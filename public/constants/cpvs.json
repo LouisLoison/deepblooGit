@@ -1,0 +1,4486 @@
+[
+  {
+     "code": 9300000,
+     "label": "electricity heating solar and nuclear energy",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Nuclear Power",
+        "Power Generation",
+        "Other"
+     ]
+  },
+  {
+     "code": 9310000,
+     "label": "electricity",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other"
+     ]
+  },
+  {
+     "code": 9320000,
+     "label": "steam hot water and associated products",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 9321000,
+     "label": "hot water",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 9322000,
+     "label": "steam",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 9323000,
+     "label": "district heating",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 9324000,
+     "label": "long distance heating",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 9330000,
+     "label": "solar energy",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar Power Solutions",
+        "Solar & Wind Power",
+        ""
+     ]
+  },
+  {
+     "code": 9331000,
+     "label": "solar panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar Power Solutions",
+        "Solar & Wind Power",
+        ""
+     ]
+  },
+  {
+     "code": 9331100,
+     "label": "solar collectors for heat production",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar Power Solutions",
+        "Solar & Wind Power",
+        ""
+     ]
+  },
+  {
+     "code": 9331200,
+     "label": "solar photovoltaic modules",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar Power Solutions",
+        "Solar & Wind Power",
+        ""
+     ]
+  },
+  {
+     "code": 9332000,
+     "label": "solar installation",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar Power Solutions",
+        "Solar & Wind Power",
+        ""
+     ]
+  },
+  {
+     "code": 9200000,
+     "label": "petroleum coal and oil products",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9210000,
+     "label": "lubricating preparations",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211000,
+     "label": "lubricating oils and lubricating agents",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211100,
+     "label": "motor oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Motors",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211200,
+     "label": "compressor lube oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211300,
+     "label": "turbine lube oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211400,
+     "label": "gear oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211500,
+     "label": "reductor oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211600,
+     "label": "oils for use in hydraulic systems and other purposes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211610,
+     "label": "liquids for hydraulic purposes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211620,
+     "label": "mould release oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211630,
+     "label": "anti corrosion oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211640,
+     "label": "electrical insulating oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211650,
+     "label": "brake fluids",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211700,
+     "label": "white oils and liquid paraffin",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211710,
+     "label": "white oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211720,
+     "label": "liquid paraffin",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211800,
+     "label": "petroleum oils and preparations",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211810,
+     "label": "light oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211820,
+     "label": "petroleum oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9211900,
+     "label": "lubricating traction oils",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9220000,
+     "label": "petroleum jelly waxes and special spirits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9221000,
+     "label": "petroleum jelly and waxes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9221100,
+     "label": "petroleum jelly",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9221200,
+     "label": "paraffin wax",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9221300,
+     "label": "petroleum wax",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9221400,
+     "label": "petroleum residues",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9222000,
+     "label": "special spirits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9222100,
+     "label": "white spirit",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9230000,
+     "label": "petroleum crude",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9240000,
+     "label": "oil and coal related products",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9241000,
+     "label": "bituminous or oil shale",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9242000,
+     "label": "coal related products",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 9242100,
+     "label": "coal oil",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31000000,
+     "label": "electrical machinery apparatus equipment and consumables lighting",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31100000,
+     "label": "electric motors generators and transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Motors",
+        "Generator",
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31110000,
+     "label": "electric motors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Motors"
+     ]
+  },
+  {
+     "code": 31111000,
+     "label": "adapters",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Power supplies"
+     ]
+  },
+  {
+     "code": 31120000,
+     "label": "generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31121000,
+     "label": "generating sets",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31121100,
+     "label": "generating sets with compression ignition engines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator",
+        "Motors"
+     ]
+  },
+  {
+     "code": 31121110,
+     "label": "power converters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31121111,
+     "label": "electric rotary converters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31121200,
+     "label": "generating sets with spark ignition engines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator",
+        "Motors"
+     ]
+  },
+  {
+     "code": 31121300,
+     "label": "wind energy generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Solar & Wind Power",
+        "Generator",
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 31121310,
+     "label": "windmills",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Wind Turbine Equipments",
+        "Solar & Wind Power"
+     ]
+  },
+  {
+     "code": 31121320,
+     "label": "wind turbines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Wind Turbine Equipments",
+        "Solar & Wind Power"
+     ]
+  },
+  {
+     "code": 31121330,
+     "label": "wind turbine generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Wind Turbine Equipments",
+        "Solar & Wind Power",
+        "Generator"
+     ]
+  },
+  {
+     "code": 31121331,
+     "label": "turbine rotors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Wind Turbine Equipments",
+        "Solar & Wind Power"
+     ]
+  },
+  {
+     "code": 31121340,
+     "label": "wind farm",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_130.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo2_wind.png",
+     "industries": [
+        "Wind Power Solutions",
+        "Wind Turbine Equipments",
+        "Solar & Wind Power"
+     ]
+  },
+  {
+     "code": 31122000,
+     "label": "generator units",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31122100,
+     "label": "fuel cells",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment",
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 31124000,
+     "label": "steam turbine generator and related apparatus",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_78.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator",
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 31124100,
+     "label": "turbine generator sets",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_78.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator",
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 31124200,
+     "label": "turbine generator control apparatus",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_78.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator",
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 31126000,
+     "label": "dynamos",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31127000,
+     "label": "emergency generator",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31128000,
+     "label": "turbogenerator",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31130000,
+     "label": "alternators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31131000,
+     "label": "single phase motors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Motors"
+     ]
+  },
+  {
+     "code": 31131100,
+     "label": "actuators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31131200,
+     "label": "anodes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31132000,
+     "label": "multi phase motors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Motors"
+     ]
+  },
+  {
+     "code": 31140000,
+     "label": "cooling towers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_60.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Cooling System"
+     ]
+  },
+  {
+     "code": 31141000,
+     "label": "water coolers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_60.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Cooling System"
+     ]
+  },
+  {
+     "code": 31150000,
+     "label": "ballasts for discharge lamps or tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31151000,
+     "label": "static converters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31153000,
+     "label": "rectifiers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31154000,
+     "label": "uninterruptible power supplies",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Power supplies"
+     ]
+  },
+  {
+     "code": 31155000,
+     "label": "inverters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_106.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Inverters"
+     ]
+  },
+  {
+     "code": 31156000,
+     "label": "interruptible power supplies",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Power supplies"
+     ]
+  },
+  {
+     "code": 31157000,
+     "label": "inductors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31158000,
+     "label": "chargers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage"
+     ]
+  },
+  {
+     "code": 31158100,
+     "label": "battery chargers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31158200,
+     "label": "supercharger",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage"
+     ]
+  },
+  {
+     "code": 31158300,
+     "label": "turbocharger",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage"
+     ]
+  },
+  {
+     "code": 31160000,
+     "label": "parts of electric motors generators and transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Motors",
+        "Generator",
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31161000,
+     "label": "parts for electrical motors and generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Motors",
+        "Generator",
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31161100,
+     "label": "excitation systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31161200,
+     "label": "gas cooling systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Cooling System"
+     ]
+  },
+  {
+     "code": 31161300,
+     "label": "generator rotors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31161400,
+     "label": "primary water systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Water Solutions"
+     ]
+  },
+  {
+     "code": 31161500,
+     "label": "seal oil systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        ""
+     ]
+  },
+  {
+     "code": 31161600,
+     "label": "stator cooling water systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Water Solutions",
+        "Cooling System"
+     ]
+  },
+  {
+     "code": 31161700,
+     "label": "parts of steam generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31161800,
+     "label": "parts of gas generators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Generator"
+     ]
+  },
+  {
+     "code": 31161900,
+     "label": "voltage control systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_18.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Voltage Regulators",
+        "Voltage Indicator",
+        "Instrument Transformers"
+     ]
+  },
+  {
+     "code": 31162000,
+     "label": "parts of transformers inductors and static converters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Transformers",
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31162100,
+     "label": "parts of condensers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other"
+     ]
+  },
+  {
+     "code": 31170000,
+     "label": "transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_57.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31171000,
+     "label": "liquid dielectric transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_57.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31172000,
+     "label": "voltage transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers",
+        "Instrument Transformers"
+     ]
+  },
+  {
+     "code": 31173000,
+     "label": "instrument transformer",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers",
+        "Instrument Transformers"
+     ]
+  },
+  {
+     "code": 31174000,
+     "label": "power supply transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_57.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers",
+        "Power supplies"
+     ]
+  },
+  {
+     "code": 31200000,
+     "label": "electricity distribution and control apparatus",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_18.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Automation -Digital Control",
+        "Control System",
+        "Monitoring and Diagnosis"
+     ]
+  },
+  {
+     "code": 31210000,
+     "label": "electrical apparatus for switching or protecting electrical circuits",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Automation -Digital Control",
+        "Control System",
+        ""
+     ]
+  },
+  {
+     "code": 31211000,
+     "label": "boards and fuse boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels",
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211100,
+     "label": "boards for electrical apparatus",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_18.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels",
+        "Automation -Digital Control",
+        "Control System",
+        "Monitoring and Diagnosis"
+     ]
+  },
+  {
+     "code": 31211110,
+     "label": "control panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels",
+        "Automation -Digital Control",
+        "Control System",
+        "Monitoring and Diagnosis"
+     ]
+  },
+  {
+     "code": 31211200,
+     "label": "fuse boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211300,
+     "label": "fuses",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211310,
+     "label": "cut outs",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211320,
+     "label": "fuse blocks",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211330,
+     "label": "fuse wires",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31211340,
+     "label": "fuse clips",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_73.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31212000,
+     "label": "circuit breakers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Circuit breakers"
+     ]
+  },
+  {
+     "code": 31212100,
+     "label": "overhead circuit breakers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Circuit breakers"
+     ]
+  },
+  {
+     "code": 31212200,
+     "label": "circuit testers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Circuit breakers"
+     ]
+  },
+  {
+     "code": 31212300,
+     "label": "magnetic circuit breakers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Circuit breakers"
+     ]
+  },
+  {
+     "code": 31212400,
+     "label": "miniature circuit breakers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Circuit breakers"
+     ]
+  },
+  {
+     "code": 31213000,
+     "label": "distribution equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipement"
+     ]
+  },
+  {
+     "code": 31213100,
+     "label": "distribution boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipement",
+        "Switchgear",
+        "Panels"
+     ]
+  },
+  {
+     "code": 31213200,
+     "label": "distribution transformers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_57.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Transformers"
+     ]
+  },
+  {
+     "code": 31213300,
+     "label": "cable distribution cabinet",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels"
+     ]
+  },
+  {
+     "code": 31213400,
+     "label": "distribution system",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Electrical Distribution Services"
+     ]
+  },
+  {
+     "code": 31214000,
+     "label": "switchgear",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switchgear"
+     ]
+  },
+  {
+     "code": 31214100,
+     "label": "switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214110,
+     "label": "isolating switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214120,
+     "label": "earthing switch",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214130,
+     "label": "safety switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214140,
+     "label": "dimmer switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214150,
+     "label": "drum switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214160,
+     "label": "pressure switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214170,
+     "label": "toggle switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214180,
+     "label": "slide switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214190,
+     "label": "limit switches",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214200,
+     "label": "switch disconnector",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches",
+        "Disconnectors"
+     ]
+  },
+  {
+     "code": 31214300,
+     "label": "outdoor switching installations",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switches"
+     ]
+  },
+  {
+     "code": 31214400,
+     "label": "fuse switch disconnector",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fuses",
+        "Switches",
+        "Disconnectors"
+     ]
+  },
+  {
+     "code": 31214500,
+     "label": "electric switchboards",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switchgear",
+        "Panels"
+     ]
+  },
+  {
+     "code": 31214510,
+     "label": "distribution switchboards",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switchgear",
+        "Panels"
+     ]
+  },
+  {
+     "code": 31214520,
+     "label": "medium voltage switchboards",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Switchgear",
+        "MV Equipment"
+     ]
+  },
+  {
+     "code": 31215000,
+     "label": "voltage limiters",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Voltage Regulators",
+        "Voltage Indicator"
+     ]
+  },
+  {
+     "code": 31216000,
+     "label": "lightning arrestors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_70.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Surge Arresters",
+        "Lightning Protections"
+     ]
+  },
+  {
+     "code": 31216100,
+     "label": "lightning protection equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_70.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Surge Arresters",
+        "Lightning Protections"
+     ]
+  },
+  {
+     "code": 31216200,
+     "label": "lightning conductors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_70.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Surge Arresters"
+     ]
+  },
+  {
+     "code": 31217000,
+     "label": "surge suppressors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_70.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Surge Arresters"
+     ]
+  },
+  {
+     "code": 31218000,
+     "label": "busbars",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31219000,
+     "label": "protection boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fuses"
+     ]
+  },
+  {
+     "code": 31220000,
+     "label": "electrical circuit components",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31221000,
+     "label": "electrical relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221100,
+     "label": "power relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221200,
+     "label": "general purpose relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221300,
+     "label": "socket relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221400,
+     "label": "alternating voltage relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221500,
+     "label": "mercury relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221600,
+     "label": "time relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31221700,
+     "label": "overload relays",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_116.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Relays"
+     ]
+  },
+  {
+     "code": 31223000,
+     "label": "lamp holders",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31224000,
+     "label": "connections and contact elements",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31224100,
+     "label": "plugs and sockets",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31224200,
+     "label": "coaxial connectors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31224300,
+     "label": "connection boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31224400,
+     "label": "connection cables",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories",
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31224500,
+     "label": "terminals",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31224600,
+     "label": "dimmers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31224700,
+     "label": "junction boxes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31224800,
+     "label": "cable joining kits",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31224810,
+     "label": "extension cables",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31230000,
+     "label": "parts of electricity distribution or control apparatus",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_18.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Control System",
+        "Electrical Distribution Services",
+        "Monitoring and Diagnosis"
+     ]
+  },
+  {
+     "code": 31300000,
+     "label": "insulated wire and cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31310000,
+     "label": "mains",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31311000,
+     "label": "mains connections",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_45.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories",
+        "Connection Devices",
+        "Connectors"
+     ]
+  },
+  {
+     "code": 31320000,
+     "label": "power distribution cables",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321000,
+     "label": "electricity power lines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321100,
+     "label": "overhead power lines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321200,
+     "label": "low and medium voltage cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321210,
+     "label": "low voltage cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321220,
+     "label": "medium voltage cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321300,
+     "label": "high voltage cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321400,
+     "label": "underwater cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321500,
+     "label": "submarine cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321600,
+     "label": "shielded cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31321700,
+     "label": "signalling cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31330000,
+     "label": "coaxial cable",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31340000,
+     "label": "insulated cable accessories",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31341000,
+     "label": "insulated cable reels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31342000,
+     "label": "insulated cable junctions",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31343000,
+     "label": "insulated cable joints",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31344000,
+     "label": "insulated cable glands",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31350000,
+     "label": "electric conductors for data and control purposes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31351000,
+     "label": "electric conductors for access control systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31400000,
+     "label": "accumulators primary cells and primary batteries",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries",
+        "Switchgear"
+     ]
+  },
+  {
+     "code": 31410000,
+     "label": "primary cells",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_37.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Switchgear",
+        "MV Equipment"
+     ]
+  },
+  {
+     "code": 31411000,
+     "label": "alkaline batteries",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31420000,
+     "label": "primary batteries",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31421000,
+     "label": "lead batteries",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31422000,
+     "label": "battery packs",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31430000,
+     "label": "electric accumulators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31431000,
+     "label": "lead acid accumulators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31432000,
+     "label": "nickel cadmium accumulators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31433000,
+     "label": "nickel iron accumulators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31434000,
+     "label": "lithium accumulators",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31440000,
+     "label": "batteries",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_9.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo3_battery.png",
+     "industries": [
+        "Energy Storage",
+        "Batteries"
+     ]
+  },
+  {
+     "code": 31500000,
+     "label": "lighting equipment and electric lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31510000,
+     "label": "electric filament lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31511000,
+     "label": "sealed beam lamp units",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31512000,
+     "label": "tungsten halogen filament lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31512100,
+     "label": "halogen bulbs linear",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31512200,
+     "label": "halogen bulbs bi pin",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31512300,
+     "label": "halogen bulbs dichroic",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31514000,
+     "label": "discharge lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31515000,
+     "label": "ultraviolet lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31516000,
+     "label": "infrared lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31517000,
+     "label": "arc lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518000,
+     "label": "signalling lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518100,
+     "label": "floodlights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518200,
+     "label": "emergency lighting equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518210,
+     "label": "stormlights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518220,
+     "label": "light stick",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518300,
+     "label": "rooflights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518500,
+     "label": "mercury vapour lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31518600,
+     "label": "searchlights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31519000,
+     "label": "incandescent and neon lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31519100,
+     "label": "incandescent lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31519200,
+     "label": "neon lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31520000,
+     "label": "lamps and light fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521000,
+     "label": "lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521100,
+     "label": "desk lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521200,
+     "label": "floor standing lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521300,
+     "label": "portable electric lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521310,
+     "label": "warning lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521320,
+     "label": "torches",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31521330,
+     "label": "rechargeable portable electric lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31522000,
+     "label": "christmas tree lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31523000,
+     "label": "illuminated signs and nameplates",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31523100,
+     "label": "advertising neon lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31523200,
+     "label": "permanent message signs",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31523300,
+     "label": "illuminated nameplates",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524000,
+     "label": "ceiling or wall light fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524100,
+     "label": "ceiling light fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524110,
+     "label": "operating theatre lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524120,
+     "label": "ceiling lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524200,
+     "label": "wall light fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31524210,
+     "label": "wall lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527000,
+     "label": "spotlights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527200,
+     "label": "exterior lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527210,
+     "label": "lanterns",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527260,
+     "label": "lighting systems",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527270,
+     "label": "platforms lighting",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527300,
+     "label": "domestic lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31527400,
+     "label": "underwater lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31530000,
+     "label": "parts of lamps and lighting equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31531000,
+     "label": "light bulbs",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31531100,
+     "label": "electric tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532000,
+     "label": "parts of lamps and light fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532100,
+     "label": "tube lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532110,
+     "label": "fluorescent tube lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532120,
+     "label": "compact fluorescent tube lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532200,
+     "label": "ring lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532210,
+     "label": "fluorescent ring lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532300,
+     "label": "globe lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532310,
+     "label": "compact fluorescent globe lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532400,
+     "label": "lamps sockets",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532500,
+     "label": "lamp starters",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532510,
+     "label": "starters for fluorescent lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532600,
+     "label": "lamp reactors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532610,
+     "label": "reactors for fluorescent lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532700,
+     "label": "lamp covers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532800,
+     "label": "lamp arms",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532900,
+     "label": "fluorescent lights",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532910,
+     "label": "fluorescent tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31532920,
+     "label": "bulbs and fluorescent lamps",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31600000,
+     "label": "electrical equipment and apparatus",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31610000,
+     "label": "electrical equipment for engines and vehicles",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "Electric Vehicle"
+     ]
+  },
+  {
+     "code": 31611000,
+     "label": "wiring sets",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31612000,
+     "label": "electrical wiring looms for engines",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment",
+        "Services"
+     ]
+  },
+  {
+     "code": 31612200,
+     "label": "starter motors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Motors"
+     ]
+  },
+  {
+     "code": 31612300,
+     "label": "electrical signalling equipment for engines",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31612310,
+     "label": "blinkers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31620000,
+     "label": "sound or visual signalling apparatus",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31625000,
+     "label": "burglar and fire alarms",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_66.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fire Fighting ssytem",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31625100,
+     "label": "fire detection systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_66.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fire Fighting ssytem",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31625200,
+     "label": "fire alarm systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_66.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fire Fighting ssytem",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31625300,
+     "label": "burglar alarm systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_66.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Fire Fighting ssytem",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31630000,
+     "label": "magnets",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31640000,
+     "label": "machines and apparatus with individual functions",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642000,
+     "label": "electronic detection apparatus",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642100,
+     "label": "detection apparatus for metal pipes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642200,
+     "label": "detection apparatus for mines",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642300,
+     "label": "detection apparatus for plastics",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642400,
+     "label": "detection apparatus for non metallic objects",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31642500,
+     "label": "detection apparatus for timber",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31643000,
+     "label": "particle accelerators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31643100,
+     "label": "linear accelerators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31644000,
+     "label": "miscellaneous data recorders",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31645000,
+     "label": "pinball machines",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31650000,
+     "label": "insulating fittings",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31651000,
+     "label": "electrical tape",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31660000,
+     "label": "carbon electrodes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31670000,
+     "label": "electrical parts of machinery or apparatus",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31671000,
+     "label": "glass envelopes and cathode ray tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31671100,
+     "label": "glass envelopes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31671200,
+     "label": "cathode ray tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31680000,
+     "label": "electrical supplies and accessories",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681000,
+     "label": "electrical accessories",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681100,
+     "label": "electrical contacts",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681200,
+     "label": "electric pumps",
+     "active": true,
+     "logo": "",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681300,
+     "label": "electrical circuits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681400,
+     "label": "electrical components",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681410,
+     "label": "electrical materials",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31681500,
+     "label": "rechargers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31682000,
+     "label": "electricity supplies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31682100,
+     "label": "electricity boxes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31682110,
+     "label": "electricity box covers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31682200,
+     "label": "instrument panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment",
+        "Panels"
+     ]
+  },
+  {
+     "code": 31682210,
+     "label": "instrumentation and control equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_18.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Quality Metering & Control",
+        "Process Automation & Control",
+        "Industrial Automation & Control",
+        "Automation -Digital Control",
+        "Control System",
+        "Monitoring and Diagnosis"
+     ]
+  },
+  {
+     "code": 31682220,
+     "label": "mixing panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels"
+     ]
+  },
+  {
+     "code": 31682230,
+     "label": "graphic display panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Panels"
+     ]
+  },
+  {
+     "code": 31682300,
+     "label": "medium voltage equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/various.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "MV Equipment"
+     ]
+  },
+  {
+     "code": 31682310,
+     "label": "medium voltage panels",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_28.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "MV Equipment",
+        "Panels",
+        "Switchgear"
+     ]
+  },
+  {
+     "code": 31682400,
+     "label": "overhead electrical equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31682410,
+     "label": "overhead cable carriers",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_5.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo39.png",
+     "industries": [
+        "Cables/Conductors/Lines & Accessories"
+     ]
+  },
+  {
+     "code": 31682500,
+     "label": "emergency electricity equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Critical Power System"
+     ]
+  },
+  {
+     "code": 31682510,
+     "label": "emergency power systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Critical Power System"
+     ]
+  },
+  {
+     "code": 31682520,
+     "label": "emergency shutdown systems",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Critical Power System"
+     ]
+  },
+  {
+     "code": 31682530,
+     "label": "emergency power supplies",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_126.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Critical Power System",
+        "Power supplies"
+     ]
+  },
+  {
+     "code": 31682540,
+     "label": "substation equipment",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Air Insulated Switchgear",
+        "Turnkey Substation/Switchgear",
+        "HV Equipment",
+        "MV Equipment"
+     ]
+  },
+  {
+     "code": 31700000,
+     "label": "electronic electromechanical and electrotechnical supplies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Mechanical design",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31710000,
+     "label": "electronic equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711000,
+     "label": "electronic supplies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711100,
+     "label": "electronic components",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711110,
+     "label": "transceivers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711120,
+     "label": "transducers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711130,
+     "label": "resistors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711131,
+     "label": "electrical resistors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711140,
+     "label": "electrodes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment",
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31711150,
+     "label": "electrical capacitors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters"
+     ]
+  },
+  {
+     "code": 31711151,
+     "label": "fixed capacitors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters"
+     ]
+  },
+  {
+     "code": 31711152,
+     "label": "variable or adjustable capacitors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters"
+     ]
+  },
+  {
+     "code": 31711154,
+     "label": "capacitor banks",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters"
+     ]
+  },
+  {
+     "code": 31711155,
+     "label": "capacitor networks",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters"
+     ]
+  },
+  {
+     "code": 31711200,
+     "label": "electronic scoreboards",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711300,
+     "label": "electronic timekeeping systems",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711310,
+     "label": "system for recording attendance",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711400,
+     "label": "valves and tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711410,
+     "label": "cathode ray television picture tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711411,
+     "label": "television camera tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711420,
+     "label": "microwave tubes and equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711421,
+     "label": "magnetrons",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711422,
+     "label": "microwave equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711423,
+     "label": "microwave radio equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711424,
+     "label": "klystrons",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711430,
+     "label": "valve tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711440,
+     "label": "receiver or amplifier valves and tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711500,
+     "label": "parts of electronic assemblies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711510,
+     "label": "parts of electrical capacitors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_59.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Capacitors / Filters",
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711520,
+     "label": "parts of electrical resistors rheostats and potentiometers",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31711530,
+     "label": "parts of electronic valves and tubes",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712000,
+     "label": "microelectronic machinery and apparatus and microsystems",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712100,
+     "label": "microelectronic machinery and apparatus",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712110,
+     "label": "electronic integrated circuits and microassemblies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712111,
+     "label": "phone cards",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712112,
+     "label": "sim cards",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712113,
+     "label": "cards containing integrated circuits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712114,
+     "label": "integrated electronic circuits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712115,
+     "label": "microassemblies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712116,
+     "label": "microprocessors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712117,
+     "label": "integrated circuit packages",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712118,
+     "label": "integrated circuit sockets or mounts",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712119,
+     "label": "integrated circuit lids",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712200,
+     "label": "microsystems",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712300,
+     "label": "printed circuits",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712310,
+     "label": "populated printed circuit boards",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712320,
+     "label": "unpopulated printed circuit boards",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712330,
+     "label": "semiconductors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712331,
+     "label": "photovoltaic cells",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_120.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo1_solar.png",
+     "industries": [
+        "Solar & Wind Power",
+        "Solar Power Solutions"
+     ]
+  },
+  {
+     "code": 31712332,
+     "label": "thyristors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "FACTS & HVDC"
+     ]
+  },
+  {
+     "code": 31712333,
+     "label": "diacs",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712334,
+     "label": "triacs",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712335,
+     "label": "optical coupled isolators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712336,
+     "label": "crystal oscillators",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712340,
+     "label": "diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712341,
+     "label": "light emitting diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712342,
+     "label": "microwave or small signal diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712343,
+     "label": "zener diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712344,
+     "label": "schottky diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712345,
+     "label": "tunnel diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712346,
+     "label": "photosensitive diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712347,
+     "label": "power or solar diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712348,
+     "label": "laser diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712349,
+     "label": "radio frequency rf diodes",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712350,
+     "label": "transistors",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_112.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Semiconductors"
+     ]
+  },
+  {
+     "code": 31712351,
+     "label": "photo sensitive transistors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712352,
+     "label": "field effect transistors fet",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712353,
+     "label": "metal oxide field effect transistors mosfet",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712354,
+     "label": "transistor chips",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712355,
+     "label": "bipolar darlington or radio frequency rf transistors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712356,
+     "label": "unijunction transistors",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712357,
+     "label": "insulated gate bipolar transistors igbt",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712358,
+     "label": "junction field effect transistors jfet",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712359,
+     "label": "bipolar junction transistors bjt",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31712360,
+     "label": "mounted piezo electric crystals",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment",
+        "LV Equipment"
+     ]
+  },
+  {
+     "code": 31720000,
+     "label": "electromechanical equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31730000,
+     "label": "electrotechnical equipment",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31731000,
+     "label": "electrotechnical supplies",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 31731100,
+     "label": "modules",
+     "active": false,
+     "logo": "",
+     "picture": "",
+     "industries": [
+        "Other Equipment"
+     ]
+  },
+  {
+     "code": 45223720,
+     "label": "petrol gas stations construction work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Gas & pipeline",
+        "Civil Work & Construction",
+        "Field Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45231200,
+     "label": "construction work for oil and gas pipelines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Gas & pipeline",
+        "Civil Work & Construction",
+        "Field Service",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45231400,
+     "label": "construction work for electricity power lines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Civil Work & Construction",
+        "Cables/Conductors/Lines & Accessories",
+        "Field Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45232200,
+     "label": "ancillary works for electricity power lines",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Civil Work & Construction",
+        "Cables/Conductors/Lines & Accessories",
+        "Field Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45232210,
+     "label": "overhead line construction",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Civil Work & Construction",
+        "Cables/Conductors/Lines & Accessories",
+        "Field Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45232220,
+     "label": "substation construction work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Air Insulated Switchgear",
+        "Gas Insulated Switchgear",
+        "Civil Work & Construction",
+        "Turnkey Substation/Switchgear",
+        "Field Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45232221,
+     "label": "transformer substation",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_58.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo4_substation.png",
+     "industries": [
+        "Air Insulated Switchgear",
+        "Gas Insulated Switchgear",
+        "Civil Work & Construction",
+        "Turnkey Substation/Switchgear",
+        "Transformers",
+        "HV Equipment",
+        "Primary Equipment"
+     ]
+  },
+  {
+     "code": 45250000,
+     "label": "construction works for plants mining and manufacturing and for buildings relating to the oil and gas industry",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Gas & pipeline",
+        "Civil Work & Construction",
+        "Mining & Metal",
+        "Gas  Based Power Plants",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45255000,
+     "label": "construction work for the oil and gas industry",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_43.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Gas & pipeline",
+        "Civil Work & Construction",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45310000,
+     "label": "electrical installation work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_132.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Installation",
+        "Engineering Services",
+        "Field Services"
+     ]
+  },
+  {
+     "code": 45311000,
+     "label": "electrical wiring and fitting work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_132.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Wire Management",
+        "Services",
+        "Other Services",
+        "Engineering Services"
+     ]
+  },
+  {
+     "code": 45311100,
+     "label": "electrical wiring work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_132.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Wire Management",
+        "Engineering Services",
+        "Services",
+        "Other Services",
+        ""
+     ]
+  },
+  {
+     "code": 45311200,
+     "label": "electrical fitting work",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_132.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Engineering Services",
+        "Services"
+     ]
+  },
+  {
+     "code": 9000000,
+     "label": "Petroleum products, fuel, electricity and other sources of energy",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Power Generation"
+     ]
+  },
+  {
+     "code": 14000000,
+     "label": "Mining, basic metals and related products",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/id_17.jpg",
+     "picture": "http://arread.fr/deepbloo/Logo5.png",
+     "industries": [
+        "Mining & Metal"
+     ]
+  },
+  {
+     "code": 76000000,
+     "label": "Services related to the oil and gas industry",
+     "active": true,
+     "logo": "http://arread.fr/deepbloo/FondBleu.jpg",
+     "picture": "http://arread.fr/deepbloo/default.png",
+     "industries": [
+        "Gas & pipeline",
+        "Services",
+        "Engineering Services"
+     ]
+  }
+]

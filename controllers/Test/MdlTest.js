@@ -106,7 +106,41 @@ exports.CpvListGet = () => {
         resolve(Cpvs)
     })
 }
+
 exports.Test = () => {
+  return new Promise(async (resolve, reject) => {
+    fs = require('fs')
+
+    let industries = []
+    fs.readFileSync('c:/Jean/Onglet2.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      industries.push(lineArray)
+    })
+
+    let cpvs = []
+    fs.readFileSync('c:/Jean/Onglet1.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      cpvs.push({
+        code: parseInt(lineArray[0], 10),
+        label: lineArray[1].split('-').join(' ').trim(),
+        active: lineArray[3] === 'Y',
+        logo: lineArray[5].trim(),
+        picture: lineArray[4].trim(),
+        industries: lineArray[2].split(',').map(a => a.trim()),
+      })
+    })
+
+    let cpvsText = JSON.stringify(cpvs, null, 3)
+    fs.writeFile('c:/Jean/OngletJson.txt', cpvsText, function (err) {
+      if (err) {
+        return console.log(err);
+      }
+    })
+    resolve()
+  })
+}
+
+exports.Test2 = () => {
     return new Promise(async (resolve, reject) => {
         const PromiseFtp = require('promise-ftp')
         const ftp = new PromiseFtp()
@@ -151,7 +185,7 @@ exports.Test = () => {
     })
 }
 
-exports.Test2 = () => {
+exports.Test3 = () => {
     return new Promise(async (resolve, reject) => {
         const fs = require('fs')
         const util = require('util')
