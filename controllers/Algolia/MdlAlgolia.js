@@ -1,7 +1,126 @@
 exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
-    const DgMarket = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket')
-    const tenders = await DgMarket.FileParse()
+    // const DgMarket = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket')
+    // const tenders = await DgMarket.FileParse()
+    const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+
+    const BddId = 'deepbloo'
+    const BddEnvironnement = 'PRD'
+    const BddTool = require(process.cwd() + '/global/BddTool')
+    let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+      SELECT      id AS "id", 
+                  hivebriteId AS "hivebriteId", 
+                  procurementId AS "procurementId", 
+                  title AS "title", 
+                  description AS "description", 
+                  lang AS "lang", 
+                  contactFirstName AS "contactFirstName", 
+                  contactLastName AS "contactLastName", 
+                  contactAddress AS "contactAddress", 
+                  contactCity AS "contactCity", 
+                  contactState AS "contactState", 
+                  contactCountry AS "contactCountry", 
+                  contactEmail AS "contactEmail", 
+                  contactPhone AS "contactPhone", 
+                  buyerName AS "buyerName", 
+                  buyerCountry AS "buyerCountry", 
+                  procurementMethod AS "procurementMethod", 
+                  noticeType AS "noticeType", 
+                  country AS "country", 
+                  estimatedCost AS "estimatedCost", 
+                  currency AS "currency", 
+                  publicationDate AS "publicationDate", 
+                  cpvs AS "cpvs", 
+                  cpvDescriptions AS "cpvDescriptions", 
+                  bidDeadlineDate AS "bidDeadlineDate", 
+                  sourceUrl AS "sourceUrl", 
+                  fileSource AS "fileSource", 
+                  algoliaId AS "algoliaId", 
+                  status AS "status", 
+                  creationDate AS "creationDate", 
+                  updateDate AS "updateDate" 
+      FROM        dgmarket 
+      WHERE       status = 0 
+    `)
+    const tenders = []
+    for (let record of recordset) {
+      // Url source list
+      let sourceUrls = []
+      let sourceUrl = record.sourceUrl
+      if (sourceUrl) {
+        sourceUrl.split(',').forEach(url => {
+          sourceUrls.push(url)
+        })
+      }
+
+      // CPV list
+      let cpvOkCount = 0
+      let cpvs = []
+      let industries = []
+      let cpvsText = record.cpvs
+      let cpvDescriptionsText = record.cpvDescriptions
+      if (cpvsText && cpvDescriptionsText) {
+        let cpvsTextTemp = cpvsText.split(',')
+        let cpvDescriptionsTextTemp = cpvDescriptionsText.split(',')
+        for (let i = 0; i < cpvsTextTemp.length; i++) {
+          let code = parseInt(cpvsTextTemp[i], 10)
+          let cpv = CpvList.find(a => a.code === code)
+          if (cpv) {
+            if (cpv.active) {
+              cpvOkCount++
+            }
+            cpvs.push(cpvDescriptionsTextTemp[i].split('-').join(' ').trim())
+            industries = industries.concat(cpv.industries)
+          }
+        }
+      }
+      if (cpvOkCount === 0) {
+        continue
+      }
+      industries = industries.filter((item, pos) => industries.indexOf(item) == pos)
+
+      let dateText = record.publicationDate
+      let publicationDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+      let publication_timestamp = new Date(publicationDate).getTime()
+
+      dateText = record.bidDeadlineDate
+      let bidDeadlineDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+      let bidDeadline_timestamp = new Date(bidDeadlineDate).getTime()
+
+      tenders.push({
+        hivebriteId: record.id,
+        procurementId: record.procurementId,
+        title: record.title,
+        lang: record.lang,
+        description: record.description,
+        contact: {
+          firstName: record.contactFirstName,
+          lastName: record.contactLastName,
+          address: record.contactAddress,
+          city: record.contactCity,
+          state: record.contactState,
+          country: record.contactCountry,
+          email: record.contactEmail,
+          phone: record.contactPhone,
+        },
+        buyer: {
+            name: record.buyerName,
+            country: record.buyerCountry,
+        },
+        procurementMethod: record.procurementMethod,
+        noticeType: record.noticeType,
+        country: record.country,
+        currency: record.currency,
+        publicationDate: publicationDate,
+        publication_timestamp: publication_timestamp,
+        cpvs: cpvs,
+        industries: industries,
+        bidDeadlineDate: bidDeadlineDate,
+        bidDeadline_timestamp: bidDeadline_timestamp,
+        sourceUrls: sourceUrls,
+        fileSource: record.fileSource
+      })
+    }
 
     const tranches = []
     let borneMin = 0

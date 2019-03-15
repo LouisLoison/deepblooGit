@@ -7,19 +7,6 @@ const bodyParser = require('body-parser')
 const path = require('path')
 const config = require('./config')
 
-/* Récupération de la config local */
-if (config.WorkSpaceFolder !== undefined && config.WorkSpaceFolder !== null) {
-  const fs = require('fs')
-  var ConfigPath = config.WorkSpaceFolder + 'BackConfig.json'
-  try {
-    var ConfigParsed = JSON.parse(fs.readFileSync(ConfigPath, 'UTF-8'))
-    config.AppBackPort = ConfigParsed.AppBackPort
-    config.AppFrontUrl = ConfigParsed.AppFrontUrl
-    config.AppSchedulePort = ConfigParsed.AppSchedulePort
-    config.bdd = ConfigParsed.bdd
-  }
-  catch (err) { }
-}
 config.user = { }
 
 app.use(helmet({
