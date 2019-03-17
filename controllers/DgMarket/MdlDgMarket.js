@@ -6,48 +6,21 @@ exports.BddImport = () => {
     const BddEnvironnement = 'PRD'
     const BddTool = require(process.cwd() + '/global/BddTool')
     for (let tender of tenders) {
-      let id = null
+      let dgmarket = tender
+      dgmarket.status = 0
+      dgmarket.updateDate = new Date()
+
+      // Search for internal id
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
-          SELECT     id AS "id"
-          FROM       dgmarket 
-          WHERE      hivebriteId = ${BddTool.NumericFormater(tender.hivebriteId, BddEnvironnement, BddId)} 
+        SELECT     id AS "id"
+        FROM       dgmarket 
+        WHERE      dgmarketId = ${BddTool.NumericFormater(tender.dgmarketId, BddEnvironnement, BddId)} 
       `)
       for (let record of recordset) {
-        id = record.id
+        dgmarket.id = record.id
+        dgmarket.creationDate = new Date()
       }
 
-      const dgmarket = {
-        id: id ? id : undefined,
-        hivebriteId: tender.hivebriteId,
-        procurementId: tender.procurementId,
-        title: tender.title,
-        description: tender.description,
-        lang: tender.lang,
-        contactFirstName: tender.contactFirstName,
-        contactLastName: tender.contactLastName,
-        contactAddress: tender.contactAddress,
-        contactCity: tender.contactCity,
-        contactState: tender.contactState,
-        contactCountry: tender.contactCountry,
-        contactEmail: tender.contactEmail,
-        contactPhone: tender.contactPhone,
-        buyerName: tender.buyerName,
-        buyerCountry: tender.buyerCountry,
-        procurementMethod: tender.procurementMethod,
-        noticeType: tender.noticeType,
-        country: tender.country,
-        estimatedCost: tender.estimatedCost,
-        currency: tender.currency,
-        publicationDate: tender.publicationDate,
-        cpvs: tender.cpvs,
-        cpvDescriptions: tender.cpvDescriptions,
-        bidDeadlineDate: tender.bidDeadlineDate,
-        sourceUrl: tender.sourceUrl,
-        fileSource: tender.fileSource,
-        status: 0,
-        creationDate: id ? new Date() : undefined,
-        updateDate: new Date()
-      }
       await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', dgmarket)
     }
     resolve()
@@ -113,13 +86,14 @@ exports.FtpList = () => {
 exports.FileParse = () => {
   return new Promise(async (resolve, reject) => {
     const fs = require('fs')
+    const path = require('path')
     const util = require('util')
     const tool = require(process.cwd() + '/controllers/CtrlTool')
 
     const readFile = util.promisify(fs.readFile)
     // const fileLocation = 'C:/Jean/Project/Deepbloo/Ftp/feed-20190108.xml'
     const fileLocation = 'C:/Jean/Project/Deepbloo/Ftp/feed-20190308.xml'
-    let fileSource = 'feed-20190308.xml'
+    const fileSource = path.parse(fileLocation).base
     let fileData = await readFile(fileLocation)
 
     const xml2js = require('xml2js')
@@ -174,7 +148,7 @@ exports.FileParse = () => {
       }
 
       tenders.push({
-        hivebriteId: parseInt(tool.getXmlJsonData(notice.id), 10),
+        dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
         procurementId: tool.getXmlJsonData(notice.procurementId),
         title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 450),
         lang: lang,

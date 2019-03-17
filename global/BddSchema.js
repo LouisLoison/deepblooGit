@@ -4,7 +4,7 @@ var Schema = {
     deepbloo: {
         dgmarket: {
             id: { type: "Int", key: true },
-            hivebriteId: { type: "Int" },
+            dgmarketId: { type: "Int" },
             procurementId: { type: "String" },
             title: { type: "String" },
             description: { type: "String" },

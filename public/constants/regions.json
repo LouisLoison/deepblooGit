@@ -1,0 +1,330 @@
+[
+  {
+     "label": "Africa",
+     "regions": [
+        {
+            "label": "Eastern",
+            "countrys": [
+               "Burundi",
+               "Comoros",
+               "Djibouti",
+               "Eritrea",
+               "Ethiopia",
+               "Kenya",
+               "Madagascar",
+               "Malawi",
+               "Mauritius",
+               "Mayotte",
+               "Mozambique",
+               "Reunion",
+               "Rwanda",
+               "Seychelles",
+               "Somalia",
+               "Tanzania",
+               "Uganda",
+               "Zambia",
+               "Zimbabwe"
+            ]
+         },
+         {
+            "label": "Northern",
+            "countrys": [
+               "Algeria",
+               "Egypt",
+               "Libya",
+               "Morocco",
+               "South Sudan",
+               "Sudan",
+               "Tunisia"
+            ]
+         },
+         {
+            "label": "Southern",
+            "countrys": [
+               "South Africa",
+               "Angola",
+               "Botswana.",
+               "Comores.",
+               "Eswatini.",
+               "Lesotho.",
+               "Madagascar.",
+               "Malawi.",
+               "Namibia",
+               "Swaziland",
+               "Zambia",
+               "Zimbabwe"
+            ]
+         },
+         {
+            "label": "Western",
+            "countrys": [
+               "Benin",
+               "Burkina Faso",
+               "Cape Verde",
+               "Cote d'Ivoire (Ivory Coast)",
+               "Gambia",
+               "Ghana",
+               "Guinea",
+               "Guinea-Bissau",
+               "Liberia",
+               "Mali",
+               "Mauritania",
+               "Niger",
+               "Nigeria",
+               "Saint Helena",
+               "Senegal",
+               "Sierra Leone",
+               "Sao Tome and Principe",
+               "Togo"
+            ]
+         },
+         {
+            "label": "Central",
+            "countrys": [
+               "Angola",
+               "Cameroon",
+               "Central African Republic",
+               "Chad",
+               "Congo",
+               "Democratic Republic of the Congo",
+               "Equatorial Guinea",
+               "Gabon",
+               "Sao Tome and Principe"
+            ]
+         }
+      ]
+   },
+   {
+      "label": "America",
+      "regions": [
+         {
+            "label": "Central",
+            "countrys": [
+               "Anguilla",
+               "Antigua and Barbuda",
+               "Aruba",
+               "Bahamas",
+               "Barbados",
+               "Belize",
+               "Bermuda",
+               "Cayman Islands ",
+               "Costa Rica",
+               "Cuba",
+               "Dominica",
+               "Dominican Republic",
+               "El Salvador",
+               "Greenland",
+               "Grenada",
+               "Guadeloupe",
+               "Guatemala",
+               "Haiti",
+               "Honduras",
+               "Jamaica",
+               "Martinique",
+               "Mexico",
+               "Montserrat",
+               "Navassa Island",
+               "Netherlands Antilles",
+               "Nicaragua",
+               "Panama",
+               "Puerto Rico",
+               "Saint Kitts and Nevis",
+               "Saint Lucia",
+               "Saint-Pierre and Miquelon",
+               "Saint Vincent and the Grenadines",
+               "Trinidad and Tobago",
+               "Turks and Caicos Islands"
+            ]
+         },
+         {
+            "label": "North/Canada",
+            "countrys": [
+               "Canada",
+               "United States"
+            ]
+         },
+         {
+            "label": "North/Canada",
+            "countrys": [
+               "Argentina",
+               "Bolivia",
+               "Brazil",
+               "Chile",
+               "Colombia",
+               "Ecuador",
+               "Falkland Islands",
+               "French Guiana ",
+               "Guyana",
+               "Paraguay",
+               "Peru",
+               "Suriname",
+               "Uruguay",
+               "Venezuela"
+            ]
+         }
+      ]
+   },
+   {
+      "label": "Asia",
+      "regions": [
+         {
+            "label": "South",
+            "countrys": [
+               "Canada",
+               "United States"
+            ]
+         },
+         {
+            "label": "Central",
+            "countrys": [
+               "Canada",
+               "United States"
+            ]
+         },
+         {
+            "label": "Eastern",
+            "countrys": [
+               "Canada",
+               "United States"
+            ]
+         },
+         {
+            "label": "Southern",
+            "countrys": [
+               "Canada",
+               "United States"
+            ]
+         }
+      ]
+   },
+   {
+      "label": "China",
+      "countrys": [
+         "China"
+      ]
+   },
+   {
+      "label": "Europe",
+      "regions": [
+         {
+            "label": "East",
+            "countrys": [
+               "Belarus",
+               "Czech Republic",
+               "Hungary",
+               "Moldova",
+               "Poland",
+               "Romania",
+               "Russia",
+               "Slovakia",
+               "Ukraine",
+               "Albania",
+               "Bosnia and Herzegovina",
+               "Bulgaria",
+               "Croatia",
+               "Kosovo",
+               "Macedonia",
+               "Moldova",
+               "Montenegro",
+               "Romania",
+               "Serbia",
+               "Slovenia"
+            ]
+         },
+         {
+            "label": "West",
+            "countrys": [
+               "Austria",
+               "Belgium",
+               "Denmark",
+               "Finland",
+               "France",
+               "Germany",
+               "Ireland",
+               "Italy",
+               "Netherlands",
+               "Northern Ireland",
+               "Norway",
+               "Portugal",
+               "Spain",
+               "Sweden",
+               "Switzerland",
+               "United Kingdom",
+               "Vatican"
+            ]
+         }
+      ]
+   },
+   {
+      "label": "India",
+      "countrys": [
+         "India"
+      ]
+   },
+   {
+      "label": "Near & Middle East",
+      "countrys": [
+         "Armenia",
+         "Azerbaijan",
+         "Bahrain",
+         "Cyprus",
+         "Georgia",
+         "Iraq",
+         "Israel",
+         "Jordan",
+         "Kuwait",
+         "Lebanon",
+         "Oman",
+         "Qatar",
+         "Saudi Arabia",
+         "State of Palestine",
+         "Syrian Arab Republic",
+         "Turkey",
+         "United Arab Emirates",
+         "Yemen"
+      ]
+   },
+   {
+      "label": "Pacific",
+      "countrys": [
+         "American Samoa",
+         "Australia",
+         "Bougainville",
+         "Cook Islands",
+         "Federated States of Micronesia",
+         "Fiji",
+         "French Polynesia",
+         "Guam",
+         "Kiribati",
+         "Nauru",
+         "New Caledonia",
+         "New Zealand",
+         "Papua New Guinea",
+         "Samoa",
+         "Solomon Islands",
+         "Tokelau Islands",
+         "Tonga",
+         "Tuvalu",
+         "Vanuatu",
+         "Wallis & Futuna Islands",
+         "Micronesia"
+      ]
+   },
+   {
+      "label": "Russia and CIS",
+      "countrys": [
+         "Armenia",
+         "Azerbaijan",
+         "Belarus",
+         "Georgia",
+         "Kazakhstan",
+         "Kyrgyzstan",
+         "Moldova",
+         "Russia",
+         "Tajikistan",
+         "Turkmenistan",
+         "Ukraine",
+         "Uzbekistan."
+      ]
+   }
+]
