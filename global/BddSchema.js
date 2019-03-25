@@ -29,6 +29,7 @@ var Schema = {
             cpvDescriptions: { type: "String" },
             bidDeadlineDate: { type: "String" },
             sourceUrl: { type: "String" },
+            termDate: { type: "DateTime" },
             fileSource: { type: "String" },
             algoliaId: { type: "Int" },
             status: { type: "Int" },

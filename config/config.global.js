@@ -1,7 +1,7 @@
 var config = module.exports = {}
 
 config.WorkSpaceFolder = 'C:/Ethelp/'
-config.AppBackPort = 9010
+config.AppBackPort = 9020
 config.AppFrontUrl = 'http://localhost:8095'
 config.hostname = 'dev.example.com'
 config.env = 'development'
