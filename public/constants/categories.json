@@ -1,0 +1,489 @@
+[
+   {
+      "category1": "Turnkey SST",
+      "category2": "SST Equipment & Work",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Air insulated switchgear",
+         "Air insulated switchyard",
+         "AIS Substation",
+         "AIS SST"
+      ]
+   },
+   {
+      "category1": "Energy storage",
+      "category2": "Renewable",
+      "cpv": "31158100",
+      "cpvText": "battery-chargers-",
+      "words": [
+         "Batteries",
+         "Energy storage",
+         "accumulator",
+         "Battery",
+         "Bio energy"
+      ]
+   },
+   {
+      "category1": "Circuit breakers",
+      "category2": "SST Equipment & Work",
+      "cpv": "31212000",
+      "cpvText": "circuit-breakers-",
+      "words": [
+         "Circuit breaker",
+         "Medium Voltage Circuit breaker",
+         "MV Circuit Breaker",
+         "HV Circuit Breaker",
+         "High Voltage Circuit Breaker"
+      ]
+   },
+   {
+      "category1": "Connector",
+      "category2": "Cables & Connectors",
+      "cpv": "31224000",
+      "cpvText": "connections-and-contact-elements-",
+      "words": [
+         "electrical connection",
+         "electrical connector",
+         "Cable",
+         "electrical busbar"
+      ]
+   },
+   {
+      "category1": "Critical Power System",
+      "category2": "Other Services & Equipment",
+      "cpv": "31682510",
+      "cpvText": "emergency-power-systems-",
+      "words": [
+         "Critical power system",
+         "Critical grid system"
+      ]
+   },
+   {
+      "category1": "Automation - Energy management",
+      "category2": "Automation",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "Demand & Response",
+         "Energy management"
+      ]
+   },
+   {
+      "category1": "Generation",
+      "category2": "Generation",
+      "cpv": "31161300",
+      "cpvText": "generator-rotors-",
+      "words": [
+         "Genset",
+         "Diesel Generator"
+      ]
+   },
+   {
+      "category1": "Other Equipments",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "Disconnectors",
+         "Earthing material",
+         "Insulators",
+         "Post insulator",
+         "Glass Insulator"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Electrical design",
+         "Electrical Drawings",
+         "Electrical distribution services"
+      ]
+   },
+   {
+      "category1": "Facts & HVDC - Others",
+      "category2": "Facts & HVDC",
+      "cpv": "31711150",
+      "cpvText": "electrical-capacitors-",
+      "words": [
+         "Facts & HVDC",
+         "capacitors bank"
+      ]
+   },
+   {
+      "category1": "O&G/Mining",
+      "category2": "O&G/Mining",
+      "cpv": "45223720",
+      "cpvText": "petrol-gas-stations-construction-work-",
+      "words": [
+         "Gas based power plants"
+      ]
+   },
+   {
+      "category1": "Turnkey SST",
+      "category2": "SST Equipment & Work",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Gas insulated Switchgear",
+         "Gas Insulated switchyard",
+         "GIS Substation",
+         "GIS SST"
+      ]
+   },
+   {
+      "category1": "Generation",
+      "category2": "Generation",
+      "cpv": "31120000",
+      "cpvText": "generators-",
+      "words": [
+         "Generator"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Grid stability",
+         "Voltage stability",
+         "Frequency stability"
+      ]
+   },
+   {
+      "category1": "Other Equipments",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "HV equipment",
+         "High Votage Equipment",
+         "High Voltage Apparatus",
+         "High Voltage",
+         "High Voltage Disconnector",
+         "HV Disconnector"
+      ]
+   },
+   {
+      "category1": "",
+      "category2": "Renewables",
+      "cpv": "31120000",
+      "cpvText": "generators-",
+      "words": [
+         "Hydro turbine",
+         "Hydroelectric turbine",
+         "steam turbine",
+         "Hydro power"
+      ]
+   },
+   {
+      "category1": "Instrument Transformer",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "Instrument transformers",
+         "Current Transformer",
+         "Voltage Tansformer"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "31155000",
+      "cpvText": "inverters-",
+      "words": [
+         "Inverters",
+         "rectifier"
+      ]
+   },
+   {
+      "category1": "Surge Arresters",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "Lightning protection",
+         "Surge Arrester",
+         "Lightning Arrester"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "Metering",
+         "Meters",
+         "smart meters",
+         "smartmeter",
+         "prepaid meters",
+         "LV equipment",
+         "Low voltage equipement"
+      ]
+   },
+   {
+      "category1": "Offgrid",
+      "category2": "Renewable",
+      "cpv": "9310000",
+      "cpvText": "electricity-",
+      "words": [
+         "Microgrid solutions",
+         "Minigrid",
+         "Micro-grid",
+         "Mini-grid",
+         "decentralized energy",
+         "offgrid",
+         "distributed energy resources",
+         "Distributed generation",
+         "dispersed generation",
+         "embedded generation",
+         "distributed energy",
+         "decentralized generation",
+         "rural electrification",
+         "off-grid",
+         "microgrid"
+      ]
+   },
+   {
+      "category1": "Turnkey SST",
+      "category2": "SST Equipment & Work",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Mobile substation",
+         "Mobile SST"
+      ]
+   },
+   {
+      "category1": "Other Equipments",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "MV equipment",
+         "Medium Voltage equipment",
+         "Medium Voltage"
+      ]
+   },
+   {
+      "category1": "Automation - Energy management",
+      "category2": "Automation",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "Network & telecommunication",
+         "Network Management system"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "9310000",
+      "cpvText": "electricity-",
+      "words": [
+         "Nuclear Power"
+      ]
+   },
+   {
+      "category1": "Control & Protection",
+      "category2": "Automation",
+      "cpv": "31221000",
+      "cpvText": "electrical-relays-",
+      "words": [
+         "Control & protection Panels",
+         "C&P Panels",
+         "Protection relay",
+         "Electrical relay"
+      ]
+   },
+   {
+      "category1": "Generation",
+      "category2": "Generation",
+      "cpv": "31120000",
+      "cpvText": "generators-",
+      "words": [
+         "Power Generation",
+         "Generator",
+         "Power Plants",
+         "Power supplies"
+      ]
+   },
+   {
+      "category1": "Other Equipments",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "Primary Equipment",
+         "HV Equipment",
+         "High Voltage Equipment",
+         "MV Equipment",
+         "Medium Voltage Equipment",
+         "\"HV Disconnector"
+      ]
+   },
+   {
+      "category1": "\"",
+      "category2": "High Voltage Disconnector",
+      "cpv": "Medium Voltage Disconnector",
+      "cpvText": "",
+      "words": []
+   },
+   {
+      "category1": "Other Equipments",
+      "category2": "SST Equipment & Work",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "Smart Grid",
+         "smartgrid",
+         "Smart Home"
+      ]
+   },
+   {
+      "category1": "Solar",
+      "category2": "Renewable",
+      "cpv": "9330000",
+      "cpvText": "solar-energy-",
+      "words": [
+         "Solar Power",
+         "Solar Home System",
+         "SHS",
+         "Solar PV",
+         "Solar Panel"
+      ]
+   },
+   {
+      "category1": "Turnkey SST",
+      "category2": "SST Equipment & Work",
+      "cpv": "45232220",
+      "cpvText": "substation-construction-work-",
+      "words": [
+         "Substations",
+         "Switchyard",
+         "digital substation",
+         "AIS Substation",
+         "\""
+      ]
+   },
+   {
+      "category1": "Air insulated switchyard/\"",
+      "category2": "Gas Insulated switchyard",
+      "cpv": "Switchgear",
+      "cpvText": "Turnkey electrical Substation",
+      "words": []
+   },
+   {
+      "category1": "Surge Arresters",
+      "category2": "SST Equipment & Work",
+      "cpv": "31682540",
+      "cpvText": "substation-equipment-",
+      "words": [
+         "Surge Arresters",
+         "Lightning Arresters",
+         "Lightning Arrestor"
+      ]
+   },
+   {
+      "category1": "Facts & HVDC - Others",
+      "category2": "Facts & HVDC",
+      "cpv": "31712330",
+      "cpvText": "semiconductors-",
+      "words": [
+         "Thyristors",
+         "Diode",
+         "semiconductor",
+         "semi-conductor"
+      ]
+   },
+   {
+      "category1": "Transformer",
+      "category2": "SST Equipment & Work",
+      "cpv": "31170000",
+      "cpvText": "transformers-",
+      "words": [
+         "Transformers",
+         "Power transformer",
+         "Distribution Transformer",
+         "HV Transformer",
+         "MV Transformer",
+         "High Voltage Transformer",
+         "Medium Voltage Transformer"
+      ]
+   },
+   {
+      "category1": "Others",
+      "category2": "Other Services & Equipment",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "Vaccuum Interrupters",
+         "Voltage Indicators",
+         "Voltage Regulators"
+      ]
+   },
+   {
+      "category1": "Wind",
+      "category2": "Renewable",
+      "cpv": "31121300",
+      "cpvText": "wind-energy-generators-",
+      "words": [
+         "Wind Power",
+         "wind energy",
+         "Offshore Wind",
+         "Wind Turbine Equipments"
+      ]
+   },
+   {
+      "category1": "Cable",
+      "category2": "Cables & Connectors",
+      "cpv": "31224400",
+      "cpvText": "connection-cables-",
+      "words": [
+         "distribution line",
+         "transmission line",
+         "power line",
+         "High Voltage Cable",
+         "HV Cable",
+         "MV Cable",
+         "Medium Voltage Cable",
+         "gas insulated lines",
+         "electric pole"
+      ]
+   },
+   {
+      "category1": "Automation - Energy management",
+      "category2": "Automation",
+      "cpv": "31200000",
+      "cpvText": "electricity-distribution-and-control-apparatus-",
+      "words": [
+         "energy management system",
+         "distribution management system"
+      ]
+   },
+   {
+      "category1": "",
+      "category2": "Renewable",
+      "cpv": "9310000",
+      "cpvText": "electricity-",
+      "words": [
+         "renewable energy"
+      ]
+   },
+   {
+      "category1": "MV Switchgear",
+      "category2": "SST Equipment & Work",
+      "cpv": "31214000",
+      "cpvText": "switchgear-",
+      "words": [
+         "MV Switchgear",
+         "Medium Voltage switchgear"
+      ]
+   }
+]

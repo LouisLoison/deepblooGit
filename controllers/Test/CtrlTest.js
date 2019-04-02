@@ -12,6 +12,12 @@ exports.ArchiveTest = (req, res) => {
     })
 }
 
+exports.CpvCreateJson = (req, res) => {
+    require(process.cwd() + '/controllers/Test/MdlTest').CpvCreateJson().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.OracleTest = (req, res) => {
     require(process.cwd() + '/controllers/Test/MdlTest').OracleTest().then(() => {
         res.end(JSON.stringify({ success: true }, null, 3))

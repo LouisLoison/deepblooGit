@@ -13,6 +13,7 @@ exports.BddImport = () => {
       files.sort()
       if (!files || files.length === 0) {
         resolve()
+        return
       }
       const fileLocation = path.join(fileFolder, files[0])
 
@@ -66,49 +67,53 @@ exports.FtpGet = () => {
 }
 
 exports.FtpGetFile = (fileName) => {
-    return new Promise((resolve, reject) => {
-        const config = require(process.cwd() + '/config')
-        var PromiseFtp = require('promise-ftp')
-        var fs = require('fs')
-        const path = require('path')
-        var ftp = new PromiseFtp()
-        ftp.connect(config.ftp)
-        .then((serverMessage) => {
-            return ftp.get(`/feed/${fileName}`)
-        }).then((stream) => {
-            return new Promise((resolve, reject) => {
-                const fileLocation = path.join(config.ftpPath, fileName)
-                stream.once('close', resolve)
-                stream.once('error', reject)
-                stream.pipe(fs.createWriteStream(fileLocation))
-            })
-        }).then(function () {
-            return ftp.end()
-        }).then(function () {
-            resolve()
+  return new Promise((resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      var PromiseFtp = require('promise-ftp')
+      var fs = require('fs')
+      const path = require('path')
+      var ftp = new PromiseFtp()
+      ftp.connect(config.ftp)
+      .then((serverMessage) => {
+        return ftp.get(`/feed/${fileName}`)
+      }).then((stream) => {
+        return new Promise((resolve, reject) => {
+          const fileLocation = path.join(config.ftpPath, fileName)
+          stream.once('close', resolve)
+          stream.once('error', reject)
+          stream.pipe(fs.createWriteStream(fileLocation))
         })
-    })
+      }).then(function () {
+        return ftp.end()
+      }).then(function () {
+        resolve()
+      })
+    } catch (err) { reject(err) }
+  })
 }
 
 exports.FtpList = () => {
-    return new Promise((resolve, reject) => {
-        const config = require(process.cwd() + '/config')
-        const PromiseFtp = require('promise-ftp')
-        const ftp = new PromiseFtp()
+  return new Promise((resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const PromiseFtp = require('promise-ftp')
+      const ftp = new PromiseFtp()
 
-        let files = []
-        ftp.connect(config.ftp)
-        .then((serverMessage) => {
-            return ftp.list('/feed/')
-        }).then((list) => {
-            list.forEach(file => {
-                files.push(file)
-            })
-            return ftp.end()
-        }).then(() => {
-            resolve(files)
+      let files = []
+      ftp.connect(config.ftp)
+      .then((serverMessage) => {
+        return ftp.list('/feed/')
+      }).then((list) => {
+        list.forEach(file => {
+          files.push(file)
         })
-    })
+        return ftp.end()
+      }).then(() => {
+        resolve(files)
+      })
+    } catch (err) { reject(err) }
+  })
 }
 
 exports.FileParse = (fileLocation) => {
@@ -130,6 +135,7 @@ exports.FileParse = (fileLocation) => {
       const parseString = util.promisify(parser.parseString)
       let parseData = await parseString(fileData)
 
+      const CategoriesList = require(process.cwd() + '/public/constants/categories.json')
       const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
       let tenders = []
@@ -190,6 +196,16 @@ exports.FileParse = (fileLocation) => {
             if (cpv) {
               if (cpv.active) {
                 cpvOkCount++
+              }
+            }
+          }
+        }
+        if (cpvOkCount === 0) {
+          for (let category of CategoriesList) {
+            for (let word of category.words) {
+              if (record.description.toLowerCase().includes(word.toLowerCase())) {
+                cpvOkCount++
+                cpvs.push(category.cpvText.split('-').join(' ').trim())
               }
             }
           }
@@ -524,5 +540,84 @@ exports.FileParseOld2 = () => {
       })
 
       resolve(tenders)
+  })
+}
+
+exports.CpvList = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const util = require('util')
+      const tool = require(process.cwd() + '/controllers/CtrlTool')
+      const readFile = util.promisify(fs.readFile)
+
+      // Get file
+      const deepblooFolder = 'C:/Temp/Deepbloo/'
+      const fileFolder = path.join(deepblooFolder, 'Archive/')
+      const files = fs.readdirSync(fileFolder)
+
+      files.sort()
+      if (!files || files.length === 0) {
+        resolve()
+        return
+      }
+
+      let cpvList = []
+      for (let file of files) {
+        const fileLocation = path.join(fileFolder, file)
+        let fileData = await readFile(fileLocation, 'utf8')
+
+        const xml2js = require('xml2js')
+        var parser = new xml2js.Parser()
+        const parseString = util.promisify(parser.parseString)
+        let parseData = await parseString(fileData)
+
+        const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+
+        parseData.notices.notice.forEach(notice => {
+          // CPV list
+          let cpvOkCount = 0
+          let cpvsText = tool.getXmlJsonData(notice.cpvs)
+          if (cpvsText) {
+            let cpvsTextTemp = cpvsText.split(',')
+            for (let i = 0; i < cpvsTextTemp.length; i++) {
+              let code = parseInt(cpvsTextTemp[i], 10)
+              let cpv = CpvList.find(a => a.code === code)
+              let cpvfind = cpvList.find(a => a.cpv === code)
+              if (!cpvfind) {
+                cpvfind = {
+                  cpv: code,
+                  active: 'U',
+                  count: 0
+                }
+                cpvList.push(cpvfind)
+              }
+              cpvfind.count++
+              if (cpv) {
+                if (cpv.active) {
+                  cpvfind.active = 'Y'
+                  cpvOkCount++
+                } else {
+                  cpvfind.active = 'N'
+                }
+              }
+            }
+          }
+          if (cpvOkCount === 0) {
+            return false
+          }
+        })
+      }
+
+      let cpvText = ''
+      for (let cpv of cpvList) {
+        cpvText += `${cpv.cpv};${cpv.active};${cpv.count}\n`
+      }
+      cpvText = cpvText
+      fs.writeFileSync('C:/Temp/Deepbloo/CpvList.csv', cpvText)
+
+      resolve(cpvList)
+    } catch (err) { reject(err) }
   })
 }

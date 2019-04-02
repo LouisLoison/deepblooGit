@@ -107,6 +107,65 @@ exports.CpvListGet = () => {
     })
 }
 
+exports.CpvCreateJson = () => {
+  return new Promise(async (resolve, reject) => {
+    fs = require('fs')
+
+    let categories = []
+    fs.readFileSync('c:/Temp/Onglet3.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      let category = {
+        category1: lineArray[0].trim(),
+        category2: lineArray[1].trim(),
+        cpv: lineArray[3].trim(),
+        cpvText: lineArray[4].trim(),
+        words: [],
+      }
+      for (let i = 5; i < lineArray.length; i++) {
+        if (!lineArray[i] || lineArray[i].trim() === '') {
+          continue
+        }
+        category.words.push(lineArray[i].trim())
+      }
+      categories.push(category)
+    })
+
+    let categoriesText = JSON.stringify(categories, null, 3)
+    fs.writeFile('c:/Temp/OngletJson2.txt', categoriesText, function (err) {
+      if (err) {
+        return console.log(err);
+      }
+    })
+  
+    let industries = []
+    fs.readFileSync('c:/Temp/Onglet2.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      industries.push(lineArray)
+    })
+
+    let cpvs = []
+    fs.readFileSync('c:/Temp/Onglet1.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      cpvs.push({
+        code: parseInt(lineArray[0], 10),
+        label: lineArray[1].split('-').join(' ').trim(),
+        active: lineArray[3] === 'Y',
+        logo: lineArray[5].trim(),
+        picture: lineArray[4].trim(),
+        industries: lineArray[2].split(',').map(a => a.trim()),
+      })
+    })
+
+    let cpvsText = JSON.stringify(cpvs, null, 3)
+    fs.writeFile('c:/Jean/OngletJson.txt', cpvsText, function (err) {
+      if (err) {
+        return console.log(err);
+      }
+    })
+    resolve()
+  })
+}
+
 exports.Test = () => {
   return new Promise(async (resolve, reject) => {
     fs = require('fs')
