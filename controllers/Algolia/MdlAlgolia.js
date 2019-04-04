@@ -4,11 +4,12 @@ exports.TendersImport = () => {
       // const DgMarket = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket')
       // await DgMarket.BddImport()
 
+      const config = require(process.cwd() + '/config')
       const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       const BddId = 'deepbloo'
-      const BddEnvironnement = 'PRD'
+      const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
         SELECT      id AS "id", 
@@ -35,6 +36,7 @@ exports.TendersImport = () => {
                     publicationDate AS "publicationDate", 
                     cpvs AS "cpvs", 
                     cpvDescriptions AS "cpvDescriptions", 
+                    words AS "words", 
                     bidDeadlineDate AS "bidDeadlineDate", 
                     sourceUrl AS "sourceUrl", 
                     fileSource AS "fileSource", 
@@ -82,6 +84,31 @@ exports.TendersImport = () => {
           continue
         }
         industries = industries.filter((item, pos) => industries.indexOf(item) == pos)
+
+        // Categories
+        let categories1 = []
+        let categories2 = []
+        let categoryLvl0 = []
+        let categoryLvl1 = []
+        let categoryLvl2 = []
+        if (cpvsText && cpvDescriptionsText) {
+          let cpvsTextTemp = cpvsText.split(',')
+          for (let i = 0; i < cpvsTextTemp.length; i++) {
+            let code = parseInt(cpvsTextTemp[i], 10)
+            let cpv = CpvList.find(a => a.code === code)
+            if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
+              if (!categories1.includes(cpv.category1)) {
+                categories1.push(cpv.category1)
+              }
+              if (!categories2.includes(cpv.category2)) {
+                categories2.push(cpv.category2)
+              }
+              categoryLvl0.push(cpv.category2)
+              categoryLvl1.push(`${cpv.category2} > ${cpv.category1}`)
+              categoryLvl2.push(`${cpv.category2} > ${cpv.category1} > ${cpv.label}`)
+            }
+          }
+        }
 
         // Region
         let regionLvl0 = []
@@ -138,6 +165,12 @@ exports.TendersImport = () => {
           regionLvl0: regionLvl0,
           regionLvl1: regionLvl1,
           regionLvl2: regionLvl2,
+          categories1: categories1,
+          categories2: categories2,
+          categoryLvl0: categoryLvl0,
+          categoryLvl1: categoryLvl1,
+          categoryLvl2: categoryLvl2,
+          words: record.words,
           currency: record.currency,
           publicationDate: publicationDate,
           publication_timestamp: publication_timestamp,
@@ -145,6 +178,8 @@ exports.TendersImport = () => {
           industries: industries,
           bidDeadlineDate: bidDeadlineDate,
           bidDeadline_timestamp: bidDeadline_timestamp,
+          creation_timestamp: new Date().getTime(),
+          // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
           sourceUrls: sourceUrls,
           fileSource: record.fileSource
         })
@@ -162,7 +197,7 @@ exports.TendersImport = () => {
       let applicationId = '583JWW9ARP'
       let apiKey = '5cc468809130d45b76cf76598a09ff21'
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
-      let index = client.initIndex('prod_tenders')
+      let index = client.initIndex(`${config.prefixe}_tenders`)
       for (tranche of tranches) {
         await this.TendersAdd(tranche, index)
       }
@@ -179,8 +214,9 @@ exports.TendersAdd = (tenders, index) => {
         reject(err)
         return
       }
+      const config = require(process.cwd() + '/config')
       const BddId = 'deepbloo'
-      const BddEnvironnement = 'PRD'
+      const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < tenders.length; i++) {
         tenders[i].objectID = content.objectIDs[i]

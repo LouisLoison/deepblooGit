@@ -33,54 +33,68 @@ exports.EquipeList = () => {
 }
 
 exports.Login = (username, password) => {
-    return new Promise((resolve, reject) => {
-        var Config = require(process.cwd() + '/config')
-        var jwt = require('jsonwebtoken')
-        var BddTool = require(process.cwd() + '/global/BddTool')
+  return new Promise(async (resolve, reject) => {
+    try {
+      var jwt = require('jsonwebtoken')
+      var BddTool = require(process.cwd() + '/global/BddTool')
 
-        var BddId = 'EtlTool'
-        var BddEnvironnement = 'PRD'
-        var Query = `
-            SELECT    UtilisateurID AS "UtilisateurID", 
-                      Identifiant AS "Identifiant", 
-                      MotDePasse AS "MotDePasse", 
-                      Pseudo AS "Pseudo", 
-                      Email AS "Email", 
-                      DroitGroupeID AS "DroitGroupeID", 
-                      EquipeReferenteID AS "EquipeReferenteID", 
-                      Statut AS "Statut", 
-                      CreationDate AS "CreationDate", 
-                      ModificationDate AS "ModificationDate", 
-                      Responsable AS "Responsable" 
-            FROM      Utilisateur 
-            WHERE     Identifiant = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
-            AND       MotDePasse = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
-        `
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, Query, reject, (recordset) => {
-            var Utilisateur = {}
-            for (var record of recordset) {
-                Utilisateur = { 
-                    UtilisateurID: record.UtilisateurID,
-                    Identifiant: record.Identifiant,
-                    Pseudo: record.Pseudo,
-                    Email: record.Email,
-                    DroitGroupeID: record.DroitGroupeID,
-                    EquipeReferenteID: record.EquipeReferenteID,
-                    Statut: record.Statut,
-                    CreationDate: record.CreationDate,
-                    ModificationDate: record.ModificationDate,
-                    Responsable: record.Responsable
-                }
-            }
+      /*
+      var BddId = 'EtlTool'
+      var BddEnvironnement = 'PRD'
+      var Query = `
+        SELECT    UtilisateurID AS "UtilisateurID", 
+                  Identifiant AS "Identifiant", 
+                  MotDePasse AS "MotDePasse", 
+                  Pseudo AS "Pseudo", 
+                  Email AS "Email", 
+                  DroitGroupeID AS "DroitGroupeID", 
+                  EquipeReferenteID AS "EquipeReferenteID", 
+                  Statut AS "Statut", 
+                  CreationDate AS "CreationDate", 
+                  ModificationDate AS "ModificationDate", 
+                  Responsable AS "Responsable" 
+        FROM      Utilisateur 
+        WHERE     Identifiant = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
+        AND       MotDePasse = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
+      `
+      let recordset = await BddTool.QueryExecBdd(BddId, BddEnvironnement, Query)
+      var Utilisateur = {}
+      for (var record of recordset) {
+          Utilisateur = { 
+              UtilisateurID: record.UtilisateurID,
+              Identifiant: record.Identifiant,
+              Pseudo: record.Pseudo,
+              Email: record.Email,
+              DroitGroupeID: record.DroitGroupeID,
+              EquipeReferenteID: record.EquipeReferenteID,
+              Statut: record.Statut,
+              CreationDate: record.CreationDate,
+              ModificationDate: record.ModificationDate,
+              Responsable: record.Responsable
+          }
+      }
+      */
+      let Utilisateur = { 
+        UtilisateurID: "record.UtilisateurID",
+        Identifiant: "record.Identifiant",
+        Pseudo: "record.Pseudo",
+        Email: "record.Email",
+        DroitGroupeID: 1,
+        EquipeReferenteID: "record.EquipeReferenteID",
+        Statut: "record.Statut",
+        CreationDate: "record.CreationDate",
+        ModificationDate: "record.ModificationDate",
+        Responsable: "record.Responsable"
+      }
 
-            // Creat user token
-            var certText = 'certTest'
-            var Token = jwt.sign({ UserId: Utilisateur.UtilisateurID, Identifiant: Utilisateur.Identifiant, Pseudo: Utilisateur.Pseudo, RoleId: Utilisateur.DroitGroupeID }, certText, { algorithm: 'HS256'})
-            
-            var data = { Utilisateur: Utilisateur, Token: Token }
-            resolve(data)
-        })
-    })
+      // Creat user token
+      var certText = 'certTest'
+      var Token = jwt.sign({ UserId: Utilisateur.UtilisateurID, Identifiant: Utilisateur.Identifiant, Pseudo: Utilisateur.Pseudo, RoleId: Utilisateur.DroitGroupeID }, certText, { algorithm: 'HS256'})
+      
+      var data = { Utilisateur: Utilisateur, Token: Token }
+      resolve(data)
+    } catch (err) { reject(err) }
+  })
 }
 
 exports.List = () => {

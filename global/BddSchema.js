@@ -27,6 +27,7 @@ var Schema = {
             publicationDate: { type: "String" },
             cpvs: { type: "String" },
             cpvDescriptions: { type: "String" },
+            words: { type: "String" },
             bidDeadlineDate: { type: "String" },
             sourceUrl: { type: "String" },
             termDate: { type: "DateTime" },

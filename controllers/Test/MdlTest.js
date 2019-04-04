@@ -117,11 +117,11 @@ exports.CpvCreateJson = () => {
       let category = {
         category1: lineArray[0].trim(),
         category2: lineArray[1].trim(),
-        cpv: lineArray[3].trim(),
-        cpvText: lineArray[4].trim(),
+        cpv: parseInt(lineArray[2].trim(), 10),
+        cpvText: lineArray[3].trim(),
         words: [],
       }
-      for (let i = 5; i < lineArray.length; i++) {
+      for (let i = 4; i < lineArray.length; i++) {
         if (!lineArray[i] || lineArray[i].trim() === '') {
           continue
         }
@@ -149,15 +149,17 @@ exports.CpvCreateJson = () => {
       cpvs.push({
         code: parseInt(lineArray[0], 10),
         label: lineArray[1].split('-').join(' ').trim(),
-        active: lineArray[3] === 'Y',
-        logo: lineArray[5].trim(),
-        picture: lineArray[4].trim(),
+        active: lineArray[5] === 'Y',
+        logo: lineArray[7].trim(),
+        picture: lineArray[6].trim(),
         industries: lineArray[2].split(',').map(a => a.trim()),
+        category1: lineArray[3].trim(),
+        category2: lineArray[4].trim(),
       })
     })
 
     let cpvsText = JSON.stringify(cpvs, null, 3)
-    fs.writeFile('c:/Jean/OngletJson.txt', cpvsText, function (err) {
+    fs.writeFile('c:/Temp/OngletJson.txt', cpvsText, function (err) {
       if (err) {
         return console.log(err);
       }
@@ -168,34 +170,16 @@ exports.CpvCreateJson = () => {
 
 exports.Test = () => {
   return new Promise(async (resolve, reject) => {
-    fs = require('fs')
-
-    let industries = []
-    fs.readFileSync('c:/Jean/Onglet2.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
-      let lineArray = line.split('|')
-      industries.push(lineArray)
-    })
-
-    let cpvs = []
-    fs.readFileSync('c:/Jean/Onglet1.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
-      let lineArray = line.split('|')
-      cpvs.push({
-        code: parseInt(lineArray[0], 10),
-        label: lineArray[1].split('-').join(' ').trim(),
-        active: lineArray[3] === 'Y',
-        logo: lineArray[5].trim(),
-        picture: lineArray[4].trim(),
-        industries: lineArray[2].split(',').map(a => a.trim()),
-      })
-    })
-
-    let cpvsText = JSON.stringify(cpvs, null, 3)
-    fs.writeFile('c:/Jean/OngletJson.txt', cpvsText, function (err) {
-      if (err) {
-        return console.log(err);
+    try {
+      const myText = 'This is My appSentence to find';
+      const word = "my sentence";
+      let regEx = new RegExp("\\b" + word + "\\b", 'gi');
+      let isFind = false;
+      if (myText.match(regEx)) {
+        isFind = true;
       }
-    })
-    resolve()
+      resolve(isFind)
+    } catch (err) { reject(err) }
   })
 }
 

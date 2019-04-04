@@ -6,7 +6,7 @@ exports.EquipeList = (req, res) => {
 
 exports.Login = (req, res) => {
     require(process.cwd() + '/controllers/User/MdlUser').Login(req.body.username, req.body.password).then((data) => {
-        res.end(JSON.stringify({ success: true, Utilisateur: data.Utilisateur, Token: data.Token }, null, 3))
+        res.end(JSON.stringify({ success: true, user: data.Utilisateur, token: data.Token }, null, 3))
     }).catch((err) => {
         require(process.cwd() + '/controllers/CtrlTool').onError(err, res)
     })

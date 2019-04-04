@@ -1,5 +1,8 @@
 var config = module.exports = {}
 
+config.prefixe = 'prod'
+config.prefixeDev = 'dev'
+config.prefixeProd = 'prod'
 config.WorkSpaceFolder = 'C:/Ethelp/'
 config.AppBackPort = 9020
 config.AppFrontUrl = 'http://localhost:8095'
@@ -16,13 +19,22 @@ config.hivebriteUrl = 'https://deepbloo.hivebrite.com/',
 config.hivebriteToken = null
 config.bdd = {
   deepbloo: {
-    PRD: {
+    prod: {
       config: {
         type: 'MySql',
         user: 'root',
         password: 'root',
         server: '127.0.0.1', 
         database: 'DeepBloo'
+      }
+    },
+    dev: {
+      config: {
+        type: 'MySql',
+        user: 'root',
+        password: 'root',
+        server: '127.0.0.1', 
+        database: 'DeepBlooDev'
       }
     }
   }

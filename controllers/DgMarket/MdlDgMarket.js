@@ -2,6 +2,7 @@ exports.BddImport = () => {
   return new Promise(async (resolve, reject) => {
     let tendersCurrent = null
     try {
+      const config = require(process.cwd() + '/config')
       const fs = require('fs')
       const path = require('path')
       
@@ -18,10 +19,11 @@ exports.BddImport = () => {
       const fileLocation = path.join(fileFolder, files[0])
 
       // Get tenders
-      const tenders = await this.FileParse(fileLocation)
+      const fileParseData = await this.FileParse(fileLocation)
+      const tenders = fileParseData.tenders
 
       const BddId = 'deepbloo'
-      const BddEnvironnement = 'PRD'
+      const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let tender of tenders) {
         tendersCurrent = tender
@@ -48,7 +50,11 @@ exports.BddImport = () => {
       const fileLocationArchive = path.join(deepblooFolder, 'Archive/', fileSource)
       fs.renameSync(fileLocation, fileLocationArchive)
 
-      resolve()
+      resolve({
+        tenderCount: fileParseData.tenderCount,
+        tenderOkCount: fileParseData.tenderOkCount,
+        tenderFoundCount: fileParseData.tenderFoundCount,
+      })
     } catch (err) {
       tendersCurrent = tendersCurrent
       reject(err)
@@ -138,8 +144,13 @@ exports.FileParse = (fileLocation) => {
       const CategoriesList = require(process.cwd() + '/public/constants/categories.json')
       const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
+      let tenderCount = 0
+      let tenderOkCount = 0
+      let tenderFoundCount = 0
       let tenders = []
       parseData.notices.notice.forEach(notice => {
+        tenderCount++
+
         // check biddeadline
         let dateLimit = new Date()
         dateLimit.setDate(dateLimit.getDate() - 15)
@@ -188,6 +199,8 @@ exports.FileParse = (fileLocation) => {
         // CPV list
         let cpvOkCount = 0
         let cpvsText = tool.getXmlJsonData(notice.cpvs)
+        let cpvDescriptionsText = tool.getXmlJsonData(notice.cpvDescriptions)
+        let words = []
         if (cpvsText) {
           let cpvsTextTemp = cpvsText.split(',')
           for (let i = 0; i < cpvsTextTemp.length; i++) {
@@ -200,17 +213,59 @@ exports.FileParse = (fileLocation) => {
             }
           }
         }
-        if (cpvOkCount === 0) {
-          for (let category of CategoriesList) {
+        /*
+        let procurementId = tool.getXmlJsonData(notice.procurementId).substring(0, 90)
+        if (procurementId === '56195157a') {
+          let toto = 10
+        }
+        */
+        // Search by key words
+        let cpvFoundCount = 0
+        for (let category of CategoriesList) {
+          if (!category.cpv) {
+            continue
+          }
+          // If category already in the tender then past
+          if (cpvsText) {
+            let cpvsTextTemp = cpvsText.split(',')
+            let cpvFound = false
+            for (let i = 0; i < cpvsTextTemp.length; i++) {
+              let code = parseInt(cpvsTextTemp[i], 10)
+              if (category.cpv === code) {
+                cpvFound = true
+                break
+              }
+            }
+            if (cpvFound) {
+              continue
+            }
+          }
+          if (category.words) {
             for (let word of category.words) {
-              if (record.description.toLowerCase().includes(word.toLowerCase())) {
-                cpvOkCount++
-                cpvs.push(category.cpvText.split('-').join(' ').trim())
+              let regEx = new RegExp("\\b" + word + "\\b", 'gi');
+              if (description.match(regEx)) {
+                cpvFoundCount++
+                if (cpvsText !== '') {
+                  cpvsText += ','
+                }
+                cpvsText += category.cpv
+                if (cpvDescriptionsText !== '') {
+                  cpvDescriptionsText += ','
+                }
+                cpvDescriptionsText += category.cpvText
+                if (!words.includes(word)) {
+                  words.push(word)
+                }
               }
             }
           }
         }
-        if (cpvOkCount === 0) {
+        if (cpvOkCount > 0) {
+          tenderOkCount++
+        } else if (cpvFoundCount > 0) {
+          tenderFoundCount++
+        }
+        if (cpvOkCount === 0 && cpvFoundCount === 0) {
           return false
         }
 
@@ -236,8 +291,9 @@ exports.FileParse = (fileLocation) => {
           estimatedCost: tool.getXmlJsonData(notice.estimatedCost),
           currency: tool.getXmlJsonData(notice.currency),
           publicationDate: tool.getXmlJsonData(notice.publicationDate),
-          cpvs: tool.getXmlJsonData(notice.cpvs),
-          cpvDescriptions: tool.getXmlJsonData(notice.cpvDescriptions),
+          cpvs: cpvsText,
+          cpvDescriptions: cpvDescriptionsText,
+          words: words,
           bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
           sourceUrl: tool.getXmlJsonData(notice.sourceUrl).substring(0, 1900),
           termDate: termDate,
@@ -245,7 +301,12 @@ exports.FileParse = (fileLocation) => {
         })
       })
 
-      resolve(tenders)
+      resolve({
+        tenderCount,
+        tenderOkCount,
+        tenderFoundCount,
+        tenders,
+      })
     } catch (err) { reject(err) }
   })
 }
