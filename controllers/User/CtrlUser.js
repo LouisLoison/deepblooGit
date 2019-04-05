@@ -1,9 +1,3 @@
-exports.EquipeList = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').EquipeList().then(function(EquipeList) {
-        res.end(JSON.stringify({ success: true, EquipeList: EquipeList }, null, 3))
-    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
-}
-
 exports.Login = (req, res) => {
     require(process.cwd() + '/controllers/User/MdlUser').Login(req.body.username, req.body.password).then((data) => {
         res.end(JSON.stringify({ success: true, user: data.Utilisateur, token: data.Token }, null, 3))

@@ -5,9 +5,6 @@ exports.TendersImport = () => {
       // await DgMarket.BddImport()
 
       const config = require(process.cwd() + '/config')
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
-      const RegionList = require(process.cwd() + '/public/constants/regions.json')
-
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
@@ -50,139 +47,11 @@ exports.TendersImport = () => {
       `)
       const tenders = []
       for (let record of recordset) {
-        // Url source list
-        let sourceUrls = []
-        let sourceUrl = record.sourceUrl
-        if (sourceUrl) {
-          sourceUrl.split(',').forEach(url => {
-            sourceUrls.push(url)
-          })
-        }
-
-        // CPV list
-        let cpvOkCount = 0
-        let cpvs = []
-        let industries = []
-        let cpvsText = record.cpvs
-        let cpvDescriptionsText = record.cpvDescriptions
-        if (cpvsText && cpvDescriptionsText) {
-          let cpvsTextTemp = cpvsText.split(',')
-          let cpvDescriptionsTextTemp = cpvDescriptionsText.split(',')
-          for (let i = 0; i < cpvsTextTemp.length; i++) {
-            let code = parseInt(cpvsTextTemp[i], 10)
-            let cpv = CpvList.find(a => a.code === code)
-            if (cpv) {
-              if (cpv.active) {
-                cpvOkCount++
-              }
-              cpvs.push(cpvDescriptionsTextTemp[i].split('-').join(' ').trim())
-              industries = industries.concat(cpv.industries)
-            }
-          }
-        }
-        if (cpvOkCount === 0) {
+        let tender = await this.TenderFormat(record)
+        if (!tender) {
           continue
         }
-        industries = industries.filter((item, pos) => industries.indexOf(item) == pos)
-
-        // Categories
-        let categories1 = []
-        let categories2 = []
-        let categoryLvl0 = []
-        let categoryLvl1 = []
-        let categoryLvl2 = []
-        if (cpvsText && cpvDescriptionsText) {
-          let cpvsTextTemp = cpvsText.split(',')
-          for (let i = 0; i < cpvsTextTemp.length; i++) {
-            let code = parseInt(cpvsTextTemp[i], 10)
-            let cpv = CpvList.find(a => a.code === code)
-            if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
-              if (!categories1.includes(cpv.category1)) {
-                categories1.push(cpv.category1)
-              }
-              if (!categories2.includes(cpv.category2)) {
-                categories2.push(cpv.category2)
-              }
-              categoryLvl0.push(cpv.category2)
-              categoryLvl1.push(`${cpv.category2} > ${cpv.category1}`)
-              categoryLvl2.push(`${cpv.category2} > ${cpv.category1} > ${cpv.label}`)
-            }
-          }
-        }
-
-        // Region
-        let regionLvl0 = []
-        let regionLvl1 = []
-        let regionLvl2 = []
-        for (let region of RegionList) {
-          if (region.countrys && region.countrys.includes(record.country)) {
-            regionLvl0.push(region.label)
-            regionLvl1.push(`${region.label} > ${record.country}`)
-          }
-          if (region.regions) {
-            for (let region2 of region.regions) {
-              if (region2.countrys && region2.countrys.includes(record.country)) {
-                regionLvl0.push(region.label)
-                regionLvl1.push(`${region.label} > ${region2.label}`)
-                regionLvl2.push(`${region.label} > ${region2.label} > ${record.country}`)
-              }
-            }
-          }
-        }
-
-        let dateText = record.publicationDate
-        let publicationDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-        let publication_timestamp = new Date(publicationDate).getTime()
-
-        dateText = record.bidDeadlineDate
-        let bidDeadlineDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-        let bidDeadline_timestamp = new Date(bidDeadlineDate).getTime()
-
-        tenders.push({
-          objectID: record.algoliaId ? record.algoliaId : undefined,
-          dgmarketId: record.dgmarketId,
-          procurementId: record.procurementId,
-          title: record.title,
-          lang: record.lang,
-          description: record.description,
-          contact: {
-            firstName: record.contactFirstName,
-            lastName: record.contactLastName,
-            address: record.contactAddress,
-            city: record.contactCity,
-            state: record.contactState,
-            country: record.contactCountry,
-            email: record.contactEmail,
-            phone: record.contactPhone,
-          },
-          buyer: {
-            name: record.buyerName,
-            country: record.buyerCountry,
-          },
-          procurementMethod: record.procurementMethod,
-          noticeType: record.noticeType,
-          country: record.country,
-          regionLvl0: regionLvl0,
-          regionLvl1: regionLvl1,
-          regionLvl2: regionLvl2,
-          categories1: categories1,
-          categories2: categories2,
-          categoryLvl0: categoryLvl0,
-          categoryLvl1: categoryLvl1,
-          categoryLvl2: categoryLvl2,
-          words: record.words,
-          currency: record.currency,
-          publicationDate: publicationDate,
-          publication_timestamp: publication_timestamp,
-          cpvs: cpvs,
-          industries: industries,
-          bidDeadlineDate: bidDeadlineDate,
-          bidDeadline_timestamp: bidDeadline_timestamp,
-          creation_timestamp: new Date().getTime(),
-          // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
-          sourceUrls: sourceUrls,
-          fileSource: record.fileSource
-        })
+        tenders.push(tender)
       }
 
       const tranches = []
@@ -202,6 +71,160 @@ exports.TendersImport = () => {
         await this.TendersAdd(tranche, index)
       }
       resolve(tenders.length)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.TenderFormat = (tender) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      // Url source list
+      let sourceUrls = []
+      let sourceUrl = tender.sourceUrl
+      if (sourceUrl) {
+        sourceUrl.split(',').forEach(url => {
+          sourceUrls.push(url)
+        })
+      }
+
+      // CPV list
+      let cpvOkCount = 0
+      let cpvs = []
+      let industries = []
+      let cpvsText = tender.cpvs
+      let cpvDescriptionsText = tender.cpvDescriptions
+      if (cpvsText && cpvDescriptionsText) {
+        let cpvsTextTemp = cpvsText.split(',')
+        let cpvDescriptionsTextTemp = cpvDescriptionsText.split(',')
+        for (let i = 0; i < cpvsTextTemp.length; i++) {
+          let code = parseInt(cpvsTextTemp[i], 10)
+          let cpv = CpvList.find(a => a.code === code)
+          if (cpv) {
+            if (cpv.active) {
+              cpvOkCount++
+            }
+            cpvs.push(cpvDescriptionsTextTemp[i].split('-').join(' ').trim())
+            industries = industries.concat(cpv.industries)
+          }
+        }
+      }
+      if (cpvOkCount === 0) {
+        resolve(null)
+      }
+      industries = industries.filter((item, pos) => industries.indexOf(item) == pos)
+
+      // Categories
+      let categories1 = []
+      let categories2 = []
+      let categoryLvl0 = []
+      let categoryLvl1 = []
+      let categoryLvl2 = []
+      if (cpvsText && cpvDescriptionsText) {
+        let cpvsTextTemp = cpvsText.split(',')
+        for (let i = 0; i < cpvsTextTemp.length; i++) {
+          let code = parseInt(cpvsTextTemp[i], 10)
+          let cpv = CpvList.find(a => a.code === code)
+          if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
+            if (!categories1.includes(cpv.category1)) {
+              categories1.push(cpv.category1)
+            }
+            if (!categories2.includes(cpv.category2)) {
+              categories2.push(cpv.category2)
+            }
+            categoryLvl0.push(cpv.category2)
+            categoryLvl1.push(`${cpv.category2} > ${cpv.category1}`)
+            categoryLvl2.push(`${cpv.category2} > ${cpv.category1} > ${cpv.label}`)
+          }
+        }
+      }
+
+      // Region
+      let regionLvl0 = []
+      let regionLvl1 = []
+      let regionLvl2 = []
+      for (let region of RegionList) {
+        if (region.countrys && region.countrys.includes(tender.country)) {
+          regionLvl0.push(region.label)
+          regionLvl1.push(`${region.label} > ${tender.country}`)
+        }
+        if (region.regions) {
+          for (let region2 of region.regions) {
+            if (region2.countrys && region2.countrys.includes(tender.country)) {
+              regionLvl0.push(region.label)
+              regionLvl1.push(`${region.label} > ${region2.label}`)
+              regionLvl2.push(`${region.label} > ${region2.label} > ${tender.country}`)
+            }
+          }
+        }
+      }
+
+      let dateText = tender.publicationDate
+      let publicationDate = ''
+      if (dateText.includes('-')) {
+        publicationDate = dateText
+      } else {
+        publicationDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+      }
+      let publication_timestamp = new Date(publicationDate).getTime()
+
+      dateText = tender.bidDeadlineDate
+      let bidDeadlineDate = ''
+      if (dateText.includes('-')) {
+        bidDeadlineDate = dateText
+      } else {
+        bidDeadlineDate = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+      }
+      let bidDeadline_timestamp = new Date(bidDeadlineDate).getTime()
+
+      let tenderNew = {
+        objectID: tender.algoliaId ? tender.algoliaId : undefined,
+        dgmarketId: tender.dgmarketId,
+        procurementId: tender.procurementId,
+        title: tender.title,
+        lang: tender.lang,
+        description: tender.description,
+        contact: {
+          firstName: tender.contactFirstName,
+          lastName: tender.contactLastName,
+          address: tender.contactAddress,
+          city: tender.contactCity,
+          state: tender.contactState,
+          country: tender.contactCountry,
+          email: tender.contactEmail,
+          phone: tender.contactPhone,
+        },
+        buyer: {
+          name: tender.buyerName,
+          country: tender.buyerCountry,
+        },
+        procurementMethod: tender.procurementMethod,
+        noticeType: tender.noticeType,
+        country: tender.country,
+        regionLvl0: regionLvl0,
+        regionLvl1: regionLvl1,
+        regionLvl2: regionLvl2,
+        categories1: categories1,
+        categories2: categories2,
+        categoryLvl0: categoryLvl0,
+        categoryLvl1: categoryLvl1,
+        categoryLvl2: categoryLvl2,
+        words: tender.words,
+        currency: tender.currency,
+        publicationDate: publicationDate,
+        publication_timestamp: publication_timestamp,
+        cpvs: cpvs,
+        industries: industries,
+        bidDeadlineDate: bidDeadlineDate,
+        bidDeadline_timestamp: bidDeadline_timestamp,
+        creation_timestamp: new Date().getTime(),
+        // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
+        sourceUrls: sourceUrls,
+        fileSource: tender.fileSource
+      }
+      resolve(tenderNew)
     } catch (err) { reject(err) }
   })
 }

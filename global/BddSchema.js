@@ -1,47 +1,81 @@
 var Config = require(process.cwd() + '/config')
 
 var Schema = {
-    deepbloo: {
-        dgmarket: {
-            id: { type: "Int", key: true },
-            dgmarketId: { type: "Int" },
-            procurementId: { type: "String" },
-            title: { type: "String" },
-            description: { type: "String" },
-            lang: { type: "Text" },
-            contactFirstName: { type: "String" },
-            contactLastName: { type: "String" },
-            contactAddress: { type: "String" },
-            contactCity: { type: "String" },
-            contactState: { type: "String" },
-            contactCountry: { type: "String" },
-            contactEmail: { type: "String" },
-            contactPhone: { type: "String" },
-            buyerName: { type: "String" },
-            buyerCountry: { type: "String" },
-            procurementMethod: { type: "String" },
-            noticeType: { type: "String" },
-            country: { type: "String" },
-            estimatedCost: { type: "String" },
-            currency: { type: "String" },
-            publicationDate: { type: "String" },
-            cpvs: { type: "String" },
-            cpvDescriptions: { type: "String" },
-            words: { type: "String" },
-            bidDeadlineDate: { type: "String" },
-            sourceUrl: { type: "String" },
-            termDate: { type: "DateTime" },
-            fileSource: { type: "String" },
-            algoliaId: { type: "Int" },
-            status: { type: "Int" },
-            creationDate: { type: "DateTime" },
-            updateDate: { type: "DateTime" }
-        }
+  deepbloo: {
+    dgmarket: {
+        id: { type: "Int", key: true },
+        dgmarketId: { type: "Int" },
+        procurementId: { type: "String" },
+        title: { type: "String" },
+        description: { type: "String" },
+        lang: { type: "Text" },
+        contactFirstName: { type: "String" },
+        contactLastName: { type: "String" },
+        contactAddress: { type: "String" },
+        contactCity: { type: "String" },
+        contactState: { type: "String" },
+        contactCountry: { type: "String" },
+        contactEmail: { type: "String" },
+        contactPhone: { type: "String" },
+        buyerName: { type: "String" },
+        buyerCountry: { type: "String" },
+        procurementMethod: { type: "String" },
+        noticeType: { type: "String" },
+        country: { type: "String" },
+        estimatedCost: { type: "String" },
+        currency: { type: "String" },
+        publicationDate: { type: "String" },
+        cpvs: { type: "String" },
+        cpvDescriptions: { type: "String" },
+        words: { type: "String" },
+        bidDeadlineDate: { type: "String" },
+        sourceUrl: { type: "String" },
+        termDate: { type: "DateTime" },
+        fileSource: { type: "String" },
+        algoliaId: { type: "Int" },
+        status: { type: "Int" },
+        creationDate: { type: "DateTime" },
+        updateDate: { type: "DateTime" }
+    },
+    tender: {
+        tenderId: { type: "Int", key: true },
+        procurementId: { type: "String" },
+        title: { type: "String" },
+        description: { type: "String" },
+        lang: { type: "Text" },
+        contactFirstName: { type: "String" },
+        contactLastName: { type: "String" },
+        contactAddress: { type: "String" },
+        contactCity: { type: "String" },
+        contactState: { type: "String" },
+        contactCountry: { type: "String" },
+        contactEmail: { type: "String" },
+        contactPhone: { type: "String" },
+        buyerName: { type: "String" },
+        buyerCountry: { type: "String" },
+        procurementMethod: { type: "String" },
+        noticeType: { type: "String" },
+        country: { type: "String" },
+        estimatedCost: { type: "String" },
+        currency: { type: "String" },
+        publicationDate: { type: "DateTime" },
+        cpvs: { type: "String" },
+        cpvDescriptions: { type: "String" },
+        cpvDescriptions: { type: "String" },
+        words: { type: "String" },
+        bidDeadlineDate: { type: "DateTime" },
+        sourceUrl: { type: "String" },
+        fileSource: { type: "String" },
+        algoliaId: { type: "Int" },
+        status: { type: "Int" },
+        creationDate: { type: "DateTime" },
+        updateDate: { type: "DateTime" }
     }
+  }
 }
 
 exports.getSchema = function() {
-    return Schema
+  return Schema
 }
 
 exports.getTableConfig = function(Bdd, Environnement, TableName) {
