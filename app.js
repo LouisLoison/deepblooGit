@@ -60,14 +60,15 @@ app.use(function(req, res, next) {
   let certText = 'certTest'
   try {
     let tokenDecoded = jwt.verify(token, certText, { algorithm: 'HS256'})
-    config.user.Identifiant = tokenDecoded.Identifiant
-    config.user.Pseudo = tokenDecoded.Pseudo
-    config.user.RoleId = tokenDecoded.RoleId
-    config.user.UserId = tokenDecoded.UserId
+    config.user.userId = tokenDecoded.userId
+    config.user.hivebriteId = tokenDecoded.hivebriteId
+    config.user.type = tokenDecoded.type
+    config.user.email = tokenDecoded.email
+    config.user.username = tokenDecoded.username
   } catch (err) {
     return res.end(JSON.stringify({ status: 403, Error: 'Invalid credentials sent!' }, null, 3))
   }
-  if (!config.user.UserId || config.user.UserId === 0 || config.user.UserId === '') {
+  if (!config.user.userId || config.user.userId === 0 || config.user.userId === '') {
     return res.end(JSON.stringify({ status: 403, Error: 'Invalid token sent!' }, null, 3))
   }
   next()

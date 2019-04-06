@@ -8,7 +8,7 @@ exports.TendersImport = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+      let query = `
         SELECT      id AS "id", 
                     dgmarketId AS "dgmarketId", 
                     procurementId AS "procurementId", 
@@ -36,6 +36,7 @@ exports.TendersImport = () => {
                     words AS "words", 
                     bidDeadlineDate AS "bidDeadlineDate", 
                     sourceUrl AS "sourceUrl", 
+                    userId AS "userId",
                     fileSource AS "fileSource", 
                     algoliaId AS "algoliaId", 
                     status AS "status", 
@@ -44,7 +45,8 @@ exports.TendersImport = () => {
         FROM        dgmarket 
         WHERE       status = 0 
         LIMIT       300
-      `)
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
       for (let record of recordset) {
         let tender = await this.TenderFormat(record)
@@ -68,7 +70,9 @@ exports.TendersImport = () => {
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
       for (tranche of tranches) {
-        await this.TendersAdd(tranche, index)
+        if (tranche.length > 0) {
+          await this.TendersAdd(tranche, index)
+        }
       }
       resolve(tenders.length)
     } catch (err) { reject(err) }
@@ -222,6 +226,7 @@ exports.TenderFormat = (tender) => {
         creation_timestamp: new Date().getTime(),
         // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
         sourceUrls: sourceUrls,
+        userId: tender.userId,
         fileSource: tender.fileSource
       }
       resolve(tenderNew)

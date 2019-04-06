@@ -35,64 +35,47 @@ exports.EquipeList = () => {
 exports.Login = (username, password) => {
   return new Promise(async (resolve, reject) => {
     try {
-      var jwt = require('jsonwebtoken')
-      var BddTool = require(process.cwd() + '/global/BddTool')
+      const config = require(process.cwd() + '/config')
+      const jwt = require('jsonwebtoken')
+      const BddTool = require(process.cwd() + '/global/BddTool')
 
-      /*
-      var BddId = 'EtlTool'
-      var BddEnvironnement = 'PRD'
-      var Query = `
-        SELECT    UtilisateurID AS "UtilisateurID", 
-                  Identifiant AS "Identifiant", 
-                  MotDePasse AS "MotDePasse", 
-                  Pseudo AS "Pseudo", 
-                  Email AS "Email", 
-                  DroitGroupeID AS "DroitGroupeID", 
-                  EquipeReferenteID AS "EquipeReferenteID", 
-                  Statut AS "Statut", 
-                  CreationDate AS "CreationDate", 
-                  ModificationDate AS "ModificationDate", 
-                  Responsable AS "Responsable" 
-        FROM      Utilisateur 
-        WHERE     Identifiant = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
-        AND       MotDePasse = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let Query = `
+        SELECT    userId AS "userId", 
+                  hivebriteId AS "hivebriteId", 
+                  type AS "type", 
+                  email AS "email", 
+                  username AS "username", 
+                  password AS "password" 
+        FROM      user 
+        WHERE     username = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
+        AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
       `
-      let recordset = await BddTool.QueryExecBdd(BddId, BddEnvironnement, Query)
-      var Utilisateur = {}
-      for (var record of recordset) {
-          Utilisateur = { 
-              UtilisateurID: record.UtilisateurID,
-              Identifiant: record.Identifiant,
-              Pseudo: record.Pseudo,
-              Email: record.Email,
-              DroitGroupeID: record.DroitGroupeID,
-              EquipeReferenteID: record.EquipeReferenteID,
-              Statut: record.Statut,
-              CreationDate: record.CreationDate,
-              ModificationDate: record.ModificationDate,
-              Responsable: record.Responsable
-          }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, Query)
+      let user = {}
+      for (let record of recordset) {
+        user = { 
+          userId: record.userId,
+          hivebriteId: record.hivebriteId,
+          type: record.type,
+          email: record.email,
+          username: record.username
+        }
       }
-      */
-      let Utilisateur = { 
-        UtilisateurID: "record.UtilisateurID",
-        Identifiant: "record.Identifiant",
-        Pseudo: "record.Pseudo",
-        Email: "record.Email",
-        DroitGroupeID: 1,
-        EquipeReferenteID: "record.EquipeReferenteID",
-        Statut: "record.Statut",
-        CreationDate: "record.CreationDate",
-        ModificationDate: "record.ModificationDate",
-        Responsable: "record.Responsable"
+
+      if (!user.userId) {
+        throw new Error('User unknown !')
       }
 
       // Creat user token
-      var certText = 'certTest'
-      var Token = jwt.sign({ UserId: Utilisateur.UtilisateurID, Identifiant: Utilisateur.Identifiant, Pseudo: Utilisateur.Pseudo, RoleId: Utilisateur.DroitGroupeID }, certText, { algorithm: 'HS256'})
+      let certText = 'certTest'
+      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username }, certText, { algorithm: 'HS256'})
       
-      var data = { Utilisateur: Utilisateur, Token: Token }
-      resolve(data)
+      resolve({
+        Utilisateur: user,
+        Token: token
+      })
     } catch (err) { reject(err) }
   })
 }
