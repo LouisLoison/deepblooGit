@@ -111,7 +111,7 @@ exports.TenderFormat = (tender) => {
               cpvOkCount++
             }
             cpvs.push(cpvDescriptionsTextTemp[i].split('-').join(' ').trim())
-            industries = industries.concat(cpv.industries)
+            industries = industries.concat(cpv.industries.filter(a => a !== ''))
           }
         }
       }
@@ -186,6 +186,7 @@ exports.TenderFormat = (tender) => {
       let tenderNew = {
         objectID: tender.algoliaId ? tender.algoliaId : undefined,
         dgmarketId: tender.dgmarketId,
+        tenderId: tender.id,
         procurementId: tender.procurementId,
         title: tender.title,
         lang: tender.lang,
@@ -252,7 +253,7 @@ exports.TendersAdd = (tenders, index) => {
           UPDATE      dgmarket 
           SET         algoliaId = '${BddTool.ChaineFormater(tenders[i].objectID, BddEnvironnement, BddId)}', 
                       status = 20 
-          WHERE       dgmarketId = ${BddTool.NumericFormater(tenders[i].dgmarketId, BddEnvironnement, BddId)} 
+          WHERE       id = ${BddTool.NumericFormater(tenders[i].tenderId, BddEnvironnement, BddId)} 
         `)
       }
       resolve(tenders)
@@ -330,7 +331,9 @@ exports.Test = () => {
     index.search({
       query: ''
     }, function searchDone(err, content) {
-      if (err) throw err;
+        if (err) {
+          throw err;
+        }
         console.log(content.hits);
       }
     );

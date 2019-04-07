@@ -67,7 +67,6 @@ exports.TenderGet = (id, algoliaId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -109,20 +108,20 @@ exports.TenderGet = (id, algoliaId) => {
                     updateDate AS "updateDate"
         FROM        dgmarket 
       `
-      Where = ``
+      let where = ``
       if (id && id !== '' && id > 0) {
-        if (Where !== '') {
-          Where += 'AND '
+        if (where !== '') {
+          where += 'AND '
         }
-        query += `WHERE id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
-        if (Where !== '') {
-          Where += 'AND '
+        if (where !== '') {
+          where += 'AND '
         }
-        query += `WHERE algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
-      if (Where !== '') { query += 'WHERE ' + Where }
+      if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let tender = {}
       for (var record of recordset) {
@@ -164,46 +163,47 @@ exports.TenderGet = (id, algoliaId) => {
         }
       }
 
-      /*
-      if (tender.cpvs) {
-        let cpvDescriptions = tender.cpvs
-        tender.cpvs = ''
-        tender.cpvDescriptions = ''
-        for (let description of cpvDescriptions) {
-          let cpv = CpvList.find(a => a.label === description.split('-').join(' ').trim())
-          if (cpv) {
-            if (tender.cpvDescriptions !== '') {
-              tender.cpvs += ','
-              tender.cpvDescriptions += ','
-            }
-            tender.cpvs += cpv.code
-            tender.cpvDescriptions += cpv.label
-          }
+      resolve(tender)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderRemove = (id, algoliaId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      
+      if (!id && !algoliaId) {
+        throw new Error("No available id !")
+      }
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        UPDATE      dgmarket 
+        SET         status = -1 
+      `
+      let where = ``
+      if (id && id !== '' && id > 0) {
+        if (where !== '') {
+          where += 'AND '
         }
+        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
       }
-
-      let termDate = new Date(tender.bidDeadlineDate)
-      if (isNaN(termDate)) {
-        throw new Error('BID deadline invalide !')
+      if (algoliaId && algoliaId !== '' && algoliaId > 0) {
+        if (where !== '') {
+          where += 'AND '
+        }
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
-
-      tender.publicationDate = tender.publicationDate.split('-').join('').trim()
-      tender.bidDeadlineDate = tender.bidDeadlineDate.split('-').join('').trim()
-
-      // Search cpv by key words
-      let cpvFound = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(tender.description, tender.cpvs, tender.cpvDescriptions)
-      tender.cpvs = cpvFound.cpvsText
-      tender.cpvDescriptions = cpvFound.cpvDescriptionsText
-
-      tender.dgmarketId = 0
-      tender.userId = config.user.userId
-      tender.status = 0
-      tender.creationDate = new Date()
-      tender.updateDate = tender.creationDate
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
-      //await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderAdd(tender)
+      if (where !== '') { query += '  WHERE ' + where }
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
-      */
+
       resolve(tender)
     } catch (err) {
       reject(err)
