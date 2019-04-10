@@ -261,6 +261,72 @@ exports.TendersAdd = (tenders, index) => {
   })
 }
 
+exports.TendersPurge = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      let query = `
+        SELECT      algoliaId AS "algoliaId" 
+        FROM        dgmarket 
+        WHERE       status = -1 
+        LIMIT       300
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const algoliaIds = []
+      for (let record of recordset) {
+        algoliaIds.push(record.algoliaId);
+      }
+
+      const tranches = []
+      let borneMin = 0
+      let occurence = 100
+      do {
+        tranches.push(algoliaIds.slice(borneMin, (borneMin + occurence)))
+        borneMin += occurence
+      } while (borneMin < algoliaIds.length && tranches.length < 100)
+
+      const algoliasearch = require('algoliasearch')
+      let applicationId = '583JWW9ARP'
+      let apiKey = '5cc468809130d45b76cf76598a09ff21'
+      let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
+      let index = client.initIndex(`${config.prefixe}_tenders`)
+      for (tranche of tranches) {
+        if (tranche.length > 0) {
+          await this.TendersRemove(algoliaIds, index)
+        }
+      }
+      resolve(tenders.length)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.TendersRemove = (algoliaIds, index) => {
+  return new Promise(async (resolve, reject) => {
+    index.deleteObjects(algoliaIds, async (err, content) => {
+      if (err) {
+        console.error(err)
+        reject(err)
+        return
+      }
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      for (let i = 0; i < algoliaIds.length; i++) {
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+          UPDATE      dgmarket 
+          SET         status = -2 
+          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
+        `)
+      }
+      resolve(tenders)
+    })
+  })
+}
+
 exports.TendersAddOld = () => {
   return new Promise((resolve, reject) => {
     const algoliasearch = require('algoliasearch')

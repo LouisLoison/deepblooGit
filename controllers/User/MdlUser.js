@@ -1,37 +1,3 @@
-exports.EquipeList = () => {
-    return new Promise((resolve, reject) => {
-        var Config = require(process.cwd() + '/config')
-        var BddTool = require(process.cwd() + '/global/BddTool')
-
-        // Get ticket list
-        var EquipeList = []
-        var BddId = 'EtlTool'
-        var Environnement = 'PRD'
-        BddTool.QueryExecBdd(BddId, Environnement, `
-            SELECT    EquipeReferenteID AS "EquipeReferenteID", 
-                      Code AS "Code", 
-                      Nom AS "Nom", 
-                      CreationDate AS "CreationDate", 
-                      ModificationDate AS "ModificationDate", 
-                      Responsable AS "Responsable" 
-            FROM      EquipeReferente 
-            ORDER BY  Nom ASC 
-        `, reject, (recordset) => { 
-            for (var record of recordset) {
-                EquipeList.push({ 
-                    EquipeReferenteID: record.EquipeReferenteID,
-                    Code: record.Code,
-                    Nom: record.Nom,
-                    CreationDate: record.CreationDate,
-                    ModificationDate: record.ModificationDate,
-                    Responsable: record.Responsable
-                })
-            }
-            resolve(EquipeList)
-        })
-    })
-}
-
 exports.Login = (username, password) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -39,9 +5,29 @@ exports.Login = (username, password) => {
       const jwt = require('jsonwebtoken')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
+      /*
+      // Get hivebrite token
+      let tokenResponse = await require('axios').post(`${config.hivebriteUrl}oauth/token`, {
+        grant_type: 'password',
+        scope: 'admin',
+        admin_email: username,
+        password: password,
+        client_id: 'b97245387eab5b1b57ac3135e8ba7fbac2399775844ba8a2fa70426fb0d26e55',
+        client_secret: '24487443aee0962b24b678e9e6f90fec40b25fa645007d418681164423486166',
+        redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+        refresh_token: null,
+      })
+      config.hivebrite.token = tokenResponse.data.access_token
+
+      // Get hivebrite user info
+      let meResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/me`)
+      let hivebriteId = meResponse.data.admin.id
+      */
+
+      // Check user in deepbloo bdd
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let Query = `
+      let query = `
         SELECT    userId AS "userId", 
                   hivebriteId AS "hivebriteId", 
                   type AS "type", 
@@ -49,10 +35,11 @@ exports.Login = (username, password) => {
                   username AS "username", 
                   password AS "password" 
         FROM      user 
-        WHERE     username = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
+        WHERE     email = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
         AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, Query)
+      // WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId, BddEnvironnement, BddId)} 
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let user = {}
       for (let record of recordset) {
         user = { 
@@ -80,210 +67,160 @@ exports.Login = (username, password) => {
   })
 }
 
-exports.List = () => {
-    return new Promise((resolve, reject) => {
-        var Config = require(process.cwd() + '/config')
-        var BddTool = require(process.cwd() + '/global/BddTool')
+exports.List = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
 
-        // Get ticket list
-        var UtilisateurList = []
-        var BddId = 'EtlTool'
-        var Environnement = 'PRD'
-        BddTool.QueryExecBdd(BddId, Environnement, `
-            SELECT    UtilisateurID AS "UtilisateurID", 
-                      Identifiant AS "Identifiant", 
-                      Pseudo AS "Pseudo", 
-                      Email AS "Email", 
-                      DroitGroupeID AS "DroitGroupeID", 
-                      EquipeReferenteID AS "EquipeReferenteID", 
-                      Statut AS "Statut", 
-                      CreationDate AS "CreationDate", 
-                      ModificationDate AS "ModificationDate", 
-                      Responsable AS "Responsable" 
-            FROM      Utilisateur 
-            ORDER BY  Identifiant ASC 
-        `, reject, (recordset) => { 
-            for (var record of recordset) {
-                UtilisateurList.push({
-                    UtilisateurID: record.UtilisateurID,
-                    Identifiant: record.Identifiant,
-                    Pseudo: record.Pseudo,
-                    Email: record.Email,
-                    DroitGroupeID: record.DroitGroupeID,
-                    EquipeReferenteID: record.EquipeReferenteID,
-                    Statut: record.Statut,
-                    CreationDate: record.CreationDate,
-                    ModificationDate: record.ModificationDate,
-                    Responsable: record.Responsable
-                })
-            }
-            resolve(UtilisateurList);
+      // Get ticket list
+      var users = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    userId AS "userId", 
+                  hivebriteId AS "hivebriteId", 
+                  type AS "type", 
+                  email AS "email", 
+                  username AS "username", 
+                  password AS "password" 
+        FROM      user 
+      `
+      if (filter) {
+        let where = ``
+        if (filter.userId) {
+          if (where !== '') { where += 'AND ' }
+          where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.type) {
+          if (where !== '') { where += 'AND ' }
+          where += `type = ${BddTool.NumericFormater(filter.type, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        users.push({
+          userId: record.userId,
+          hivebriteId: record.hivebriteId,
+          type: record.type,
+          email: record.email,
+          username: record.username,
+          password: record.password,
         })
-    })
+      }
+      resolve(users);
+    } catch (err) { reject(err) }
+  })
 }
 
-exports.Utilisateur = (UtilisateurID) => {
-    return new Promise((resolve, reject) => {
-        var Config = require(process.cwd() + '/config')
-        var BddTool = require(process.cwd() + '/global/BddTool')
-
-        // Get Flux list
-        var Utilisateur = {}
-        var BddId = 'EtlTool'
-        var BddEnvironnement = 'PRD'
-        var Query = `
-            SELECT      Utilisateur.UtilisateurID AS "UtilisateurID", 
-                        Utilisateur.Identifiant AS "Identifiant", 
-                        Utilisateur.MotDePasse AS "MotDePasse", 
-                        Utilisateur.Pseudo AS "Pseudo", 
-                        Utilisateur.Email AS "Email", 
-                        Utilisateur.DroitGroupeID AS "DroitGroupeID", 
-                        Utilisateur.EquipeReferenteID AS "EquipeReferenteID", 
-                        EquipeReferente.Nom AS "EquipeReferenteNom",
-                        Utilisateur.Statut AS "Statut", 
-                        Utilisateur.CreationDate AS "CreationDate", 
-                        Utilisateur.ModificationDate AS "ModificationDate", 
-                        Utilisateur.Responsable AS "Responsable" 
-            FROM        Utilisateur
-            LEFT JOIN   EquipeReferente ON EquipeReferente.EquipeReferenteID = Utilisateur.EquipeReferenteID  
-            WHERE       Utilisateur.UtilisateurID = ${BddTool.NumericFormater(UtilisateurID, BddEnvironnement, BddId)} 
-        `
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, Query, reject, (recordset) => { 
-            for (var record of recordset) {
-                Utilisateur = { 
-                    UtilisateurID: record.UtilisateurID, 
-                    Identifiant: record.Identifiant, 
-                    MotDePasse: record.MotDePasse, 
-                    Pseudo: record.Pseudo, 
-                    Email: record.Email, 
-                    DroitGroupeID: record.DroitGroupeID, 
-                    EquipeReferenteID: record.EquipeReferenteID, 
-                    EquipeReferenteNom: record.EquipeReferenteNom, 
-                    Statut: record.Statut, 
-                    CreationDate: record.CreationDate, 
-                    ModificationDate: record.ModificationDate, 
-                    Responsable: record.Responsable
-                }
-            }
-            resolve(Utilisateur)
-        })
-    })
+exports.user = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = null
+      let filter = {
+        userId
+      }
+      let users = await this.List(filter)
+      if (users && users.length > 0) {
+        user = users[0]
+      }
+      resolve(user);
+    } catch (err) { reject(err) }
+  })
 }
 
-exports.UtilisateurAddUpdate = (Utilisateur, ProjetList) => {
-    return new Promise((resolve, reject) => {
-        let UserData = {Utilisateur: Utilisateur, ProjetList: ProjetList}
-        UserRecordAddUpdate(UserData)
-        .then(UserProjetListDelete)
-        .then(UserProjetListAdd)
-        .then((data) => {
-            resolve(data)
-        }).catch((err) => {
-            reject(err)
-        })
-    })
+exports.AddUpdate = (user) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      resolve(userNew);
+    } catch (err) { reject(err) }
+  })
 }
 
 var UserRecordAddUpdate = (UserData) => {
-    return new Promise((resolve, reject) => {
-        var BddTool = require(process.cwd() + '/global/BddTool')
-        BddTool.RecordAddUpdate('EtlTool', 'PRD', 'Utilisateur', UserData.Utilisateur).then((data) => {
-            UserData.Utilisateur = data
-            resolve(UserData)
-        }).catch((err) => { reject(err) })
-    })
+  return new Promise((resolve, reject) => {
+      var BddTool = require(process.cwd() + '/global/BddTool')
+      BddTool.RecordAddUpdate('EtlTool', 'PRD', 'Utilisateur', UserData.Utilisateur).then((data) => {
+          UserData.Utilisateur = data
+          resolve(UserData)
+      }).catch((err) => { reject(err) })
+  })
 }
 
-var UserProjetListDelete = (UserData) => {
-    return new Promise((resolve, reject) => {
-        var BddTool = require(process.cwd() + '/global/BddTool')
-        var BddId = 'EtlTool'
-        var BddEnvironnement = 'PRD'
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, `
-            DELETE FROM UtilisateurProjet 
-            WHERE       UtilisateurID = ${BddTool.NumericFormater(UserData.Utilisateur.UtilisateurID, BddEnvironnement, BddId)} 
-        `, reject, (recordset) => { 
-            resolve(UserData)
-        })
-    })
-}
-
-var UserProjetListAdd = (UserData) => {
-    return new Promise((resolve, reject) => {
-
-        if (!UserData.ProjetList || UserData.ProjetList.length === 0) {
-            resolve(UserData)
-            return
-        }
-        
-        var ResultList = []
-        for (var Projet of UserData.ProjetList) {
-            ResultList.push({ Projet: Projet, status: -1 })
-        }
-        
-        ResultList.forEach((Result) => {
-            var BddTool = require(process.cwd() + '/global/BddTool')
-            var BddId = 'EtlTool'
-            var BddEnvironnement = 'PRD'
-            BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'UtilisateurProjet', {
-                UtilisateurID: UserData.Utilisateur.UtilisateurID,
-                Projet: Result.Projet
-            }).then((data) => {
-                Result.data = data
-                Result.status = 1
-            }).catch((err) => {
-                Result.status = 0
-                Result.err = err
-            }).then(() => { ResultUpdate() })
-        })
-
-        var ResultUpdate = () => {
-            var NotFinishNbr = ResultList.filter(a => a.status === -1).length
-            if (NotFinishNbr > 0) { return }
-            resolve(UserData)
-        }
-    })
-}
-
-exports.UtilisateurProjetList = (UtilisateurID) => {
-    return new Promise((resolve, reject) => {
-        var BddTool = require(process.cwd() + '/global/BddTool')
-
-        // Get utilisateur projet list
-        var UtilisateurProjetList = []
-        var BddId = 'EtlTool'
-        var BddEnvironnement = 'PRD'
-        var Query = `
-            SELECT      UtilisateurProjet.UtilisateurProjetID AS "UtilisateurProjetID", 
-                        UtilisateurProjet.UtilisateurID AS "UtilisateurID", 
-                        UtilisateurProjet.Projet AS "Projet", 
-                        UtilisateurProjet.CreationDate AS "CreationDate", 
-                        UtilisateurProjet.ModificationDate AS "ModificationDate", 
-                        UtilisateurProjet.Responsable AS "Responsable" 
-            FROM        UtilisateurProjet
-            WHERE       UtilisateurProjet.UtilisateurID = ${BddTool.NumericFormater(UtilisateurID, BddEnvironnement, BddId)} 
-        `
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, Query, reject, (recordset) => { 
-            for (var record of recordset) {
-                UtilisateurProjetList.push({ 
-                    UtilisateurProjetID: record.UtilisateurProjetID,
-                    UtilisateurID: record.UtilisateurID,
-                    Projet: record.Projet,
-                    CreationDate: record.CreationDate, 
-                    ModificationDate: record.ModificationDate, 
-                    Responsable: record.Responsable
-                })
-            }
-            resolve(UtilisateurProjetList)
-        })
-    })
-}
-
-exports.UtilisateurProjetNomListSync = async (UtilisateurID) => {
-    let ProjetList = null
+exports.Synchro = () => {
+  return new Promise(async (resolve, reject) => {
     try {
-        ProjetList = await this.UtilisateurProjetList(UtilisateurID)
-        ProjetList = ProjetList.map(a => a.Projet)
-    } catch (err) { }
-    return ProjetList
+      // Get hivebrite user list
+      await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').TokenGet()
+      let users = []
+      let userTotal = 1
+      let currentPage = 1
+      while (users.length < userTotal && currentPage < 200) {
+        let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${currentPage}&per_page=500`)
+        users = users.concat(usersResponse.data.users)
+        userTotal = usersResponse.headers["x-total"]
+        currentPage++
+      }
+
+      let usersBdd = await this.List()
+
+      // Update user bdd list
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      for (let user of users) {
+        let userBdd = usersBdd.find(a => a.email === user.email)
+        if (!userBdd) {
+          userBdd = {
+            hivebriteId: user.id,
+            type: 3,
+            email: user.email,
+            username: user.name,
+            creationDate: new Date(),
+            updateDate: new Date()
+          }
+          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+        } else {
+          if (
+            userBdd.hivebriteId !== user.id
+            || userBdd.hivebriteId !== user.id
+            || userBdd.email !== user.email
+            || userBdd.username !== user.name
+          ) {
+            userBdd.hivebriteId = user.id
+            userBdd.email = user.email
+            userBdd.username = user.name
+            userBdd.updateDate = new Date()
+            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+          }
+        }
+      }
+
+      resolve(users.length);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.SetPremium = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      let user = await this.user(userId)
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      user.type = 2
+      await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      resolve(user);
+    } catch (err) { reject(err) }
+  })
 }

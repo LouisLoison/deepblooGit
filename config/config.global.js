@@ -15,6 +15,12 @@ config.ftp = {
   password: 'core25RrRqq',
   protocol: 'ftp'
 },
+config.hivebrite = {
+  url: 'https://deepbloo.hivebrite.com/',
+  clientId: 'b97245387eab5b1b57ac3135e8ba7fbac2399775844ba8a2fa70426fb0d26e55',
+  clientSecret: '24487443aee0962b24b678e9e6f90fec40b25fa645007d418681164423486166',
+  token: null,
+},
 config.hivebriteUrl = 'https://deepbloo.hivebrite.com/',
 config.hivebriteToken = null
 config.bdd = {

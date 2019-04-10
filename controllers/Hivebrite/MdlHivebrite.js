@@ -1,33 +1,33 @@
 exports.TokenGet = () => {
-    return new Promise((resolve, reject) => {
-        const config = require(process.cwd() + '/config')
-        require('axios').post(`${config.hivebriteUrl}oauth/token`, {
-            grant_type: 'password',
-            scope: 'admin',
-            admin_email: 'stanislas@deepbloo.com',
-            password: 'appli1806',
-            client_id: 'b97245387eab5b1b57ac3135e8ba7fbac2399775844ba8a2fa70426fb0d26e55',
-            client_secret: '24487443aee0962b24b678e9e6f90fec40b25fa645007d418681164423486166',
-            redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
-            refresh_token: null,
-        }).then(response => {
-            config.hivebriteToken = response.data.access_token
-            resolve(response.data)
-        }).catch(err => { reject(err) })
-    })
+  return new Promise((resolve, reject) => {
+    const config = require(process.cwd() + '/config')
+    require('axios').post(`${config.hivebriteUrl}oauth/token`, {
+      grant_type: 'password',
+      scope: 'admin',
+      admin_email: 'stanislas@deepbloo.com',
+      password: 'appli1806',
+      client_id: 'b97245387eab5b1b57ac3135e8ba7fbac2399775844ba8a2fa70426fb0d26e55',
+      client_secret: '24487443aee0962b24b678e9e6f90fec40b25fa645007d418681164423486166',
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
+      refresh_token: null,
+    }).then(response => {
+      config.hivebriteToken = response.data.access_token
+      resolve(response.data)
+    }).catch(err => { reject(err) })
+  })
 }
 
 exports.delete = (url, param) => {
-    return new Promise(async (resolve, reject) => {
-        const config = require(process.cwd() + '/config')
-        await this.TokenGet()
-        const axios = require('axios');
-        axios.defaults.baseURL = config.hivebriteUrl
-        axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
-        axios.delete(url, param).then(response => {
-            resolve(response)
-        }).catch(err => { reject(err) })
-    })
+  return new Promise(async (resolve, reject) => {
+    const config = require(process.cwd() + '/config')
+    await this.TokenGet()
+    const axios = require('axios');
+    axios.defaults.baseURL = config.hivebriteUrl
+    axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
+    axios.delete(url, param).then(response => {
+      resolve(response)
+    }).catch(err => { reject(err) })
+  })
 }
 
 exports.get = (url, param) => {

@@ -7,31 +7,31 @@ exports.Login = (req, res) => {
 }
 
 exports.List = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').List().then((data) => {
-        res.end(JSON.stringify({ success: true, UtilisateurList: data }, null, 3))
+    require(process.cwd() + '/controllers/User/MdlUser').List(req.body.filter).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
-exports.Timeline = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUserTimeline').Timeline(req.body.Identifiant).then((data) => {
-        res.end(JSON.stringify({ success: true, Timeline: data }, null, 3))
-    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
-}
-
-exports.Utilisateur = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').Utilisateur(req.body.UtilisateurID).then((data) => {
+exports.user = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').user(req.body.userId).then((data) => {
         res.end(JSON.stringify({ success: true, Utilisateur: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
-exports.UtilisateurAddUpdate = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').UtilisateurAddUpdate(req.body.Utilisateur, req.body.ProjetList).then((data) => {
-        res.end(JSON.stringify({ success: true }, null, 3))
+exports.AddUpdate = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').AddUpdate(req.body.user).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
-exports.UtilisateurProjetList = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').UtilisateurProjetList(req.body.UtilisateurID).then((data) => {
-        res.end(JSON.stringify({ success: true, UtilisateurProjetList: data }, null, 3))
+exports.Synchro = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').Synchro().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.SetPremium = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').SetPremium(req.body.userId).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

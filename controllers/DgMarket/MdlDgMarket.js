@@ -332,6 +332,204 @@ exports.CpvList = () => {
       const util = require('util')
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      // Get file
+      const deepblooFolder = 'C:/Temp/Deepbloo/'
+      const fileFolder = path.join(deepblooFolder, 'Archive/')
+      const files = fs.readdirSync(fileFolder)
+
+      files.sort()
+      if (!files || files.length === 0) {
+        resolve()
+        return
+      }
+
+      let tenders = []
+      let cpvList = []
+      for (let file of files) {
+        if (tenders.length > 300) {
+          break
+        }
+        const fileLocation = path.join(fileFolder, file)
+        let fileData = await readFile(fileLocation, 'utf8')
+
+        const xml2js = require('xml2js')
+        var parser = new xml2js.Parser()
+        const parseString = util.promisify(parser.parseString)
+        let parseData = await parseString(fileData)
+
+        const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+
+        parseData.notices.notice.forEach(notice => {
+
+          if (tenders.length > 300) {
+            return false
+          }
+
+          // check biddeadline
+          let dateLimit = new Date()
+          // dateLimit.setDate(dateLimit.getDate() - 15)
+          let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
+          if (!dateText || dateText.trim() === '') {
+            return false
+          }
+          let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+          let termDate = new Date(bidDeadlineDateText)
+          if (isNaN(termDate)) {
+            return false
+          }
+          if (termDate < dateLimit) {
+            return false
+          }
+
+          // description
+          let lang = ''
+          let description = ''
+          if (notice.noticeText) {
+            let descriptions = []
+            notice.noticeText.forEach(noticeText => {
+              let description = descriptions.find(a => a.lang === noticeText.$.lang)
+              if (description) {
+                description.text += noticeText._ + '<br><br>'
+                description.text = description.text.substring(0, 1000)
+              } else {
+                descriptions.push({
+                  lang: noticeText.$.lang,
+                  text: noticeText._ + '<br><br>'
+                })
+              }
+            })
+            if (descriptions && descriptions.length > 0) {
+              lang = descriptions[0].lang
+              description = descriptions[0].text.substring(0, 5000)
+            }
+          }
+
+          // CPV list
+          let cpvOkCount = 0
+          let cpvsText = tool.getXmlJsonData(notice.cpvs)
+          let cpvDescriptionsText = tool.getXmlJsonData(notice.cpvDescriptions)
+          if (cpvsText) {
+            let cpvsTextTemp = cpvsText.split(',')
+            for (let i = 0; i < cpvsTextTemp.length; i++) {
+              let code = parseInt(cpvsTextTemp[i], 10)
+              let cpv = CpvList.find(a => a.code === code)
+              let cpvfind = cpvList.find(a => a.cpv === code)
+              if (!cpvfind) {
+                cpvfind = {
+                  cpv: code,
+                  active: 'U',
+                  count: 0
+                }
+                cpvList.push(cpvfind)
+              }
+              cpvfind.count++
+              if (cpv) {
+                if (cpv.active) {
+                  cpvfind.active = 'Y'
+                  cpvOkCount++
+                } else {
+                  cpvfind.active = 'N'
+                }
+              }
+            }
+          }
+          // Search by key words
+          let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText)
+          let words = cpvFound.words
+          cpvsText = cpvFound.cpvsText
+          cpvDescriptionsText = cpvFound.cpvDescriptionsText
+
+          // Categories
+          let categories1 = []
+          let categories2 = []
+          if (cpvsText && cpvDescriptionsText) {
+            let cpvsTextTemp = cpvsText.split(',')
+            for (let i = 0; i < cpvsTextTemp.length; i++) {
+              let code = parseInt(cpvsTextTemp[i], 10)
+              let cpv = CpvList.find(a => a.code === code)
+              if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
+                if (!categories1.includes(cpv.category1)) {
+                  categories1.push(cpv.category1)
+                }
+                if (!categories2.includes(cpv.category2)) {
+                  categories2.push(cpv.category2)
+                }
+              }
+            }
+          }
+
+          // Region
+          let country = tool.getXmlJsonData(notice.country)
+          let regionLvl0 = []
+          let regionLvl1 = []
+          let regionLvl2 = []
+          for (let region of RegionList) {
+            if (region.countrys && region.countrys.includes(country)) {
+              regionLvl0.push(region.label)
+              regionLvl1.push(`${region.label} > ${country}`)
+            }
+            if (region.regions) {
+              for (let region2 of region.regions) {
+                if (region2.countrys && region2.countrys.includes(country)) {
+                  regionLvl0.push(region.label)
+                  regionLvl1.push(`${region.label} > ${region2.label}`)
+                  regionLvl2.push(`${region.label} > ${region2.label} > ${country}`)
+                }
+              }
+            }
+          }
+
+          tenders.push({
+            dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+            title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 100),
+            description: description,
+            buyerName: tool.getXmlJsonData(notice.buyerName),
+            country: tool.getXmlJsonData(notice.country),
+            regions: regionLvl1,
+            cpvs: cpvsText,
+            cpvDescriptions: tool.getXmlJsonData(notice.cpvDescriptions).substring(0, 300),
+            categories1: categories1,
+            categories2: categories2,
+            publicationDate: tool.getXmlJsonData(notice.publicationDate),
+            bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
+            words: words,
+            valide: cpvOkCount !== 0 || cpvFound.cpvFoundCount > 0,
+          })
+        })
+      }
+
+      let tenderText = `catch;dgmarketId;categories1;categories2;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
+      for (let tender of tenders) {
+        let description = tender.description.substring(0, 1000)
+        description = description.split(';').join(',')
+        description = description.split('\r\n').join(' ').trim()
+        description = description.split('\r').join(' ').trim()
+        description = description.split('\n').join(' ').trim()
+        // description = ''
+        description = description.trim()
+        let title = tender.title.substring(0, 1000)
+        title = title.split(';').join(',')
+        title = title.split('\n').join(' ').trim()
+        title = title.trim()
+        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories1.join(',')};${tender.categories2.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+      }
+      fs.writeFileSync('C:/Temp/Deepbloo/TenderList.csv', tenderText)
+
+      resolve(cpvList)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.CpvListOld = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const fs = require('fs')
+      const path = require('path')
+      const util = require('util')
+      const tool = require(process.cwd() + '/controllers/CtrlTool')
+      const readFile = util.promisify(fs.readFile)
 
       // Get file
       const deepblooFolder = 'C:/Temp/Deepbloo/'

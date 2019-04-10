@@ -322,9 +322,9 @@ exports.TenderRemove = (id, algoliaId) => {
       }
       if (where !== '') { query += '  WHERE ' + where }
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
 
-      resolve(tender)
+      resolve()
     } catch (err) {
       reject(err)
     }
