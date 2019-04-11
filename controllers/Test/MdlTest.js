@@ -166,9 +166,7 @@ exports.CpvCreateJson = () => {
         active: lineArray[5] === 'Y',
         logo: lineArray[7].trim(),
         picture: lineArray[6].trim(),
-        // industries: lineArray[2].split(',').map(a => a.trim()),
-        category1: lineArray[3].trim(),
-        category2: lineArray[4].trim(),
+        category: lineArray[3].trim(),
       })
     })
 
