@@ -111,14 +111,22 @@ exports.CpvCreateJson = () => {
   return new Promise(async (resolve, reject) => {
     fs = require('fs')
 
+    let familys = []
+    fs.readFileSync('c:/Temp/Onglet4.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
+      let lineArray = line.split('|')
+      familys.push({
+        category: lineArray[0].trim(),
+        family: lineArray[1].trim()
+      })
+    })
+
     let categories = []
     fs.readFileSync('c:/Temp/Onglet3.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
       let lineArray = line.split('|')
       let category = {
-        category1: lineArray[0].trim(),
-        category2: lineArray[1].trim(),
-        cpv: parseInt(lineArray[2].trim(), 10),
-        cpvText: lineArray[3].trim(),
+        category: lineArray[0].trim(),
+        cpv: parseInt(lineArray[1].trim(), 10),
+        cpvText: lineArray[2].trim(),
         words: [],
       }
       for (let i = 4; i < lineArray.length; i++) {
@@ -126,6 +134,10 @@ exports.CpvCreateJson = () => {
           continue
         }
         category.words.push(lineArray[i].trim())
+      }
+      let family = familys.find(a => a.category === category.category)
+      if (family) {
+        category.family = family.family
       }
       categories.push(category)
     })
@@ -137,11 +149,13 @@ exports.CpvCreateJson = () => {
       }
     })
   
+    /*
     let industries = []
     fs.readFileSync('c:/Temp/Onglet2.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
       let lineArray = line.split('|')
       industries.push(lineArray)
     })
+    */
 
     let cpvs = []
     fs.readFileSync('c:/Temp/Onglet1.txt', 'utf-8').split(/\r?\n/).forEach((line) => {
@@ -152,7 +166,7 @@ exports.CpvCreateJson = () => {
         active: lineArray[5] === 'Y',
         logo: lineArray[7].trim(),
         picture: lineArray[6].trim(),
-        industries: lineArray[2].split(',').map(a => a.trim()),
+        // industries: lineArray[2].split(',').map(a => a.trim()),
         category1: lineArray[3].trim(),
         category2: lineArray[4].trim(),
       })

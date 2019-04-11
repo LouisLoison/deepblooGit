@@ -51,7 +51,7 @@ exports.Login = (username, password) => {
         }
       }
 
-      if (!user.userId) {
+      if (!user || !user.userId) {
         throw new Error('User unknown !')
       }
 
@@ -60,8 +60,8 @@ exports.Login = (username, password) => {
       let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username }, certText, { algorithm: 'HS256'})
       
       resolve({
-        Utilisateur: user,
-        Token: token
+        user,
+        token
       })
     } catch (err) { reject(err) }
   })
@@ -114,7 +114,7 @@ exports.List = (filter) => {
   })
 }
 
-exports.user = (userId) => {
+exports.User = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = null
@@ -130,6 +130,49 @@ exports.user = (userId) => {
   })
 }
 
+exports.Memberships = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await this.User(userId)
+
+      // Get hivebrite user info
+      let memberships = null
+      if (user.hivebriteId) {
+        let membershipsResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${user.hivebriteId}/memberships`)
+        memberships = membershipsResponse.data.memberships
+      }
+      
+      let isPremiumMembership = false;
+      for (let membership of memberships) {
+        if (
+          membership.type_name.startsWith('Premium Membership')
+          && membership.status === "paid"
+        ) {
+          isPremiumMembership = true
+        }
+      }
+
+      let userUpdate = false
+      if (isPremiumMembership && user.type !== 1 && user.type !== 2) {
+        user.type = 2
+        userUpdate = true
+      }
+      if (!isPremiumMembership && user.type === 2) {
+        user.type = 3
+        userUpdate = true
+      }
+      if (userUpdate) {
+        await this.AddUpdate(user)
+      }
+
+      resolve({
+        isPremiumMembership,
+        memberships
+      });
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.AddUpdate = (user) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -140,16 +183,6 @@ exports.AddUpdate = (user) => {
       let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
       resolve(userNew);
     } catch (err) { reject(err) }
-  })
-}
-
-var UserRecordAddUpdate = (UserData) => {
-  return new Promise((resolve, reject) => {
-      var BddTool = require(process.cwd() + '/global/BddTool')
-      BddTool.RecordAddUpdate('EtlTool', 'PRD', 'Utilisateur', UserData.Utilisateur).then((data) => {
-          UserData.Utilisateur = data
-          resolve(UserData)
-      }).catch((err) => { reject(err) })
   })
 }
 
@@ -214,7 +247,7 @@ exports.SetPremium = (userId) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      let user = await this.user(userId)
+      let user = await this.User(userId)
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
