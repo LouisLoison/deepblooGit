@@ -127,8 +127,6 @@ exports.FtpList = () => {
 exports.FileParse = (fileLocation) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // const fileLocation = 'C:/Temp/Deepbloo/Ftp/feed-20190108.xml'
-
       const fs = require('fs')
       const path = require('path')
       const util = require('util')
@@ -233,8 +231,8 @@ exports.FileParse = (fileLocation) => {
           title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 450),
           lang: lang,
           description: description,
-          contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName),
-          contactLastName: tool.getXmlJsonData(notice.contactAddress[0].lastName),
+          contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName).substring(0, 90),
+          contactLastName: tool.getXmlJsonData(notice.contactAddress[0].lastName).substring(0, 90),
           contactAddress: tool.getXmlJsonData(notice.contactAddress[0].address).substring(0, 490),
           contactCity: tool.getXmlJsonData(notice.contactAddress[0].city).substring(0, 90),
           contactState: tool.getXmlJsonData(notice.contactAddress[0].state).substring(0, 90),
@@ -333,6 +331,7 @@ exports.CpvList = () => {
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
+      const CategoryList = require(process.cwd() + '/public/constants/categories.json')
 
       // Get file
       const deepblooFolder = 'C:/Temp/Deepbloo/'
@@ -442,19 +441,22 @@ exports.CpvList = () => {
           cpvDescriptionsText = cpvFound.cpvDescriptionsText
 
           // Categories
-          let categories1 = []
-          let categories2 = []
+          let categories = []
+          let families = []
           if (cpvsText && cpvDescriptionsText) {
             let cpvsTextTemp = cpvsText.split(',')
             for (let i = 0; i < cpvsTextTemp.length; i++) {
               let code = parseInt(cpvsTextTemp[i], 10)
               let cpv = CpvList.find(a => a.code === code)
-              if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
-                if (!categories1.includes(cpv.category1)) {
-                  categories1.push(cpv.category1)
+              if (cpv) {
+                if (cpv.category && cpv.category !== '') {
+                  if (!categories.includes(cpv.category)) {
+                    categories.push(cpv.category)
+                  }
                 }
-                if (!categories2.includes(cpv.category2)) {
-                  categories2.push(cpv.category2)
+                let category = CategoryList.find(a => a.category === cpv.category)
+                if (category && !families.includes(category.family)) {
+                  families.push(category.family)
                 }
               }
             }
@@ -490,8 +492,8 @@ exports.CpvList = () => {
             regions: regionLvl1,
             cpvs: cpvsText,
             cpvDescriptions: tool.getXmlJsonData(notice.cpvDescriptions).substring(0, 300),
-            categories1: categories1,
-            categories2: categories2,
+            categories: categories,
+            families: families,
             publicationDate: tool.getXmlJsonData(notice.publicationDate),
             bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
             words: words,
@@ -500,7 +502,7 @@ exports.CpvList = () => {
         })
       }
 
-      let tenderText = `catch;dgmarketId;categories1;categories2;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
+      let tenderText = `catch;dgmarketId;categories;families;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
       for (let tender of tenders) {
         let description = tender.description.substring(0, 1000)
         description = description.split(';').join(',')
@@ -513,7 +515,7 @@ exports.CpvList = () => {
         title = title.split(';').join(',')
         title = title.split('\n').join(' ').trim()
         title = title.trim()
-        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories1.join(',')};${tender.categories2.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
       fs.writeFileSync('C:/Temp/Deepbloo/TenderList.csv', tenderText)
 

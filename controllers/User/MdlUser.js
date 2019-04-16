@@ -55,9 +55,18 @@ exports.Login = (username, password) => {
         throw new Error('User unknown !')
       }
 
+      // Get hivebrite user info
+      if (user.hivebriteId) {
+        await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').TokenGet()
+        let userResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`/api/admin/v1/users/${user.hivebriteId}`)
+        if (userResponse && userResponse.data && userResponse.data.user && userResponse.data.user.photo) {
+          user.photo = userResponse.data.user.photo['large-url']
+        }
+      }
+
       // Creat user token
       let certText = 'certTest'
-      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username }, certText, { algorithm: 'HS256'})
+      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username, photo: user.photo }, certText, { algorithm: 'HS256'})
       
       resolve({
         user,
@@ -83,7 +92,8 @@ exports.List = (filter) => {
                   type AS "type", 
                   email AS "email", 
                   username AS "username", 
-                  password AS "password" 
+                  password AS "password", 
+                  membershipFree AS "membershipFree"
         FROM      user 
       `
       if (filter) {
@@ -107,6 +117,7 @@ exports.List = (filter) => {
           email: record.email,
           username: record.username,
           password: record.password,
+          membershipFree: record.membershipFree,
         })
       }
       resolve(users);
@@ -145,8 +156,8 @@ exports.Memberships = (userId) => {
       let isPremiumMembership = false;
       for (let membership of memberships) {
         if (
-          membership.type_name.startsWith('Premium Membership')
-          && membership.status === "paid"
+          membership.status === "paid"
+          // && membership.type_name.startsWith('Premium Membership')
         ) {
           isPremiumMembership = true
         }
@@ -252,6 +263,9 @@ exports.SetPremium = (userId) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       user.type = 2
+      if (!user.password || user.password.trim() === '') {
+        user.password = Math.random().toString(36).slice(-10)
+      }
       await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
       resolve(user);
     } catch (err) { reject(err) }

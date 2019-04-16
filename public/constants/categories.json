@@ -14,7 +14,8 @@
          "Smart Grid",
          "smartgrid",
          "Smart Home",
-         "smarthome"
+         "smarthome",
+         "power distribution"
       ],
       "family": "Other"
    },
@@ -67,7 +68,9 @@
          "Feeder protection",
          "Transformer protection",
          "Bus Protection",
-         "Generator protection"
+         "Generator protection",
+         "voltage protection",
+         "power control"
       ],
       "family": "Automation"
    },
@@ -88,7 +91,17 @@
          "Tower",
          "MV Line",
          "HV Line",
-         "kV Line"
+         "kV Line",
+         "Electric line",
+         "extension line",
+         "Cable line",
+         "overhead line",
+         "HT Line",
+         "MT Line",
+         "OH line",
+         "Pole",
+         "electrical line",
+         "power transmission"
       ],
       "family": "T&D"
    },
@@ -154,7 +167,9 @@
          "fuel cell",
          "turbogenerator",
          "generating unit",
-         "Power supply"
+         "Power supply",
+         "Power distribution",
+         "Power conversion"
       ],
       "family": "Generation"
    },
@@ -201,8 +216,6 @@
          "Electrical design",
          "Electrical Drawing",
          "Electrical distribution service",
-         "eletrical survey",
-         "electrical audit",
          "Civil work",
          "Construction",
          "Site work",
@@ -213,9 +226,6 @@
          "Galvanization",
          "Galvanized",
          "Steel structure",
-         "Voltage stability",
-         "Frequency stability",
-         "Grid stability",
          "electrical installation work",
          "voltage installation work"
       ],
@@ -302,7 +312,7 @@
          "charge controller",
          "storage system"
       ],
-      "family": "Renewable"
+      "family": "Renewables"
    },
    {
       "category": "Offgrid",
@@ -321,7 +331,20 @@
          "embedded generation",
          "off-grid",
          "decentralized generation",
-         "rural electrification"
+         "rural electrification",
+         "electrical installation",
+         "electrical test",
+         "electrical system",
+         "electrical equipment",
+         "electrical",
+         "energy",
+         "electricity",
+         "off grid",
+         "mini grid",
+         "On-grid",
+         "On grid",
+         "Grid test",
+         "Grid system"
       ],
       "family": "Renewables"
    },
@@ -338,8 +361,9 @@
          "Solar Farm",
          "Solar installation",
          "Photovoltaic",
-         "PhotovolatÃ¯c",
-         "solarfarm"
+         "Photovolatï¿½c",
+         "solarfarm",
+         "solar"
       ],
       "family": "Renewables"
    },
@@ -368,7 +392,18 @@
       "cpv": 9310000,
       "cpvText": "electricity-",
       "words": [
-         "renewable energy"
+         "renewable energy",
+         "renewable",
+         "energy audit",
+         "eletrical survey",
+         "electrical audit",
+         "Voltage stability",
+         "Frequency stability",
+         "Grid stability",
+         "power station",
+         "power unit",
+         "power system",
+         "power"
       ],
       "family": "Other"
    },
@@ -406,7 +441,8 @@
          "Medium Voltage switchgear",
          "MV Panel",
          "Medium Voltage Panel",
-         "MV Switchgear"
+         "MV Switchgear",
+         "medium voltage switchboard"
       ],
       "family": "T&D"
    },
@@ -446,7 +482,8 @@
          "Lightning Arrester",
          "Lightning Arrestor",
          "Surge Arrestor",
-         "surge protector"
+         "surge protector",
+         "surge protection"
       ],
       "family": "T&D"
    },
@@ -492,7 +529,12 @@
          "Prefabricated substation",
          "substation",
          "switchgear",
-         "switchyard"
+         "switchyard",
+         "transfomer substation",
+         "electrical substation",
+         "Power substation",
+         "Grid station",
+         "sub-station"
       ],
       "family": "T&D"
    },
@@ -525,7 +567,8 @@
          "Fire pumping system",
          "Fire extinguisher",
          "Fire Hydrant System",
-         "fire alarm"
+         "fire alarm",
+         "fire protection"
       ],
       "family": "T&D"
    }

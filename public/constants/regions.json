@@ -168,39 +168,49 @@
       "label": "Asia",
       "regions": [
          {
-            "label": "South",
-            "countrys": [
-               "Canada",
-               "United States"
-            ]
-         },
-         {
             "label": "Central",
             "countrys": [
-               "Canada",
-               "United States"
+               "Kazakhstan",
+               "Kyrgyzstan",
+               "Tajikistan",
+               "Turkmenistan",
+               "Uzbekistan "
             ]
          },
          {
             "label": "Eastern",
             "countrys": [
-               "Canada",
-               "United States"
+               "Democratic People's Republic of Korea",
+               "Japan",
+               "Mongolia",
+               "Republic of Korea",
+               "China"
             ]
          },
          {
             "label": "Southern",
             "countrys": [
-               "Canada",
-               "United States"
+               "Afghanistan",
+               "Bangladesh",
+               "Bhutan",
+               "Iran (Islamic Republic of)",
+               "Maldives",
+               "Nepal",
+               "Pakistan",
+               "Sri Lanka",
+               "Brunei Darussalam",
+               "Cambodia",
+               "Indonesia",
+               "Lao People's Democratic Republic",
+               "Malaysia",
+               "Myanmar",
+               "Philippines",
+               "Singapore",
+               "Thailand",
+               "Timor-Leste",
+               "Viet Nam"
             ]
          }
-      ]
-   },
-   {
-      "label": "China",
-      "countrys": [
-         "China"
       ]
    },
    {

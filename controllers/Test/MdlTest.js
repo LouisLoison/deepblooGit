@@ -129,7 +129,7 @@ exports.CpvCreateJson = () => {
         cpvText: lineArray[2].trim(),
         words: [],
       }
-      for (let i = 4; i < lineArray.length; i++) {
+      for (let i = 5; i < lineArray.length; i++) {
         if (!lineArray[i] || lineArray[i].trim() === '') {
           continue
         }
@@ -183,13 +183,16 @@ exports.CpvCreateJson = () => {
 exports.Test = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const myText = 'This is My appSentence to find';
-      const word = "my sentence";
-      let regEx = new RegExp("\\b" + word + "\\b", 'gi');
-      let isFind = false;
-      if (myText.match(regEx)) {
-        isFind = true;
-      }
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const horodatage = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      const fileLocation = path.join(config.WorkSpaceFolder, `ApiTest${horodatage}.txt`)
+      fs.writeFile(fileLocation, `Date : ${new Date().toISOString()}`, function (err) {
+        if (err) {
+          return console.log(err);
+        }
+      })
       resolve(isFind)
     } catch (err) { reject(err) }
   })

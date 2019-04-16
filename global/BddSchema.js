@@ -45,6 +45,7 @@ var Schema = {
         email: { type: "String" },
         username: { type: "String" },
         password: { type: "String" },
+        membershipFree: { type: "Int" },
         creationDate: { type: "DateTime" },
         updateDate: { type: "DateTime" }
     }

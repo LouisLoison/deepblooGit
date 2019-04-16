@@ -84,6 +84,7 @@ exports.TenderFormat = (tender) => {
     try {
       const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
+      const CategoryList = require(process.cwd() + '/public/constants/categories.json')
 
       // Url source list
       let sourceUrls = []
@@ -97,7 +98,6 @@ exports.TenderFormat = (tender) => {
       // CPV list
       let cpvOkCount = 0
       let cpvs = []
-      let industries = []
       let cpvsText = tender.cpvs
       let cpvDescriptionsText = tender.cpvDescriptions
       if (cpvsText && cpvDescriptionsText) {
@@ -111,36 +111,39 @@ exports.TenderFormat = (tender) => {
               cpvOkCount++
             }
             cpvs.push(cpvDescriptionsTextTemp[i].split('-').join(' ').trim())
-            industries = industries.concat(cpv.industries.filter(a => a !== ''))
           }
         }
       }
       if (cpvOkCount === 0) {
         resolve(null)
       }
-      industries = industries.filter((item, pos) => industries.indexOf(item) == pos)
 
       // Categories
-      let categories1 = []
-      let categories2 = []
+      let categories = []
+      let families = []
       let categoryLvl0 = []
       let categoryLvl1 = []
-      let categoryLvl2 = []
       if (cpvsText && cpvDescriptionsText) {
         let cpvsTextTemp = cpvsText.split(',')
         for (let i = 0; i < cpvsTextTemp.length; i++) {
           let code = parseInt(cpvsTextTemp[i], 10)
           let cpv = CpvList.find(a => a.code === code)
-          if (cpv && cpv.category1 && cpv.category2 && cpv.category1 !== '' && cpv.category2 !== '') {
-            if (!categories1.includes(cpv.category1)) {
-              categories1.push(cpv.category1)
+          if (cpv) {
+            if (cpv.category && cpv.category !== '') {
+              if (!categories.includes(cpv.category)) {
+                categories.push(cpv.category)
+              }
+              if (!categoryLvl0.includes(cpv.category)) {
+                categoryLvl0.push(cpv.category)
+              }
+              if (!categoryLvl1.includes(`${cpv.category} > ${cpv.label}`)) {
+                categoryLvl1.push(`${cpv.category} > ${cpv.label}`)
+              }
             }
-            if (!categories2.includes(cpv.category2)) {
-              categories2.push(cpv.category2)
+            let category = CategoryList.find(a => a.category === cpv.category)
+            if (category && !families.includes(category.family)) {
+              families.push(category.family)
             }
-            categoryLvl0.push(cpv.category2)
-            categoryLvl1.push(`${cpv.category2} > ${cpv.category1}`)
-            categoryLvl2.push(`${cpv.category2} > ${cpv.category1} > ${cpv.label}`)
           }
         }
       }
@@ -211,21 +214,20 @@ exports.TenderFormat = (tender) => {
         regionLvl0: regionLvl0,
         regionLvl1: regionLvl1,
         regionLvl2: regionLvl2,
-        categories1: categories1,
-        categories2: categories2,
+        categories: categories,
+        families: families,
         categoryLvl0: categoryLvl0,
         categoryLvl1: categoryLvl1,
-        categoryLvl2: categoryLvl2,
         words: tender.words,
         currency: tender.currency,
         publicationDate: publicationDate,
         publication_timestamp: publication_timestamp,
         cpvs: cpvs,
-        industries: industries,
         bidDeadlineDate: bidDeadlineDate,
         bidDeadline_timestamp: bidDeadline_timestamp,
-        creation_timestamp: new Date().getTime(),
+        // creation_timestamp: new Date().getTime(),
         // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
+        creation_timestamp: publication_timestamp,
         sourceUrls: sourceUrls,
         userId: tender.userId,
         fileSource: tender.fileSource

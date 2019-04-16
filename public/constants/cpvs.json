@@ -85,7 +85,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "solar"
+      "category": "Solar"
    },
    {
       "code": 9332000,
@@ -693,7 +693,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy storage"
+      "category": "Energy Storage"
    },
    {
       "code": 31158100,
@@ -701,7 +701,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy storage"
+      "category": "Energy Storage"
    },
    {
       "code": 31158200,
@@ -709,7 +709,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy storage"
+      "category": "Energy Storage"
    },
    {
       "code": 31158300,
@@ -717,7 +717,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy storage"
+      "category": "Energy Storage"
    },
    {
       "code": 31160000,
@@ -805,7 +805,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Instrument Transformer"
+      "category": "Instrument Transformers"
    },
    {
       "code": 31162000,
@@ -3493,7 +3493,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Tunrkey SST"
+      "category": "Turnkey SST"
    },
    {
       "code": 45232221,
@@ -3501,7 +3501,7 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Tunrkey SST"
+      "category": "Turnkey SST"
    },
    {
       "code": 45250000,

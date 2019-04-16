@@ -1,3 +1,67 @@
+exports.sendMail = (subject, html, text, to, from) => {
+  return new Promise((resolve, reject) => {
+    const nodeMailer = require('nodemailer')
+    const transporter = nodeMailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,  // true for 465 port, false for other ports
+      auth: {
+        user: 'alexandre@deepbloo.com',
+        pass: 'fuegofuego'
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    })
+    /*
+    const transporter = nodeMailer.createTransport({
+      host: 'email-smtp.eu-west-1.amazonaws.com',
+      port: 465,
+      secure: true,  // true for 465 port, false for other ports
+      auth: {
+        user: 'AKIAZXRLCF3CBWZKCSA2',
+        pass: 'BCtgQx4OAwGFeTV/gK05RpdDPakWT9YObgCEnlqdFP5a'
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+    */
+    /*
+    const transporter = nodeMailer.createTransport({
+      host: 'smtp.ionos.fr',
+      port: 465,
+      secure: true,  // true for 465 port, false for other ports
+      auth: {
+        user: 'j.cazaux@arread.fr',
+        pass: 'ArreadCazaux'
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+    */
+    if (!from) {
+      from = '"Deepbloo" <info@deepbloo.com>'
+    }
+    const mailOptions = {
+      from: from,
+      to: to,
+      subject: subject,
+      text: text,
+      html: html
+    }
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error)
+        reject(error)
+      } else {
+        resolve()
+      }
+    });
+  })
+}
+
 exports.getXmlJsonData = (data) => {
     if (data && data.length > 0) {
         if (data[0]._) {
@@ -10,35 +74,35 @@ exports.getXmlJsonData = (data) => {
 }
 
 exports.ArchiveFile = (filePath, archivePath) => {
-    return new Promise((resolve, reject) => {
-        const fs = require('fs')
-        const path = require('path')
-        const moment = require('moment')
+  return new Promise((resolve, reject) => {
+    const fs = require('fs')
+    const path = require('path')
+    const moment = require('moment')
 
-        // Liste des fichiers du rep
-        if (!fs.existsSync(archivePath)) { fs.mkdirSync(archivePath) }
-        fs.readdirSync(filePath).forEach(file => {
-            let fileLocation = path.join(filePath, file)
-            let fileStat = fs.statSync(fileLocation)
-            if (fileStat.isDirectory()) { return }
-            let fileDays = moment().diff(moment(fileStat.mtime), 'days')
-            if (fileDays > 60) {
-                let year = fileStat.mtime.getUTCFullYear()
-                let yearPath = path.join(archivePath, `${year}`)
-                if (!fs.existsSync(yearPath)) { fs.mkdirSync(yearPath) }
-                let month = fileStat.mtime.getUTCMonth() + 1
-                let monthPath = path.join(yearPath, `${month}`)
-                if (!fs.existsSync(monthPath)) { fs.mkdirSync(monthPath) }
-                let day = fileStat.mtime.getUTCDate()
-                let dayPath = path.join(monthPath, `${day}`)
-                if (!fs.existsSync(dayPath)) { fs.mkdirSync(dayPath) }
-                dayPath = dayPath
-                let fileLocationNew = path.join(dayPath, file)
-                require(process.cwd() + '/controllers/CtrlTool').renameSync(fileLocation, fileLocationNew)
-            }
-        })
-        resolve(true)
+    // Liste des fichiers du rep
+    if (!fs.existsSync(archivePath)) { fs.mkdirSync(archivePath) }
+    fs.readdirSync(filePath).forEach(file => {
+        let fileLocation = path.join(filePath, file)
+        let fileStat = fs.statSync(fileLocation)
+        if (fileStat.isDirectory()) { return }
+        let fileDays = moment().diff(moment(fileStat.mtime), 'days')
+        if (fileDays > 60) {
+            let year = fileStat.mtime.getUTCFullYear()
+            let yearPath = path.join(archivePath, `${year}`)
+            if (!fs.existsSync(yearPath)) { fs.mkdirSync(yearPath) }
+            let month = fileStat.mtime.getUTCMonth() + 1
+            let monthPath = path.join(yearPath, `${month}`)
+            if (!fs.existsSync(monthPath)) { fs.mkdirSync(monthPath) }
+            let day = fileStat.mtime.getUTCDate()
+            let dayPath = path.join(monthPath, `${day}`)
+            if (!fs.existsSync(dayPath)) { fs.mkdirSync(dayPath) }
+            dayPath = dayPath
+            let fileLocationNew = path.join(dayPath, file)
+            require(process.cwd() + '/controllers/CtrlTool').renameSync(fileLocation, fileLocationNew)
+        }
     })
+    resolve(true)
+  })
 }
 
 exports.ArchiveFile = (filePath, archivePath) => {

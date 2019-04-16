@@ -1,6 +1,6 @@
 var config = module.exports = {}
 
-config.prefixe = 'dev'
+config.prefixe = 'prod'
 config.prefixeDev = 'dev'
 config.prefixeProd = 'prod'
 config.WorkSpaceFolder = 'C:/Ethelp/'

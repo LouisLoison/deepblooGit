@@ -334,18 +334,210 @@ exports.TenderRemove = (id, algoliaId) => {
 exports.TenderStatistic = (year, month) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let creationDateMin = new Date(year, month, 1);
-      let creationDateMax = new Date(year, month, 1);
-      creationDateMax.setMonth(creationDateMax.getMonth() + 1);
-      creationDateMax.setDate(creationDateMin.getDate() - 1);
-      let termDateMin = new Date(year, month, 1);
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      let termDateMin = null
+      if (year && month) {
+        let creationDateMin = new Date(year, month, 1)
+        let creationDateMax = new Date(year, month, 1)
+        creationDateMax.setMonth(creationDateMax.getMonth() + 1)
+        creationDateMax.setDate(creationDateMin.getDate() - 1)
+        termDateMin = new Date(year, month, 1)
+      }
       let tenders = await this.TenderList(null, null, null, null, termDateMin)
       let statistic = {
         count: tenders.length,
+        weekCount: 0,
+        monthCount: 0,
+        liveCount: 0,
+        liveWeekNextCount: 0,
         countrys: [],
+        regions: [],
+        categories: [],
+        families: [],
       }
+
+      let weekDate = new Date();
+      weekDate.setDate(weekDate.getDate() - 7);
+      let weekTimestamp = weekDate.getTime()
+
+      let monthDate = new Date();
+      monthDate.setMonth(monthDate.getMonth() - 1);
+      let monthTimestamp = monthDate.getTime()
+
+      let nowTimestamp = new Date().getTime()
+
+      let weekNextDate = new Date();
+      weekNextDate.setDate(weekNextDate.getDate() + 7);
+      let weekNextTimestamp = weekNextDate.getTime()
+
       for (let tender of tenders) {
+        let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender)
+
+        if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > weekTimestamp) {
+          statistic.weekCount++
+        }
+
+        if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > monthTimestamp) {
+          statistic.monthCount++
+        }
+
+        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > weekNextTimestamp) {
+          statistic.liveWeekNextCount++
+        }
+
+        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > nowTimestamp) {
+          statistic.liveCount++
+        } else {
+          continue
+        }
+
+        // Categories count
+        for(let categorie of tenderFormat.categories) {
+          let categorieFind = statistic.categories.find(a => a.categorie === categorie)
+          if(!categorieFind) {
+            statistic.categories.push({
+              categorie: categorie,
+              count: 1,
+            });
+          } else {
+            categorieFind.count++
+          }
+        }
+
+        // Families count
+        for(let familie of tenderFormat.families) {
+          let familieFind = statistic.families.find(a => a.familie === familie)
+          if(!familieFind) {
+            statistic.families.push({
+              familie: familie,
+              count: 1,
+            });
+          } else {
+            familieFind.count++
+          }
+        }
+
+        // Country count
         if (tender.country && tender.country !== '') {
+          // Search for region and sub-region
+          for (let region of RegionList) {
+            if (region.countrys && region.countrys.includes(tender.country)) {
+              let regionFind = statistic.regions.find(a => a.region === region.label)
+              if(!regionFind) {
+                regionFind = {
+                  region: region.label,
+                  count: 1,
+                  regionSubs: [],
+                  categories: [],
+                  families: [],
+                }
+                statistic.regions.push(regionFind);
+              } else {
+                regionFind.count++
+              }
+              for(let categorie of tenderFormat.categories) {
+                let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
+                if(!categorieFind) {
+                  regionFind.categories.push({
+                    categorie: categorie,
+                    count: 1,
+                  });
+                } else {
+                  categorieFind.count++
+                }
+              }
+              for(let familie of tenderFormat.families) {
+                let familieFind = regionFind.families.find(a => a.familie === familie)
+                if(!familieFind) {
+                  regionFind.families.push({
+                    familie: familie,
+                    count: 1,
+                  });
+                } else {
+                  familieFind.count++
+                }
+              }
+            }
+
+            if (region.regions) {
+              for (let region2 of region.regions) {
+                if (region2.countrys && region2.countrys.includes(tender.country)) {
+                  let regionFind = statistic.regions.find(a => a.region === region.label)
+                  if(!regionFind) {
+                    regionFind = {
+                      region: region.label,
+                      count: 1,
+                      regionSubs: [],
+                      categories: [],
+                      families: [],
+                    }
+                    statistic.regions.push(regionFind);
+                  } else {
+                    regionFind.count++
+                  }
+                  for(let categorie of tenderFormat.categories) {
+                    let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
+                    if(!categorieFind) {
+                      regionFind.categories.push({
+                        categorie: categorie,
+                        count: 1,
+                      });
+                    } else {
+                      categorieFind.count++
+                    }
+                  }
+                  for(let familie of tenderFormat.families) {
+                    let familieFind = regionFind.families.find(a => a.familie === familie)
+                    if(!familieFind) {
+                      regionFind.families.push({
+                        familie: familie,
+                        count: 1,
+                      });
+                    } else {
+                      familieFind.count++
+                    }
+                  }
+                  let regionSubFind = regionFind.regionSubs.find(a => a.region === region2.label)
+                  if(!regionSubFind) {
+                    regionSubFind = {
+                      region: region2.label,
+                      count: 1,
+                      categories: [],
+                      families: [],
+                    }
+                    regionFind.regionSubs.push(regionSubFind);
+                  } else {
+                    regionSubFind.count++
+                  }
+                  for(let categorie of tenderFormat.categories) {
+                    let categorieFind = regionSubFind.categories.find(a => a.categorie === categorie)
+                    if(!categorieFind) {
+                      regionSubFind.categories.push({
+                        categorie: categorie,
+                        count: 1,
+                      });
+                    } else {
+                      categorieFind.count++
+                    }
+                  }
+                  for(let familie of tenderFormat.families) {
+                    let familieFind = regionSubFind.families.find(a => a.familie === familie)
+                    if(!familieFind) {
+                      regionSubFind.families.push({
+                        familie: familie,
+                        count: 1,
+                      });
+                    } else {
+                      familieFind.count++
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Country count
           let country = statistic.countrys.find(a => a.country === tender.country)
           if(!country) {
             statistic.countrys.push({
@@ -357,16 +549,36 @@ exports.TenderStatistic = (year, month) => {
           }
         }
       }
-      statistic.countrys.sort((a, b) => {
-        if (a.count > b.count) {
-          return 1;
-        }
-        if (a.count < b.count) {
-          return -1;
-        }
-        return 0;
+
+      // Sort data
+      statistic.categories = statistic.categories.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
       });
-      statistic.countrys.reverse();
+      statistic.families = statistic.families.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
+      });
+      statistic.countrys = statistic.countrys.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
+      });
+      statistic.regions = statistic.regions.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
+      });
+      for (let region of statistic.regions) {
+        if (!region.regionSubs) { continue }
+        region.regionSubs = region.regionSubs.sort((a, b) => {
+          if (a.count > b.count) { return -1 }
+          if (a.count < b.count) { return 1 }
+          return 0
+        });
+      }
       resolve(statistic)
     } catch (err) {
       reject(err)
