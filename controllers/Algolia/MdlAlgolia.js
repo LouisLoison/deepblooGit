@@ -225,9 +225,9 @@ exports.TenderFormat = (tender) => {
         cpvs: cpvs,
         bidDeadlineDate: bidDeadlineDate,
         bidDeadline_timestamp: bidDeadline_timestamp,
-        // creation_timestamp: new Date().getTime(),
+        creation_timestamp: new Date().getTime(),
         // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
-        creation_timestamp: publication_timestamp,
+        // creation_timestamp: publication_timestamp,
         sourceUrls: sourceUrls,
         userId: tender.userId,
         fileSource: tender.fileSource
