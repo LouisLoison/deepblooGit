@@ -21,6 +21,11 @@ exports.MembershipSynchro = () => {
   return new Promise(async (resolve, reject) => {
     try {
       await this.TokenGet()
+      
+      // Synchro new user
+      await require(process.cwd() + '/controllers/User/MdlUser').Synchro()
+
+      // Get memberships
       let memberships = []
       let membershipTotal = 1
       let currentPage = 1
@@ -31,7 +36,7 @@ exports.MembershipSynchro = () => {
         currentPage++
       }
 
-      // Synchro user
+      // Synchro user type
       const config = require(process.cwd() + '/config')
       let userMemberships = []
       const BddId = 'deepbloo'
