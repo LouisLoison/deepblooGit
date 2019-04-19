@@ -157,6 +157,7 @@ exports.Memberships = (userId) => {
       for (let membership of memberships) {
         if (
           membership.status === "paid"
+          && new Date(membership.expires_at) > new Date()
           // && membership.type_name.startsWith('Premium Membership')
         ) {
           isPremiumMembership = true
@@ -178,7 +179,8 @@ exports.Memberships = (userId) => {
 
       resolve({
         isPremiumMembership,
-        memberships
+        memberships,
+        hasFree : user.membershipFree > 0
       });
     } catch (err) { reject(err) }
   })

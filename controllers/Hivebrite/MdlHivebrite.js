@@ -43,37 +43,71 @@ exports.MembershipSynchro = () => {
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let membership of memberships) {
-        // Search for internal id
-        let query = `
-          SELECT      userId AS "userId", 
-                      type AS "type", 
-                      email AS "email", 
-                      username AS "username", 
-                      password AS "password", 
-                      membershipFree AS "membershipFree" 
-          FROM        user 
-          WHERE       type = 3 
-          AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id, BddEnvironnement, BddId)} 
-        `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-        for (let record of recordset) {
-          userMemberships.push({
-            user: {
-              userId: record.userId,
-              email: record.email,
-              username: record.username,
-              password: record.password,
-              membershipFree: record.membershipFree
-            },
-            membership
-          })
+        let userMembership = userMemberships.find(a => a.user.userId === membership.user_id)
+        if (!userMembership) {
+          // Search for internal id
+          let query = `
+            SELECT      userId AS "userId", 
+                        type AS "type", 
+                        email AS "email", 
+                        username AS "username", 
+                        password AS "password", 
+                        membershipFree AS "membershipFree" 
+            FROM        user 
+            WHERE       type = 3 
+            AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id, BddEnvironnement, BddId)} 
+          `
+          let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+          for (let record of recordset) {
+            userMemberships.push({
+              user: {
+                userId: record.userId,
+                email: record.email,
+                username: record.username,
+                password: record.password,
+                membershipFree: record.membershipFree
+              },
+              memberships: [ membership ],
+              membership
+            })
+          }
+        } else {
+          userMembership.membership.push(membership)
         }
       }
 
       for (let userMembership of userMemberships) {
         let user = userMembership.user
         let membership = userMembership.membership
-        if (membership.type_name.startsWith("Premium Free Trial")) {
+
+        // If user already have take a premium Free Trial
+        if (membership.type_name.startsWith("Premium Free Trial") && user.membershipFree === 1) {
+          user.membershipFree = 2
+          user.updateDate = new Date()
+          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+
+          // Send email
+          let to = user.email
+          let subject = 'Deepbloo - login information'
+          let text = `
+            Dear ${user.username},
+
+            Thanks for your interest but it seems that you had already chosen our Free Trial plan earlier and unfortunatelly this can not be renewed.
+
+            If you would like to continue as a premium member on DEEPBLOO , please select one of our membership plans here: https://platform.deepbloo.com/memberships
+
+            If you have any question, do not hesitate to contact us at info@deepbloo.com
+
+            The Deepbloo team
+          `
+          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+          // await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'alexandre@deepbloo.com')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'jeancazaux@hotmail.com')
+          continue
+        }
+
+        if (membership.type_name.startsWith("Premium Free Trial") && !user.membershipFree) {
           user.membershipFree = 1
         }
         if (!user.password || user.password.trim() === '') {
@@ -95,11 +129,13 @@ exports.MembershipSynchro = () => {
           Login: ${user.email}
           Password: ${user.password}
 
-          You can now go to the tender section, click on Login and enter your login and password.
+          You can now go to the tender section here: https://platform.deepbloo.com/page/tenders
+
+          And click on Login (blue button on the top left side) and enter your login and password.
 
           If you have any question, do not hesitate to contact us at info@deepbloo.com
 
-          The Deepbloo team        
+          The Deepbloo team
         `
         let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)

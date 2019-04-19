@@ -7,8 +7,7 @@ exports.BddImport = () => {
       const path = require('path')
       
       // Get file
-      const deepblooFolder = 'C:/Temp/Deepbloo/'
-      const fileFolder = path.join(deepblooFolder, 'Ftp/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -65,11 +64,30 @@ exports.BddImport = () => {
 exports.FtpGet = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+
+      // Get file list on FTP
       const files = await this.FtpList()
-      for (const file of files) {
+      const xmlFiles = files.filter(a => a.name.toLowerCase().startsWith('feed-') && a.name.toLowerCase().endsWith('.xml'))
+
+      // Get file list on workspace folder
+      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
+      const ftpFiles = fs.readdirSync(ftpFileFolder)
+      const archiveFileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
+      const archiveFiles = fs.readdirSync(archiveFileFolder)
+      const workspaceFiles = ftpFiles.concat(archiveFiles)
+
+      let importFiles = []
+      for (const file of xmlFiles) {
+        if (workspaceFiles.includes(file.name)) {
+          continue
+        }
+        importFiles.push(file)
         await this.FtpGetFile(file.name)
       }
-      resolve(files)
+      resolve(importFiles)
     } catch (err) { reject(err) }
   })
 }
@@ -78,25 +96,30 @@ exports.FtpGetFile = (fileName) => {
   return new Promise((resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
-      var PromiseFtp = require('promise-ftp')
-      var fs = require('fs')
+      const PromiseFtp = require('promise-ftp')
+      const fs = require('fs')
       const path = require('path')
-      var ftp = new PromiseFtp()
+      const ftp = new PromiseFtp()
+
+      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
       ftp.connect(config.ftp)
-      .then((serverMessage) => {
-        return ftp.get(`/feed/${fileName}`)
-      }).then((stream) => {
-        return new Promise((resolve, reject) => {
-          const fileLocation = path.join(config.ftpPath, fileName)
-          stream.once('close', resolve)
-          stream.once('error', reject)
-          stream.pipe(fs.createWriteStream(fileLocation))
+        .then((serverMessage) => {
+          return ftp.get(`/feed/${fileName}`)
         })
-      }).then(function () {
-        return ftp.end()
-      }).then(function () {
-        resolve()
-      })
+        .then((stream) => {
+          return new Promise((resolve, reject) => {
+            const fileLocation = path.join(ftpFileFolder, fileName)
+            stream.once('close', resolve)
+            stream.once('error', reject)
+            stream.pipe(fs.createWriteStream(fileLocation))
+          })
+        })
+        .then(function () {
+          return ftp.end()
+        })
+        .then(function () {
+          resolve()
+        })
     } catch (err) { reject(err) }
   })
 }
@@ -325,6 +348,7 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) =>
 exports.CpvList = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
       const fs = require('fs')
       const path = require('path')
       const util = require('util')
@@ -334,8 +358,7 @@ exports.CpvList = () => {
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
 
       // Get file
-      const deepblooFolder = 'C:/Temp/Deepbloo/'
-      const fileFolder = path.join(deepblooFolder, 'Archive/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -517,7 +540,8 @@ exports.CpvList = () => {
         title = title.trim()
         tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
-      fs.writeFileSync('C:/Temp/Deepbloo/TenderList.csv', tenderText)
+      const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.csv')
+      fs.writeFileSync(tenderListLocation, tenderText)
 
       resolve(cpvList)
     } catch (err) { reject(err) }
@@ -527,6 +551,7 @@ exports.CpvList = () => {
 exports.CpvListOld = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
       const fs = require('fs')
       const path = require('path')
       const util = require('util')
@@ -534,8 +559,7 @@ exports.CpvListOld = () => {
       const readFile = util.promisify(fs.readFile)
 
       // Get file
-      const deepblooFolder = 'C:/Temp/Deepbloo/'
-      const fileFolder = path.join(deepblooFolder, 'Archive/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -596,7 +620,8 @@ exports.CpvListOld = () => {
         cpvText += `${cpv.cpv};${cpv.active};${cpv.count}\n`
       }
       cpvText = cpvText
-      fs.writeFileSync('C:/Temp/Deepbloo/CpvList.csv', cpvText)
+      const cpvListLocation = path.join(config.WorkSpaceFolder, 'CpvList.csv')
+      fs.writeFileSync(cpvListLocation, cpvText)
 
       resolve(cpvList)
     } catch (err) { reject(err) }

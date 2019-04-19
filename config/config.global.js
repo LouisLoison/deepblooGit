@@ -3,7 +3,7 @@ var config = module.exports = {}
 config.prefixe = 'prod'
 config.prefixeDev = 'dev'
 config.prefixeProd = 'prod'
-config.WorkSpaceFolder = 'C:/Ethelp/'
+config.WorkSpaceFolder = 'C:/Temp/Deepbloo/'
 config.AppBackPort = 9020
 config.AppFrontUrl = 'http://localhost:8095'
 config.hostname = 'dev.example.com'
