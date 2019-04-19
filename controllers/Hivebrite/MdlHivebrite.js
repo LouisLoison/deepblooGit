@@ -43,11 +43,18 @@ exports.MembershipSynchro = () => {
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let membership of memberships) {
-        let userMembership = userMemberships.find(a => a.user.userId === membership.user_id)
+        if (
+          membership.status !== "paid"
+          || new Date(membership.expires_at) < new Date()
+        ) {
+          continue
+        }
+        let userMembership = userMemberships.find(a => a.user.hivebriteId === membership.user_id)
         if (!userMembership) {
           // Search for internal id
           let query = `
             SELECT      userId AS "userId", 
+                        hivebriteId AS "hivebriteId", 
                         type AS "type", 
                         email AS "email", 
                         username AS "username", 
@@ -62,6 +69,7 @@ exports.MembershipSynchro = () => {
             userMemberships.push({
               user: {
                 userId: record.userId,
+                hivebriteId: record.hivebriteId,
                 email: record.email,
                 username: record.username,
                 password: record.password,
@@ -72,7 +80,8 @@ exports.MembershipSynchro = () => {
             })
           }
         } else {
-          userMembership.membership.push(membership)
+          userMembership.memberships = membership
+          userMembership.memberships.push(membership)
         }
       }
 
@@ -102,7 +111,7 @@ exports.MembershipSynchro = () => {
           `
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
-          // await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'alexandre@deepbloo.com')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'alexandre@deepbloo.com')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'jeancazaux@hotmail.com')
           continue
         }
