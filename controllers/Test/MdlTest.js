@@ -193,12 +193,85 @@ exports.Test = () => {
           return console.log(err);
         }
       })
-      resolve(isFind)
+      resolve({
+        horodatage,
+        fileLocation
+      })
     } catch (err) { reject(err) }
   })
 }
 
 exports.Test2 = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const sleep = require('util').promisify(setTimeout)
+
+      let horodatage1 = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      let fileLocation = path.join(config.WorkSpaceFolder, `ApiTest2${horodatage1}Start.txt`)
+      fs.writeFile(fileLocation, `Date : ${new Date().toISOString()}`, function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+
+      await sleep(900000)
+
+      let horodatage2 = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      fileLocation = path.join(config.WorkSpaceFolder, `ApiTest2${horodatage1}Start_${horodatage2}End.txt`)
+      fs.writeFile(fileLocation, `Date : ${new Date().toISOString()}`, function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+
+      resolve({
+        horodatage1,
+        horodatage2,
+        fileLocation
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.Test3 = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const sleep = require('util').promisify(setTimeout)
+
+      let horodatage1 = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      let fileLocation = path.join(config.WorkSpaceFolder, `ApiTest2${horodatage1}Start.txt`)
+      fs.writeFile(fileLocation, `Date : ${new Date().toISOString()}`, function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+
+      await sleep(30000)
+
+      let horodatage2 = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      fileLocation = path.join(config.WorkSpaceFolder, `ApiTest2${horodatage1}Start_${horodatage2}End.txt`)
+      fs.writeFile(fileLocation, `Date : ${new Date().toISOString()}`, function (err) {
+        if (err) {
+          console.log(err)
+        }
+      })
+
+      resolve({
+        horodatage1,
+        horodatage2,
+        fileLocation
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.Test100 = () => {
     return new Promise(async (resolve, reject) => {
         const PromiseFtp = require('promise-ftp')
         const ftp = new PromiseFtp()
@@ -243,7 +316,7 @@ exports.Test2 = () => {
     })
 }
 
-exports.Test3 = () => {
+exports.Test101 = () => {
     return new Promise(async (resolve, reject) => {
         const fs = require('fs')
         const util = require('util')
