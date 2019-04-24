@@ -46,7 +46,7 @@ exports.BddImport = () => {
 
       // Move file to archive folder
       const fileSource = path.parse(fileLocation).base
-      const fileLocationArchive = path.join(deepblooFolder, 'Archive/', fileSource)
+      const fileLocationArchive = path.join(config.WorkSpaceFolder, 'Archive/', fileSource)
       fs.renameSync(fileLocation, fileLocationArchive)
 
       resolve({
