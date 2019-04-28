@@ -1,9 +1,6 @@
 exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      // const DgMarket = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket')
-      // await DgMarket.BddImport()
-
       const config = require(process.cwd() + '/config')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -44,7 +41,6 @@ exports.TendersImport = () => {
                     updateDate AS "updateDate" 
         FROM        dgmarket 
         WHERE       status = 0 
-        LIMIT       300
       `
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
