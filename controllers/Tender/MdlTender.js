@@ -373,9 +373,11 @@ exports.TenderStatistic = (year, month) => {
 
       for (let tender of tenders) {
         let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender)
+        let isWeek = false
 
         if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > weekTimestamp) {
           statistic.weekCount++
+          isWeek = true
         }
 
         if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > monthTimestamp) {
@@ -399,9 +401,13 @@ exports.TenderStatistic = (year, month) => {
             statistic.categories.push({
               categorie: categorie,
               count: 1,
+              weekCount: isWeek ? 1 : 0,
             });
           } else {
             categorieFind.count++
+            if (isWeek) {
+              categorieFind.weekCount++
+            }
           }
         }
 
@@ -412,9 +418,13 @@ exports.TenderStatistic = (year, month) => {
             statistic.families.push({
               familie: familie,
               count: 1,
+              weekCount: isWeek ? 1 : 0,
             });
           } else {
             familieFind.count++
+            if (isWeek) {
+              familieFind.weekCount++
+            }
           }
         }
 
@@ -428,13 +438,17 @@ exports.TenderStatistic = (year, month) => {
                 regionFind = {
                   region: region.label,
                   count: 1,
+                  weekCount: isWeek ? 1 : 0,
                   regionSubs: [],
                   categories: [],
                   families: [],
                 }
-                statistic.regions.push(regionFind);
+                statistic.regions.push(regionFind)
               } else {
                 regionFind.count++
+                if (isWeek) {
+                  regionFind.weekCount++
+                }
               }
               for(let categorie of tenderFormat.categories) {
                 let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
@@ -442,9 +456,13 @@ exports.TenderStatistic = (year, month) => {
                   regionFind.categories.push({
                     categorie: categorie,
                     count: 1,
-                  });
+                    weekCount: isWeek ? 1 : 0,
+                  })
                 } else {
                   categorieFind.count++
+                  if (isWeek) {
+                    categorieFind.weekCount++
+                  }
                 }
               }
               for(let familie of tenderFormat.families) {
@@ -453,9 +471,13 @@ exports.TenderStatistic = (year, month) => {
                   regionFind.families.push({
                     familie: familie,
                     count: 1,
-                  });
+                    weekCount: isWeek ? 1 : 0,
+                  })
                 } else {
                   familieFind.count++
+                  if (isWeek) {
+                    familieFind.weekCount++
+                  }
                 }
               }
             }
@@ -468,13 +490,17 @@ exports.TenderStatistic = (year, month) => {
                     regionFind = {
                       region: region.label,
                       count: 1,
+                      weekCount: isWeek ? 1 : 0,
                       regionSubs: [],
                       categories: [],
                       families: [],
                     }
-                    statistic.regions.push(regionFind);
+                    statistic.regions.push(regionFind)
                   } else {
                     regionFind.count++
+                    if (isWeek) {
+                      regionFind.weekCount++
+                    }
                   }
                   for(let categorie of tenderFormat.categories) {
                     let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
@@ -482,9 +508,13 @@ exports.TenderStatistic = (year, month) => {
                       regionFind.categories.push({
                         categorie: categorie,
                         count: 1,
-                      });
+                        weekCount: isWeek ? 1 : 0,
+                      })
                     } else {
                       categorieFind.count++
+                      if (isWeek) {
+                        categorieFind.weekCount++
+                      }
                     }
                   }
                   for(let familie of tenderFormat.families) {
@@ -493,9 +523,13 @@ exports.TenderStatistic = (year, month) => {
                       regionFind.families.push({
                         familie: familie,
                         count: 1,
+                        weekCount: isWeek ? 1 : 0,
                       });
                     } else {
                       familieFind.count++
+                      if (isWeek) {
+                        familieFind.weekCount++
+                      }
                     }
                   }
                   let regionSubFind = regionFind.regionSubs.find(a => a.region === region2.label)
@@ -509,6 +543,9 @@ exports.TenderStatistic = (year, month) => {
                     regionFind.regionSubs.push(regionSubFind);
                   } else {
                     regionSubFind.count++
+                    if (isWeek) {
+                      regionSubFind.weekCount++
+                    }
                   }
                   for(let categorie of tenderFormat.categories) {
                     let categorieFind = regionSubFind.categories.find(a => a.categorie === categorie)
@@ -516,9 +553,13 @@ exports.TenderStatistic = (year, month) => {
                       regionSubFind.categories.push({
                         categorie: categorie,
                         count: 1,
+                        weekCount: isWeek ? 1 : 0,
                       });
                     } else {
                       categorieFind.count++
+                      if (isWeek) {
+                        categorieFind.weekCount++
+                      }
                     }
                   }
                   for(let familie of tenderFormat.families) {
@@ -527,9 +568,13 @@ exports.TenderStatistic = (year, month) => {
                       regionSubFind.families.push({
                         familie: familie,
                         count: 1,
+                        weekCount: isWeek ? 1 : 0,
                       });
                     } else {
                       familieFind.count++
+                      if (isWeek) {
+                        familieFind.weekCount++
+                      }
                     }
                   }
                 }
