@@ -80,7 +80,7 @@ exports.MembershipSynchro = () => {
             })
           }
         } else {
-          userMembership.memberships = membership
+          userMembership.membership = membership
           userMembership.memberships.push(membership)
         }
       }
