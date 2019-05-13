@@ -95,4 +95,4 @@ app.use(function(req, res) {
 var server = app.listen(config.AppBackPort, function() {
   console.log('Server listening on port ' + config.AppBackPort)
 })
-server.timeout = 1200000;
+server.timeout = 2400000;

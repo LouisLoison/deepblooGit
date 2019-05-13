@@ -112,6 +112,7 @@ exports.MembershipSynchro = () => {
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'alexandre@deepbloo.com')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'julie@deepbloo.com')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'jeancazaux@hotmail.com')
           continue
         }
@@ -149,6 +150,7 @@ exports.MembershipSynchro = () => {
         let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'alexandre@deepbloo.com')
+        await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'julie@deepbloo.com')
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, 'jeancazaux@hotmail.com')
       }
 
