@@ -29,7 +29,7 @@ exports.MembershipSynchro = () => {
       let memberships = []
       let membershipTotal = 1
       let currentPage = 1
-      while (memberships.length < membershipTotal && currentPage < 200) {
+      while (memberships.length < membershipTotal && currentPage < 1000) {
         let membershipsResponse = await this.get(`api/admin/v2/memberships?page=${currentPage}&per_page=500`)
         memberships = memberships.concat(membershipsResponse.data.memberships)
         membershipTotal = membershipsResponse.headers["x-total"]
@@ -251,5 +251,87 @@ exports.VenturesGet = () => {
     }
     */
     resolve(ventureDuplicates)
+  })
+}
+
+exports.CompanieSynchro = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await this.TokenGet()
+      
+      // Synchro new user
+      await require(process.cwd() + '/controllers/User/MdlUser').Synchro()
+
+      // Get companies
+      let companieHeaders = []
+      let companieTotal = 1
+      let currentPage = 1
+      while (companieHeaders.length < companieTotal && currentPage < 2) {
+        let companiesResponse = await this.get(`api/admin/v1/companies?page=${currentPage}&per_page=100`)
+        companieHeaders = companieHeaders.concat(companiesResponse.data.companies)
+        companieTotal = companiesResponse.headers["x-total"]
+        currentPage++
+      }
+      
+      let companies = []
+      for (let companieHeader of companieHeaders) {
+        let companieResponse = await this.get(`api/admin/v1/companies/${companieHeader.id}`)
+        let companie = companieResponse.data.company
+        if (companie.long_description && companie.long_description !== '') {
+          let cpvsText = '';
+          let cpvDescriptionsText = '';
+          companie.cpvFound = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(companie.long_description, cpvsText, cpvDescriptionsText)
+        }
+        companies.push(companieResponse.data.company)
+      }
+
+      let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
+
+      // Update organization bdd list
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      for (let companie of companies) {
+        let organizationBdd = organizationsBdd.find(a => a.dgmarketId === companie.id)
+        if (!organizationBdd) {
+          organizationBdd = {
+            dgmarketId: companie.id,
+            name: companie.name,
+            creationDate: new Date(),
+            updateDate: new Date()
+          }
+          organizationBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+        } else {
+          if (organizationBdd.name !== companie.name) {
+            organizationBdd.name = companie.name
+            organizationBdd.updateDate = new Date()
+            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+          }
+        }
+
+        let query = `
+            DELETE FROM organizationcpv 
+            WHERE organizationId = ${organizationBdd.organizationId} 
+        `
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        if (companie.cpvFound) {
+          let cpvsTextTemp = companie.cpvFound.cpvsText.split(',')
+          let cpvsDescriptionTemp = companie.cpvFound.cpvDescriptionsText.split(',')
+          for (let i = 0; i < cpvsTextTemp.length; i++) {
+            let code = parseInt(cpvsTextTemp[i], 10)
+            let name = cpvsDescriptionTemp[i].replace(/-/g, ' ')
+            organizationCpv = {
+              organizationId: organizationBdd.organizationId,
+              cpvCode: code,
+              cpvName: name,
+            }
+            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
+          }
+        }
+      }
+
+      resolve(companies)
+    } catch (err) { reject(err) }
   })
 }

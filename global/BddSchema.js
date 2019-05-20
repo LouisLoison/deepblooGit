@@ -48,6 +48,19 @@ var Schema = {
         membershipFree: { type: "Int" },
         creationDate: { type: "DateTime" },
         updateDate: { type: "DateTime" }
+    },
+    organization: {
+        organizationId: { type: "Int", key: true },
+        dgmarketId: { type: "Int" },
+        name: { type: "String" },
+        creationDate: { type: "DateTime" },
+        updateDate: { type: "DateTime" }
+    },
+    organizationCpv: {
+        organizationCpvId: { type: "Int", key: true },
+        organizationId: { type: "Int" },
+        cpvCode: { type: "String" },
+        cpvName: { type: "String" },
     }
   }
 }

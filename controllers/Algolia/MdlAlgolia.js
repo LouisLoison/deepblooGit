@@ -2,9 +2,9 @@ exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      const BddTool = require(process.cwd() + '/global/BddTool')
       let query = `
         SELECT      id AS "id", 
                     dgmarketId AS "dgmarketId", 

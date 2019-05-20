@@ -15,3 +15,9 @@ exports.VenturesGet = (req, res) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.CompanieSynchro = (req, res) => {
+    require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').CompanieSynchro().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}

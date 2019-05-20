@@ -293,6 +293,7 @@ exports.FileParse = (fileLocation) => {
 exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) => {
   const CategoriesList = require(process.cwd() + '/public/constants/categories.json')
 
+  let cpvs = []
   let words = []
   let cpvFoundCount = 0
   if (!cpvsText) {
@@ -321,15 +322,18 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) =>
       for (let word of category.words) {
         let regEx = new RegExp("\\b" + word + "\\b", 'gi');
         if (description.match(regEx)) {
-          cpvFoundCount++
-          if (cpvsText !== '') {
-            cpvsText += ','
+          if (!cpvs.includes(category.cpv)) {
+            cpvs.push(category.cpv)
+            cpvFoundCount++
+            if (cpvsText !== '') {
+              cpvsText += ','
+            }
+            cpvsText += category.cpv
+            if (cpvDescriptionsText !== '') {
+              cpvDescriptionsText += ','
+            }
+            cpvDescriptionsText += category.cpvText
           }
-          cpvsText += category.cpv
-          if (cpvDescriptionsText !== '') {
-            cpvDescriptionsText += ','
-          }
-          cpvDescriptionsText += category.cpvText
           if (!words.includes(word)) {
             words.push(word)
           }
@@ -624,6 +628,110 @@ exports.CpvListOld = () => {
       fs.writeFileSync(cpvListLocation, cpvText)
 
       resolve(cpvList)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.ExportUrlFromFile = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT      id AS "id", 
+                    dgmarketId AS "dgmarketId", 
+                    procurementId AS "procurementId", 
+                    title AS "title", 
+                    description AS "description", 
+                    lang AS "lang", 
+                    contactFirstName AS "contactFirstName", 
+                    contactLastName AS "contactLastName", 
+                    contactAddress AS "contactAddress", 
+                    contactCity AS "contactCity", 
+                    contactState AS "contactState", 
+                    contactCountry AS "contactCountry", 
+                    contactEmail AS "contactEmail", 
+                    contactPhone AS "contactPhone", 
+                    buyerName AS "buyerName", 
+                    buyerCountry AS "buyerCountry", 
+                    procurementMethod AS "procurementMethod", 
+                    noticeType AS "noticeType", 
+                    country AS "country", 
+                    estimatedCost AS "estimatedCost", 
+                    currency AS "currency", 
+                    publicationDate AS "publicationDate", 
+                    cpvs AS "cpvs", 
+                    cpvDescriptions AS "cpvDescriptions", 
+                    words AS "words", 
+                    bidDeadlineDate AS "bidDeadlineDate", 
+                    sourceUrl AS "sourceUrl", 
+                    userId AS "userId",
+                    fileSource AS "fileSource", 
+                    algoliaId AS "algoliaId", 
+                    status AS "status", 
+                    creationDate AS "creationDate", 
+                    updateDate AS "updateDate" 
+        FROM        dgmarket 
+        WHERE       status = 0 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const tenders = []
+      for (let record of recordset) {
+        let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record)
+        if (!tender) {
+          continue
+        }
+        tenders.push(tender)
+      }
+      
+      let domaines = []
+      let tenderUrl = []
+      for (let tender of tenders) {
+        for (let url of tender.sourceUrls) {
+          if (url.includes('bidsinfo.com')) {
+            let toto = 1
+          }
+          if (!url.toLowerCase().startsWith('https://') && !url.toLowerCase().startsWith('http://')) {
+            continue
+          }
+          let domaine = url.substring(url.indexOf('//') + 2)
+          domaine = domaine.split('/')[0].trim()
+          if (!domaine || domaine === '') {
+            continue
+          }
+          if (domaines.includes(domaine)) {
+            continue
+          }
+          domaines.push(domaine)
+          let tenderNew = tender
+          tenderNew.url = url
+          tenderNew.urlDomaine = domaine
+          tenderNew.urlType = ''
+          tenderUrl.push(tenderNew)
+          // https://www2.comprasnet.gov.br/siasgnet-irp/resumoIRP.do?method=iniciar&acessoPublico=1&irp.codigoIrp=277619
+        }
+      }
+
+      let tenderText = `dgmarketId;title;buyerName;domaine;url;type;bidDeadline;publication\n`
+      for (let tender of tenderUrl) {
+        let title = tender.title.substring(0, 1000)
+        title = title.split(';').join(',')
+        title = title.split('\r\n').join(' ').trim()
+        title = title.split('\n\r').join(' ').trim()
+        title = title.split('\n').join(' ').trim()
+        title = title.split('\r').join(' ').trim()
+        title = title.trim()
+        tenderText += `${tender.dgmarketId};${title};${tender.buyer.name};${tender.urlDomaine};${tender.url};${tender.urlType};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+      }
+      const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderUrlList.csv')
+      fs.writeFileSync(tenderListLocation, tenderText)
+
+      resolve(domaines)
     } catch (err) { reject(err) }
   })
 }
