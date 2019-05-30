@@ -15,7 +15,9 @@ exports.List = (filter) => {
                   organization.creationDate AS "creationDate", 
                   organization.updateDate AS "updateDate", 
                   organizationCpv.cpvCode AS "cpvCode", 
-                  organizationCpv.cpvName AS "cpvName" 
+                  organizationCpv.cpvName AS "cpvName", 
+                  organizationCpv.origineType AS "origineType", 
+                  organizationCpv.rating AS "rating" 
         FROM      organization 
         LEFT JOIN organizationCpv ON organizationCpv.organizationId = organization.organizationId 
       `
@@ -46,6 +48,8 @@ exports.List = (filter) => {
           organization.cpvs.push({
             code: record.cpvCode,
             name: record.cpvName,
+            origineType: record.origineType,
+            rating: record.rating,
           })
         }
       }

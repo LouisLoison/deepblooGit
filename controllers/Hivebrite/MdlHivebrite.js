@@ -258,9 +258,6 @@ exports.CompanieSynchro = () => {
   return new Promise(async (resolve, reject) => {
     try {
       await this.TokenGet()
-      
-      // Synchro new user
-      await require(process.cwd() + '/controllers/User/MdlUser').Synchro()
 
       // Get companies
       let companieHeaders = []
@@ -313,6 +310,7 @@ exports.CompanieSynchro = () => {
         let query = `
             DELETE FROM organizationcpv 
             WHERE organizationId = ${organizationBdd.organizationId} 
+            AND origineType = 1 
         `
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         if (companie.cpvFound) {
@@ -323,8 +321,9 @@ exports.CompanieSynchro = () => {
             let name = cpvsDescriptionTemp[i].replace(/-/g, ' ')
             organizationCpv = {
               organizationId: organizationBdd.organizationId,
-              cpvCode: code,
-              cpvName: name,
+              cpvCode: code.trim(),
+              cpvName: name.trim(),
+              origineType: 1,
             }
             await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
           }
