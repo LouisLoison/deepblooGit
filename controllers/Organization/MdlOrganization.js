@@ -37,7 +37,7 @@ exports.List = (filter) => {
           organization = {
             organizationId: record.organizationId,
             dgmarketId: record.dgmarketId,
-            name: record.name,
+            name: record.name.trim(),
             cpvs: [],
             creationDate: record.creationDate,
             updateDate: record.updateDate,
@@ -47,7 +47,7 @@ exports.List = (filter) => {
         if (record.cpvCode) {
           organization.cpvs.push({
             code: record.cpvCode,
-            name: record.cpvName,
+            name: record.cpvName.trim(),
             origineType: record.origineType,
             rating: record.rating,
           })
@@ -82,6 +82,24 @@ exports.AddUpdate = (organization) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let organizationNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organization)
+
+      if (organization.cpvs) {
+        let query = `
+            DELETE FROM organizationcpv 
+            WHERE organizationId = ${organizationNew.organizationId} 
+        `
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        for (let cpv of organization.cpvs) {
+          let organizationCpv= {
+            organizationId: organizationNew.organizationId,
+            cpvCode: cpv.code,
+            cpvName: cpv.name.trim(),
+            origineType: cpv.origineType,
+            rating: cpv.rating,
+          }
+          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
+        }
+      }
       resolve(organizationNew);
     } catch (err) { reject(err) }
   })
