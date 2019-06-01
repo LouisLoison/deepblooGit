@@ -73,17 +73,18 @@ exports.getSchema = function() {
 
 exports.getTableConfig = function(Bdd, Environnement, TableName) {
   return new Promise(async (resolve, reject) => {
-    const BddTool = require(process.cwd() + '/global/BddTool')
-    const TableConfig = { TableName: TableName }
-    let Query = ''
-    if (Config.bdd[Bdd][Environnement].config.type === 'MsSql') {
-      Query = `Exec SP_Columns ${TableName}`
-    } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
-      Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = '${Config.bdd[Bdd][Environnement].config.database}' `
-    } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
-      Query = `SELECT * FROM SYS.USER_TAB_COLUMNS WHERE TABLE_NAME= '${TableName.toUpperCase()}'`
-    }
-    BddTool.QueryExecBdd(Bdd, Environnement, Query, (err) => { reject(err) }, (recordset) => { 
+    try {
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const TableConfig = { TableName: TableName }
+      let Query = ''
+      if (Config.bdd[Bdd][Environnement].config.type === 'MsSql') {
+        Query = `Exec SP_Columns ${TableName}`
+      } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
+        Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = '${Config.bdd[Bdd][Environnement].config.database}' `
+      } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
+        Query = `SELECT * FROM SYS.USER_TAB_COLUMNS WHERE TABLE_NAME= '${TableName.toUpperCase()}'`
+      }
+      let recordset = await BddTool.QueryExecBdd2(Bdd, Environnement, Query)
       if (!recordset || recordset.length === 0) {
         TableConfig.Error = 'Table manquante'
       } else {
@@ -103,6 +104,6 @@ exports.getTableConfig = function(Bdd, Environnement, TableName) {
         }
       }
       resolve(TableConfig)
-    })
+    } catch (err) { reject(err) }
   })
 }

@@ -104,3 +104,74 @@ exports.AddUpdate = (organization) => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.ListFromCpvs = (cpvs) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get ticket list
+      var organizations = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT      organization.organizationId AS "organizationId", 
+                    organization.name AS "name", 
+                    organization.dgmarketId AS "dgmarketId", 
+                    organization.creationDate AS "creationDate", 
+                    organization.updateDate AS "updateDate", 
+                    organizationCpv.cpvCode AS "cpvCode", 
+                    organizationCpv.cpvName AS "cpvName", 
+                    organizationCpv.origineType AS "origineType", 
+                    organizationCpv.rating AS "rating" 
+        FROM        organization 
+        INNER JOIN  organizationCpv ON organizationCpv.organizationId = organization.organizationId 
+      `
+      if (cpvs) {
+        let where = ``
+        if (where !== '') { where += 'AND ' }
+        where += `organizationCpv.cpvCode IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      query += '  ORDER BY organization.organizationId '
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let organization = null
+      for (var record of recordset) {
+        if (!organization || organization.organizationId !== record.organizationId) {
+          organization = {
+            organizationId: record.organizationId,
+            dgmarketId: record.dgmarketId,
+            name: record.name.trim(),
+            cpvs: [],
+            creationDate: record.creationDate,
+            updateDate: record.updateDate,
+          }
+          organizations.push(organization)
+        }
+        if (record.cpvCode) {
+          organization.cpvs.push({
+            code: record.cpvCode,
+            name: record.cpvName.trim(),
+            origineType: record.origineType,
+            rating: record.rating,
+          })
+        }
+      }
+
+      // Init CPV rating
+      /*
+      for (let organization of organizations) {
+        organization.cpvRating = 0
+        // Search for manual rating
+        let manualRatingFounds
+        for (let cpv of organization.cpvs) {
+          organization.cpvRating = 0
+        }
+      }
+      */
+
+      resolve(organizations);
+    } catch (err) { reject(err) }
+  })
+}
