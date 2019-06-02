@@ -131,7 +131,7 @@ exports.ListFromCpvs = (cpvs) => {
       if (cpvs) {
         let where = ``
         if (where !== '') { where += 'AND ' }
-        where += `organizationCpv.cpvCode IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
+        where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY organization.organizationId '
@@ -160,16 +160,56 @@ exports.ListFromCpvs = (cpvs) => {
       }
 
       // Init CPV rating
-      /*
       for (let organization of organizations) {
-        organization.cpvRating = 0
-        // Search for manual rating
-        let manualRatingFounds
+        organization.cpvRatings = []
         for (let cpv of organization.cpvs) {
-          organization.cpvRating = 0
+          if (cpv.origineType === -1) {
+            continue;
+          }
+          let cpvFound = organization.cpvRatings.find(a => a.code === cpv.code);
+          if (!cpvFound) {
+            cpvFound = {
+              code: cpv.code,
+              name: cpv.name,
+              ratingSynchro: 0,
+              rating: 0,
+              cpvs: [],
+              isDelete: false,
+            };
+            organization.cpvRatings.push(cpvFound);
+          }
+          if (cpv.origineType === 1) {
+            cpvFound.ratingSynchro++;
+          }
+          if (cpv.origineType === 2) {
+            cpvFound.isManual = true;
+            cpvFound.rating = Math.max(cpvFound.rating, cpv.rating);
+          }
+          if (cpv.origineType === -1) {
+            cpvFound.isDelete = true;
+          }
+          cpvFound.cpvs.push(cpv);
         }
+        organization.cpvRatings = organization.cpvRatings.filter(a => !a.isDelete);
+        organization.cpvRatings = organization.cpvRatings.sort((a, b) => {
+          return a.rating > b.rating ? -1 : a.rating < b.rating ? 1 : 0;
+        });
       }
-      */
+      organizations = organizations.filter(a => a.cpvRatings.length > 0);
+
+      for (let organization of organizations) {
+        let cpvRating = organization.cpvRatings[0];
+        if (cpvRating.rating > 0) {
+          organization.cpvRating = cpvRating.rating
+        } else {
+          organization.cpvRating = cpvRating.ratingSynchro
+        }
+        organization.cpvs = undefined;
+      }
+
+      organizations = organizations.sort((a, b) => {
+        return a.cpvRating > b.cpvRating ? -1 : a.cpvRating < b.cpvRating ? 1 : 0;
+      });
 
       resolve(organizations);
     } catch (err) { reject(err) }
