@@ -11,6 +11,7 @@ exports.List = (filter) => {
       let query = `
         SELECT    organization.organizationId AS "organizationId", 
                   organization.name AS "name", 
+                  organization.countrys AS "countrys", 
                   organization.dgmarketId AS "dgmarketId", 
                   organization.creationDate AS "creationDate", 
                   organization.updateDate AS "updateDate", 
@@ -38,6 +39,7 @@ exports.List = (filter) => {
             organizationId: record.organizationId,
             dgmarketId: record.dgmarketId,
             name: record.name.trim(),
+            countrys: record.countrys,
             cpvs: [],
             creationDate: record.creationDate,
             updateDate: record.updateDate,

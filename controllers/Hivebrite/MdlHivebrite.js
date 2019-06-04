@@ -263,7 +263,7 @@ exports.CompanieSynchro = () => {
       let companieHeaders = []
       let companieTotal = 1
       let currentPage = 1
-      while (companieHeaders.length < companieTotal && currentPage < 2) {
+      while (companieHeaders.length < companieTotal && currentPage < 100) {
         let companiesResponse = await this.get(`api/admin/v1/companies?page=${currentPage}&per_page=100`)
         companieHeaders = companieHeaders.concat(companiesResponse.data.companies)
         companieTotal = companiesResponse.headers["x-total"]
@@ -321,7 +321,7 @@ exports.CompanieSynchro = () => {
             let name = cpvsDescriptionTemp[i].replace(/-/g, ' ')
             organizationCpv = {
               organizationId: organizationBdd.organizationId,
-              cpvCode: code.trim(),
+              cpvCode: code,
               cpvName: name.trim(),
               origineType: 1,
             }

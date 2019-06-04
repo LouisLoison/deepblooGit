@@ -53,6 +53,7 @@ var Schema = {
       organizationId: { type: "Int", key: true },
       dgmarketId: { type: "Int" },
       name: { type: "String" },
+      countrys: { type: "String" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
