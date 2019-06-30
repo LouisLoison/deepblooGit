@@ -46,8 +46,20 @@ var Schema = {
       username: { type: "String" },
       password: { type: "String" },
       membershipFree: { type: "Int" },
+      organizationId: { type: "Int" },
+      country: { type: "String" },
+      countryCode: { type: "String" },
+      photo: { type: "String" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
+    },
+    userCpv: {
+      userCpvId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      cpvCode: { type: "String" },
+      cpvName: { type: "String" },
+      origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
+      rating: { type: "Int" },
     },
     organization: {
       organizationId: { type: "Int", key: true },

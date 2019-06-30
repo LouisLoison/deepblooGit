@@ -17,7 +17,7 @@ exports.AddUpdate = (req, res) => {
 }
 
 exports.ListFromCpvs = (req, res) => {
-  require(process.cwd() + '/controllers/Organization/MdlOrganization').ListFromCpvs(req.body.cpvs).then((data) => {
+  require(process.cwd() + '/controllers/Organization/MdlOrganization').ListFromCpvs(req.body.cpvs, req.body.country).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

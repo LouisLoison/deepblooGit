@@ -107,7 +107,7 @@ exports.AddUpdate = (organization) => {
   })
 }
 
-exports.ListFromCpvs = (cpvs) => {
+exports.ListFromCpvs = (cpvs, country) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -121,48 +121,120 @@ exports.ListFromCpvs = (cpvs) => {
         SELECT      organization.organizationId AS "organizationId", 
                     organization.name AS "name", 
                     organization.dgmarketId AS "dgmarketId", 
+                    organization.countrys AS "countrys", 
                     organization.creationDate AS "creationDate", 
                     organization.updateDate AS "updateDate", 
                     organizationCpv.cpvCode AS "cpvCode", 
                     organizationCpv.cpvName AS "cpvName", 
                     organizationCpv.origineType AS "origineType", 
-                    organizationCpv.rating AS "rating" 
+                    organizationCpv.rating AS "rating", 
+                    user.userId AS "userId", 
+                    user.hivebriteId AS "hivebriteId", 
+                    user.username AS "userName", 
+                    user.email AS "userEmail", 
+                    user.photo AS "userPhoto", 
+                    user.country AS "userCountry", 
+                    user.countryCode AS "userCountryCode", 
+                    userCpv.cpvCode AS "userCpvCode", 
+                    userCpv.cpvName AS "userCpvName", 
+                    userCpv.origineType AS "userOrigineType", 
+                    userCpv.rating AS "userRating" 
         FROM        organization 
         INNER JOIN  organizationCpv ON organizationCpv.organizationId = organization.organizationId 
+        LEFT JOIN   user ON user.organizationId = organization.organizationId 
+        LEFT JOIN   userCpv ON userCpv.userId = user.userId 
       `
       if (cpvs) {
         let where = ``
         if (where !== '') { where += 'AND ' }
+        where += `( \n`
         where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
+        where += `OR userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
+        where += `) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }
-      query += '  ORDER BY organization.organizationId '
+      query += '  ORDER BY organization.organizationId, organizationCpv.cpvCode, user.userId, userCpv.cpvCode '
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let organization = null
+      let cpvCode = null
+      let user = null
+      let userCpvCode = null
       for (var record of recordset) {
         if (!organization || organization.organizationId !== record.organizationId) {
           organization = {
             organizationId: record.organizationId,
             dgmarketId: record.dgmarketId,
             name: record.name.trim(),
+            countrys: record.countrys ? record.countrys.trim().split(',') : [],
             cpvs: [],
+            users: [],
             creationDate: record.creationDate,
             updateDate: record.updateDate,
           }
           organizations.push(organization)
+          cpvCode = null
+          user = null
+          userCpvCode = null
         }
-        if (record.cpvCode) {
+        if (record.cpvCode && cpvCode !== record.cpvCode) {
           organization.cpvs.push({
             code: record.cpvCode,
             name: record.cpvName.trim(),
             origineType: record.origineType,
             rating: record.rating,
           })
+          cpvCode = record.cpvCode
+        }
+        if (record.userId && (!user || user.userId !== record.userId)) {
+          user = organization.users.find(a => a.userId === record.userId)
+          if (!user) {
+            user = {
+              userId: record.userId,
+              hivebriteId: record.hivebriteId,
+              username: record.userName,
+              email: record.userEmail,
+              photo: record.userPhoto,
+              country: record.userCountry,
+              cpvs: [],
+            }
+            organization.users.push(user)
+          }
+        }
+        if (user && record.userCpvCode && userCpvCode !== record.userCpvCode) {
+          user.cpvs.push({
+            code: record.userCpvCode,
+            name: record.userCpvName.trim(),
+            origineType: record.userOrigineType,
+            rating: record.userRating,
+          })
+          userCpvCode = record.userCpvCode
         }
       }
 
       // Init CPV rating
       for (let organization of organizations) {
+        let organizationCountryFlg = false
+        let userCountryFlg = false
+        let userCpvFlg = false
+
+        if (organization.countrys.includes(country)) {
+          organizationCountryFlg = true
+        }
+
+        for (let user of organization.users) {
+          if (user.country === country) {
+            userCountryFlg = true
+          }
+          if (user.cpvs && user.cpvs.length > 0) {
+            let userCpvNames = user.cpvs.map(a => a.name)
+            for (let cpv of cpvs) {
+              if (userCpvNames.includes(cpv)) {
+                userCpvFlg = true
+              }
+            }
+          }
+        }
+
         organization.cpvRatings = []
         for (let cpv of organization.cpvs) {
           if (cpv.origineType === -1) {
@@ -194,9 +266,28 @@ exports.ListFromCpvs = (cpvs) => {
         }
         organization.cpvRatings = organization.cpvRatings.filter(a => !a.isDelete);
         organization.cpvRatings = organization.cpvRatings.sort((a, b) => {
-          return a.rating > b.rating ? -1 : a.rating < b.rating ? 1 : 0;
-        });
+          return a.rating > b.rating ? -1 : a.rating < b.rating ? 1 : 0
+        })
+        if (organization.cpvRatings.length > 0) {
+          organizationCpvFlg = true
+        }
+
+        organization.cpvRating = 0
+        if (organizationCpvFlg && organizationCountryFlg && userCpvFlg && userCountryFlg) {
+          organization.cpvRating = 6
+        } else if (organizationCpvFlg && userCpvFlg && userCountryFlg) {
+          organization.cpvRating = 5
+        } else if (userCpvFlg && userCountryFlg) {
+          organization.cpvRating = 4
+        } else if (organizationCpvFlg && userCountryFlg) {
+          organization.cpvRating = 3
+        } else if (organizationCpvFlg) {
+          organization.cpvRating = 2
+        } else if (userCpvFlg) {
+          organization.cpvRating = 1
+        }
       }
+      /*
       organizations = organizations.filter(a => a.cpvRatings.length > 0);
 
       for (let organization of organizations) {
@@ -208,12 +299,20 @@ exports.ListFromCpvs = (cpvs) => {
         }
         organization.cpvs = undefined;
       }
+      */
 
+      organizations = organizations.filter(a => a.cpvRating);
       organizations = organizations.sort((a, b) => {
-        return a.cpvRating > b.cpvRating ? -1 : a.cpvRating < b.cpvRating ? 1 : 0;
+        let aValue = a.cpvRating
+        let bValue = b.cpvRating
+        if (aValue === bValue) {
+          aValue = a.users.length
+          bValue = b.users.length
+        }
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       });
 
-      resolve(organizations);
+      resolve(organizations.slice(0, 30));
     } catch (err) { reject(err) }
   })
 }

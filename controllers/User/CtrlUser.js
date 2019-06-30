@@ -36,6 +36,12 @@ exports.Synchro = (req, res) => {
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.SynchroFull = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').SynchroFull().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.SetPremium = (req, res) => {
     require(process.cwd() + '/controllers/User/MdlUser').SetPremium(req.body.userId).then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))

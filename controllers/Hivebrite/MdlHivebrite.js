@@ -257,6 +257,7 @@ exports.VenturesGet = () => {
 exports.CompanieSynchro = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const countrys = require(process.cwd() + '/public/constants/countrys.json')
       await this.TokenGet()
 
       // Get companies
@@ -274,12 +275,25 @@ exports.CompanieSynchro = () => {
       for (let companieHeader of companieHeaders) {
         let companieResponse = await this.get(`api/admin/v1/companies/${companieHeader.id}`)
         let companie = companieResponse.data.company
+        let countryCode = companie.juridiction
+        if (!countryCode && companie.billing_location) {
+          countryCode = companie.billing_location.country
+        } else if (!countryCode && companie.postal_location) {
+          countryCode = companie.postal_location.country
+        }
+        if (countryCode && countryCode !== '') {
+          let countryFound = countrys.find(a => a.code === countryCode)
+          if (countryFound) {
+            companie.country = countryFound.name
+          }
+        }
+
         if (companie.long_description && companie.long_description !== '') {
           let cpvsText = '';
           let cpvDescriptionsText = '';
           companie.cpvFound = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(companie.long_description, cpvsText, cpvDescriptionsText)
         }
-        companies.push(companieResponse.data.company)
+        companies.push(companie)
       }
 
       let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
@@ -295,22 +309,33 @@ exports.CompanieSynchro = () => {
           organizationBdd = {
             dgmarketId: companie.id,
             name: companie.name,
+            countrys: companie.country,
             creationDate: new Date(),
             updateDate: new Date()
           }
           organizationBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
         } else {
-          if (organizationBdd.name !== companie.name) {
+          let countrys = companie.country
+          if (organizationBdd.countrys && organizationBdd.countrys !== '') {
+            if (!organizationBdd.countrys.split('|').includes(companie.country)) {
+              countrys = `${organizationBdd.countrys}|${companie.country}`
+            }
+          }
+          if (
+            organizationBdd.name !== companie.name
+            || organizationBdd.countrys !== countrys
+          ) {
             organizationBdd.name = companie.name
+            organizationBdd.countrys = companie.country
             organizationBdd.updateDate = new Date()
             await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
           }
         }
 
         let query = `
-            DELETE FROM organizationcpv 
-            WHERE organizationId = ${organizationBdd.organizationId} 
-            AND origineType = 1 
+          DELETE FROM organizationcpv 
+          WHERE organizationId = ${organizationBdd.organizationId} 
+          AND origineType = 1 
         `
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         if (companie.cpvFound) {
