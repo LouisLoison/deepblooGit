@@ -235,7 +235,7 @@ exports.FileParse = (fileLocation) => {
           }
         }
         // Search by key words
-        let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText)
+        let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText, notice.id[0])
         let words = cpvFound.words
         cpvsText = cpvFound.cpvsText
         cpvDescriptionsText = cpvFound.cpvDescriptionsText
@@ -290,8 +290,8 @@ exports.FileParse = (fileLocation) => {
   })
 }
 
-exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) => {
-  const CategoriesList = require(process.cwd() + '/public/constants/categories.json')
+exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
+  const constCpvs = require(process.cwd() + '/public/constants/cpvs.json')
 
   let cpvs = []
   let words = []
@@ -299,17 +299,17 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) =>
   if (!cpvsText) {
     cpvsText = ''
   }
-  for (let category of CategoriesList) {
-    if (!category.cpv) {
+  for (let constCpv of constCpvs) {
+    if (!constCpv.code) {
       continue
     }
-
-    // If category already in the tender then past
+    
+    // If constCpv already in the tender then past
     let cpvsTextTemp = cpvsText.split(',')
     let cpvFound = false
     for (let i = 0; i < cpvsTextTemp.length; i++) {
       let code = parseInt(cpvsTextTemp[i], 10)
-      if (category.cpv === code) {
+      if (constCpv.code === code) {
         cpvFound = true
         break
       }
@@ -318,21 +318,44 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) =>
       continue
     }
 
-    if (category.words) {
-      for (let word of category.words) {
-        let regEx = new RegExp("\\b" + word + "\\b", 'gi');
+    /*
+    if (id === "28822109" && constCpv.code === 10000003) {
+      let toto = 123;
+    }
+    */
+
+    if (constCpv.words) {
+      let cpvWords = JSON.parse(JSON.stringify(constCpv.words))
+      cpvWords.push(constCpv.label)
+      for (let word of cpvWords) {
+        let regEx = new RegExp("\\b" + word + "\\b", 'gi')
         if (description.match(regEx)) {
-          if (!cpvs.includes(category.cpv)) {
-            cpvs.push(category.cpv)
+
+          // Tyres exception
+          let exceptionFound = false
+          let exceptionWords = ['tyres', 'tyre']
+          for (let exceptionWord of exceptionWords) {
+            let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+            if (constCpv.code === 31158100 && description.match(regExException)) {
+              exceptionFound = true
+              break
+            }
+          }
+          if (exceptionFound) {
+            continue
+          }
+
+          if (!cpvs.includes(constCpv.code)) {
+            cpvs.push(constCpv.code)
             cpvFoundCount++
             if (cpvsText !== '') {
               cpvsText += ','
             }
-            cpvsText += category.cpv
-            if (cpvDescriptionsText !== '') {
-              cpvDescriptionsText += ','
+            cpvsText += constCpv.code
+            if (cpvLabelsText !== '') {
+              cpvLabelsText += ','
             }
-            cpvDescriptionsText += category.cpvText
+            cpvLabelsText += constCpv.label
           }
           if (!words.includes(word)) {
             words.push(word)
@@ -345,7 +368,7 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvDescriptionsText) =>
     words: words,
     cpvFoundCount: cpvFoundCount,
     cpvsText: cpvsText,
-    cpvDescriptionsText: cpvDescriptionsText,
+    cpvDescriptionsText: cpvLabelsText,
   }
 }
 

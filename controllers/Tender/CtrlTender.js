@@ -11,7 +11,7 @@ exports.TenderGet = (req, res) => {
 }
 
 exports.TenderList = (req, res) => {
-    require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(req.body.id, req.body.algoliaId, req.body.creationDateMin, req.body.creationDateMax, req.body.termDateMin, req.body.termDateMax).then((data) => {
+    require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(req.body.id, req.body.algoliaId, req.body.creationDateMin, req.body.creationDateMax, req.body.termDateMin, req.body.termDateMax, req.body.cpvLabels).then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

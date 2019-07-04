@@ -170,7 +170,7 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -240,6 +240,15 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       if (termDateMax && termDateMax !== '') {
         if (where !== '') { where += 'AND '}
         where += `termDate <= ${BddTool.DateFormater(termDateMax, BddEnvironnement, BddId)} `
+      }
+      if (cpvLabels && cpvLabels.length) {
+        if (where !== '') { where += 'AND '}
+        let orCondition = ''
+        for (let cpvLabel of cpvLabels) {
+          if (orCondition !== '') { orCondition += 'OR '}
+          orCondition += `cpvDescriptions LIKE '%${BddTool.ChaineFormater(cpvLabel, BddEnvironnement, BddId)}%' `
+        }
+        where += `(${orCondition}) `
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)

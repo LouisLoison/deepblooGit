@@ -168,6 +168,8 @@ exports.ListFromCpvs = (cpvs, country) => {
             countrys: record.countrys ? record.countrys.trim().split(',') : [],
             cpvs: [],
             users: [],
+            cpvFounds: [],
+            cpvRatings: [],
             creationDate: record.creationDate,
             updateDate: record.updateDate,
           }
@@ -196,6 +198,7 @@ exports.ListFromCpvs = (cpvs, country) => {
               photo: record.userPhoto,
               country: record.userCountry,
               cpvs: [],
+              cpvFounds: [],
             }
             organization.users.push(user)
           }
@@ -213,6 +216,7 @@ exports.ListFromCpvs = (cpvs, country) => {
 
       // Init CPV rating
       for (let organization of organizations) {
+        let organizationCpvFlg = false
         let organizationCountryFlg = false
         let userCountryFlg = false
         let userCpvFlg = false
@@ -226,50 +230,26 @@ exports.ListFromCpvs = (cpvs, country) => {
             userCountryFlg = true
           }
           if (user.cpvs && user.cpvs.length > 0) {
-            let userCpvNames = user.cpvs.map(a => a.name)
-            for (let cpv of cpvs) {
-              if (userCpvNames.includes(cpv)) {
+            let cpvLabels = user.cpvs.map(a => a.name.toLowerCase())
+            for (let cpvLabel of cpvs) {
+              if (cpvLabels.includes(cpvLabel.toLowerCase())) {
                 userCpvFlg = true
+                user.cpvFounds.push(cpvLabel)
+                let cpvFound = organization.cpvFounds.find(a => a === cpvLabel);
+                if (!cpvFound) {
+                  organization.cpvFounds.push(cpvLabel)
+                }
               }
             }
           }
         }
 
-        organization.cpvRatings = []
-        for (let cpv of organization.cpvs) {
-          if (cpv.origineType === -1) {
-            continue;
+        let cpvLabels = organization.cpvs.filter(a => a.origineType !== -1).map(b => b.name.toLowerCase())
+        for (let cpvLabel of cpvs) {
+          if (cpvLabels.includes(cpvLabel.toLowerCase())) {
+            organizationCpvFlg = true
+            organization.cpvFounds.push(cpvLabel)
           }
-          let cpvFound = organization.cpvRatings.find(a => a.code === cpv.code);
-          if (!cpvFound) {
-            cpvFound = {
-              code: cpv.code,
-              name: cpv.name,
-              ratingSynchro: 0,
-              rating: 0,
-              cpvs: [],
-              isDelete: false,
-            };
-            organization.cpvRatings.push(cpvFound);
-          }
-          if (cpv.origineType === 1) {
-            cpvFound.ratingSynchro++;
-          }
-          if (cpv.origineType === 2) {
-            cpvFound.isManual = true;
-            cpvFound.rating = Math.max(cpvFound.rating, cpv.rating);
-          }
-          if (cpv.origineType === -1) {
-            cpvFound.isDelete = true;
-          }
-          cpvFound.cpvs.push(cpv);
-        }
-        organization.cpvRatings = organization.cpvRatings.filter(a => !a.isDelete);
-        organization.cpvRatings = organization.cpvRatings.sort((a, b) => {
-          return a.rating > b.rating ? -1 : a.rating < b.rating ? 1 : 0
-        })
-        if (organization.cpvRatings.length > 0) {
-          organizationCpvFlg = true
         }
 
         organization.cpvRating = 0
@@ -287,21 +267,8 @@ exports.ListFromCpvs = (cpvs, country) => {
           organization.cpvRating = 1
         }
       }
-      /*
-      organizations = organizations.filter(a => a.cpvRatings.length > 0);
 
-      for (let organization of organizations) {
-        let cpvRating = organization.cpvRatings[0];
-        if (cpvRating.rating > 0) {
-          organization.cpvRating = cpvRating.rating
-        } else {
-          organization.cpvRating = cpvRating.ratingSynchro
-        }
-        organization.cpvs = undefined;
-      }
-      */
-
-      organizations = organizations.filter(a => a.cpvRating);
+      organizations = organizations.filter(a => a.cpvFounds.length > 0);
       organizations = organizations.sort((a, b) => {
         let aValue = a.cpvRating
         let bValue = b.cpvRating
@@ -311,7 +278,6 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       });
-
       resolve(organizations.slice(0, 30));
     } catch (err) { reject(err) }
   })

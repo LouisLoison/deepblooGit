@@ -5,7 +5,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "heater",
+         "heating"
+      ]
    },
    {
       "code": 9310000,
@@ -13,7 +17,28 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "renewables",
+         "energy",
+         "power",
+         "transmission",
+         "distribution",
+         "t&d",
+         "generation",
+         "voltage",
+         "grid",
+         "electricity",
+         "electrical",
+         "electrification",
+         "electric",
+         "electrified",
+         "electrically",
+         "frequency",
+         "discharge",
+         "énergies renouvelables",
+         "énergie renouvelable"
+      ]
    },
    {
       "code": 9320000,
@@ -21,7 +46,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "steam",
+         "hot water"
+      ]
    },
    {
       "code": 9321000,
@@ -29,7 +58,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "hot water"
+      ]
    },
    {
       "code": 9322000,
@@ -37,7 +69,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "steam"
+      ]
    },
    {
       "code": 9323000,
@@ -45,7 +80,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "district heater",
+         "district heating"
+      ]
    },
    {
       "code": 9324000,
@@ -53,7 +92,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 9330000,
@@ -61,7 +101,17 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
+      "category": "Solar",
+      "words": [
+         "solar",
+         "photovoltaic",
+         "photovoltaïc",
+         "solaires",
+         "photovoltaïques",
+         "shs",
+         "solar home system",
+         "solar rooftop"
+      ]
    },
    {
       "code": 9331000,
@@ -69,7 +119,17 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
+      "category": "Solar",
+      "words": [
+         "solar",
+         "photovoltaic",
+         "photovoltaïc",
+         "solaires",
+         "photovoltaïques",
+         "shs",
+         "solar home system",
+         "solar rooftop"
+      ]
    },
    {
       "code": 9331100,
@@ -77,7 +137,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
+      "category": "Solar",
+      "words": [
+         "solar collector"
+      ]
    },
    {
       "code": 9331200,
@@ -85,7 +148,17 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
+      "category": "solar",
+      "words": [
+         "solar",
+         "photovoltaic",
+         "photovoltaïc",
+         "solaires",
+         "photovoltaïques",
+         "shs",
+         "solar home system",
+         "solar rooftop"
+      ]
    },
    {
       "code": 9332000,
@@ -93,279 +166,17 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
-   },
-   {
-      "code": 9200000,
-      "label": "petroleum coal and oil products",
-      "active": false,
-      "logo": "http://arread.fr/deepbloo/default.png",
-      "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": ""
-   },
-   {
-      "code": 9210000,
-      "label": "lubricating preparations",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211000,
-      "label": "lubricating oils and lubricating agents",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211100,
-      "label": "motor oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211200,
-      "label": "compressor lube oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211300,
-      "label": "turbine lube oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211400,
-      "label": "gear oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211500,
-      "label": "reductor oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211600,
-      "label": "oils for use in hydraulic systems and other purposes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211610,
-      "label": "liquids for hydraulic purposes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211620,
-      "label": "mould release oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211630,
-      "label": "anti corrosion oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211640,
-      "label": "electrical insulating oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211650,
-      "label": "brake fluids",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211700,
-      "label": "white oils and liquid paraffin",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211710,
-      "label": "white oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211720,
-      "label": "liquid paraffin",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211800,
-      "label": "petroleum oils and preparations",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211810,
-      "label": "light oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211820,
-      "label": "petroleum oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9211900,
-      "label": "lubricating traction oils",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9220000,
-      "label": "petroleum jelly waxes and special spirits",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9221000,
-      "label": "petroleum jelly and waxes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9221100,
-      "label": "petroleum jelly",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9221200,
-      "label": "paraffin wax",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9221300,
-      "label": "petroleum wax",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9221400,
-      "label": "petroleum residues",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9222000,
-      "label": "special spirits",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9222100,
-      "label": "white spirit",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9230000,
-      "label": "petroleum crude",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9240000,
-      "label": "oil and coal related products",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9241000,
-      "label": "bituminous or oil shale",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9242000,
-      "label": "coal related products",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 9242100,
-      "label": "coal oil",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
+      "category": "Solar",
+      "words": [
+         "solar",
+         "photovoltaic",
+         "photovoltaïc",
+         "solaires",
+         "photovoltaïques",
+         "shs",
+         "solar home system",
+         "solar rooftop"
+      ]
    },
    {
       "code": 30237280,
@@ -373,7 +184,11 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "power supply",
+         "power supplies"
+      ]
    },
    {
       "code": 31000000,
@@ -381,7 +196,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31100000,
@@ -389,7 +205,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "electric motors",
+         "electric generators"
+      ]
    },
    {
       "code": 31110000,
@@ -397,7 +217,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "eletric motors"
+      ]
    },
    {
       "code": 31111000,
@@ -405,7 +228,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "adapters"
+      ]
    },
    {
       "code": 31120000,
@@ -413,7 +239,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "generators",
+         "balance of plant"
+      ]
    },
    {
       "code": 31121000,
@@ -437,7 +267,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "power converters",
+         "power supply converters"
+      ]
    },
    {
       "code": 31121111,
@@ -445,7 +279,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 31121200,
@@ -469,7 +304,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": []
    },
    {
       "code": 31121310,
@@ -477,7 +313,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": []
    },
    {
       "code": 31121320,
@@ -485,7 +322,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": []
    },
    {
       "code": 31121330,
@@ -493,7 +331,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": []
    },
    {
       "code": 31121331,
@@ -501,7 +340,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": [
+         "turbines",
+         "rotors"
+      ]
    },
    {
       "code": 31121340,
@@ -509,7 +352,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
-      "category": "Wind"
+      "category": "Wind",
+      "words": []
    },
    {
       "code": 31122000,
@@ -517,7 +361,14 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "groupe électrogène",
+         "diesel generator",
+         "genset",
+         "emergency generators",
+         "critical generators"
+      ]
    },
    {
       "code": 31122100,
@@ -525,7 +376,12 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "fuel cells",
+         "cell fuel",
+         "cells fuel"
+      ]
    },
    {
       "code": 31124000,
@@ -533,7 +389,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_78.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "steam turbines",
+         "steam generators"
+      ]
    },
    {
       "code": 31124100,
@@ -541,7 +401,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_78.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "turbines"
+      ]
    },
    {
       "code": 31124200,
@@ -549,7 +412,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_78.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 31126000,
@@ -557,7 +421,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "dynamos"
+      ]
    },
    {
       "code": 31127000,
@@ -565,7 +432,14 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "groupe électrogène",
+         "diesel generator",
+         "genset",
+         "emergency generators",
+         "critical generators"
+      ]
    },
    {
       "code": 31128000,
@@ -573,7 +447,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "turbo generators",
+         "turbogenerators"
+      ]
    },
    {
       "code": 31130000,
@@ -581,7 +459,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "alternators"
+      ]
    },
    {
       "code": 31131000,
@@ -589,7 +470,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31131100,
@@ -597,7 +479,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31131200,
@@ -605,7 +488,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31132000,
@@ -613,7 +497,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31140000,
@@ -621,7 +506,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_60.jpg",
-      "category": "Cooling System"
+      "category": "Cooling System",
+      "words": []
    },
    {
       "code": 31141000,
@@ -629,7 +515,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_60.jpg",
-      "category": "Cooling System"
+      "category": "Cooling System",
+      "words": []
    },
    {
       "code": 31150000,
@@ -637,7 +524,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31151000,
@@ -645,7 +533,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31153000,
@@ -653,7 +542,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31154000,
@@ -661,7 +551,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31155000,
@@ -669,7 +560,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_106.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31156000,
@@ -677,7 +569,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31157000,
@@ -685,7 +578,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31158000,
@@ -693,7 +587,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy storage",
+      "words": [
+         "chargers"
+      ]
    },
    {
       "code": 31158100,
@@ -701,7 +598,18 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy storage",
+      "words": [
+         "batteries",
+         "energy storage",
+         "storage devices",
+         "battery",
+         "loaders",
+         "battery-powered",
+         "charge controllers",
+         "storage system",
+         "stockage d'énergie"
+      ]
    },
    {
       "code": 31158200,
@@ -709,7 +617,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy storage",
+      "words": [
+         "superchargers"
+      ]
    },
    {
       "code": 31158300,
@@ -717,7 +628,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy storage",
+      "words": [
+         "tubochargers"
+      ]
    },
    {
       "code": 31160000,
@@ -725,7 +639,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31161000,
@@ -733,7 +648,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31161100,
@@ -741,7 +657,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31161200,
@@ -749,7 +666,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Cooling System"
+      "category": "Cooling System",
+      "words": [
+         "gas cooling systems"
+      ]
    },
    {
       "code": 31161300,
@@ -757,7 +677,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 31161400,
@@ -765,7 +686,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31161500,
@@ -773,7 +695,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31161600,
@@ -781,7 +704,12 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Cooling System"
+      "category": "Cooling System",
+      "words": [
+         "cooling fans",
+         "cooling systems",
+         "cooling water systems"
+      ]
    },
    {
       "code": 31161700,
@@ -789,7 +717,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "steam generators"
+      ]
    },
    {
       "code": 31161800,
@@ -797,7 +728,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 31161900,
@@ -805,7 +737,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Instrument Transformers"
+      "category": "Instrument Transformer",
+      "words": [
+         "voltage controls"
+      ]
    },
    {
       "code": 31162000,
@@ -813,7 +748,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": []
    },
    {
       "code": 31162100,
@@ -821,7 +757,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "condensers"
+      ]
    },
    {
       "code": 31170000,
@@ -829,7 +768,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": [
+         "transformers"
+      ]
    },
    {
       "code": 31171000,
@@ -837,7 +779,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": [
+         "liquid dielectric transformers"
+      ]
    },
    {
       "code": 31172000,
@@ -845,7 +790,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Instrument Transformers"
+      "category": "Instrument Transformers",
+      "words": [
+         "voltage transformers"
+      ]
    },
    {
       "code": 31173000,
@@ -853,7 +801,12 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Instrument Transformers"
+      "category": "Instrument Transformers",
+      "words": [
+         "current transformers",
+         "instrument transformers",
+         "voltage transformers"
+      ]
    },
    {
       "code": 31174000,
@@ -861,7 +814,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": []
    },
    {
       "code": 31200000,
@@ -869,7 +823,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": []
    },
    {
       "code": 31210000,
@@ -877,7 +832,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": []
    },
    {
       "code": 31211000,
@@ -885,7 +841,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31211100,
@@ -893,7 +850,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31211110,
@@ -901,7 +859,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "control panels"
+      ]
    },
    {
       "code": 31211200,
@@ -909,7 +870,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "fuse boxes"
+      ]
    },
    {
       "code": 31211300,
@@ -917,7 +881,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "fuses"
+      ]
    },
    {
       "code": 31211310,
@@ -925,7 +892,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "cut outs"
+      ]
    },
    {
       "code": 31211320,
@@ -933,7 +903,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "fuse blocks"
+      ]
    },
    {
       "code": 31211330,
@@ -941,7 +914,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "fuse wires"
+      ]
    },
    {
       "code": 31211340,
@@ -949,7 +925,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "fuse clips"
+      ]
    },
    {
       "code": 31212000,
@@ -957,7 +936,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "circuit breakers",
+         "disjoncteurs"
+      ]
    },
    {
       "code": 31212100,
@@ -965,7 +948,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "overhead circuit breakers"
+      ]
    },
    {
       "code": 31212200,
@@ -973,7 +959,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "circuit testers"
+      ]
    },
    {
       "code": 31212300,
@@ -981,7 +970,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "magnetic circuit breakers"
+      ]
    },
    {
       "code": 31212400,
@@ -989,7 +981,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "miniature circuit breakers"
+      ]
    },
    {
       "code": 31213000,
@@ -997,7 +992,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Circuit breakers"
+      "category": "Circuit breakers",
+      "words": [
+         "distribution equipment"
+      ]
    },
    {
       "code": 31213100,
@@ -1005,7 +1003,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "distribution boxes"
+      ]
    },
    {
       "code": 31213200,
@@ -1013,7 +1014,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": [
+         "distribution transformers"
+      ]
    },
    {
       "code": 31213300,
@@ -1021,7 +1025,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "cable distribution cabinet"
+      ]
    },
    {
       "code": 31213400,
@@ -1029,7 +1036,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "distribution system"
+      ]
    },
    {
       "code": 31214000,
@@ -1037,7 +1047,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "switchgear"
+      ]
    },
    {
       "code": 31214100,
@@ -1045,7 +1058,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "switches"
+      ]
    },
    {
       "code": 31214110,
@@ -1053,7 +1069,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "isolating switches"
+      ]
    },
    {
       "code": 31214120,
@@ -1061,7 +1080,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "earthing switch"
+      ]
    },
    {
       "code": 31214130,
@@ -1069,7 +1091,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "safety switches"
+      ]
    },
    {
       "code": 31214140,
@@ -1077,7 +1102,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "dimmer switches"
+      ]
    },
    {
       "code": 31214150,
@@ -1085,7 +1113,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "drum switches"
+      ]
    },
    {
       "code": 31214160,
@@ -1093,7 +1124,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "pressure switches"
+      ]
    },
    {
       "code": 31214170,
@@ -1101,7 +1135,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "toggle switches"
+      ]
    },
    {
       "code": 31214180,
@@ -1109,7 +1146,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "slide switches"
+      ]
    },
    {
       "code": 31214190,
@@ -1117,7 +1157,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": [
+         "limit switches"
+      ]
    },
    {
       "code": 31214200,
@@ -1125,7 +1168,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": []
    },
    {
       "code": 31214300,
@@ -1133,7 +1177,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": []
    },
    {
       "code": 31214400,
@@ -1141,7 +1186,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Switches"
+      "category": "Switches",
+      "words": []
    },
    {
       "code": 31214500,
@@ -1149,7 +1195,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "electric switchboards"
+      ]
    },
    {
       "code": 31214510,
@@ -1157,7 +1206,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "medium voltage switchboards"
+      ]
    },
    {
       "code": 31214520,
@@ -1165,7 +1217,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "MV Switchgear"
+      "category": "MV Switchgear",
+      "words": [
+         "medium voltage switchboards"
+      ]
    },
    {
       "code": 31215000,
@@ -1173,7 +1228,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Meters"
+      "category": "Meters",
+      "words": []
    },
    {
       "code": 31216000,
@@ -1181,7 +1237,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
-      "category": "Surge Arresters"
+      "category": "Surge Arresters",
+      "words": []
    },
    {
       "code": 31216100,
@@ -1189,7 +1246,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
-      "category": "Surge Arresters"
+      "category": "Surge Arresters",
+      "words": []
    },
    {
       "code": 31216200,
@@ -1197,7 +1255,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
-      "category": "Surge Arresters"
+      "category": "Surge Arresters",
+      "words": []
    },
    {
       "code": 31217000,
@@ -1205,7 +1264,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
-      "category": "Surge Arresters"
+      "category": "Surge Arresters",
+      "words": []
    },
    {
       "code": 31218000,
@@ -1213,7 +1273,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "busbars"
+      ]
    },
    {
       "code": 31219000,
@@ -1221,7 +1284,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": []
    },
    {
       "code": 31220000,
@@ -1229,7 +1293,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31221000,
@@ -1237,7 +1302,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "relays",
+         "protections"
+      ]
    },
    {
       "code": 31221100,
@@ -1245,7 +1314,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "relays",
+         "protections"
+      ]
    },
    {
       "code": 31221200,
@@ -1253,7 +1326,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "relays",
+         "protections"
+      ]
    },
    {
       "code": 31221300,
@@ -1261,7 +1338,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "socket relays"
+      ]
    },
    {
       "code": 31221400,
@@ -1269,7 +1349,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "alternative voltage relays"
+      ]
    },
    {
       "code": 31221500,
@@ -1277,7 +1360,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "mercury relays"
+      ]
    },
    {
       "code": 31221600,
@@ -1285,7 +1371,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "time relays"
+      ]
    },
    {
       "code": 31221700,
@@ -1293,7 +1382,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
-      "category": "Control & Protection"
+      "category": "Control & Protection",
+      "words": [
+         "overload relays"
+      ]
    },
    {
       "code": 31223000,
@@ -1301,7 +1393,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31224000,
@@ -1309,7 +1402,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224100,
@@ -1317,7 +1411,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224200,
@@ -1325,7 +1420,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224300,
@@ -1333,7 +1429,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224400,
@@ -1341,7 +1438,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224500,
@@ -1349,7 +1447,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224600,
@@ -1357,7 +1456,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224700,
@@ -1365,7 +1465,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224800,
@@ -1373,7 +1474,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31224810,
@@ -1381,7 +1483,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31230000,
@@ -1389,7 +1492,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31300000,
@@ -1397,7 +1501,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "insulated cables",
+         "insulated wires"
+      ]
    },
    {
       "code": 31310000,
@@ -1405,7 +1513,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31311000,
@@ -1413,7 +1522,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31320000,
@@ -1421,7 +1531,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "distribution cables"
+      ]
    },
    {
       "code": 31321000,
@@ -1429,7 +1542,15 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lignes ht",
+         "lignes haute tension",
+         "power lines",
+         "powerlines",
+         "overheadlines",
+         "overhead lines"
+      ]
    },
    {
       "code": 31321100,
@@ -1437,7 +1558,15 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lignes ht",
+         "lignes haute tension",
+         "power lines",
+         "powerlines",
+         "overheadlines",
+         "overhead lines"
+      ]
    },
    {
       "code": 31321200,
@@ -1445,7 +1574,13 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lv cables",
+         "low voltage cables",
+         "mv cables",
+         "medium voltage cables"
+      ]
    },
    {
       "code": 31321210,
@@ -1453,7 +1588,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lv cables",
+         "low voltage cables"
+      ]
    },
    {
       "code": 31321220,
@@ -1461,7 +1600,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "mv cables",
+         "medium voltage cables"
+      ]
    },
    {
       "code": 31321300,
@@ -1469,7 +1612,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "hv cables",
+         "high voltage cables"
+      ]
    },
    {
       "code": 31321400,
@@ -1477,7 +1624,12 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "underwater cables",
+         "underwater power cables",
+         "underwater distribution cables"
+      ]
    },
    {
       "code": 31321500,
@@ -1485,7 +1637,12 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "submarine cables",
+         "submarine power cables",
+         "submarine distribution cables"
+      ]
    },
    {
       "code": 31321600,
@@ -1493,7 +1650,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31321700,
@@ -1501,7 +1659,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31330000,
@@ -1509,7 +1668,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31340000,
@@ -1517,7 +1677,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cable accessories"
+      ]
    },
    {
       "code": 31341000,
@@ -1525,7 +1688,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31342000,
@@ -1533,7 +1697,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cable junctions"
+      ]
    },
    {
       "code": 31343000,
@@ -1541,7 +1708,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cable joints"
+      ]
    },
    {
       "code": 31344000,
@@ -1549,7 +1719,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cable gands"
+      ]
    },
    {
       "code": 31350000,
@@ -1557,7 +1730,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31351000,
@@ -1565,7 +1739,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 31400000,
@@ -1573,7 +1748,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": []
    },
    {
       "code": 31410000,
@@ -1581,7 +1757,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_37.jpg",
-      "category": "MV Switchgear"
+      "category": "MV Switchgear",
+      "words": []
    },
    {
       "code": 31411000,
@@ -1589,7 +1766,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "alkaline battery",
+         "alkaline batteries"
+      ]
    },
    {
       "code": 31420000,
@@ -1597,7 +1778,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "primary battery",
+         "primary batteries"
+      ]
    },
    {
       "code": 31421000,
@@ -1605,7 +1790,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "lead battery",
+         "lead batteries"
+      ]
    },
    {
       "code": 31422000,
@@ -1613,7 +1802,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": []
    },
    {
       "code": 31430000,
@@ -1621,7 +1811,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "electric accumulators"
+      ]
    },
    {
       "code": 31431000,
@@ -1629,7 +1822,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "lead acid accumulators"
+      ]
    },
    {
       "code": 31432000,
@@ -1637,7 +1833,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "nickel cadmium accumulators"
+      ]
    },
    {
       "code": 31433000,
@@ -1645,7 +1844,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "nickel iron accumulators"
+      ]
    },
    {
       "code": 31434000,
@@ -1653,7 +1855,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": [
+         "lithium accumulators"
+      ]
    },
    {
       "code": 31440000,
@@ -1661,7 +1866,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
-      "category": "Energy Storage"
+      "category": "Energy Storage",
+      "words": []
    },
    {
       "code": 31500000,
@@ -1669,7 +1875,13 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": [
+         "street lightings",
+         "streetlightings",
+         "street lights",
+         "streetlights"
+      ]
    },
    {
       "code": 31510000,
@@ -1677,7 +1889,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31511000,
@@ -1685,7 +1898,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31512000,
@@ -1693,7 +1907,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31512100,
@@ -1701,7 +1916,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31512200,
@@ -1709,7 +1925,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31512300,
@@ -1717,7 +1934,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31514000,
@@ -1725,7 +1943,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31515000,
@@ -1733,7 +1952,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31516000,
@@ -1741,7 +1961,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31517000,
@@ -1749,7 +1970,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518000,
@@ -1757,7 +1979,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518100,
@@ -1765,7 +1988,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518200,
@@ -1773,7 +1997,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518210,
@@ -1781,7 +2006,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518220,
@@ -1789,7 +2015,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518300,
@@ -1797,7 +2024,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518500,
@@ -1805,7 +2033,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31518600,
@@ -1813,7 +2042,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31519000,
@@ -1821,7 +2051,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31519100,
@@ -1829,7 +2060,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31519200,
@@ -1837,7 +2069,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31520000,
@@ -1845,7 +2078,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521000,
@@ -1853,7 +2087,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521100,
@@ -1861,7 +2096,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521200,
@@ -1869,7 +2105,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521300,
@@ -1877,7 +2114,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521310,
@@ -1885,7 +2123,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521320,
@@ -1893,7 +2132,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31521330,
@@ -1901,7 +2141,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31522000,
@@ -1909,7 +2150,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31523000,
@@ -1917,7 +2159,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31523100,
@@ -1925,7 +2168,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31523200,
@@ -1933,7 +2177,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31523300,
@@ -1941,7 +2186,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524000,
@@ -1949,7 +2195,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524100,
@@ -1957,7 +2204,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524110,
@@ -1965,7 +2213,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524120,
@@ -1973,7 +2222,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524200,
@@ -1981,7 +2231,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31524210,
@@ -1989,7 +2240,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527000,
@@ -1997,7 +2249,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527200,
@@ -2005,7 +2258,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527210,
@@ -2013,7 +2267,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527260,
@@ -2021,7 +2276,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527270,
@@ -2029,7 +2285,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527300,
@@ -2037,7 +2294,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31527400,
@@ -2045,7 +2303,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31530000,
@@ -2053,7 +2312,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31531000,
@@ -2061,7 +2321,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31531100,
@@ -2069,7 +2330,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532000,
@@ -2077,7 +2339,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532100,
@@ -2085,7 +2348,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532110,
@@ -2093,7 +2357,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532120,
@@ -2101,7 +2366,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532200,
@@ -2109,7 +2375,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532210,
@@ -2117,7 +2384,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532300,
@@ -2125,7 +2393,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532310,
@@ -2133,7 +2402,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532400,
@@ -2141,7 +2411,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532500,
@@ -2149,7 +2420,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532510,
@@ -2157,7 +2429,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532600,
@@ -2165,7 +2438,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532610,
@@ -2173,7 +2447,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532700,
@@ -2181,7 +2456,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532800,
@@ -2189,7 +2465,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532900,
@@ -2197,7 +2474,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532910,
@@ -2205,7 +2483,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31532920,
@@ -2213,7 +2492,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting"
+      "category": "Lighting",
+      "words": []
    },
    {
       "code": 31600000,
@@ -2221,7 +2501,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31610000,
@@ -2229,7 +2510,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31611000,
@@ -2237,7 +2519,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31612000,
@@ -2245,7 +2528,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31612200,
@@ -2253,7 +2537,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31612300,
@@ -2261,7 +2546,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31612310,
@@ -2269,7 +2555,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31620000,
@@ -2277,7 +2564,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31625000,
@@ -2285,7 +2573,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
-      "category": "Fire fighting system"
+      "category": "Fire fighting system",
+      "words": []
    },
    {
       "code": 31625100,
@@ -2293,7 +2582,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
-      "category": "Fire fighting system"
+      "category": "Fire fighting system",
+      "words": []
    },
    {
       "code": 31625200,
@@ -2301,7 +2591,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
-      "category": "Fire fighting system"
+      "category": "Fire fighting system",
+      "words": []
    },
    {
       "code": 31625300,
@@ -2309,159 +2600,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
-      "category": "Fire fighting system"
-   },
-   {
-      "code": 31630000,
-      "label": "magnets",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31640000,
-      "label": "machines and apparatus with individual functions",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642000,
-      "label": "electronic detection apparatus",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642100,
-      "label": "detection apparatus for metal pipes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642200,
-      "label": "detection apparatus for mines",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642300,
-      "label": "detection apparatus for plastics",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642400,
-      "label": "detection apparatus for non metallic objects",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31642500,
-      "label": "detection apparatus for timber",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31643000,
-      "label": "particle accelerators",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31643100,
-      "label": "linear accelerators",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31644000,
-      "label": "miscellaneous data recorders",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31645000,
-      "label": "pinball machines",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31650000,
-      "label": "insulating fittings",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31651000,
-      "label": "electrical tape",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31660000,
-      "label": "carbon electrodes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31670000,
-      "label": "electrical parts of machinery or apparatus",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31671000,
-      "label": "glass envelopes and cathode ray tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31671100,
-      "label": "glass envelopes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31671200,
-      "label": "cathode ray tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
+      "category": "Fire fighting system",
+      "words": []
    },
    {
       "code": 31680000,
@@ -2469,7 +2609,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681000,
@@ -2477,7 +2618,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681100,
@@ -2485,7 +2627,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681200,
@@ -2493,7 +2636,13 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "electric pumps",
+         "electrical pumps",
+         "electric pumpings",
+         "electrical pumpings"
+      ]
    },
    {
       "code": 31681300,
@@ -2501,7 +2650,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681400,
@@ -2509,7 +2659,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681410,
@@ -2517,7 +2668,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31681500,
@@ -2525,7 +2677,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31682000,
@@ -2533,7 +2686,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31682100,
@@ -2541,7 +2695,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31682110,
@@ -2549,7 +2704,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31682200,
@@ -2557,7 +2713,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682210,
@@ -2565,7 +2722,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": [
+         "instrumentation and control",
+         "control and instrumentation"
+      ]
    },
    {
       "code": 31682220,
@@ -2573,7 +2734,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682230,
@@ -2581,7 +2743,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682300,
@@ -2589,7 +2752,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682310,
@@ -2597,7 +2761,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682400,
@@ -2605,7 +2770,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Panel/Board"
+      "category": "Panel/Board",
+      "words": []
    },
    {
       "code": 31682410,
@@ -2613,7 +2779,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
-      "category": "Cables/Lines"
+      "category": "Cables/Lines",
+      "words": []
    },
    {
       "code": 31682500,
@@ -2621,7 +2788,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Critical Power System"
+      "category": "Critical Power System",
+      "words": [
+         "emergency lights",
+         "emergency electrical"
+      ]
    },
    {
       "code": 31682510,
@@ -2629,7 +2800,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Critical Power System"
+      "category": "Critical Power System",
+      "words": [
+         "emergency power",
+         "critical power"
+      ]
    },
    {
       "code": 31682520,
@@ -2637,7 +2812,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Critical Power System"
+      "category": "Critical Power System",
+      "words": []
    },
    {
       "code": 31682530,
@@ -2645,7 +2821,11 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
-      "category": "Critical Power System"
+      "category": "Critical Power System",
+      "words": [
+         "emergency batteries",
+         "emergency battery"
+      ]
    },
    {
       "code": 31682540,
@@ -2653,7 +2833,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Turnkey SST"
+      "category": "Turnkey SST",
+      "words": []
    },
    {
       "code": 31700000,
@@ -2661,7 +2842,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31710000,
@@ -2669,7 +2851,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711000,
@@ -2677,7 +2860,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711100,
@@ -2685,7 +2869,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711110,
@@ -2693,7 +2878,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711120,
@@ -2701,7 +2887,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711130,
@@ -2709,7 +2896,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711131,
@@ -2717,7 +2905,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711140,
@@ -2725,7 +2914,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31711150,
@@ -2733,7 +2923,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31711151,
@@ -2741,7 +2932,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31711152,
@@ -2749,7 +2941,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31711154,
@@ -2757,7 +2950,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31711155,
@@ -2765,119 +2959,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711200,
-      "label": "electronic scoreboards",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711300,
-      "label": "electronic timekeeping systems",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711310,
-      "label": "system for recording attendance",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711400,
-      "label": "valves and tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711410,
-      "label": "cathode ray television picture tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711411,
-      "label": "television camera tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711420,
-      "label": "microwave tubes and equipment",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711421,
-      "label": "magnetrons",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711422,
-      "label": "microwave equipment",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711423,
-      "label": "microwave radio equipment",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711424,
-      "label": "klystrons",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711430,
-      "label": "valve tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711440,
-      "label": "receiver or amplifier valves and tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711500,
-      "label": "parts of electronic assemblies",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": "Capacitors"
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31711510,
@@ -2885,151 +2968,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
-      "category": "Capacitors"
-   },
-   {
-      "code": 31711520,
-      "label": "parts of electrical resistors rheostats and potentiometers",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31711530,
-      "label": "parts of electronic valves and tubes",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712000,
-      "label": "microelectronic machinery and apparatus and microsystems",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712100,
-      "label": "microelectronic machinery and apparatus",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712110,
-      "label": "electronic integrated circuits and microassemblies",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712111,
-      "label": "phone cards",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712112,
-      "label": "sim cards",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712113,
-      "label": "cards containing integrated circuits",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712114,
-      "label": "integrated electronic circuits",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712115,
-      "label": "microassemblies",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712116,
-      "label": "microprocessors",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712117,
-      "label": "integrated circuit packages",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712118,
-      "label": "integrated circuit sockets or mounts",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712119,
-      "label": "integrated circuit lids",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712200,
-      "label": "microsystems",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712300,
-      "label": "printed circuits",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712310,
-      "label": "populated printed circuit boards",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712320,
-      "label": "unpopulated printed circuit boards",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
+      "category": "Capacitors",
+      "words": []
    },
    {
       "code": 31712330,
@@ -3037,7 +2977,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712331,
@@ -3045,7 +2986,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
-      "category": "Solar"
+      "category": "Solar",
+      "words": []
    },
    {
       "code": 31712332,
@@ -3053,7 +2995,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712333,
@@ -3061,7 +3004,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31712334,
@@ -3069,7 +3013,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31712335,
@@ -3077,7 +3022,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31712336,
@@ -3085,7 +3031,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31712340,
@@ -3093,7 +3040,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712341,
@@ -3101,7 +3049,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712342,
@@ -3109,7 +3058,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712343,
@@ -3117,7 +3067,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712344,
@@ -3125,7 +3076,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712345,
@@ -3133,7 +3085,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712346,
@@ -3141,7 +3094,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712347,
@@ -3149,7 +3103,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712348,
@@ -3157,7 +3112,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712349,
@@ -3165,7 +3121,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31712350,
@@ -3173,87 +3130,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
-      "category": "Facts & HVDC - Others"
-   },
-   {
-      "code": 31712351,
-      "label": "photo sensitive transistors",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712352,
-      "label": "field effect transistors fet",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712353,
-      "label": "metal oxide field effect transistors mosfet",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712354,
-      "label": "transistor chips",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712355,
-      "label": "bipolar darlington or radio frequency rf transistors",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712356,
-      "label": "unijunction transistors",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712357,
-      "label": "insulated gate bipolar transistors igbt",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712358,
-      "label": "junction field effect transistors jfet",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712359,
-      "label": "bipolar junction transistors bjt",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
-   },
-   {
-      "code": 31712360,
-      "label": "mounted piezo electric crystals",
-      "active": false,
-      "logo": "",
-      "picture": "",
-      "category": ""
+      "category": "Facts & HVDC - Others",
+      "words": []
    },
    {
       "code": 31720000,
@@ -3261,7 +3139,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31730000,
@@ -3269,7 +3148,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31731000,
@@ -3277,7 +3157,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 31731100,
@@ -3285,7 +3166,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 38341300,
@@ -3293,7 +3175,20 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": [
+         "metering",
+         "smartmeters",
+         "wattmeters",
+         "watt-meters",
+         "voltmeters",
+         "volt-meters",
+         "ammeters",
+         "wattmètres",
+         "ampèremètres",
+         "compteurs",
+         "voltmètres"
+      ]
    },
    {
       "code": 38341310,
@@ -3301,7 +3196,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": [
+         "ammeters"
+      ]
    },
    {
       "code": 38341320,
@@ -3309,7 +3207,12 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": [
+         "voltmètres",
+         "volt-meters",
+         "voltmeters"
+      ]
    },
    {
       "code": 38551000,
@@ -3317,7 +3220,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": []
    },
    {
       "code": 38550000,
@@ -3325,7 +3229,20 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": [
+         "metering",
+         "smartmeters",
+         "wattmeters",
+         "watt-meters",
+         "voltmeters",
+         "volt-meters",
+         "ammeters",
+         "wattmètres",
+         "ampèremètres",
+         "compteurs",
+         "voltmètres"
+      ]
    },
    {
       "code": 38552000,
@@ -3333,7 +3250,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": []
    },
    {
       "code": 38553000,
@@ -3341,7 +3259,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": []
    },
    {
       "code": 38554000,
@@ -3349,7 +3268,20 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Meters"
+      "category": "Meters",
+      "words": [
+         "metering",
+         "smartmeters",
+         "wattmeters",
+         "watt-meters",
+         "voltmeters",
+         "volt-meters",
+         "ammeters",
+         "wattmètres",
+         "ampèremètres",
+         "compteurs",
+         "voltmètres"
+      ]
    },
    {
       "code": 44111500,
@@ -3357,7 +3289,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Insulators"
+      "category": "Insulators",
+      "words": []
    },
    {
       "code": 44111510,
@@ -3365,7 +3298,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Insulators"
+      "category": "Insulators",
+      "words": [
+         "insulators"
+      ]
    },
    {
       "code": 44111511,
@@ -3373,7 +3309,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Insulators"
+      "category": "Insulators",
+      "words": [
+         "insulators"
+      ]
    },
    {
       "code": 44111511,
@@ -3389,7 +3328,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Insulators"
+      "category": "Insulators",
+      "words": []
    },
    {
       "code": 44212222,
@@ -3397,7 +3337,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "pylons"
+      ]
    },
    {
       "code": 44318000,
@@ -3405,7 +3348,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "conductors"
+      ]
    },
    {
       "code": 44318000,
@@ -3429,7 +3375,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cables"
+      ]
    },
    {
       "code": 44322000,
@@ -3437,7 +3386,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "cable accessories"
+      ]
    },
    {
       "code": 44322300,
@@ -3445,7 +3397,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": []
    },
    {
       "code": 45223720,
@@ -3453,7 +3406,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45231200,
@@ -3461,7 +3415,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45231400,
@@ -3469,7 +3424,15 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lignes ht",
+         "lignes haute tension",
+         "power lines",
+         "powerlines",
+         "overheadlines",
+         "overhead lines"
+      ]
    },
    {
       "code": 45232200,
@@ -3477,7 +3440,15 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lignes ht",
+         "lignes haute tension",
+         "power lines",
+         "powerlines",
+         "overheadlines",
+         "overhead lines"
+      ]
    },
    {
       "code": 45232210,
@@ -3485,7 +3456,15 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Cables/Lines/Connectors"
+      "category": "Cables/Lines/Connectors",
+      "words": [
+         "lignes ht",
+         "lignes haute tension",
+         "power lines",
+         "powerlines",
+         "overheadlines",
+         "overhead lines"
+      ]
    },
    {
       "code": 45232220,
@@ -3493,7 +3472,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Turnkey SST"
+      "category": "Tunrkey SST",
+      "words": []
    },
    {
       "code": 45232221,
@@ -3501,7 +3481,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
-      "category": "Turnkey SST"
+      "category": "Tunrkey SST",
+      "words": []
    },
    {
       "code": 45250000,
@@ -3509,7 +3490,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45251000,
@@ -3517,7 +3499,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251100,
@@ -3525,7 +3508,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251100,
@@ -3541,7 +3525,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251110,
@@ -3557,7 +3542,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251111,
@@ -3573,7 +3559,15 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Hydro/Thermal"
+      "category": "Hydro/Thermal",
+      "words": [
+         "hydropower project",
+         "hydroelectric project",
+         "hydro-power project",
+         "hydro-electric project",
+         "hydropower plant",
+         "hydroelectric plant"
+      ]
    },
    {
       "code": 45251120,
@@ -3589,7 +3583,12 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Hydro/Thermal"
+      "category": "Hydro/Thermal",
+      "words": [
+         "thermal power project",
+         "thermal power station",
+         "thermal power plant"
+      ]
    },
    {
       "code": 45251140,
@@ -3613,7 +3612,11 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Hydro/Thermal"
+      "category": "Hydro/Thermal",
+      "words": [
+         "geothermal power plant",
+         "geothermal power station"
+      ]
    },
    {
       "code": 45251141,
@@ -3637,7 +3640,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251143,
@@ -3645,7 +3649,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251150,
@@ -3653,7 +3658,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Cooling System"
+      "category": "Cooling System",
+      "words": [
+         "cooling towers"
+      ]
    },
    {
       "code": 45251160,
@@ -3661,7 +3669,22 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Wind"
+      "category": "Wind",
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 45251160,
@@ -3685,7 +3708,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "heating plant"
+      ]
    },
    {
       "code": 45251200,
@@ -3701,7 +3727,12 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "cogénération",
+         "cogeneration project",
+         "cogeneration plant"
+      ]
    },
    {
       "code": 45251230,
@@ -3709,7 +3740,11 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "steam generation plant",
+         "steam generation project"
+      ]
    },
    {
       "code": 45251240,
@@ -3717,7 +3752,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 45251250,
@@ -3725,7 +3761,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": [
+         "district heating"
+      ]
    },
    {
       "code": 45251240,
@@ -3749,7 +3788,8 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45310000,
@@ -3757,7 +3797,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": [
+         "electrical installation"
+      ]
    },
    {
       "code": 45311000,
@@ -3765,7 +3808,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "electrical wiring"
+      ]
    },
    {
       "code": 45311100,
@@ -3773,7 +3819,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "electrical wiring"
+      ]
    },
    {
       "code": 45311200,
@@ -3781,7 +3830,10 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "electrical fitting"
+      ]
    },
    {
       "code": 45312310,
@@ -3789,7 +3841,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Surge Arresters"
+      "category": "Surge Arresters",
+      "words": []
    },
    {
       "code": 45312311,
@@ -3797,7 +3850,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315000,
@@ -3805,7 +3859,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315100,
@@ -3813,7 +3868,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": [
+         "electrical engineering"
+      ]
    },
    {
       "code": 45315200,
@@ -3821,7 +3879,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315300,
@@ -3829,7 +3888,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315400,
@@ -3837,7 +3897,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315500,
@@ -3845,7 +3906,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315600,
@@ -3853,7 +3915,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45315700,
@@ -3861,7 +3924,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45317000,
@@ -3869,7 +3933,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": [
+         "installation"
+      ]
    },
    {
       "code": 45317100,
@@ -3877,7 +3944,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45317200,
@@ -3885,7 +3953,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45317300,
@@ -3893,7 +3962,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Construction/CW/Installation"
+      "category": "Construction/CW/Installation",
+      "words": []
    },
    {
       "code": 45251141,
@@ -3909,7 +3979,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Transformers"
+      "category": "Transformers",
+      "words": []
    },
    {
       "code": 50532300,
@@ -3917,7 +3988,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 50532400,
@@ -3925,7 +3997,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65000000,
@@ -3933,7 +4006,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65300000,
@@ -3941,7 +4015,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65310000,
@@ -3949,7 +4024,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65320000,
@@ -3957,7 +4033,10 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "electrical installations"
+      ]
    },
    {
       "code": 65400000,
@@ -3965,7 +4044,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65410000,
@@ -3973,7 +4053,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 65500000,
@@ -3981,7 +4062,20 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": [
+         "metering",
+         "smartmeters",
+         "wattmeters",
+         "watt-meters",
+         "voltmeters",
+         "volt-meters",
+         "ammeters",
+         "wattmètres",
+         "ampèremètres",
+         "compteurs",
+         "voltmètres"
+      ]
    },
    {
       "code": 71314000,
@@ -3989,7 +4083,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 71314100,
@@ -3997,7 +4092,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 71314200,
@@ -4005,7 +4101,8 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 71314300,
@@ -4013,23 +4110,53 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Others"
+      "category": "Others",
+      "words": []
    },
    {
       "code": 9000000,
-      "label": "Petroleum products, fuel, electricity and other sources of energy",
+      "label": "Petroleum products",
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Generation"
+      "category": "Generation",
+      "words": []
+   },
+   {
+      "code": 9000000,
+      "label": "fuel",
+      "active": true,
+      "logo": "http://arread.fr/deepbloo/default.png",
+      "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
+      "category": "Generation",
+      "words": []
+   },
+   {
+      "code": 9000000,
+      "label": "electricity and other sources of energy",
+      "active": true,
+      "logo": "http://arread.fr/deepbloo/default.png",
+      "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
+      "category": "Generation",
+      "words": []
    },
    {
       "code": 14000000,
-      "label": "Mining, basic metals and related products",
+      "label": "Mining",
       "active": true,
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_17.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
+   },
+   {
+      "code": 14000000,
+      "label": "basic metals and related products",
+      "active": true,
+      "logo": "http://arread.fr/deepbloo/Logo5.png",
+      "picture": "http://arread.fr/deepbloo/id_17.jpg",
+      "category": "Others",
+      "words": []
    },
    {
       "code": 76000000,
@@ -4037,6 +4164,76 @@
       "active": true,
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
-      "category": "Others"
+      "category": "Others",
+      "words": []
+   },
+   {
+      "code": 10000001,
+      "label": "Offgrid",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "microgrids",
+         "minigrids",
+         "micro-grids",
+         "mini-grids",
+         "decentralized energy",
+         "offgrid",
+         "distributed energy",
+         "off-grid",
+         "hors réseau",
+         "micro-réseaux",
+         "micro-réseau",
+         "micro réseau",
+         "mini solar",
+         "mini-solar",
+         "mini-photovotalic",
+         "mini photovotaic"
+      ]
+   },
+   {
+      "code": 10000002,
+      "label": "Microgrid",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "microgrids",
+         "minigrids",
+         "micro-grids",
+         "mini-grids",
+         "decentralized energy",
+         "offgrid",
+         "distributed energy",
+         "off-grid",
+         "hors réseau",
+         "micro-réseaux",
+         "micro-réseau",
+         "micro réseau",
+         "mini solar",
+         "mini-solar",
+         "mini-photovotalic",
+         "mini photovotaic"
+      ]
+   },
+   {
+      "code": 10000003,
+      "label": "Bioenergy",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "bio énergies",
+         "bioénergies",
+         "bio energies",
+         "biomass",
+         "biomasse",
+         "bio energy",
+         "bioenergie"
+      ]
    }
 ]

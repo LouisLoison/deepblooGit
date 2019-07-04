@@ -106,6 +106,10 @@ exports.List = (filter) => {
           if (where !== '') { where += 'AND ' }
           where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
         }
+        if (filter.organizationId) {
+          if (where !== '') { where += 'AND ' }
+          where += `organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+        }
         if (filter.type) {
           if (where !== '') { where += 'AND ' }
           where += `type = ${BddTool.NumericFormater(filter.type, BddEnvironnement, BddId)} \n`
@@ -237,9 +241,6 @@ exports.Synchro = () => {
             type: 3,
             email: user.email,
             username: user.name,
-            organizationId: organizationId,
-            country: country,
-            countryCode: countryCode,
             creationDate: new Date(),
             updateDate: new Date()
           }
@@ -250,16 +251,10 @@ exports.Synchro = () => {
             || userBdd.hivebriteId !== user.id
             || userBdd.email !== user.email
             || userBdd.username !== user.name
-            || userBdd.organizationId !== organizationId
-            || userBdd.country !== country
-            || userBdd.countryCode !== countryCode
           ) {
             userBdd.hivebriteId = user.id
             userBdd.email = user.email
             userBdd.username = user.name
-            userBdd.organizationId = organizationId
-            userBdd.country = country
-            userBdd.countryCode = countryCode
             userBdd.updateDate = new Date()
             await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
           }
@@ -419,6 +414,60 @@ exports.SetPremium = (userId) => {
       }
       await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
       resolve(user);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.Opportunity = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = ''
+      let recordset = null
+
+      let user = await this.User(userId)
+      let organization = null
+      if (user.organizationId) {
+        organization = await require(process.cwd() + '/controllers/Organization/MdlOrganization').Organization(user.organizationId)
+        let filter = {
+          organizationId: organization.organizationId
+        }
+        organization.users = await this.List(filter)
+      }
+
+
+      let cpvs = []
+      query = `
+        SELECT      userCpv.cpvCode AS "userCpvCode", 
+                    userCpv.cpvName AS "userCpvName", 
+                    userCpv.origineType AS "userOrigineType", 
+                    userCpv.rating AS "userRating" 
+        FROM        userCpv 
+        WHERE       userCpv.userId = ${user.userId} 
+      `
+      query += '  ORDER BY userCpv.cpvCode '
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let userCpvCode = null
+      for (var record of recordset) {
+        if (userCpvCode !== record.userCpvCode) {
+          cpvs.push({
+            code: record.userCpvCode,
+            name: record.userCpvName.trim(),
+            origineType: record.userOrigineType,
+            rating: record.userRating,
+          })
+          userCpvCode = record.userCpvCode
+        }
+      }
+
+      resolve({
+        user,
+        organization,
+        cpvs,
+      });
     } catch (err) { reject(err) }
   })
 }
