@@ -97,6 +97,7 @@ exports.List = (filter) => {
                   organizationId AS "organizationId", 
                   country AS "country", 
                   countryCode AS "countryCode", 
+                  regions AS "regions", 
                   photo AS "photo" 
         FROM      user 
       `
@@ -129,6 +130,7 @@ exports.List = (filter) => {
           organizationId: record.organizationId,
           country: record.country,
           countryCode: record.countryCode,
+          regions: record.regions,
           photo: record.photo,
         })
       }
@@ -137,16 +139,20 @@ exports.List = (filter) => {
   })
 }
 
-exports.User = (userId) => {
+exports.User = (userId, getCpv) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let user = null
+      let user = null;
       let filter = {
         userId
       }
-      let users = await this.List(filter)
+      let users = await this.List(filter);
       if (users && users.length > 0) {
-        user = users[0]
+        user = users[0];
+
+        if (getCpv) {
+          user.cpvs = [];
+        }
       }
       resolve(user);
     } catch (err) { reject(err) }
@@ -265,7 +271,7 @@ exports.Synchro = () => {
   })
 }
 
-exports.SynchroFull = () => {
+exports.SynchroAllFull = () => {
   return new Promise(async (resolve, reject) => {
     try {
       // Get hivebrite user list
@@ -290,110 +296,157 @@ exports.SynchroFull = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       for (let user of users) {
-        let userBdd = usersBdd.find(a => a.email === user.email)
-
-        // Get user organization by user experiences
-        let organizationId = 0
-        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${user.id}/experiences`)
-        if (userExperiencesResponse.data.experiences.length > 0) {
-          let experiences = userExperiencesResponse.data.experiences.sort((a, b) => {
-            return a.id > b.id ? -1 : a.id < b.id ? 1 : 0;
-          });
-          let organizationDgmarketId = experiences[0].companies_company_id
-          organization = organizationsBdd.find(a => a.dgmarketId === organizationDgmarketId)
-          if (organization) {
-            organizationId = organization.organizationId
-          }
-        }
-
-        // Get user country
-        let userResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${user.id}`)
-        let userData = userResponse.data.user
-        let country = ''
-        let countryCode = ''
-        if (userData.live_location) {
-          country = userData.live_location.country
-          countryCode = userData.live_location.country_code
-        }
-
-        // Get user photo
-        let photo = ''
-        if (userData.photo && userData.photo['large-url']) {
-          photo = userData.photo['large-url']
-        }
-
-        if (!userBdd) {
-          userBdd = {
-            hivebriteId: user.id,
-            type: 3,
-            email: user.email,
-            username: user.name,
-            organizationId: organizationId,
-            country: country,
-            countryCode: countryCode,
-            photo: photo,
-            creationDate: new Date(),
-            updateDate: new Date()
-          }
-          userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
-        } else {
-          if (
-            userBdd.hivebriteId !== user.id
-            || userBdd.hivebriteId !== user.id
-            || userBdd.email !== user.email
-            || userBdd.username !== user.name
-            || userBdd.organizationId !== organizationId
-            || userBdd.country !== country
-            || userBdd.countryCode !== countryCode
-            || userBdd.photo !== photo
-          ) {
-            userBdd.hivebriteId = user.id
-            userBdd.email = user.email
-            userBdd.username = user.name
-            userBdd.organizationId = organizationId
-            userBdd.country = country
-            userBdd.countryCode = countryCode
-            userBdd.photo = photo
-            userBdd.updateDate = new Date()
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
-          }
-        }
-
-        // Get user cpv
-        let cpvData = userData.custom_attributes.find(a => a.name === '_CPV')
-        let cpvs = []
-        if (cpvData) {
-          let cpvLabels = cpvData.value
-          if (cpvLabels && cpvLabels.length > 0) {
-            for (cpvLabel of cpvLabels) {
-              let label = cpvLabel.split('-').join(' ').trim()
-              let cpv = CpvList.find(a => a.label === label)
-              if (cpv && !cpvs.find(a => a.label === label)) {
-                cpvs.push(cpv)
-              }
-            }
-          }
-          cpvs = cpvs
-        }
-        
-        let query = `
-            DELETE FROM userCpv 
-            WHERE userId = ${userBdd.userId} 
-        `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-        for (let cpv of cpvs) {
-          let userCpv= {
-            userId: userBdd.userId,
-            cpvCode: cpv.code,
-            cpvName: cpv.label.trim(),
-            origineType: cpv.origineType,
-            rating: cpv.rating,
-          }
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv)
-        }
+        let userBdd = usersBdd.find(a => a.email === user.email);
+        await this.SynchroFull(userBdd.userId, user, usersBdd, organizationsBdd);
       }
 
       resolve(users.length);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!usersBdd) {
+        usersBdd = await this.List()
+      }
+      if (!organizationsBdd) {
+        organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
+      }
+      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      // Update user bdd list
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let userBdd = usersBdd.find(a => a.userId === userId)
+      if (!userBdd) {
+        throw new Error("No available user id !")
+      }
+
+      if (!user) {
+        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`);
+        user = userExperiencesResponse.data.user;
+      }
+
+      // Get user organization by user experiences
+      let organizationId = 0
+      let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}/experiences`)
+      if (userExperiencesResponse.data.experiences.length > 0) {
+        let experiences = userExperiencesResponse.data.experiences.sort((a, b) => {
+          return a.id > b.id ? -1 : a.id < b.id ? 1 : 0;
+        });
+        let organizationDgmarketId = experiences[0].companies_company_id
+        organization = organizationsBdd.find(a => a.dgmarketId === organizationDgmarketId)
+        if (organization) {
+          organizationId = organization.organizationId
+        }
+      }
+
+      // Get user country
+      let userResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`)
+      let userData = userResponse.data.user
+      let country = ''
+      let countryCode = ''
+      if (userData.live_location) {
+        country = userData.live_location.country
+        countryCode = userData.live_location.country_code
+      }
+
+      // Get user photo
+      let photo = ''
+      if (userData.photo && userData.photo['large-url']) {
+        photo = userData.photo['large-url']
+      }
+
+      // Get _Interested_in_business_opportunities_in_these_areas"
+      let interesteAreaData = userData.custom_attributes.find(a => a.name === '_Interested_in_business_opportunities_in_these_areas');
+      let interesteAreas = [];
+      if (interesteAreaData) {
+        let interesteAreaLabels = interesteAreaData.value;
+        if (interesteAreaLabels && interesteAreaLabels.length > 0) {
+          for (interesteAreaLabel of interesteAreaLabels) {
+            let label = interesteAreaLabel.trim();
+            interesteAreas.push(label);
+          }
+        }
+      }
+      let regions = interesteAreas.join(',');
+
+      if (!userBdd) {
+        userBdd = {
+          hivebriteId: userBdd.hivebriteId,
+          type: 3,
+          email: user.email,
+          username: user.name,
+          organizationId: organizationId,
+          country: country,
+          countryCode: countryCode,
+          regions: regions,
+          photo: photo,
+          creationDate: new Date(),
+          updateDate: new Date()
+        }
+        userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+      } else {
+        if (
+          userBdd.email !== user.email
+          || userBdd.username !== user.name
+          || userBdd.organizationId !== organizationId
+          || userBdd.country !== country
+          || userBdd.countryCode !== countryCode
+          || userBdd.regions !== regions
+          || userBdd.photo !== photo
+        ) {
+          userBdd.email = user.email
+          userBdd.username = user.name
+          userBdd.organizationId = organizationId
+          userBdd.country = country
+          userBdd.countryCode = countryCode
+          userBdd.regions = regions
+          userBdd.photo = photo
+          userBdd.updateDate = new Date()
+          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+        }
+      }
+
+      // Get user cpv
+      let cpvData = userData.custom_attributes.find(a => a.name === '_CPV');
+      let cpvs = [];
+      if (cpvData) {
+        let cpvLabels = cpvData.value;
+        if (cpvLabels && cpvLabels.length > 0) {
+          for (cpvLabel of cpvLabels) {
+            let label = cpvLabel.split('-').join(' ').trim();
+            let cpv = CpvList.find(a => a.label === label);
+            if (cpv && !cpvs.find(a => a.label === label)) {
+              cpvs.push(cpv);
+            }
+          }
+        }
+      }
+      
+      let query = `
+          DELETE FROM userCpv 
+          WHERE userId = ${userBdd.userId} 
+      `;
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query);
+      for (let cpv of cpvs) {
+        let userCpv= {
+          userId: userBdd.userId,
+          cpvCode: cpv.code,
+          cpvName: cpv.label.trim(),
+          origineType: cpv.origineType,
+          rating: cpv.rating,
+        };
+        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv);
+      }
+
+      resolve(userBdd);
     } catch (err) { reject(err) }
   })
 }

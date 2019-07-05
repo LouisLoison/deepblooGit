@@ -49,6 +49,7 @@ var Schema = {
       organizationId: { type: "Int" },
       country: { type: "String" },
       countryCode: { type: "String" },
+      regions: { type: "String" },
       photo: { type: "String" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }

@@ -113,7 +113,17 @@ exports.ListFromCpvs = (cpvs, country) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      // Get ticket list
+      let cpvSearchLabels = []
+      for (let cpvLabel of cpvs) {
+        if (!cpvLabel || cpvLabel === '') {
+          continue;
+        }
+        if (['electricity', 'energy and related services'].includes(cpvLabel.toLowerCase())) {
+          continue;
+        }
+        cpvSearchLabels.push(cpvLabel);
+      }
+
       var organizations = []
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -148,8 +158,8 @@ exports.ListFromCpvs = (cpvs, country) => {
         let where = ``
         if (where !== '') { where += 'AND ' }
         where += `( \n`
-        where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
-        where += `OR userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvs, BddEnvironnement, BddId)}) \n`
+        where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
+        where += `OR userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
         where += `) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -231,7 +241,7 @@ exports.ListFromCpvs = (cpvs, country) => {
           }
           if (user.cpvs && user.cpvs.length > 0) {
             let cpvLabels = user.cpvs.map(a => a.name.toLowerCase())
-            for (let cpvLabel of cpvs) {
+            for (let cpvLabel of cpvSearchLabels) {
               if (cpvLabels.includes(cpvLabel.toLowerCase())) {
                 userCpvFlg = true
                 user.cpvFounds.push(cpvLabel)
@@ -245,10 +255,12 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         let cpvLabels = organization.cpvs.filter(a => a.origineType !== -1).map(b => b.name.toLowerCase())
-        for (let cpvLabel of cpvs) {
+        for (let cpvLabel of cpvSearchLabels) {
           if (cpvLabels.includes(cpvLabel.toLowerCase())) {
             organizationCpvFlg = true
-            organization.cpvFounds.push(cpvLabel)
+            if (!organization.cpvFounds.find(a => a === cpvLabel)) {
+              organization.cpvFounds.push(cpvLabel)
+            }
           }
         }
 
@@ -273,8 +285,12 @@ exports.ListFromCpvs = (cpvs, country) => {
         let aValue = a.cpvRating
         let bValue = b.cpvRating
         if (aValue === bValue) {
-          aValue = a.users.length
-          bValue = b.users.length
+          aValue = a.cpvFounds.length
+          bValue = b.cpvFounds.length
+          if (aValue === bValue) {
+            aValue = a.users.length
+            bValue = b.users.length
+          }
         }
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       });
