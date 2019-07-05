@@ -139,7 +139,7 @@ exports.List = (filter) => {
   })
 }
 
-exports.User = (userId, getCpv) => {
+exports.User = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = null;
@@ -149,12 +149,38 @@ exports.User = (userId, getCpv) => {
       let users = await this.List(filter);
       if (users && users.length > 0) {
         user = users[0];
-
-        if (getCpv) {
-          user.cpvs = [];
-        }
       }
       resolve(user);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.UserCpvs = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let cpvs = [];
+      let query = `
+        SELECT      userCpv.cpvCode AS "cpvCode", 
+                    userCpv.cpvName AS "cpvName", 
+                    userCpv.origineType AS "origineType", 
+                    userCpv.rating AS "rating" 
+        FROM        userCpv 
+        WHERE       userCpv.userId = ${userId} 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        cpvs.push({
+          cpvCode: record.cpvCode,
+          cpvName: record.cpvName,
+          origineType: record.origineType,
+          rating: record.rating,
+        });
+      }
+      resolve(cpvs);
     } catch (err) { reject(err) }
   })
 }

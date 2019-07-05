@@ -13,8 +13,14 @@ exports.List = (req, res) => {
 }
 
 exports.User = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').User(req.body.userId, req.body.getCpv).then((data) => {
+    require(process.cwd() + '/controllers/User/MdlUser').User(req.body.userId).then((data) => {
         res.end(JSON.stringify({ success: true, Utilisateur: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.UserCpvs = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').UserCpvs(req.body.userId).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
