@@ -141,11 +141,17 @@ exports.CpvCreateJson = () => {
         }
         let categorie = categories.find(a => a.cpvText.toLowerCase() === cpvLabel.toLowerCase())
         if (categorie) {
-          categorie.words = words
+          if (!categorie.words) {
+            categorie.words = []
+          }
+          categorie.words = categorie.words.concat(words)
         }
         let cpv = cpvs.find(a => a.label.toLowerCase() === cpvLabelFormat.toLowerCase())
         if (cpv) {
-          cpv.words = words
+          if (!cpv.words) {
+            cpv.words = []
+          }
+          cpv.words = cpv.words.concat(words)
         } else {
           console.log(`Unknow CPV : ${cpvLabelFormat}`)
         }

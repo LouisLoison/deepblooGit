@@ -550,3 +550,44 @@ exports.Opportunity = (userId) => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.OpportunityDownloadCsv = (tenders) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const moment = require('moment')
+
+      let tenderText = `cpvs;region;country;title;description;publication;bidDeadline;buyerName;email\n`
+      if (tenders) {
+        for (let tender of tenders) {
+          let description = tender.description.substring(0, 1000)
+          description = description.split(';').join(',')
+          description = description.split('\r\n').join(' ').trim()
+          description = description.split('\r').join(' ').trim()
+          description = description.split('\n').join(' ').trim()
+          // description = ''
+          description = description.trim()
+          let title = tender.title.substring(0, 1000)
+          title = title.split(';').join(',')
+          title = title.split('\n').join(' ').trim()
+          title = title.trim()
+          tenderText += `${tender.cpvDescriptions};${tender.region};${tender.country};${title};${description};${tender.publicationDate};${tender.bidDeadlineDate};${tender.buyerName};${tender.contactEmail}\n`
+        }
+      }
+      const fileName = `opportunities_${moment().format("YYYYMMDD_HHmmss")}.csv`
+      const downloadPath = path.join(config.WorkSpaceFolder, 'Download/')
+      if (!fs.existsSync(downloadPath)) {
+        fs.mkdirSync(downloadPath)
+      }
+      const tenderListLocation = path.join(downloadPath, fileName)
+      fs.writeFileSync(tenderListLocation, tenderText)
+
+      resolve({
+        fileName: fileName, 
+        url: `download/${fileName}`,
+      });
+    } catch (err) { reject(err) }
+  })
+}

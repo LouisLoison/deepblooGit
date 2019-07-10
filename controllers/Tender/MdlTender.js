@@ -340,10 +340,17 @@ exports.TenderRemove = (id, algoliaId) => {
   })
 }
 
-exports.TenderStatistic = (year, month) => {
+exports.TenderStatistic = (year, month, user) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      let cpvLabels = null
+      if (user === 'me') {
+        let userCpvs = await require(process.cwd() + '/controllers/User/MdlUser').UserCpvs(config.user.userId)
+        cpvLabels = userCpvs.map(a => a.cpvName)
+      }
 
       let termDateMin = null
       if (year && month) {
@@ -353,7 +360,7 @@ exports.TenderStatistic = (year, month) => {
         creationDateMax.setDate(creationDateMin.getDate() - 1)
         termDateMin = new Date(year, month, 1)
       }
-      let tenders = await this.TenderList(null, null, null, null, termDateMin)
+      let tenders = await this.TenderList(null, null, null, null, termDateMin, null, cpvLabels)
       let statistic = {
         count: tenders.length,
         weekCount: 0,

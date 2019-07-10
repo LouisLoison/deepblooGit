@@ -241,6 +241,17 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
+         "generating sets",
+         "generating units",
+         "générateurs",
+         "alternateurs",
+         "generation",
+         "generators",
+         "groupe électrogène",
+         "diesel generator",
+         "genset",
+         "emergency generators",
+         "critical generators",
          "generators",
          "balance of plant"
       ]
@@ -269,6 +280,8 @@
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Generation",
       "words": [
+         "converters",
+         "convertors",
          "power converters",
          "power supply converters"
       ]
@@ -305,7 +318,21 @@
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
       "category": "Wind",
-      "words": []
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 31121310,
@@ -314,7 +341,21 @@
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
       "category": "Wind",
-      "words": []
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 31121320,
@@ -323,7 +364,21 @@
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
       "category": "Wind",
-      "words": []
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 31121330,
@@ -332,7 +387,21 @@
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
       "category": "Wind",
-      "words": []
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 31121331,
@@ -353,7 +422,21 @@
       "logo": "http://arread.fr/deepbloo/Logo2_wind.png",
       "picture": "http://arread.fr/deepbloo/id_130.jpg",
       "category": "Wind",
-      "words": []
+      "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines"
+      ]
    },
    {
       "code": 31122000,
@@ -363,6 +446,12 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
+         "generating sets",
+         "generating units",
+         "générateurs",
+         "alternateurs",
+         "generation",
+         "generators",
          "groupe électrogène",
          "diesel generator",
          "genset",
@@ -403,6 +492,7 @@
       "picture": "http://arread.fr/deepbloo/id_78.jpg",
       "category": "Generation",
       "words": [
+         "turbogenerators",
          "turbines"
       ]
    },
@@ -449,6 +539,7 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
+         "turbogenerators",
          "turbo generators",
          "turbogenerators"
       ]
@@ -543,7 +634,13 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "inverters",
+         "rectifiers",
+         "invertors",
+         "alternators",
+         "redresseurs"
+      ]
    },
    {
       "code": 31154000,
@@ -561,7 +658,13 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_106.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "inverters",
+         "rectifiers",
+         "invertors",
+         "alternators",
+         "redresseurs"
+      ]
    },
    {
       "code": 31156000,
@@ -678,7 +781,14 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "generating sets",
+         "generating units",
+         "générateurs",
+         "alternateurs",
+         "generation",
+         "generators"
+      ]
    },
    {
       "code": 31161400,
@@ -770,6 +880,10 @@
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
       "category": "Transformers",
       "words": [
+         "transformers",
+         "transformateurs",
+         "transformadores",
+         "transformator",
          "transformers"
       ]
    },
@@ -824,7 +938,43 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
       "category": "Control & Protection",
-      "words": []
+      "words": [
+         "demand & response",
+         "sensors",
+         "metering",
+         "meters",
+         "smartmeters",
+         "lv equipments",
+         "lv apparatus",
+         "lv devices",
+         "wattmeters",
+         "watt-meters",
+         "voltmeters",
+         "volt-meters",
+         "ammeters",
+         "wattmètres",
+         "ampèremètres",
+         "compteurs",
+         "voltmètres",
+         "scada",
+         "feeder automation",
+         "network & telecommunication",
+         "network management system",
+         "motor control centers",
+         "smart grids",
+         "smartgrids",
+         "smart home",
+         "réseaux intelligents",
+         "réseau intelligent",
+         "vacuum interrupters",
+         "voltage indicators",
+         "voltage regulators",
+         "vacuum contactors",
+         "enclosures",
+         "metal-clad",
+         "energy management systems",
+         "distribution management systems"
+      ]
    },
    {
       "code": 31210000,
@@ -861,6 +1011,18 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
       "words": [
+         "panels",
+         "switchboards",
+         "c&p panels",
+         "panelboards",
+         "electrical cabinets",
+         "control automation",
+         "grid automation",
+         "reclosers",
+         "arc fault protection",
+         "fault current",
+         "sectionalizers",
+         "control",
          "control panels"
       ]
    },
@@ -883,6 +1045,7 @@
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
       "category": "Control & Protection",
       "words": [
+         "fuses",
          "fuses"
       ]
    },
@@ -938,6 +1101,11 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Circuit breakers",
       "words": [
+         "circuit breakers",
+         "circuit-breakers",
+         "circuit interruptors",
+         "circuit-interruptors",
+         "disjoncteurs",
          "circuit breakers",
          "disjoncteurs"
       ]
@@ -1060,6 +1228,11 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
+         "switches",
+         "interrupters",
+         "interruptors",
+         "disconnect switches",
+         "interrupteurs",
          "switches"
       ]
    },
@@ -1169,7 +1342,9 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
-      "words": []
+      "words": [
+         "disconnectors"
+      ]
    },
    {
       "code": 31214300,
@@ -1187,7 +1362,9 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
-      "words": []
+      "words": [
+         "disconnectors"
+      ]
    },
    {
       "code": 31214500,
@@ -1197,6 +1374,18 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
       "words": [
+         "panels",
+         "switchboards",
+         "c&p panels",
+         "panelboards",
+         "electrical cabinets",
+         "control automation",
+         "grid automation",
+         "reclosers",
+         "arc fault protection",
+         "fault current",
+         "sectionalizers",
+         "control",
          "electric switchboards"
       ]
    },
@@ -1208,6 +1397,18 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
       "words": [
+         "panels",
+         "switchboards",
+         "c&p panels",
+         "panelboards",
+         "electrical cabinets",
+         "control automation",
+         "grid automation",
+         "reclosers",
+         "arc fault protection",
+         "fault current",
+         "sectionalizers",
+         "control",
          "medium voltage switchboards"
       ]
    },
@@ -1238,7 +1439,16 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
       "category": "Surge Arresters",
-      "words": []
+      "words": [
+         "lightning protections",
+         "surge arresters",
+         "lightning arresters",
+         "lightning arrestors",
+         "surge arrestors",
+         "surge protectors",
+         "paratonnerres",
+         "parafoudres"
+      ]
    },
    {
       "code": 31216100,
@@ -1247,7 +1457,16 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
       "category": "Surge Arresters",
-      "words": []
+      "words": [
+         "lightning protections",
+         "surge arresters",
+         "lightning arresters",
+         "lightning arrestors",
+         "surge arrestors",
+         "surge protectors",
+         "paratonnerres",
+         "parafoudres"
+      ]
    },
    {
       "code": 31216200,
@@ -1265,7 +1484,16 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
       "category": "Surge Arresters",
-      "words": []
+      "words": [
+         "lightning protections",
+         "surge arresters",
+         "lightning arresters",
+         "lightning arrestors",
+         "surge arrestors",
+         "surge protectors",
+         "paratonnerres",
+         "parafoudres"
+      ]
    },
    {
       "code": 31218000,
@@ -1403,7 +1631,15 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "connections",
+         "connectors",
+         "busbars",
+         "wires",
+         "wiring",
+         "bus bars",
+         "conductors"
+      ]
    },
    {
       "code": 31224100,
@@ -1533,6 +1769,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
+         "cables",
+         "cabling",
          "distribution cables"
       ]
    },
@@ -1576,6 +1814,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
+         "cables",
+         "cabling",
          "lv cables",
          "low voltage cables",
          "mv cables",
@@ -1590,6 +1830,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
+         "cables",
+         "cabling",
          "lv cables",
          "low voltage cables"
       ]
@@ -1602,6 +1844,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
+         "cables",
+         "cabling",
          "mv cables",
          "medium voltage cables"
       ]
@@ -1614,6 +1858,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
+         "cables",
+         "cabling",
          "hv cables",
          "high voltage cables"
       ]
@@ -1813,6 +2059,7 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
       "words": [
+         "accumulators",
          "electric accumulators"
       ]
    },
@@ -1867,7 +2114,17 @@
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
-      "words": []
+      "words": [
+         "batteries",
+         "energy storage",
+         "storage devices",
+         "battery",
+         "loaders",
+         "battery-powered",
+         "charge controllers",
+         "storage system",
+         "stockage d'énergie"
+      ]
    },
    {
       "code": 31500000,
@@ -2574,7 +2831,18 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
       "category": "Fire fighting system",
-      "words": []
+      "words": [
+         "fire extinguishers",
+         "fire fighting",
+         "fire detection",
+         "fire systems",
+         "fire detectors",
+         "firefighting",
+         "firedetectors",
+         "extincteurs",
+         "détecteurs de feu",
+         "détecteurs de fumée"
+      ]
    },
    {
       "code": 31625100,
@@ -2583,7 +2851,18 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
       "category": "Fire fighting system",
-      "words": []
+      "words": [
+         "fire extinguishers",
+         "fire fighting",
+         "fire detection",
+         "fire systems",
+         "fire detectors",
+         "firefighting",
+         "firedetectors",
+         "extincteurs",
+         "détecteurs de feu",
+         "détecteurs de fumée"
+      ]
    },
    {
       "code": 31625200,
@@ -2592,7 +2871,18 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_66.jpg",
       "category": "Fire fighting system",
-      "words": []
+      "words": [
+         "fire extinguishers",
+         "fire fighting",
+         "fire detection",
+         "fire systems",
+         "fire detectors",
+         "firefighting",
+         "firedetectors",
+         "extincteurs",
+         "détecteurs de feu",
+         "détecteurs de fumée"
+      ]
    },
    {
       "code": 31625300,
@@ -2834,7 +3124,26 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Turnkey SST",
-      "words": []
+      "words": [
+         "sectionneurs",
+         "disjoncteurs",
+         "current transformers",
+         "instrument transformers",
+         "voltage transformers",
+         "power transformers",
+         "distribution transformers",
+         "circuit breakers",
+         "primary equipments",
+         "hv equipments",
+         "mv equipments",
+         "mv apparatus",
+         "hv apparatus",
+         "secondary equipments",
+         "hv devices",
+         "mv devices",
+         "cellules de moyenne tension",
+         "équipements de moyenne tension"
+      ]
    },
    {
       "code": 31700000,
@@ -2924,7 +3233,19 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
       "category": "Capacitors",
-      "words": []
+      "words": [
+         "facts & hvdc",
+         "capacitors",
+         "capacitorbanks",
+         "capacitances",
+         "condensors",
+         "condensers",
+         "condensators",
+         "capacitor banks",
+         "wave trappers",
+         "reactors",
+         "condensateurs"
+      ]
    },
    {
       "code": 31711151,
@@ -2951,7 +3272,19 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
       "category": "Capacitors",
-      "words": []
+      "words": [
+         "facts & hvdc",
+         "capacitors",
+         "capacitorbanks",
+         "capacitances",
+         "condensors",
+         "condensers",
+         "condensators",
+         "capacitor banks",
+         "wave trappers",
+         "reactors",
+         "condensateurs"
+      ]
    },
    {
       "code": 31711155,
@@ -2978,7 +3311,13 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "thyristors",
+         "diodes",
+         "semiconductors",
+         "semi-conductors",
+         "valves"
+      ]
    },
    {
       "code": 31712331,
@@ -3041,7 +3380,13 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "thyristors",
+         "diodes",
+         "semiconductors",
+         "semi-conductors",
+         "valves"
+      ]
    },
    {
       "code": 31712341,
@@ -3290,7 +3635,12 @@
       "logo": "",
       "picture": "",
       "category": "Insulators",
-      "words": []
+      "words": [
+         "insulators",
+         "bushings",
+         "isolateurs",
+         "isolators"
+      ]
    },
    {
       "code": 44111510,
@@ -3300,6 +3650,10 @@
       "picture": "",
       "category": "Insulators",
       "words": [
+         "insulators",
+         "bushings",
+         "isolateurs",
+         "isolators",
          "insulators"
       ]
    },
@@ -3311,6 +3665,10 @@
       "picture": "",
       "category": "Insulators",
       "words": [
+         "insulators",
+         "bushings",
+         "isolateurs",
+         "isolators",
          "insulators"
       ]
    },
@@ -3473,7 +3831,16 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Tunrkey SST",
-      "words": []
+      "words": [
+         "substations",
+         "mobile sst",
+         "gis sst",
+         "ais sst",
+         "turnkey sst",
+         "switchyards",
+         "switchgears",
+         "controlgears"
+      ]
    },
    {
       "code": 45232221,
@@ -3482,7 +3849,16 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Tunrkey SST",
-      "words": []
+      "words": [
+         "substations",
+         "mobile sst",
+         "gis sst",
+         "ais sst",
+         "turnkey sst",
+         "switchyards",
+         "switchgears",
+         "controlgears"
+      ]
    },
    {
       "code": 45250000,
@@ -3561,6 +3937,20 @@
       "picture": "",
       "category": "Hydro/Thermal",
       "words": [
+         "hydropower",
+         "hydroelectricity",
+         "hydroelectric",
+         "hydro electric",
+         "hydro power",
+         "microhydro",
+         "micro hydro",
+         "water power",
+         "waterpower",
+         "hydropower",
+         "hydo plant",
+         "small hydro",
+         "hydroélectrique",
+         "hydro électrique",
          "hydropower project",
          "hydroelectric project",
          "hydro-power project",
@@ -3671,6 +4061,19 @@
       "picture": "",
       "category": "Wind",
       "words": [
+         "wind",
+         "windmills",
+         "windfarms",
+         "eolic",
+         "eolian",
+         "aeolian",
+         "windpower",
+         "wind-powered",
+         "éoliens",
+         "éoliennes",
+         "wind farms",
+         "wind turbines",
+         "windturbines",
          "wind",
          "windmills",
          "windfarms",
@@ -4232,8 +4635,7 @@
          "bio energies",
          "biomass",
          "biomasse",
-         "bio energy",
-         "bioenergie"
+         "bio energy"
       ]
    }
 ]

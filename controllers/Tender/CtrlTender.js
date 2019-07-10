@@ -23,7 +23,7 @@ exports.TenderRemove = (req, res) => {
 }
 
 exports.TenderStatistic = (req, res) => {
-    require(process.cwd() + '/controllers/Tender/MdlTender').TenderStatistic(req.body.year, req.body.month).then((data) => {
+    require(process.cwd() + '/controllers/Tender/MdlTender').TenderStatistic(req.body.year, req.body.month, req.body.user).then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

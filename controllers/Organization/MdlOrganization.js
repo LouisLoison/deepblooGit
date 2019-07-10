@@ -112,6 +112,7 @@ exports.ListFromCpvs = (cpvs, country) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       let cpvSearchLabels = []
       for (let cpvLabel of cpvs) {
@@ -122,6 +123,32 @@ exports.ListFromCpvs = (cpvs, country) => {
           continue;
         }
         cpvSearchLabels.push(cpvLabel);
+      }
+
+      // Get country region
+      let region1Source = null
+      let region2Source = null
+      for (let region1 of RegionList) {
+        if (region1.countrys) {
+          if (region1.countrys.find(a => a.toLowerCase() === country.toLowerCase())) {
+            region1Source = region1
+            break
+          }
+        }
+        if (region1.regions) {
+          for (let region2 of region1.regions) {
+            if (region2.countrys) {
+              if (region2.countrys.find(a => a.toLowerCase() === country.toLowerCase())) {
+                region1Source = region1
+                region2Source = region2
+                break
+              }
+            }
+          }
+          if (region1Source) {
+            break
+          }
+        }
       }
 
       var organizations = []
@@ -143,6 +170,7 @@ exports.ListFromCpvs = (cpvs, country) => {
                     user.username AS "userName", 
                     user.email AS "userEmail", 
                     user.photo AS "userPhoto", 
+                    user.regions AS "userRegions", 
                     user.country AS "userCountry", 
                     user.countryCode AS "userCountryCode", 
                     userCpv.cpvCode AS "userCpvCode", 
@@ -206,6 +234,7 @@ exports.ListFromCpvs = (cpvs, country) => {
               username: record.userName,
               email: record.userEmail,
               photo: record.userPhoto,
+              regions: record.userRegions,
               country: record.userCountry,
               cpvs: [],
               cpvFounds: [],
@@ -228,6 +257,7 @@ exports.ListFromCpvs = (cpvs, country) => {
       for (let organization of organizations) {
         let organizationCpvFlg = false
         let organizationCountryFlg = false
+        let userRegionFlg = false
         let userCountryFlg = false
         let userCpvFlg = false
 
@@ -236,9 +266,43 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         for (let user of organization.users) {
+          // Test user region
+          if (region1Source) {
+            let region1 = null
+            let region2 = null
+            let regionLabel2 = ''
+            if (user.regions) {
+              let regionLabels = user.regions.trim().split(',')
+              for (let regionLabel of regionLabels) {
+                let regionLabel1 = regionLabel.trim().split('-')[0].trim()
+                if (regionLabel1 !== '') {
+                  region1 = RegionList.find(a => a.label.toLowerCase() === regionLabel1.toLowerCase())
+                  if (region1) {
+                    if (regionLabel.includes('-')) {
+                      regionLabel2 = regionLabel.trim().split('-')[1].trim()
+                      region2 = region1.regions.find(a => a.label.toLowerCase() === regionLabel1.toLowerCase())
+                    }
+                  }
+                }
+              }
+            }
+            if (region1 && region1.label === region1Source.label) {
+              if (region2 && regionLabel2.toLowerCase() !== 'all') {
+                if (region2Source && region2 && region2.label === region2Source.label) {
+                  userRegionFlg = true
+                }
+              } else {
+                userRegionFlg = true
+              }
+            }
+          }
+
+          // Test user country
           if (user.country === country) {
             userCountryFlg = true
           }
+
+          // Test user CPV
           if (user.cpvs && user.cpvs.length > 0) {
             let cpvLabels = user.cpvs.map(a => a.name.toLowerCase())
             for (let cpvLabel of cpvSearchLabels) {
@@ -265,22 +329,16 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         organization.cpvRating = 0
-        if (organizationCpvFlg && organizationCountryFlg && userCpvFlg && userCountryFlg) {
-          organization.cpvRating = 6
-        } else if (organizationCpvFlg && userCpvFlg && userCountryFlg) {
+        if (userCpvFlg && userRegionFlg && userCountryFlg) {
           organization.cpvRating = 5
-        } else if (userCpvFlg && userCountryFlg) {
-          organization.cpvRating = 4
-        } else if (organizationCpvFlg && userCountryFlg) {
+        } else if (userCpvFlg && userRegionFlg) {
           organization.cpvRating = 3
-        } else if (organizationCpvFlg) {
-          organization.cpvRating = 2
         } else if (userCpvFlg) {
           organization.cpvRating = 1
         }
       }
 
-      organizations = organizations.filter(a => a.cpvFounds.length > 0);
+      organizations = organizations.filter(a => a.cpvRating > 0);
       organizations = organizations.sort((a, b) => {
         let aValue = a.cpvRating
         let bValue = b.cpvRating
