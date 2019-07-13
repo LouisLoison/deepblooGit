@@ -517,7 +517,6 @@ exports.Opportunity = (userId) => {
         organization.users = await this.List(filter)
       }
 
-
       let cpvs = []
       query = `
         SELECT      userCpv.cpvCode AS "userCpvCode", 

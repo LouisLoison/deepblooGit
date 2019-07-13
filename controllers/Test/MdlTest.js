@@ -128,11 +128,14 @@ exports.CpvCreateJson = () => {
       let lineArray = line.split('|')
       let cpvLabels = lineArray[0].trim()
       let words = []
-      for (let i = 1; i < lineArray.length; i++) {
+      for (let i = 2; i < lineArray.length; i++) {
         if (!lineArray[i] || lineArray[i].trim() === '') {
           continue
         }
-        words.push(lineArray[i].trim().toLowerCase())
+        let wordTextes = lineArray[i].trim().toLowerCase()
+        for (let word of wordTextes.split(',')) {
+          words.push(word.trim().toLowerCase())
+        }
       }
       for (let cpvLabel of cpvLabels.split(',')) {
         let cpvLabelFormat = cpvLabel.split('-').join(' ').trim()

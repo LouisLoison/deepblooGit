@@ -170,11 +170,12 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -254,6 +255,62 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let tenders = []
       for (var record of recordset) {
+        // Get country region
+        let region1Tender = null
+        let region2Tender = null
+        if (record.country && record.country !== '') {
+          for (let region1 of RegionList) {
+            if (region1.countrys) {
+              if (region1.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
+                region1Tender = region1
+                break
+              }
+            }
+            if (region1.regions) {
+              for (let region2 of region1.regions) {
+                if (region2.countrys) {
+                  if (region2.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
+                    region1Tender = region1
+                    region2Tender = region2
+                    break
+                  }
+                }
+              }
+              if (region1Tender) {
+                break
+              }
+            }
+          }
+        }
+        if (regions && regions.trim() !== '') {
+          let isRegionOk = false
+          if (region1Tender) {
+            for (let region of regions.split(',')) {
+              let regionLabel = region.trim()
+              let regionLabel1 = regionLabel.split('-')[0].trim()
+              if (regionLabel1.toLowerCase() === 'worldwide') {
+                isRegionOk = true
+              } else {
+                let regionLabel2 = ''
+                if (regionLabel.includes('-')) {
+                  regionLabel2 = regionLabel.trim().split('-')[1].trim()
+                }
+                if (regionLabel1.toLowerCase() === region1Tender.label.toLowerCase()) {
+                  if (region2Tender && regionLabel2.toLowerCase() !== 'all') {
+                    if (region2Tender && regionLabel2.toLowerCase() === region2Tender.label.toLowerCase()) {
+                      isRegionOk = true
+                    }
+                  } else {
+                    isRegionOk = true
+                  }
+                }
+              }
+            }
+          }
+          if (!isRegionOk) {
+            continue
+          }
+        }
         tenders.push({
           id: record.id,
           dgmarketId: record.dgmarketId,
@@ -346,9 +403,12 @@ exports.TenderStatistic = (year, month, user) => {
       const config = require(process.cwd() + '/config')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
+      let userData = null
+      let userCpvs = []
       let cpvLabels = null
       if (user === 'me') {
-        let userCpvs = await require(process.cwd() + '/controllers/User/MdlUser').UserCpvs(config.user.userId)
+        userData = await require(process.cwd() + '/controllers/User/MdlUser').User(config.user.userId)
+        userCpvs = await require(process.cwd() + '/controllers/User/MdlUser').UserCpvs(config.user.userId)
         cpvLabels = userCpvs.map(a => a.cpvName)
       }
 
@@ -360,7 +420,7 @@ exports.TenderStatistic = (year, month, user) => {
         creationDateMax.setDate(creationDateMin.getDate() - 1)
         termDateMin = new Date(year, month, 1)
       }
-      let tenders = await this.TenderList(null, null, null, null, termDateMin, null, cpvLabels)
+      let tenders = await this.TenderList(null, null, null, null, termDateMin, null, cpvLabels, userData? userData.regions : null)
       let statistic = {
         count: tenders.length,
         weekCount: 0,
@@ -369,8 +429,12 @@ exports.TenderStatistic = (year, month, user) => {
         liveWeekNextCount: 0,
         countrys: [],
         regions: [],
+        cpvLabels: [],
         categories: [],
         families: [],
+        buyerNames: [],
+        user: userData,
+        userCpvs: userCpvs,
       }
 
       let weekDate = new Date();
@@ -410,6 +474,43 @@ exports.TenderStatistic = (year, month, user) => {
           continue
         }
 
+        // buyer name count
+        if (tenderFormat.buyer && tenderFormat.buyer.name) {
+          let buyerNameFind = statistic.buyerNames.find(a => a.label === tenderFormat.buyer.name)
+          if(!buyerNameFind) {
+            statistic.buyerNames.push({
+              label: tenderFormat.buyer.name,
+              count: 1,
+              weekCount: isWeek ? 1 : 0,
+            })
+          } else {
+            buyerNameFind.count++
+            if (isWeek) {
+              buyerNameFind.weekCount++
+            }
+          }
+        }
+
+        // CPVs count
+        for(let cpvLabel of tenderFormat.cpvs) {
+          if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
+            continue
+          }
+          let cpvFind = statistic.cpvLabels.find(a => a.label === cpvLabel)
+          if(!cpvFind) {
+            statistic.cpvLabels.push({
+              label: cpvLabel,
+              count: 1,
+              weekCount: isWeek ? 1 : 0,
+            })
+          } else {
+            cpvFind.count++
+            if (isWeek) {
+              cpvFind.weekCount++
+            }
+          }
+        }
+
         // Categories count
         for(let categorie of tenderFormat.categories) {
           let categorieFind = statistic.categories.find(a => a.categorie === categorie)
@@ -418,7 +519,7 @@ exports.TenderStatistic = (year, month, user) => {
               categorie: categorie,
               count: 1,
               weekCount: isWeek ? 1 : 0,
-            });
+            })
           } else {
             categorieFind.count++
             if (isWeek) {
@@ -456,6 +557,7 @@ exports.TenderStatistic = (year, month, user) => {
                   count: 1,
                   weekCount: isWeek ? 1 : 0,
                   regionSubs: [],
+                  cpvLabels: [],
                   categories: [],
                   families: [],
                 }
@@ -464,6 +566,24 @@ exports.TenderStatistic = (year, month, user) => {
                 regionFind.count++
                 if (isWeek) {
                   regionFind.weekCount++
+                }
+              }
+              for(let cpvLabel of tenderFormat.cpvs) {
+                if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
+                  continue
+                }
+                let cpvFind = regionFind.cpvLabels.find(a => a.label === cpvLabel)
+                if(!cpvFind) {
+                  regionFind.cpvLabels.push({
+                    label: cpvLabel,
+                    count: 1,
+                    weekCount: isWeek ? 1 : 0,
+                  })
+                } else {
+                  cpvFind.count++
+                  if (isWeek) {
+                    cpvFind.weekCount++
+                  }
                 }
               }
               for(let categorie of tenderFormat.categories) {
@@ -508,6 +628,7 @@ exports.TenderStatistic = (year, month, user) => {
                       count: 1,
                       weekCount: isWeek ? 1 : 0,
                       regionSubs: [],
+                      cpvLabels: [],
                       categories: [],
                       families: [],
                     }
@@ -516,6 +637,24 @@ exports.TenderStatistic = (year, month, user) => {
                     regionFind.count++
                     if (isWeek) {
                       regionFind.weekCount++
+                    }
+                  }
+                  for(let cpvLabel of tenderFormat.cpvs) {
+                    if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
+                      continue
+                    }
+                    let cpvFind = regionFind.cpvLabels.find(a => a.label === cpvLabel)
+                    if(!cpvFind) {
+                      regionFind.cpvLabels.push({
+                        label: cpvLabel,
+                        count: 1,
+                        weekCount: isWeek ? 1 : 0,
+                      })
+                    } else {
+                      cpvFind.count++
+                      if (isWeek) {
+                        cpvFind.weekCount++
+                      }
                     }
                   }
                   for(let categorie of tenderFormat.categories) {
@@ -553,6 +692,7 @@ exports.TenderStatistic = (year, month, user) => {
                     regionSubFind = {
                       region: region2.label,
                       count: 1,
+                      cpvLabels: [],
                       categories: [],
                       families: [],
                     }
@@ -561,6 +701,24 @@ exports.TenderStatistic = (year, month, user) => {
                     regionSubFind.count++
                     if (isWeek) {
                       regionSubFind.weekCount++
+                    }
+                  }
+                  for(let cpvLabel of tenderFormat.cpvs) {
+                    if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
+                      continue
+                    }
+                    let cpvFind = regionSubFind.cpvLabels.find(a => a.label === cpvLabel)
+                    if(!cpvFind) {
+                      regionSubFind.cpvLabels.push({
+                        label: cpvLabel,
+                        count: 1,
+                        weekCount: isWeek ? 1 : 0,
+                      });
+                    } else {
+                      cpvFind.count++
+                      if (isWeek) {
+                        cpvFind.weekCount++
+                      }
                     }
                   }
                   for(let categorie of tenderFormat.categories) {
@@ -612,6 +770,16 @@ exports.TenderStatistic = (year, month, user) => {
       }
 
       // Sort data
+      statistic.buyerNames = statistic.buyerNames.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
+      });
+      statistic.cpvLabels = statistic.cpvLabels.sort((a, b) => {
+        if (a.count > b.count) { return -1 }
+        if (a.count < b.count) { return 1 }
+        return 0
+      });
       statistic.categories = statistic.categories.sort((a, b) => {
         if (a.count > b.count) { return -1 }
         if (a.count < b.count) { return 1 }

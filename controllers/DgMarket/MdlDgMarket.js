@@ -219,6 +219,7 @@ exports.FileParse = (fileLocation) => {
         }
 
         // CPV list
+        let title = tool.getXmlJsonData(notice.noticeTitle)
         let cpvOkCount = 0
         let cpvsText = tool.getXmlJsonData(notice.cpvs)
         let cpvDescriptionsText = tool.getXmlJsonData(notice.cpvDescriptions)
@@ -234,8 +235,10 @@ exports.FileParse = (fileLocation) => {
             }
           }
         }
+
         // Search by key words
-        let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText, notice.id[0])
+        let textToParse = `${title} ${description}`
+        let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0])
         let words = cpvFound.words
         cpvsText = cpvFound.cpvsText
         cpvDescriptionsText = cpvFound.cpvDescriptionsText
@@ -251,7 +254,7 @@ exports.FileParse = (fileLocation) => {
         tenders.push({
           dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
           procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
-          title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 450),
+          title: title.substring(0, 450),
           lang: lang,
           description: description,
           contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName).substring(0, 90),
@@ -319,7 +322,7 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
     }
 
     /*
-    if (id === "28822109" && constCpv.code === 10000003) {
+    if (id === "28923966" && constCpv.code === 31173000) {
       let toto = 123;
     }
     */

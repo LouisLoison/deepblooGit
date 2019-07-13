@@ -8,6 +8,7 @@
       "category": "Generation",
       "words": [
          "heater",
+         "heaters",
          "heating"
       ]
    },
@@ -83,7 +84,9 @@
       "category": "Generation",
       "words": [
          "district heater",
-         "district heating"
+         "district heaters",
+         "district heating",
+         "district heatings"
       ]
    },
    {
@@ -93,7 +96,9 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "long distance heating"
+      ]
    },
    {
       "code": 9330000,
@@ -104,12 +109,16 @@
       "category": "Solar",
       "words": [
          "solar",
-         "photovoltaic",
-         "photovoltaïc",
          "solaires",
+         "solaire",
+         "photovoltaic",
+         "photovoltaïque",
          "photovoltaïques",
+         "photovoltaique",
+         "photovoltaiques",
          "shs",
          "solar home system",
+         "solar home systems",
          "solar rooftop"
       ]
    },
@@ -122,12 +131,16 @@
       "category": "Solar",
       "words": [
          "solar",
-         "photovoltaic",
-         "photovoltaïc",
          "solaires",
+         "solaire",
+         "photovoltaic",
+         "photovoltaïque",
          "photovoltaïques",
+         "photovoltaique",
+         "photovoltaiques",
          "shs",
          "solar home system",
+         "solar home systems",
          "solar rooftop"
       ]
    },
@@ -139,7 +152,8 @@
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
       "category": "Solar",
       "words": [
-         "solar collector"
+         "solar collector",
+         "solar collectors"
       ]
    },
    {
@@ -151,12 +165,16 @@
       "category": "solar",
       "words": [
          "solar",
-         "photovoltaic",
-         "photovoltaïc",
          "solaires",
+         "solaire",
+         "photovoltaic",
+         "photovoltaïque",
          "photovoltaïques",
+         "photovoltaique",
+         "photovoltaiques",
          "shs",
          "solar home system",
+         "solar home systems",
          "solar rooftop"
       ]
    },
@@ -169,12 +187,16 @@
       "category": "Solar",
       "words": [
          "solar",
-         "photovoltaic",
-         "photovoltaïc",
          "solaires",
+         "solaire",
+         "photovoltaic",
+         "photovoltaïque",
          "photovoltaïques",
+         "photovoltaique",
+         "photovoltaiques",
          "shs",
          "solar home system",
+         "solar home systems",
          "solar rooftop"
       ]
    },
@@ -197,7 +219,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "consumables lighting",
+         "consumable lighting"
+      ]
    },
    {
       "code": 31100000,
@@ -208,7 +233,9 @@
       "category": "Generation",
       "words": [
          "electric motors",
-         "electric generators"
+         "electric motor",
+         "electric generators",
+         "electric generator"
       ]
    },
    {
@@ -219,7 +246,8 @@
       "picture": "",
       "category": "Generation",
       "words": [
-         "eletric motors"
+         "electric motors",
+         "electric motor"
       ]
    },
    {
@@ -230,7 +258,8 @@
       "picture": "",
       "category": "Generation",
       "words": [
-         "adapters"
+         "adapters",
+         "adapter"
       ]
    },
    {
@@ -242,17 +271,30 @@
       "category": "Generation",
       "words": [
          "generating sets",
+         "generating set",
          "generating units",
+         "generating unit",
          "générateurs",
+         "générateur",
+         "generateur",
+         "generateurs",
+         "",
          "alternateurs",
+         "alternateur",
          "generation",
          "generators",
+         "generator",
          "groupe électrogène",
+         "groupes électrogènes",
          "diesel generator",
+         "diesel generators",
          "genset",
          "emergency generators",
+         "emergency generator",
          "critical generators",
+         "critical generator",
          "generators",
+         "generator",
          "balance of plant"
       ]
    },
@@ -281,9 +323,13 @@
       "category": "Generation",
       "words": [
          "converters",
+         "converter",
          "convertors",
+         "convertor",
          "power converters",
-         "power supply converters"
+         "power converter",
+         "power supply converters",
+         "power supply converter"
       ]
    },
    {
@@ -293,7 +339,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "electric rotary converters",
+         "electric rotary converter"
+      ]
    },
    {
       "code": 31121200,
@@ -321,17 +370,33 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine",
+         "wind energy generator"
       ]
    },
    {
@@ -344,17 +409,32 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine"
       ]
    },
    {
@@ -367,17 +447,32 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine"
       ]
    },
    {
@@ -390,17 +485,32 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine"
       ]
    },
    {
@@ -412,7 +522,9 @@
       "category": "Wind",
       "words": [
          "turbines",
-         "rotors"
+         "turbine",
+         "rotors",
+         "rotor"
       ]
    },
    {
@@ -425,17 +537,32 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine"
       ]
    },
    {
@@ -447,16 +574,28 @@
       "category": "Generation",
       "words": [
          "generating sets",
+         "generating set",
          "generating units",
+         "generating unit",
          "générateurs",
+         "générateur",
+         "generateur",
+         "generateurs",
+         "",
          "alternateurs",
+         "alternateur",
          "generation",
          "generators",
+         "generator",
          "groupe électrogène",
+         "groupes électrogènes",
          "diesel generator",
+         "diesel generators",
          "genset",
          "emergency generators",
-         "critical generators"
+         "emergency generator",
+         "critical generators",
+         "critical generator"
       ]
    },
    {
@@ -468,8 +607,13 @@
       "category": "Generation",
       "words": [
          "fuel cells",
+         "fuel cell",
+         "fuel-cells",
+         "fuel-cell",
          "cell fuel",
-         "cells fuel"
+         "cells fuel",
+         "cell-fuel",
+         "cells-fuel"
       ]
    },
    {
@@ -481,7 +625,9 @@
       "category": "Generation",
       "words": [
          "steam turbines",
-         "steam generators"
+         "steam turbine",
+         "steam generators",
+         "steam generator"
       ]
    },
    {
@@ -493,7 +639,11 @@
       "category": "Generation",
       "words": [
          "turbogenerators",
-         "turbines"
+         "turbogenerator",
+         "turbines",
+         "turbine",
+         "turbine generator",
+         "turbine generators"
       ]
    },
    {
@@ -513,7 +663,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
-         "dynamos"
+         "dynamos",
+         "dynamo"
       ]
    },
    {
@@ -525,10 +676,14 @@
       "category": "Generation",
       "words": [
          "groupe électrogène",
+         "groupes électrogènes",
          "diesel generator",
+         "diesel generators",
          "genset",
          "emergency generators",
-         "critical generators"
+         "emergency generator",
+         "critical generators",
+         "critical generator"
       ]
    },
    {
@@ -540,8 +695,11 @@
       "category": "Generation",
       "words": [
          "turbogenerators",
+         "turbogenerator",
          "turbo generators",
-         "turbogenerators"
+         "turbo generator",
+         "turbogenerators",
+         "turbogenerator"
       ]
    },
    {
@@ -552,7 +710,8 @@
       "picture": "",
       "category": "Generation",
       "words": [
-         "alternators"
+         "alternators",
+         "alternator"
       ]
    },
    {
@@ -562,7 +721,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "single phase motor",
+         "single phase motors"
+      ]
    },
    {
       "code": 31131100,
@@ -571,7 +733,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "actuators",
+         "actuator"
+      ]
    },
    {
       "code": 31131200,
@@ -580,7 +745,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "anodes",
+         "anode"
+      ]
    },
    {
       "code": 31132000,
@@ -589,7 +757,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "multi-phase motor",
+         "multi-phase motors"
+      ]
    },
    {
       "code": 31140000,
@@ -598,7 +769,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_60.jpg",
       "category": "Cooling System",
-      "words": []
+      "words": [
+         "cooling tower",
+         "cooling towers"
+      ]
    },
    {
       "code": 31141000,
@@ -607,7 +781,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_60.jpg",
       "category": "Cooling System",
-      "words": []
+      "words": [
+         "water cooler",
+         "water coolers",
+         "water-cooler",
+         "water-coolers"
+      ]
    },
    {
       "code": 31150000,
@@ -625,7 +804,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "static converter",
+         "static converters"
+      ]
    },
    {
       "code": 31153000,
@@ -636,10 +818,17 @@
       "category": "Others",
       "words": [
          "inverters",
+         "inverter",
          "rectifiers",
+         "rectifier",
          "invertors",
+         "invertor",
          "alternators",
-         "redresseurs"
+         "alternator",
+         "redresseurs",
+         "redresseur",
+         "rectifer",
+         "rectifers"
       ]
    },
    {
@@ -660,10 +849,17 @@
       "category": "Others",
       "words": [
          "inverters",
+         "inverter",
          "rectifiers",
+         "rectifier",
          "invertors",
+         "invertor",
          "alternators",
-         "redresseurs"
+         "alternator",
+         "redresseurs",
+         "redresseur",
+         "inverter",
+         "inverters"
       ]
    },
    {
@@ -682,7 +878,10 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "inductors",
+         "inductor"
+      ]
    },
    {
       "code": 31158000,
@@ -692,7 +891,8 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy storage",
       "words": [
-         "chargers"
+         "chargers",
+         "charger"
       ]
    },
    {
@@ -704,13 +904,18 @@
       "category": "Energy storage",
       "words": [
          "batteries",
+         "battery",
          "energy storage",
          "storage devices",
+         "storage device",
          "battery",
          "loaders",
+         "loader",
          "battery-powered",
          "charge controllers",
+         "charge controller",
          "storage system",
+         "storage systems",
          "stockage d'énergie"
       ]
    },
@@ -722,7 +927,8 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy storage",
       "words": [
-         "superchargers"
+         "superchargers",
+         "supercharger"
       ]
    },
    {
@@ -733,7 +939,8 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy storage",
       "words": [
-         "tubochargers"
+         "tubocharger",
+         "tubocharger"
       ]
    },
    {
@@ -761,7 +968,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "excitation systems",
+         "exitation system"
+      ]
    },
    {
       "code": 31161200,
@@ -771,7 +981,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Cooling System",
       "words": [
-         "gas cooling systems"
+         "gas cooling systems",
+         "gas cooling system"
       ]
    },
    {
@@ -783,11 +994,21 @@
       "category": "Generation",
       "words": [
          "generating sets",
+         "generating set",
          "generating units",
+         "generating unit",
          "générateurs",
+         "générateur",
+         "generateur",
+         "generateurs",
+         "",
          "alternateurs",
+         "alternateur",
          "generation",
-         "generators"
+         "generators",
+         "generator",
+         "generator rotors",
+         "generator rotor"
       ]
    },
    {
@@ -806,7 +1027,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "seal oil systems",
+         "seal oil system"
+      ]
    },
    {
       "code": 31161600,
@@ -817,8 +1041,11 @@
       "category": "Cooling System",
       "words": [
          "cooling fans",
+         "cooling fan",
          "cooling systems",
-         "cooling water systems"
+         "cooling system",
+         "cooling water systems",
+         "cooling water system"
       ]
    },
    {
@@ -829,7 +1056,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
-         "steam generators"
+         "steam generators",
+         "steam generator"
       ]
    },
    {
@@ -839,7 +1067,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "gas generator",
+         "gas generators"
+      ]
    },
    {
       "code": 31161900,
@@ -849,7 +1080,8 @@
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
       "category": "Instrument Transformer",
       "words": [
-         "voltage controls"
+         "voltage controls",
+         "voltage control"
       ]
    },
    {
@@ -859,7 +1091,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Transformers",
-      "words": []
+      "words": [
+         "static converters",
+         "static converter",
+         "transformer inductor",
+         "transformer inductors"
+      ]
    },
    {
       "code": 31162100,
@@ -869,7 +1106,10 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
       "words": [
-         "condensers"
+         "condensers",
+         "condenser",
+         "condensateur",
+         "condensateurs"
       ]
    },
    {
@@ -881,10 +1121,13 @@
       "category": "Transformers",
       "words": [
          "transformers",
+         "transformer",
          "transformateurs",
+         "transformateur",
          "transformadores",
+         "transformador",
          "transformator",
-         "transformers"
+         "transformators"
       ]
    },
    {
@@ -895,7 +1138,8 @@
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
       "category": "Transformers",
       "words": [
-         "liquid dielectric transformers"
+         "liquid dielectric transformers",
+         "liquid dielectric transformer"
       ]
    },
    {
@@ -906,7 +1150,8 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Instrument Transformers",
       "words": [
-         "voltage transformers"
+         "voltage transformers",
+         "voltage transformer"
       ]
    },
    {
@@ -918,8 +1163,11 @@
       "category": "Instrument Transformers",
       "words": [
          "current transformers",
+         "current transformer",
          "instrument transformers",
-         "voltage transformers"
+         "instrument transformer",
+         "voltage transformers",
+         "voltage transformer"
       ]
    },
    {
@@ -929,7 +1177,12 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
       "category": "Transformers",
-      "words": []
+      "words": [
+         "power supply transformers",
+         "power supply transformer",
+         "power transformer",
+         "power transformers"
+      ]
    },
    {
       "code": 31200000,
@@ -941,36 +1194,65 @@
       "words": [
          "demand & response",
          "sensors",
+         "sensor",
          "metering",
+         "meterings",
          "meters",
          "smartmeters",
+         "smartmeter",
          "lv equipments",
+         "lv equipment",
          "lv apparatus",
          "lv devices",
+         "lv device",
          "wattmeters",
+         "wattmeter",
+         "watt meter",
+         "watt meters",
          "watt-meters",
+         "watt-meter",
          "voltmeters",
+         "voltmeter",
          "volt-meters",
+         "volt-meter",
          "ammeters",
+         "ammeter",
          "wattmètres",
+         "wattmètre",
          "ampèremètres",
+         "ampèremètre",
          "compteurs",
+         "compteur",
          "voltmètres",
+         "voltmètre",
          "scada",
          "feeder automation",
          "network & telecommunication",
          "network management system",
          "motor control centers",
+         "motor control center",
          "smart grids",
+         "smart grid",
          "smartgrids",
+         "smartgrid",
          "smart home",
+         "smart homes",
+         "smarthome",
+         "smarthomes",
          "réseaux intelligents",
          "réseau intelligent",
+         "reseau intelligent",
+         "reseaux intelligents",
          "vacuum interrupters",
+         "vacuum interrupter",
          "voltage indicators",
+         "voltage indicator",
          "voltage regulators",
+         "voltage regulator",
          "vacuum contactors",
+         "vacuum contactor",
          "enclosures",
+         "enclosure",
          "metal-clad",
          "energy management systems",
          "distribution management systems"
@@ -992,7 +1274,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "fuse boxes",
+         "fuse box"
+      ]
    },
    {
       "code": 31211100,
@@ -1012,18 +1297,29 @@
       "category": "Panel/Board",
       "words": [
          "panels",
+         "panel",
          "switchboards",
+         "switchboard",
          "c&p panels",
+         "c&p panel",
          "panelboards",
+         "panelboard",
          "electrical cabinets",
+         "electrical cabinet",
          "control automation",
          "grid automation",
          "reclosers",
+         "recloser",
          "arc fault protection",
+         "arc fault protections",
          "fault current",
+         "fault currents",
          "sectionalizers",
-         "control",
-         "control panels"
+         "sectionalizer",
+         "control panels",
+         "control panel",
+         "control switchboard",
+         "control switchboards"
       ]
    },
    {
@@ -1046,7 +1342,9 @@
       "category": "Control & Protection",
       "words": [
          "fuses",
-         "fuses"
+         "fuse",
+         "fusible",
+         "fusibles"
       ]
    },
    {
@@ -1057,7 +1355,10 @@
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
       "category": "Control & Protection",
       "words": [
-         "cut outs"
+         "cut outs",
+         "cut out",
+         "cut-out",
+         "cut-outs"
       ]
    },
    {
@@ -1068,7 +1369,8 @@
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
       "category": "Control & Protection",
       "words": [
-         "fuse blocks"
+         "fuse blocks",
+         "fuse block"
       ]
    },
    {
@@ -1079,7 +1381,9 @@
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
       "category": "Control & Protection",
       "words": [
-         "fuse wires"
+         "fuse wires",
+         "fuse wire",
+         "fuse wiring"
       ]
    },
    {
@@ -1090,7 +1394,8 @@
       "picture": "http://arread.fr/deepbloo/id_73.jpg",
       "category": "Control & Protection",
       "words": [
-         "fuse clips"
+         "fuse clips",
+         "fuse clip"
       ]
    },
    {
@@ -1102,12 +1407,15 @@
       "category": "Circuit breakers",
       "words": [
          "circuit breakers",
+         "circuit breaker",
          "circuit-breakers",
+         "circuit-breaker",
          "circuit interruptors",
+         "circuit interruptor",
          "circuit-interruptors",
+         "circuit-interruptor",
          "disjoncteurs",
-         "circuit breakers",
-         "disjoncteurs"
+         "disjoncteur"
       ]
    },
    {
@@ -1118,7 +1426,10 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Circuit breakers",
       "words": [
-         "overhead circuit breakers"
+         "overhead circuit breakers",
+         "overhead circuit breaker",
+         "overhead circuit-breaker",
+         "overhead circuit-breakers"
       ]
    },
    {
@@ -1129,7 +1440,10 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Circuit breakers",
       "words": [
-         "circuit testers"
+         "circuit testers",
+         "circuit tester",
+         "circuit-tester",
+         "circuit-testers"
       ]
    },
    {
@@ -1140,7 +1454,10 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Circuit breakers",
       "words": [
-         "magnetic circuit breakers"
+         "magnetic circuit breakers",
+         "magnetic circuit breaker",
+         "magnetic circuit-breaker",
+         "magnetic circuit-breakers"
       ]
    },
    {
@@ -1151,7 +1468,10 @@
       "picture": "http://arread.fr/deepbloo/id_58.jpg",
       "category": "Circuit breakers",
       "words": [
-         "miniature circuit breakers"
+         "miniature circuit breakers",
+         "miniature circuit breaker",
+         "miniature circuit-breaker",
+         "miniature circuit-breakers"
       ]
    },
    {
@@ -1173,7 +1493,8 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Control & Protection",
       "words": [
-         "distribution boxes"
+         "distribution boxes",
+         "distribution box"
       ]
    },
    {
@@ -1184,7 +1505,8 @@
       "picture": "http://arread.fr/deepbloo/id_57.jpg",
       "category": "Transformers",
       "words": [
-         "distribution transformers"
+         "distribution transformers",
+         "distribution transformer"
       ]
    },
    {
@@ -1195,7 +1517,8 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
       "words": [
-         "cable distribution cabinet"
+         "cable distribution cabinet",
+         "cable distribution cabinets"
       ]
    },
    {
@@ -1206,7 +1529,8 @@
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Panel/Board",
       "words": [
-         "distribution system"
+         "distribution system",
+         "distribution systems"
       ]
    },
    {
@@ -1217,7 +1541,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Control & Protection",
       "words": [
-         "switchgear"
+         "switchgear",
+         "switchgears"
       ]
    },
    {
@@ -1229,11 +1554,17 @@
       "category": "Switches",
       "words": [
          "switches",
+         "switch",
          "interrupters",
+         "interrupter",
          "interruptors",
+         "interruptor",
          "disconnect switches",
+         "disconnect switch",
          "interrupteurs",
-         "switches"
+         "interrupteur",
+         "switches",
+         "switch"
       ]
    },
    {
@@ -1244,7 +1575,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "isolating switches"
+         "isolating switches",
+         "isolating switch"
       ]
    },
    {
@@ -1255,7 +1587,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "earthing switch"
+         "earthing switch",
+         "earthing switches"
       ]
    },
    {
@@ -1266,7 +1599,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "safety switches"
+         "safety switches",
+         "safety switch"
       ]
    },
    {
@@ -1277,7 +1611,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "dimmer switches"
+         "dimmer switches",
+         "dimmer switch"
       ]
    },
    {
@@ -1288,7 +1623,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "drum switches"
+         "drum switches",
+         "drum switch"
       ]
    },
    {
@@ -1299,7 +1635,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "pressure switches"
+         "pressure switches",
+         "pressure switch"
       ]
    },
    {
@@ -1310,7 +1647,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "toggle switches"
+         "toggle switches",
+         "toggle switch"
       ]
    },
    {
@@ -1321,7 +1659,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "slide switches"
+         "slide switches",
+         "slide switch"
       ]
    },
    {
@@ -1332,7 +1671,8 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "limit switches"
+         "limit switches",
+         "limit switch"
       ]
    },
    {
@@ -1343,7 +1683,10 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "disconnectors"
+         "disconnectors",
+         "disconnector",
+         "switch disconnector",
+         "switch disconnectors"
       ]
    },
    {
@@ -1353,7 +1696,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
-      "words": []
+      "words": [
+         "outdoor switching installations",
+         "outdoor switching installation"
+      ]
    },
    {
       "code": 31214400,
@@ -1363,7 +1709,9 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Switches",
       "words": [
-         "disconnectors"
+         "disconnectors",
+         "disconnector",
+         "fuse switch disconnectors"
       ]
    },
    {
@@ -1375,18 +1723,35 @@
       "category": "Panel/Board",
       "words": [
          "panels",
+         "panel",
          "switchboards",
+         "switchboard",
          "c&p panels",
+         "c&p panel",
          "panelboards",
+         "panelboard",
          "electrical cabinets",
+         "electrical cabinet",
          "control automation",
          "grid automation",
          "reclosers",
+         "recloser",
          "arc fault protection",
+         "arc fault protections",
          "fault current",
+         "fault currents",
          "sectionalizers",
-         "control",
-         "electric switchboards"
+         "sectionalizer",
+         "electric switchboards",
+         "electric switchboard",
+         "electrical switchboard",
+         "electrical switchboards",
+         "tableau électrique",
+         "tableaux électrique",
+         "tableaux électriques",
+         "tableau electrique",
+         "tableaux electrique",
+         "tableaux electriques"
       ]
    },
    {
@@ -1398,18 +1763,32 @@
       "category": "Panel/Board",
       "words": [
          "panels",
+         "panel",
          "switchboards",
+         "switchboard",
          "c&p panels",
+         "c&p panel",
          "panelboards",
+         "panelboard",
          "electrical cabinets",
+         "electrical cabinet",
          "control automation",
          "grid automation",
          "reclosers",
+         "recloser",
          "arc fault protection",
+         "arc fault protections",
          "fault current",
+         "fault currents",
          "sectionalizers",
-         "control",
-         "medium voltage switchboards"
+         "sectionalizer",
+         "medium voltage switchboards",
+         "medium voltage switch",
+         "mv switchboards",
+         "mv switch",
+         "mv switchboards",
+         "mv switchboard",
+         "distribution moyenne tension"
       ]
    },
    {
@@ -1420,7 +1799,13 @@
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "MV Switchgear",
       "words": [
-         "medium voltage switchboards"
+         "medium voltage switchboards",
+         "medium voltage switchboard",
+         "mv switchboards",
+         "mv switchboard",
+         "distribution moyenne tension",
+         "panneaux de moyenne tension",
+         "panneau de moyenne tension"
       ]
    },
    {
@@ -1430,7 +1815,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Meters",
-      "words": []
+      "words": [
+         "voltage limiters",
+         "voltage limiter"
+      ]
    },
    {
       "code": 31216000,
@@ -1441,13 +1829,21 @@
       "category": "Surge Arresters",
       "words": [
          "lightning protections",
+         "lightning protection",
          "surge arresters",
+         "surge arrester",
          "lightning arresters",
+         "lightning arrester",
          "lightning arrestors",
+         "lightning arrestor",
          "surge arrestors",
+         "surge arrestor",
          "surge protectors",
+         "surge protector",
          "paratonnerres",
-         "parafoudres"
+         "paratonnerre",
+         "parafoudres",
+         "parafoudre"
       ]
    },
    {
@@ -1459,13 +1855,21 @@
       "category": "Surge Arresters",
       "words": [
          "lightning protections",
+         "lightning protection",
          "surge arresters",
+         "surge arrester",
          "lightning arresters",
+         "lightning arrester",
          "lightning arrestors",
+         "lightning arrestor",
          "surge arrestors",
+         "surge arrestor",
          "surge protectors",
+         "surge protector",
          "paratonnerres",
-         "parafoudres"
+         "paratonnerre",
+         "parafoudres",
+         "parafoudre"
       ]
    },
    {
@@ -1475,7 +1879,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_70.jpg",
       "category": "Surge Arresters",
-      "words": []
+      "words": [
+         "lightning conductors",
+         "lightning conductor"
+      ]
    },
    {
       "code": 31217000,
@@ -1486,13 +1893,23 @@
       "category": "Surge Arresters",
       "words": [
          "lightning protections",
+         "lightning protection",
          "surge arresters",
+         "surge arrester",
          "lightning arresters",
+         "lightning arrester",
          "lightning arrestors",
+         "lightning arrestor",
          "surge arrestors",
+         "surge arrestor",
          "surge protectors",
+         "surge protector",
          "paratonnerres",
-         "parafoudres"
+         "paratonnerre",
+         "parafoudres",
+         "parafoudre",
+         "surge suppressors",
+         "surge suppressor"
       ]
    },
    {
@@ -1503,7 +1920,8 @@
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "busbars"
+         "busbars",
+         "busbar"
       ]
    },
    {
@@ -1513,7 +1931,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Control & Protection",
-      "words": []
+      "words": [
+         "protection boxes",
+         "protection box"
+      ]
    },
    {
       "code": 31220000,
@@ -1522,7 +1943,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical circuit components",
+         "electrical circuit component"
+      ]
    },
    {
       "code": 31221000,
@@ -1533,7 +1957,62 @@
       "category": "Control & Protection",
       "words": [
          "relays",
-         "protections"
+         "relay",
+         "relais",
+         "motor protections",
+         "motor protection",
+         "line protection",
+         "line protections",
+         "distance protections",
+         "distance protection",
+         "bus bar protection",
+         "bus bar protections",
+         "busbar protection",
+         "bus bar protection",
+         "control/protection panel",
+         "control/protection panels",
+         "control & protection panel",
+         "control & protection panels",
+         "control&protection panels",
+         "control&protection panel",
+         "control and protection panels",
+         "control and protection panel",
+         "control protection panel",
+         "control protection panels",
+         "protection/control panel",
+         "protection/control panels",
+         "protection & control panel",
+         "protection & control panels",
+         "protection&control panels",
+         "protection&control panel",
+         "protection and control panel",
+         "protection and control panels",
+         "protection control panels",
+         "protection control panel",
+         "",
+         "transformer protection",
+         "transformer protections",
+         "differential protection",
+         "differential protections",
+         "voltage protection",
+         "voltage protections",
+         "feeder protection",
+         "feeder",
+         "protections",
+         "numerical protection",
+         "numerical protections",
+         "directional protection",
+         "directional protections",
+         "overcurrent protections",
+         "overcurrent protection",
+         "over-current protection",
+         "over-current protections",
+         "over current protection",
+         "over current protections",
+         "generator protections",
+         "generator protection",
+         "fault protection",
+         "fault protections"
       ]
    },
    {
@@ -1545,7 +2024,61 @@
       "category": "Control & Protection",
       "words": [
          "relays",
-         "protections"
+         "relay",
+         "motor protections",
+         "motor protection",
+         "line protection",
+         "line protections",
+         "distance protections",
+         "distance protection",
+         "bus bar protection",
+         "bus bar protections",
+         "busbar protection",
+         "bus bar protection",
+         "control/protection panel",
+         "control/protection panels",
+         "control & protection panel",
+         "control & protection panels",
+         "control&protection panels",
+         "control&protection panel",
+         "control and protection panels",
+         "control and protection panel",
+         "control protection panel",
+         "control protection panels",
+         "protection/control panel",
+         "protection/control panels",
+         "protection & control panel",
+         "protection & control panels",
+         "protection&control panels",
+         "protection&control panel",
+         "protection and control panel",
+         "protection and control panels",
+         "protection control panels",
+         "protection control panel",
+         "",
+         "transformer protection",
+         "transformer protections",
+         "differential protection",
+         "differential protections",
+         "voltage protection",
+         "voltage protections",
+         "feeder protection",
+         "feeder",
+         "protections",
+         "numerical protection",
+         "numerical protections",
+         "directional protection",
+         "directional protections",
+         "overcurrent protections",
+         "overcurrent protection",
+         "over-current protection",
+         "over-current protections",
+         "over current protection",
+         "over current protections",
+         "generator protections",
+         "generator protection",
+         "fault protection",
+         "fault protections"
       ]
    },
    {
@@ -1557,7 +2090,61 @@
       "category": "Control & Protection",
       "words": [
          "relays",
-         "protections"
+         "relay",
+         "motor protections",
+         "motor protection",
+         "line protection",
+         "line protections",
+         "distance protections",
+         "distance protection",
+         "bus bar protection",
+         "bus bar protections",
+         "busbar protection",
+         "bus bar protection",
+         "control/protection panel",
+         "control/protection panels",
+         "control & protection panel",
+         "control & protection panels",
+         "control&protection panels",
+         "control&protection panel",
+         "control and protection panels",
+         "control and protection panel",
+         "control protection panel",
+         "control protection panels",
+         "protection/control panel",
+         "protection/control panels",
+         "protection & control panel",
+         "protection & control panels",
+         "protection&control panels",
+         "protection&control panel",
+         "protection and control panel",
+         "protection and control panels",
+         "protection control panels",
+         "protection control panel",
+         "",
+         "transformer protection",
+         "transformer protections",
+         "differential protection",
+         "differential protections",
+         "voltage protection",
+         "voltage protections",
+         "feeder protection",
+         "feeder",
+         "protections",
+         "numerical protection",
+         "numerical protections",
+         "directional protection",
+         "directional protections",
+         "overcurrent protections",
+         "overcurrent protection",
+         "over-current protection",
+         "over-current protections",
+         "over current protection",
+         "over current protections",
+         "generator protections",
+         "generator protection",
+         "fault protection",
+         "fault protections"
       ]
    },
    {
@@ -1568,7 +2155,8 @@
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
       "category": "Control & Protection",
       "words": [
-         "socket relays"
+         "socket relays",
+         "socket relay"
       ]
    },
    {
@@ -1579,7 +2167,8 @@
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
       "category": "Control & Protection",
       "words": [
-         "alternative voltage relays"
+         "alternative voltage relays",
+         "alternative voltage relay"
       ]
    },
    {
@@ -1590,7 +2179,8 @@
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
       "category": "Control & Protection",
       "words": [
-         "mercury relays"
+         "mercury relays",
+         "mercury relay"
       ]
    },
    {
@@ -1601,7 +2191,8 @@
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
       "category": "Control & Protection",
       "words": [
-         "time relays"
+         "time relays",
+         "time relay"
       ]
    },
    {
@@ -1612,7 +2203,8 @@
       "picture": "http://arread.fr/deepbloo/id_116.jpg",
       "category": "Control & Protection",
       "words": [
-         "overload relays"
+         "overload relays",
+         "overload relay"
       ]
    },
    {
@@ -1622,7 +2214,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "lamp holders",
+         "lamp holder"
+      ]
    },
    {
       "code": 31224000,
@@ -1633,12 +2228,20 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "connections",
+         "connection",
          "connectors",
+         "connector",
          "busbars",
+         "busbar",
          "wires",
+         "wire",
          "wiring",
          "bus bars",
-         "conductors"
+         "bus bar",
+         "conductors",
+         "conductor",
+         "connections and contact elements",
+         "connection and contact element"
       ]
    },
    {
@@ -1648,7 +2251,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "plugs and sockets",
+         "plug and socket"
+      ]
    },
    {
       "code": 31224200,
@@ -1657,7 +2263,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "coaxial connector",
+         "coaxial connectors"
+      ]
    },
    {
       "code": 31224300,
@@ -1666,7 +2275,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "connection boxe",
+         "connection boxes"
+      ]
    },
    {
       "code": 31224400,
@@ -1675,7 +2287,10 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "connection cable",
+         "connection cables"
+      ]
    },
    {
       "code": 31224500,
@@ -1684,7 +2299,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "terminal",
+         "terminals"
+      ]
    },
    {
       "code": 31224600,
@@ -1693,7 +2311,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "dimmer",
+         "dimmers"
+      ]
    },
    {
       "code": 31224700,
@@ -1702,7 +2323,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "junction box",
+         "junction boxes"
+      ]
    },
    {
       "code": 31224800,
@@ -1711,7 +2335,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "cable joining kit",
+         "cable joining kits"
+      ]
    },
    {
       "code": 31224810,
@@ -1720,7 +2347,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "extension cables",
+         "extension cable"
+      ]
    },
    {
       "code": 31230000,
@@ -1729,7 +2359,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_18.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "parts of electricity distribution",
+         "control apparatus"
+      ]
    },
    {
       "code": 31300000,
@@ -1740,7 +2373,9 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "insulated cables",
-         "insulated wires"
+         "insulated cable",
+         "insulated wires",
+         "insulated wire"
       ]
    },
    {
@@ -1759,7 +2394,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_45.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "mains connections",
+         "main connection"
+      ]
    },
    {
       "code": 31320000,
@@ -1770,8 +2408,16 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "cables",
+         "cable",
          "cabling",
-         "distribution cables"
+         "câbles",
+         "câble",
+         "distribution cables",
+         "distribution cable",
+         "câbles de distribution",
+         "câble de distribution",
+         "cable de distribution",
+         "cables de distribution"
       ]
    },
    {
@@ -1783,11 +2429,25 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "lignes ht",
+         "ligne ht",
          "lignes haute tension",
+         "ligne haute tension",
+         "hv line",
+         "hv lines",
+         "high voltage line",
+         "high voltage lines",
          "power lines",
+         "power line",
          "powerlines",
+         "powerline",
          "overheadlines",
-         "overhead lines"
+         "overheadline",
+         "overhead lines",
+         "overheadline",
+         "transmission lines",
+         "transmission line",
+         "lignes de transmission",
+         "ligne de transmission"
       ]
    },
    {
@@ -1799,11 +2459,25 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "lignes ht",
+         "ligne ht",
          "lignes haute tension",
+         "ligne haute tension",
+         "hv line",
+         "hv lines",
+         "high voltage line",
+         "high voltage lines",
          "power lines",
+         "power line",
          "powerlines",
+         "powerline",
          "overheadlines",
-         "overhead lines"
+         "overheadline",
+         "overhead lines",
+         "overheadline",
+         "transmission lines",
+         "transmission line",
+         "lignes de transmission",
+         "ligne de transmission"
       ]
    },
    {
@@ -1815,11 +2489,50 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "cables",
+         "cable",
          "cabling",
+         "câbles",
+         "câble",
          "lv cables",
-         "low voltage cables",
+         "lv cable",
+         "cables lt",
+         "cable lt",
+         "cable mt",
+         "cables mt",
+         "mv cable",
          "mv cables",
-         "medium voltage cables"
+         "low voltage cables",
+         "low voltage cable",
+         "cables basse tension",
+         "cable basse tension",
+         "cables de basse tension",
+         "cable de basse tension",
+         "cable basse-tension",
+         "cables basse-tension",
+         "câble basse tension",
+         "câbles basse tension",
+         "câbles basse-tension",
+         "câble basse-tension",
+         "câble de basse tension",
+         "câbles de basse tension",
+         "câble de basse-tension",
+         "câbles de basse-tension",
+         "cables de moyenne tension",
+         "cable de moyenne tension",
+         "cables moyenne tension",
+         "cable moyenne tension",
+         "cable moyenne-tension",
+         "cables moyenne-tension",
+         "medium voltage cables",
+         "medium voltage cable",
+         "câble moyenne tension",
+         "câbles moyenne tension",
+         "câbles moyenne-tension",
+         "câble moyenne-tension",
+         "câble de moyenne tension",
+         "câbles de moyenne tension",
+         "câble de moyenne-tension",
+         "câbles de moyenne-tension"
       ]
    },
    {
@@ -1831,9 +2544,32 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "cables",
+         "cable",
          "cabling",
+         "câbles",
+         "câble",
          "lv cables",
-         "low voltage cables"
+         "lv cable",
+         "cables lt",
+         "cable lt",
+         "câble lt",
+         "câbles lt",
+         "low voltage cables",
+         "low voltage cable",
+         "cables basse tension",
+         "cable basse tension",
+         "cables de basse tension",
+         "cable de basse tension",
+         "cable basse-tension",
+         "cables basse-tension",
+         "câble basse tension",
+         "câbles basse tension",
+         "câbles basse-tension",
+         "câble basse-tension",
+         "câble de basse tension",
+         "câbles de basse tension",
+         "câble de basse-tension",
+         "câbles de basse-tension"
       ]
    },
    {
@@ -1845,9 +2581,32 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "cables",
+         "cable",
          "cabling",
+         "câbles",
+         "câble",
          "mv cables",
-         "medium voltage cables"
+         "mv cable",
+         "cables mt",
+         "cable mt",
+         "câbles mt",
+         "câble mt",
+         "cables de moyenne tension",
+         "cable de moyenne tension",
+         "cables moyenne tension",
+         "cable moyenne tension",
+         "cable moyenne-tension",
+         "cables moyenne-tension",
+         "medium voltage cables",
+         "medium voltage cable",
+         "câble moyenne tension",
+         "câbles moyenne tension",
+         "câbles moyenne-tension",
+         "câble moyenne-tension",
+         "câble de moyenne tension",
+         "câbles de moyenne tension",
+         "câble de moyenne-tension",
+         "câbles de moyenne-tension"
       ]
    },
    {
@@ -1859,9 +2618,32 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "cables",
+         "cable",
          "cabling",
+         "câbles",
+         "câble",
          "hv cables",
-         "high voltage cables"
+         "hv cable",
+         "cables ht",
+         "cable ht",
+         "câble ht",
+         "câbles ht",
+         "cables de haute tension",
+         "cable de haute tension",
+         "cables haute tension",
+         "cable haute tension",
+         "cables haute-tension",
+         "cable haute-tension",
+         "high voltage cables",
+         "high voltage cable",
+         "câble haute tension",
+         "câbles haute tension",
+         "câbles haute-tension",
+         "câble haute-tension",
+         "câble de haute tension",
+         "câbles de haute tension",
+         "câble de haute-tension",
+         "câbles de haute-tension"
       ]
    },
    {
@@ -1873,8 +2655,20 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "underwater cables",
+         "underwater cable",
          "underwater power cables",
-         "underwater distribution cables"
+         "underwater power cable",
+         "underwater distribution cables",
+         "underwater distribution cable",
+         "cables sousmarins",
+         "cables sous-marins",
+         "cables sous marins",
+         "câbles sous-marins",
+         "cable sousmarin",
+         "cable sous-marin",
+         "cable sous marin",
+         "câble sous-marin",
+         ""
       ]
    },
    {
@@ -1886,8 +2680,20 @@
       "category": "Cables/Lines/Connectors",
       "words": [
          "submarine cables",
+         "submarine cable",
          "submarine power cables",
-         "submarine distribution cables"
+         "submarine power cable",
+         "submarine distribution cables",
+         "submarine distribution cable",
+         "cables sousmarins",
+         "cables sous-marins",
+         "cables sous marins",
+         "câbles sous-marins",
+         "cable sousmarin",
+         "cable sous-marin",
+         "cable sous marin",
+         "câble sous-marin",
+         ""
       ]
    },
    {
@@ -1897,7 +2703,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "shielded cable",
+         "shielded cables"
+      ]
    },
    {
       "code": 31321700,
@@ -1906,7 +2715,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "signalling cable",
+         "signalling cables"
+      ]
    },
    {
       "code": 31330000,
@@ -1915,7 +2727,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "coaxial cables",
+         "coaxial cable"
+      ]
    },
    {
       "code": 31340000,
@@ -1925,7 +2740,24 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cable accessories"
+         "cable accessories",
+         "cables accessories",
+         "accessoires de cable",
+         "accessoire de cable",
+         "accessoires de cables",
+         "accessoire de cables",
+         "accessoires de câble",
+         "accessoires de câbles",
+         "accessoire de câbles",
+         "accessoire de câble",
+         "accessoire câble",
+         "accessoires câble",
+         "accessoires câbles",
+         "accessoire câbles",
+         "accessoire cable",
+         "accessoires cable",
+         "accessoire cables",
+         "accessoires cables"
       ]
    },
    {
@@ -1935,7 +2767,14 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "insulated cable reels",
+         "insulated cables reels",
+         "cables isolés",
+         "câbles isolés",
+         "cable isolé",
+         "câble isolé"
+      ]
    },
    {
       "code": 31342000,
@@ -1945,7 +2784,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cable junctions"
+         "cable junctions",
+         "cable junction"
       ]
    },
    {
@@ -1956,7 +2796,12 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cable joints"
+         "cable joints",
+         "cable joint",
+         "joints de cables",
+         "joint de cable",
+         "joints de câbles",
+         "joint de câble"
       ]
    },
    {
@@ -1967,7 +2812,8 @@
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cable gands"
+         "cable glands",
+         "cable gland"
       ]
    },
    {
@@ -1986,7 +2832,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "electric conductor for access control system",
+         "electric conductors for access control systems"
+      ]
    },
    {
       "code": 31400000,
@@ -1995,7 +2844,10 @@
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
-      "words": []
+      "words": [
+         "primary batteries",
+         "primary battery"
+      ]
    },
    {
       "code": 31410000,
@@ -2004,7 +2856,10 @@
       "logo": "http://arread.fr/deepbloo/Logo4_substation.png",
       "picture": "http://arread.fr/deepbloo/id_37.jpg",
       "category": "MV Switchgear",
-      "words": []
+      "words": [
+         "primary cell",
+         "primary cells"
+      ]
    },
    {
       "code": 31411000,
@@ -2049,7 +2904,10 @@
       "logo": "http://arread.fr/deepbloo/Logo3_battery.png",
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
-      "words": []
+      "words": [
+         "battery pack",
+         "battery packs"
+      ]
    },
    {
       "code": 31430000,
@@ -2060,7 +2918,11 @@
       "category": "Energy Storage",
       "words": [
          "accumulators",
-         "electric accumulators"
+         "accumulator",
+         "electric accumulators",
+         "electric accumulator",
+         "electrical accumulators",
+         "electrical accumulator"
       ]
    },
    {
@@ -2071,7 +2933,10 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
       "words": [
-         "lead acid accumulators"
+         "lead acid accumulators",
+         "lead acid accumulator",
+         "lead-acid accumulators",
+         "lead-acid accumulator"
       ]
    },
    {
@@ -2082,7 +2947,10 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
       "words": [
-         "nickel cadmium accumulators"
+         "nickel cadmium accumulators",
+         "nickel cadmium accumulator",
+         "nickel-cadmium accumulators",
+         "nickel-cadmium accumulator"
       ]
    },
    {
@@ -2093,7 +2961,10 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
       "words": [
-         "nickel iron accumulators"
+         "nickel iron accumulators",
+         "nickel iron accumulator",
+         "nickel-iron accumulators",
+         "nickel-iron accumulator"
       ]
    },
    {
@@ -2104,7 +2975,8 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy Storage",
       "words": [
-         "lithium accumulators"
+         "lithium accumulators",
+         "lithium accumulator"
       ]
    },
    {
@@ -2116,13 +2988,18 @@
       "category": "Energy Storage",
       "words": [
          "batteries",
+         "battery",
          "energy storage",
          "storage devices",
+         "storage device",
          "battery",
          "loaders",
+         "loader",
          "battery-powered",
          "charge controllers",
+         "charge controller",
          "storage system",
+         "storage systems",
          "stockage d'énergie"
       ]
    },
@@ -2135,9 +3012,17 @@
       "category": "Lighting",
       "words": [
          "street lightings",
+         "street lighting",
          "streetlightings",
+         "streetlighting",
          "street lights",
-         "streetlights"
+         "street light",
+         "streetlights",
+         "streetlight",
+         "éclairage urbain",
+         "éclairage de rue",
+         "lampadaires",
+         "lampadaire"
       ]
    },
    {
@@ -2147,7 +3032,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "electric filament lamps",
+         "electric filament lamps"
+      ]
    },
    {
       "code": 31511000,
@@ -2156,7 +3044,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "sealed beam lamp",
+         "sealed beam lamp",
+         "sealed-beam lamp",
+         "sealed-beam lamp"
+      ]
    },
    {
       "code": 31512000,
@@ -2165,7 +3058,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "tungsten halogen filament lamp",
+         "tungsten halogen filament lamps"
+      ]
    },
    {
       "code": 31512100,
@@ -2174,7 +3070,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "halogen bulbs",
+         "halogen bulb"
+      ]
    },
    {
       "code": 31512200,
@@ -2183,7 +3082,9 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "halogen bulbs bi pin"
+      ]
    },
    {
       "code": 31512300,
@@ -2192,7 +3093,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "halogen bulbs dichroic",
+         "halogen bulb dichroic"
+      ]
    },
    {
       "code": 31514000,
@@ -2201,7 +3105,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "discharge lamps",
+         "discharge lamp"
+      ]
    },
    {
       "code": 31515000,
@@ -2210,7 +3117,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "ultraviolet lamps",
+         "ultraviolet lamp"
+      ]
    },
    {
       "code": 31516000,
@@ -2219,7 +3129,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "infrared lamps",
+         "infrared lamps"
+      ]
    },
    {
       "code": 31517000,
@@ -2228,7 +3141,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "arc lamp",
+         "arc lamps"
+      ]
    },
    {
       "code": 31518000,
@@ -2237,7 +3153,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "signalling lights",
+         "signalling light",
+         "signalling lighting",
+         "signalling lightings"
+      ]
    },
    {
       "code": 31518100,
@@ -2246,7 +3167,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "floodlights",
+         "floodlights"
+      ]
    },
    {
       "code": 31518200,
@@ -2255,7 +3179,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "emergency lighting",
+         "emergency lightings",
+         "emergency light",
+         "emergency lights"
+      ]
    },
    {
       "code": 31518210,
@@ -2264,7 +3193,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "stormlights",
+         "stormlight"
+      ]
    },
    {
       "code": 31518220,
@@ -2273,7 +3205,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "light stick",
+         "light sticks"
+      ]
    },
    {
       "code": 31518300,
@@ -2282,7 +3217,14 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "rooflights",
+         "rooflight",
+         "roof lights",
+         "roof light",
+         "roof-lights",
+         "roof-light"
+      ]
    },
    {
       "code": 31518500,
@@ -2291,7 +3233,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "mercury vapour lamps",
+         "mercury vapour lamp"
+      ]
    },
    {
       "code": 31518600,
@@ -2300,7 +3245,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "searchlights",
+         "searchlight"
+      ]
    },
    {
       "code": 31519000,
@@ -2309,7 +3257,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "incandescent lamp",
+         "neon lamp",
+         "incandescent lamps",
+         "neon lamps"
+      ]
    },
    {
       "code": 31519100,
@@ -2318,7 +3271,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "incandescent lamps",
+         "incandescent lamp"
+      ]
    },
    {
       "code": 31519200,
@@ -2327,7 +3283,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "neon lamps",
+         "neon lamp"
+      ]
    },
    {
       "code": 31520000,
@@ -2336,7 +3295,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamps fittings",
+         "light fittings",
+         "lamp fitting",
+         "light fitting"
+      ]
    },
    {
       "code": 31521000,
@@ -2345,7 +3309,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamps",
+         "lamp"
+      ]
    },
    {
       "code": 31521100,
@@ -2354,7 +3321,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "desk lamps",
+         "desk lamp"
+      ]
    },
    {
       "code": 31521200,
@@ -2363,7 +3333,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "floor standing lamps",
+         "floor standing lamp"
+      ]
    },
    {
       "code": 31521300,
@@ -2372,7 +3345,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "portable electric lamps",
+         "portable electric lamp",
+         "portable lamp",
+         "portable lamps"
+      ]
    },
    {
       "code": 31521310,
@@ -2381,7 +3359,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "warning lights",
+         "warning light",
+         "warning lightings",
+         "warning lighting"
+      ]
    },
    {
       "code": 31521320,
@@ -2390,7 +3373,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "torches",
+         "torche"
+      ]
    },
    {
       "code": 31521330,
@@ -2399,7 +3385,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "rechargeable portable electric lamps",
+         "rechargeable portable electric lamp"
+      ]
    },
    {
       "code": 31522000,
@@ -2408,7 +3397,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "christmas tree lights",
+         "christmas tree light"
+      ]
    },
    {
       "code": 31523000,
@@ -2417,7 +3409,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "illuminated signs",
+         "nameplates",
+         "illuminated sign",
+         "nameplate"
+      ]
    },
    {
       "code": 31523100,
@@ -2426,7 +3423,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "neon lights",
+         "neon light",
+         "neon-lights",
+         "neon-light"
+      ]
    },
    {
       "code": 31523200,
@@ -2435,7 +3437,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "permanent message signs",
+         "permanent message sign"
+      ]
    },
    {
       "code": 31523300,
@@ -2444,7 +3449,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "illuminated nameplates",
+         "illuminated nameplate"
+      ]
    },
    {
       "code": 31524000,
@@ -2453,7 +3461,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "ceiling light fittings",
+         "wall light fittings",
+         "ceiling light fitting",
+         "wall light fitting"
+      ]
    },
    {
       "code": 31524100,
@@ -2462,7 +3475,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "ceiling light fittings",
+         "ceiling light fitting"
+      ]
    },
    {
       "code": 31524110,
@@ -2471,7 +3487,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "operating theatre lamps",
+         "operating theatre lamp"
+      ]
    },
    {
       "code": 31524120,
@@ -2480,7 +3499,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "ceiling lights",
+         "ceiling light"
+      ]
    },
    {
       "code": 31524200,
@@ -2489,7 +3511,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "wall light fittings",
+         "wall light fitting"
+      ]
    },
    {
       "code": 31524210,
@@ -2498,7 +3523,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "wall lights",
+         "wall light"
+      ]
    },
    {
       "code": 31527000,
@@ -2507,7 +3535,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "spotlights",
+         "spotlight",
+         "spot-lights",
+         "spot-light"
+      ]
    },
    {
       "code": 31527200,
@@ -2516,7 +3549,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "exterior lights",
+         "exterior light"
+      ]
    },
    {
       "code": 31527210,
@@ -2525,7 +3561,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lanterns",
+         "lantern"
+      ]
    },
    {
       "code": 31527260,
@@ -2534,7 +3573,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lighting systems",
+         "lighting system"
+      ]
    },
    {
       "code": 31527270,
@@ -2543,7 +3585,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "platforms lighting",
+         "platforms lightings"
+      ]
    },
    {
       "code": 31527300,
@@ -2552,7 +3597,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "domestic lights",
+         "domestic light",
+         "domestic lightings",
+         "domestic lighting"
+      ]
    },
    {
       "code": 31527400,
@@ -2561,7 +3611,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "underwater lights",
+         "underwater light",
+         "underwater lightings",
+         "underwater lighting"
+      ]
    },
    {
       "code": 31530000,
@@ -2570,7 +3625,14 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamps",
+         "lamp",
+         "lighting",
+         "lightings",
+         "lights",
+         "light"
+      ]
    },
    {
       "code": 31531000,
@@ -2579,7 +3641,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "light bulbs",
+         "light bulb"
+      ]
    },
    {
       "code": 31531100,
@@ -2588,7 +3653,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "electric tubes",
+         "electric tube",
+         "electrical tubes",
+         "electrical tube"
+      ]
    },
    {
       "code": 31532000,
@@ -2596,8 +3666,7 @@
       "active": true,
       "logo": "",
       "picture": "",
-      "category": "Lighting",
-      "words": []
+      "category": "Lighting"
    },
    {
       "code": 31532100,
@@ -2606,7 +3675,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "tube lamps",
+         "tube lamp"
+      ]
    },
    {
       "code": 31532110,
@@ -2615,7 +3687,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "fluorescent tube lamps",
+         "fluorescent tube lamp"
+      ]
    },
    {
       "code": 31532120,
@@ -2624,7 +3699,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "compact fluorescent tube lamps",
+         "compact fluorescent tube lamp"
+      ]
    },
    {
       "code": 31532200,
@@ -2633,7 +3711,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "ring lamps",
+         "ring lamp"
+      ]
    },
    {
       "code": 31532210,
@@ -2642,7 +3723,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "fluorescent ring lamps",
+         "fluorescent ring lamp"
+      ]
    },
    {
       "code": 31532300,
@@ -2651,7 +3735,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "globe lamps",
+         "globe lamp"
+      ]
    },
    {
       "code": 31532310,
@@ -2660,7 +3747,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "compact fluorescent globe lamps",
+         "compact fluorescent globe lamp"
+      ]
    },
    {
       "code": 31532400,
@@ -2669,7 +3759,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamps sockets",
+         "lamps socket"
+      ]
    },
    {
       "code": 31532500,
@@ -2678,7 +3771,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamp starters",
+         "lamp starter"
+      ]
    },
    {
       "code": 31532510,
@@ -2687,7 +3783,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "starters for fluorescent lamps",
+         "starters for",
+         "fluorescent lamp starter",
+         "fluorescent lamp starters"
+      ]
    },
    {
       "code": 31532600,
@@ -2696,7 +3797,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamp reactors",
+         "lamp reactor"
+      ]
    },
    {
       "code": 31532610,
@@ -2705,7 +3809,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "reactors for fluorescent lamps",
+         "reactors for fluorescent lamp",
+         "reactor for fluorescent lamps",
+         "reactor for fluorescent lamp"
+      ]
    },
    {
       "code": 31532700,
@@ -2714,7 +3823,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamp covers",
+         "lamp cover"
+      ]
    },
    {
       "code": 31532800,
@@ -2723,7 +3835,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "lamp arms",
+         "lamp arm"
+      ]
    },
    {
       "code": 31532900,
@@ -2732,7 +3847,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "fluorescent lights",
+         "fluorescent light",
+         "fluorescent lightings",
+         "fluorescent lighting"
+      ]
    },
    {
       "code": 31532910,
@@ -2741,7 +3861,10 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "fluorescent tubes",
+         "fluorescent tube"
+      ]
    },
    {
       "code": 31532920,
@@ -2750,7 +3873,12 @@
       "logo": "",
       "picture": "",
       "category": "Lighting",
-      "words": []
+      "words": [
+         "bulbs",
+         "bulb",
+         "fluorescent lamps",
+         "fluorescent lamp"
+      ]
    },
    {
       "code": 31600000,
@@ -2759,7 +3887,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical equipment",
+         "electrical apparatus",
+         "electrical equipments",
+         "electrical apparatus"
+      ]
    },
    {
       "code": 31610000,
@@ -2777,7 +3910,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "wiring sets",
+         "wiring set"
+      ]
    },
    {
       "code": 31612000,
@@ -2795,7 +3931,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "starter motors",
+         "starter motor"
+      ]
    },
    {
       "code": 31612300,
@@ -2804,7 +3943,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical signalling equipment for engines",
+         "electric signalling equipments for engines"
+      ]
    },
    {
       "code": 31612310,
@@ -2833,14 +3975,23 @@
       "category": "Fire fighting system",
       "words": [
          "fire extinguishers",
+         "fire extinguisher",
          "fire fighting",
-         "fire detection",
-         "fire systems",
-         "fire detectors",
+         "fire-fighting",
          "firefighting",
+         "fire detection",
+         "fire-detection",
+         "fire alarms",
+         "fire alarm",
+         "fire systems",
+         "fire system",
+         "fire detectors",
+         "fire detector",
          "firedetectors",
          "extincteurs",
+         "extincteur",
          "détecteurs de feu",
+         "détecteur de feu",
          "détecteurs de fumée"
       ]
    },
@@ -2853,14 +4004,23 @@
       "category": "Fire fighting system",
       "words": [
          "fire extinguishers",
+         "fire extinguisher",
          "fire fighting",
-         "fire detection",
-         "fire systems",
-         "fire detectors",
+         "fire-fighting",
          "firefighting",
+         "fire detection",
+         "fire-detection",
+         "fire alarms",
+         "fire alarm",
+         "fire systems",
+         "fire system",
+         "fire detectors",
+         "fire detector",
          "firedetectors",
          "extincteurs",
+         "extincteur",
          "détecteurs de feu",
+         "détecteur de feu",
          "détecteurs de fumée"
       ]
    },
@@ -2873,14 +4033,23 @@
       "category": "Fire fighting system",
       "words": [
          "fire extinguishers",
+         "fire extinguisher",
          "fire fighting",
-         "fire detection",
-         "fire systems",
-         "fire detectors",
+         "fire-fighting",
          "firefighting",
+         "fire detection",
+         "fire-detection",
+         "fire alarms",
+         "fire alarm",
+         "fire systems",
+         "fire system",
+         "fire detectors",
+         "fire detector",
          "firedetectors",
          "extincteurs",
+         "extincteur",
          "détecteurs de feu",
+         "détecteur de feu",
          "détecteurs de fumée"
       ]
    },
@@ -2900,7 +4069,13 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical suplies",
+         "electrical accessories",
+         "electrical accessory",
+         "electric supply",
+         "electric accessory"
+      ]
    },
    {
       "code": 31681000,
@@ -2909,7 +4084,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical accessories",
+         "electrical accessory",
+         "electric accessories",
+         "electric accessory"
+      ]
    },
    {
       "code": 31681100,
@@ -2918,7 +4098,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical contacts",
+         "electrical contact",
+         "electric contacts",
+         "electric contact"
+      ]
    },
    {
       "code": 31681200,
@@ -2929,9 +4114,13 @@
       "category": "Others",
       "words": [
          "electric pumps",
+         "electric pump",
          "electrical pumps",
+         "electrical pump",
          "electric pumpings",
-         "electrical pumpings"
+         "electric pumping",
+         "electrical pumpings",
+         "electrical pumping"
       ]
    },
    {
@@ -2941,7 +4130,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical circuits",
+         "electrical circuit",
+         "electric circuits",
+         "electric circuit"
+      ]
    },
    {
       "code": 31681400,
@@ -2950,7 +4144,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical components",
+         "electrical component",
+         "electric components",
+         "electric component"
+      ]
    },
    {
       "code": 31681410,
@@ -2959,7 +4158,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical materials",
+         "electrical material",
+         "electric materials",
+         "electric material"
+      ]
    },
    {
       "code": 31681500,
@@ -2968,7 +4172,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "rechargers",
+         "recharger"
+      ]
    },
    {
       "code": 31682000,
@@ -2977,7 +4184,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electricity supplies",
+         "electricity supply"
+      ]
    },
    {
       "code": 31682100,
@@ -2986,7 +4196,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electricity boxes",
+         "electricity box"
+      ]
    },
    {
       "code": 31682110,
@@ -2995,7 +4208,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electricity box covers",
+         "electricity box cover"
+      ]
    },
    {
       "code": 31682200,
@@ -3004,7 +4220,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "instrument panels",
+         "instrument panel",
+         "switchboard",
+         "switchboards"
+      ]
    },
    {
       "code": 31682210,
@@ -3015,7 +4236,8 @@
       "category": "Panel/Board",
       "words": [
          "instrumentation and control",
-         "control and instrumentation"
+         "control panel",
+         "control panels"
       ]
    },
    {
@@ -3025,7 +4247,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "mixing panels",
+         "mixing panel"
+      ]
    },
    {
       "code": 31682230,
@@ -3034,7 +4259,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "graphic display panels",
+         "graphic display panel"
+      ]
    },
    {
       "code": 31682300,
@@ -3043,7 +4271,14 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/various.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "medium voltage equipment",
+         "medium voltage equipments",
+         "medium-voltage equipment",
+         "medium-voltage equipments",
+         "mv equipment",
+         "mv equipments"
+      ]
    },
    {
       "code": 31682310,
@@ -3052,7 +4287,16 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_28.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "medium voltage panels",
+         "medium voltage panel",
+         "medium-voltage panels",
+         "medium-voltage panel",
+         "mv panel",
+         "mv panels",
+         "mv switchgear",
+         "mv switchgears"
+      ]
    },
    {
       "code": 31682400,
@@ -3061,7 +4305,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Panel/Board",
-      "words": []
+      "words": [
+         "overhead electrical equipment",
+         "overhead electrical equipments",
+         "overhead electric equipment",
+         "overhead electric equipments"
+      ]
    },
    {
       "code": 31682410,
@@ -3070,7 +4319,10 @@
       "logo": "http://arread.fr/deepbloo/Logo39.png",
       "picture": "http://arread.fr/deepbloo/id_5.jpg",
       "category": "Cables/Lines",
-      "words": []
+      "words": [
+         "overhead cable carriers",
+         "overhead cable carrier"
+      ]
    },
    {
       "code": 31682500,
@@ -3079,10 +4331,7 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
       "category": "Critical Power System",
-      "words": [
-         "emergency lights",
-         "emergency electrical"
-      ]
+      "words": []
    },
    {
       "code": 31682510,
@@ -3103,7 +4352,10 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_126.jpg",
       "category": "Critical Power System",
-      "words": []
+      "words": [
+         "emergency shutdown systems",
+         "emergency shutdown system"
+      ]
    },
    {
       "code": 31682530,
@@ -3114,7 +4366,9 @@
       "category": "Critical Power System",
       "words": [
          "emergency batteries",
-         "emergency battery"
+         "emergency battery",
+         "batterie de secours",
+         "batteries de secours"
       ]
    },
    {
@@ -3126,23 +4380,41 @@
       "category": "Turnkey SST",
       "words": [
          "sectionneurs",
+         "sectionneur",
          "disjoncteurs",
+         "disjoncteur",
          "current transformers",
+         "current transformer",
          "instrument transformers",
+         "instrument transformer",
+         "voltage transformer",
          "voltage transformers",
          "power transformers",
+         "power transformer",
          "distribution transformers",
+         "distribution transformer",
          "circuit breakers",
+         "circuit breaker",
+         "substation equipment",
+         "substation equipments",
          "primary equipments",
+         "primary equipment",
          "hv equipments",
+         "hv equipment",
          "mv equipments",
+         "hv equipment",
          "mv apparatus",
          "hv apparatus",
          "secondary equipments",
+         "secondary equipment",
          "hv devices",
+         "hv device",
          "mv devices",
+         "mv device",
          "cellules de moyenne tension",
-         "équipements de moyenne tension"
+         "cellule de moyenne tension",
+         "équipements de moyenne tension",
+         "équipement de moyenne tension"
       ]
    },
    {
@@ -3161,7 +4433,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electronic equipment",
+         "electronic equipments",
+         "electronical equipment",
+         "electronical equipments"
+      ]
    },
    {
       "code": 31711000,
@@ -3170,7 +4447,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electronic supplies",
+         "electronic supply",
+         "electronical supplies",
+         "electronical supply"
+      ]
    },
    {
       "code": 31711100,
@@ -3179,7 +4461,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electronic components",
+         "electronic component",
+         "electronical components",
+         "electronical component"
+      ]
    },
    {
       "code": 31711110,
@@ -3188,7 +4475,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "transceivers",
+         "transceiver"
+      ]
    },
    {
       "code": 31711120,
@@ -3197,7 +4487,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "transducers",
+         "transducer"
+      ]
    },
    {
       "code": 31711130,
@@ -3206,7 +4499,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "resistors",
+         "resistor"
+      ]
    },
    {
       "code": 31711131,
@@ -3215,7 +4511,12 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical resistors",
+         "electrical resistor",
+         "electric resistors",
+         "electric resistor"
+      ]
    },
    {
       "code": 31711140,
@@ -3224,7 +4525,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrodes",
+         "electrode"
+      ]
    },
    {
       "code": 31711150,
@@ -3236,15 +4540,29 @@
       "words": [
          "facts & hvdc",
          "capacitors",
+         "capacitor",
          "capacitorbanks",
-         "capacitances",
-         "condensors",
-         "condensers",
-         "condensators",
+         "capacitorbank",
          "capacitor banks",
+         "capacitor bank",
+         "capacitance",
+         "capacitances",
+         "condensators",
+         "condensator",
+         "condensateurs",
+         "condensateur",
+         "condensers",
+         "condenser",
+         "condensors",
+         "condensor",
          "wave trappers",
+         "wave trapper",
          "reactors",
-         "condensateurs"
+         "reactor",
+         "electrical capacitors",
+         "electrical capacitor",
+         "electric capacitors",
+         "electric capacitor"
       ]
    },
    {
@@ -3254,7 +4572,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
       "category": "Capacitors",
-      "words": []
+      "words": [
+         "fixed capacitors",
+         "fixed capacitor"
+      ]
    },
    {
       "code": 31711152,
@@ -3263,7 +4584,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
       "category": "Capacitors",
-      "words": []
+      "words": [
+         "variable capacitors",
+         "variable capacitor"
+      ]
    },
    {
       "code": 31711154,
@@ -3275,15 +4599,29 @@
       "words": [
          "facts & hvdc",
          "capacitors",
+         "capacitor",
          "capacitorbanks",
-         "capacitances",
-         "condensors",
-         "condensers",
-         "condensators",
+         "capacitorbank",
          "capacitor banks",
+         "capacitor bank",
+         "capacitance",
+         "capacitances",
+         "condensators",
+         "condensator",
+         "condensateurs",
+         "condensateur",
+         "condensers",
+         "condenser",
+         "condensors",
+         "condensor",
          "wave trappers",
+         "wave trapper",
          "reactors",
-         "condensateurs"
+         "reactor",
+         "electrical capacitors",
+         "electrical capacitor",
+         "electric capacitors",
+         "electric capacitor"
       ]
    },
    {
@@ -3293,7 +4631,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_59.jpg",
       "category": "Capacitors",
-      "words": []
+      "words": [
+         "capacitor networks",
+         "capacitor network"
+      ]
    },
    {
       "code": 31711510,
@@ -3313,10 +4654,17 @@
       "category": "Facts & HVDC - Others",
       "words": [
          "thyristors",
+         "thyristor",
          "diodes",
+         "diode",
          "semiconductors",
+         "semiconductor",
          "semi-conductors",
-         "valves"
+         "semi-conductor",
+         "semiconducteurs",
+         "semiconducteur",
+         "valves",
+         "valve"
       ]
    },
    {
@@ -3326,7 +4674,20 @@
       "logo": "http://arread.fr/deepbloo/Logo1_solar.png",
       "picture": "http://arread.fr/deepbloo/id_120.jpg",
       "category": "Solar",
-      "words": []
+      "words": [
+         "solar",
+         "solaires",
+         "solaire",
+         "photovoltaic",
+         "photovoltaïque",
+         "photovoltaïques",
+         "photovoltaique",
+         "photovoltaiques",
+         "shs",
+         "solar home system",
+         "solar home systems",
+         "solar rooftop"
+      ]
    },
    {
       "code": 31712332,
@@ -3335,7 +4696,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "thyristors",
+         "thyristor"
+      ]
    },
    {
       "code": 31712333,
@@ -3362,7 +4726,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "optical coupled isolators",
+         "optical coupled isolator"
+      ]
    },
    {
       "code": 31712336,
@@ -3371,7 +4738,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "crystal oscillators",
+         "crystal oscillator"
+      ]
    },
    {
       "code": 31712340,
@@ -3382,10 +4752,17 @@
       "category": "Facts & HVDC - Others",
       "words": [
          "thyristors",
+         "thyristor",
          "diodes",
+         "diode",
          "semiconductors",
+         "semiconductor",
          "semi-conductors",
-         "valves"
+         "semi-conductor",
+         "semiconducteurs",
+         "semiconducteur",
+         "valves",
+         "valve"
       ]
    },
    {
@@ -3395,7 +4772,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "light emitting diodes",
+         "light emitting diode"
+      ]
    },
    {
       "code": 31712342,
@@ -3413,7 +4793,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "zener diodes",
+         "zener diode"
+      ]
    },
    {
       "code": 31712344,
@@ -3422,7 +4805,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "schottky diodes",
+         "schottky diode"
+      ]
    },
    {
       "code": 31712345,
@@ -3431,7 +4817,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "tunnel diode",
+         "tunnel diodes"
+      ]
    },
    {
       "code": 31712346,
@@ -3440,7 +4829,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "photosensitive diode",
+         "photosensitive diodes"
+      ]
    },
    {
       "code": 31712347,
@@ -3449,7 +4841,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "power diode",
+         "power diodes",
+         "solar diode",
+         "solar diodes"
+      ]
    },
    {
       "code": 31712348,
@@ -3458,7 +4855,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "laser diodes",
+         "laser diode"
+      ]
    },
    {
       "code": 31712349,
@@ -3467,7 +4867,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "radio frequency diode",
+         "radio frequency diodes"
+      ]
    },
    {
       "code": 31712350,
@@ -3476,7 +4879,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_112.jpg",
       "category": "Facts & HVDC - Others",
-      "words": []
+      "words": [
+         "transistor",
+         "transistors"
+      ]
    },
    {
       "code": 31720000,
@@ -3485,7 +4891,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electromechanical equipment",
+         "electromechanical equipments"
+      ]
    },
    {
       "code": 31730000,
@@ -3494,7 +4903,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrotechnical equipment",
+         "electrotechnical equipments"
+      ]
    },
    {
       "code": 31731000,
@@ -3503,7 +4915,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrotechnical supply",
+         "electrotechnical supplies"
+      ]
    },
    {
       "code": 31731100,
@@ -3523,16 +4938,39 @@
       "category": "Meters",
       "words": [
          "metering",
-         "smartmeters",
-         "wattmeters",
-         "watt-meters",
-         "voltmeters",
-         "volt-meters",
-         "ammeters",
-         "wattmètres",
-         "ampèremètres",
+         "meterings",
          "compteurs",
-         "voltmètres"
+         "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
+         "smartmeters",
+         "smartmeter",
+         "smart meter",
+         "smart meters",
+         "wattmeters",
+         "wattmeter",
+         "watt-meters",
+         "watt-meter",
+         "wattmètre",
+         "wattmètres",
+         "wattmetres",
+         "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
+         "voltmètres",
+         "voltmètre",
+         "volt-meters",
+         "volt-meter",
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter"
       ]
    },
    {
@@ -3543,7 +4981,12 @@
       "picture": "",
       "category": "Meters",
       "words": [
-         "ammeters"
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter"
       ]
    },
    {
@@ -3554,9 +4997,14 @@
       "picture": "",
       "category": "Meters",
       "words": [
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
          "voltmètres",
+         "voltmètre",
          "volt-meters",
-         "voltmeters"
+         "volt-meter"
       ]
    },
    {
@@ -3566,7 +5014,42 @@
       "logo": "",
       "picture": "",
       "category": "Meters",
-      "words": []
+      "words": [
+         "metering",
+         "meterings",
+         "compteurs",
+         "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
+         "smartmeters",
+         "smartmeter",
+         "smart meter",
+         "smart meters",
+         "wattmeters",
+         "wattmeter",
+         "watt-meters",
+         "watt-meter",
+         "wattmètre",
+         "wattmètres",
+         "wattmetres",
+         "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
+         "voltmètres",
+         "voltmètre",
+         "volt-meters",
+         "volt-meter",
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter"
+      ]
    },
    {
       "code": 38550000,
@@ -3577,16 +5060,39 @@
       "category": "Meters",
       "words": [
          "metering",
-         "smartmeters",
-         "wattmeters",
-         "watt-meters",
-         "voltmeters",
-         "volt-meters",
-         "ammeters",
-         "wattmètres",
-         "ampèremètres",
+         "meterings",
          "compteurs",
-         "voltmètres"
+         "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
+         "smartmeters",
+         "smartmeter",
+         "smart meter",
+         "smart meters",
+         "wattmeters",
+         "wattmeter",
+         "watt-meters",
+         "watt-meter",
+         "wattmètre",
+         "wattmètres",
+         "wattmetres",
+         "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
+         "voltmètres",
+         "voltmètre",
+         "volt-meters",
+         "volt-meter",
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter"
       ]
    },
    {
@@ -3596,7 +5102,12 @@
       "logo": "",
       "picture": "",
       "category": "Meters",
-      "words": []
+      "words": [
+         "electronic meters",
+         "electronic meter",
+         "electronical meters",
+         "electronical meter"
+      ]
    },
    {
       "code": 38553000,
@@ -3605,7 +5116,12 @@
       "logo": "",
       "picture": "",
       "category": "Meters",
-      "words": []
+      "words": [
+         "magnetic meters",
+         "magnetic meter",
+         "magnetical meters",
+         "magnetical meter"
+      ]
    },
    {
       "code": 38554000,
@@ -3616,16 +5132,45 @@
       "category": "Meters",
       "words": [
          "metering",
-         "smartmeters",
-         "wattmeters",
-         "watt-meters",
-         "voltmeters",
-         "volt-meters",
-         "ammeters",
-         "wattmètres",
-         "ampèremètres",
+         "meterings",
          "compteurs",
-         "voltmètres"
+         "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
+         "smartmeters",
+         "smartmeter",
+         "smart meter",
+         "smart meters",
+         "wattmeters",
+         "wattmeter",
+         "watt-meters",
+         "watt-meter",
+         "wattmètre",
+         "wattmètres",
+         "wattmetres",
+         "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
+         "voltmètres",
+         "voltmètre",
+         "volt-meters",
+         "volt-meter",
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter",
+         "compteurs",
+         "compteur",
+         "voltmètres",
+         "voltmètre",
+         "voltmetres",
+         "voltmetre"
       ]
    },
    {
@@ -3637,9 +5182,13 @@
       "category": "Insulators",
       "words": [
          "insulators",
+         "insulator",
          "bushings",
+         "bushing",
          "isolateurs",
-         "isolators"
+         "isolateur",
+         "isolators",
+         "isolator"
       ]
    },
    {
@@ -3651,10 +5200,13 @@
       "category": "Insulators",
       "words": [
          "insulators",
+         "insulator",
          "bushings",
+         "bushing",
          "isolateurs",
+         "isolateur",
          "isolators",
-         "insulators"
+         "isolator"
       ]
    },
    {
@@ -3666,10 +5218,13 @@
       "category": "Insulators",
       "words": [
          "insulators",
+         "insulator",
          "bushings",
+         "bushing",
          "isolateurs",
+         "isolateur",
          "isolators",
-         "insulators"
+         "isolator"
       ]
    },
    {
@@ -3687,7 +5242,12 @@
       "logo": "",
       "picture": "",
       "category": "Insulators",
-      "words": []
+      "words": [
+         "electrical insulating fittings",
+         "electrical insulating fitting",
+         "electric insulating fittings",
+         "electric insulating fitting"
+      ]
    },
    {
       "code": 44212222,
@@ -3697,7 +5257,10 @@
       "picture": "",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "pylons"
+         "pylons",
+         "pylon",
+         "pylone",
+         "pylones"
       ]
    },
    {
@@ -3708,7 +5271,10 @@
       "picture": "",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "conductors"
+         "conductors",
+         "conductor",
+         "conducteur",
+         "conducteurs"
       ]
    },
    {
@@ -3735,7 +5301,10 @@
       "picture": "",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cables"
+         "cables",
+         "cable",
+         "câbles",
+         "câble"
       ]
    },
    {
@@ -3746,7 +5315,26 @@
       "picture": "",
       "category": "Cables/Lines/Connectors",
       "words": [
-         "cable accessories"
+         "cable accessories",
+         "cable accessory",
+         "cables accessories",
+         "cables accessory",
+         "accessoires de cable",
+         "accessoire de cable",
+         "accessoires de cables",
+         "accessoire de cables",
+         "accessoires de câble",
+         "accessoires de câbles",
+         "accessoire de câbles",
+         "accessoire de câble",
+         "accessoire câble",
+         "accessoires câble",
+         "accessoires câbles",
+         "accessoire câbles",
+         "accessoire cable",
+         "accessoires cable",
+         "accessoire cables",
+         "accessoires cables"
       ]
    },
    {
@@ -3756,7 +5344,10 @@
       "logo": "",
       "picture": "",
       "category": "Cables/Lines/Connectors",
-      "words": []
+      "words": [
+         "cable ducts",
+         "cable duct"
+      ]
    },
    {
       "code": 45223720,
@@ -3765,7 +5356,9 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "petrol gas stations construction work"
+      ]
    },
    {
       "code": 45231200,
@@ -3774,7 +5367,12 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "oil pipeline",
+         "oil pipelines",
+         "gas pipeline",
+         "gas pipelines"
+      ]
    },
    {
       "code": 45231400,
@@ -3783,14 +5381,7 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": [
-         "lignes ht",
-         "lignes haute tension",
-         "power lines",
-         "powerlines",
-         "overheadlines",
-         "overhead lines"
-      ]
+      "words": []
    },
    {
       "code": 45232200,
@@ -3799,14 +5390,7 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": [
-         "lignes ht",
-         "lignes haute tension",
-         "power lines",
-         "powerlines",
-         "overheadlines",
-         "overhead lines"
-      ]
+      "words": []
    },
    {
       "code": 45232210,
@@ -3815,14 +5399,7 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/id_43.jpg",
       "category": "Cables/Lines/Connectors",
-      "words": [
-         "lignes ht",
-         "lignes haute tension",
-         "power lines",
-         "powerlines",
-         "overheadlines",
-         "overhead lines"
-      ]
+      "words": []
    },
    {
       "code": 45232220,
@@ -3833,13 +5410,17 @@
       "category": "Tunrkey SST",
       "words": [
          "substations",
+         "substation",
          "mobile sst",
          "gis sst",
          "ais sst",
          "turnkey sst",
          "switchyards",
+         "switchyard",
          "switchgears",
-         "controlgears"
+         "switchgear",
+         "substation construction work",
+         "substation construction works"
       ]
    },
    {
@@ -3851,13 +5432,17 @@
       "category": "Tunrkey SST",
       "words": [
          "substations",
+         "substation",
          "mobile sst",
          "gis sst",
          "ais sst",
          "turnkey sst",
          "switchyards",
+         "switchyard",
          "switchgears",
-         "controlgears"
+         "switchgear",
+         "transformer substation",
+         "transformer substations"
       ]
    },
    {
@@ -3885,7 +5470,9 @@
       "logo": "",
       "picture": "",
       "category": "Generation",
-      "words": []
+      "words": [
+         "construction work for power plant"
+      ]
    },
    {
       "code": 45251100,
@@ -3902,7 +5489,9 @@
       "logo": "",
       "picture": "",
       "category": "Generation",
-      "words": []
+      "words": [
+         "nuclear power station construction work"
+      ]
    },
    {
       "code": 45251110,
@@ -3937,26 +5526,26 @@
       "picture": "",
       "category": "Hydro/Thermal",
       "words": [
-         "hydropower",
+         "hydro électrique",
+         "hydro électriques",
          "hydroelectricity",
+         "hydro electricity",
          "hydroelectric",
          "hydro electric",
-         "hydro power",
          "microhydro",
          "micro hydro",
          "water power",
          "waterpower",
          "hydropower",
-         "hydo plant",
+         "hydro power",
+         "hydro plant",
+         "hydro plants",
+         "hydroplants",
+         "hydroplant",
          "small hydro",
+         "small hydros",
          "hydroélectrique",
-         "hydro électrique",
-         "hydropower project",
-         "hydroelectric project",
-         "hydro-power project",
-         "hydro-electric project",
-         "hydropower plant",
-         "hydroelectric plant"
+         "hydroélectriques"
       ]
    },
    {
@@ -3974,11 +5563,7 @@
       "logo": "",
       "picture": "",
       "category": "Hydro/Thermal",
-      "words": [
-         "thermal power project",
-         "thermal power station",
-         "thermal power plant"
-      ]
+      "words": []
    },
    {
       "code": 45251140,
@@ -4003,10 +5588,7 @@
       "logo": "",
       "picture": "",
       "category": "Hydro/Thermal",
-      "words": [
-         "geothermal power plant",
-         "geothermal power station"
-      ]
+      "words": []
    },
    {
       "code": 45251141,
@@ -4049,9 +5631,7 @@
       "logo": "",
       "picture": "",
       "category": "Cooling System",
-      "words": [
-         "cooling towers"
-      ]
+      "words": []
    },
    {
       "code": 45251160,
@@ -4063,30 +5643,60 @@
       "words": [
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
          "windturbines",
+         "wind turbine",
+         "windturbine",
          "wind",
          "windmills",
+         "windmill",
+         "wind-mill",
+         "wind-mills",
          "windfarms",
+         "windfarm",
+         "wind-farm",
+         "wind-farms",
+         "wind farm",
+         "wind farms",
          "eolic",
          "eolian",
          "aeolian",
+         "eolians",
+         "aeolians",
+         "aeolics",
          "windpower",
          "wind-powered",
+         "wind-power",
          "éoliens",
          "éoliennes",
-         "wind farms",
+         "éolien",
+         "éolienne",
          "wind turbines",
-         "windturbines"
+         "windturbines",
+         "wind turbine",
+         "windturbine"
       ]
    },
    {
@@ -4113,7 +5723,8 @@
       "picture": "",
       "category": "Generation",
       "words": [
-         "heating plant"
+         "heating plant",
+         "heating plants"
       ]
    },
    {
@@ -4133,8 +5744,11 @@
       "category": "Generation",
       "words": [
          "cogénération",
+         "cogeneration",
          "cogeneration project",
-         "cogeneration plant"
+         "cogeneration projects",
+         "cogeneration plant",
+         "cogeneration plants"
       ]
    },
    {
@@ -4146,7 +5760,9 @@
       "category": "Generation",
       "words": [
          "steam generation plant",
-         "steam generation project"
+         "steam generation plants",
+         "steam generation project",
+         "steam generation projects"
       ]
    },
    {
@@ -4166,7 +5782,10 @@
       "picture": "",
       "category": "Generation",
       "words": [
-         "district heating"
+         "district-heating plant",
+         "district-heating plants",
+         "district heating plant",
+         "district heating plants"
       ]
    },
    {
@@ -4202,7 +5821,14 @@
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
       "category": "Construction/CW/Installation",
       "words": [
-         "electrical installation"
+         "electrical installation",
+         "electrical installations",
+         "electric installation",
+         "electric installations",
+         "installations électriques",
+         "installation électrique",
+         "installations electriques",
+         "installation electrique"
       ]
    },
    {
@@ -4213,7 +5839,14 @@
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
       "category": "Others",
       "words": [
-         "electrical wiring"
+         "electrical wiring",
+         "electrical wirings",
+         "electric wiring",
+         "electric wirings",
+         "câblage électrique",
+         "cablage electrique",
+         "câblage electrique",
+         "cablage électrique"
       ]
    },
    {
@@ -4224,7 +5857,14 @@
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
       "category": "Others",
       "words": [
-         "electrical wiring"
+         "electrical wiring",
+         "electrical wirings",
+         "electric wiring",
+         "electric wirings",
+         "câblage électrique",
+         "cablage electrique",
+         "câblage electrique",
+         "cablage électrique"
       ]
    },
    {
@@ -4235,7 +5875,14 @@
       "picture": "http://arread.fr/deepbloo/id_132.jpg",
       "category": "Others",
       "words": [
-         "electrical fitting"
+         "electrical fitting",
+         "electrical fittings",
+         "electric fitting",
+         "ellectric fittings",
+         "installations électriques",
+         "installation électrique",
+         "installations electriques",
+         "installation electrique"
       ]
    },
    {
@@ -4273,7 +5920,13 @@
       "picture": "",
       "category": "Construction/CW/Installation",
       "words": [
-         "electrical engineering"
+         "electrical engineering",
+         "electric engineering",
+         "electric engineering",
+         "electrical installation",
+         "electrical installations",
+         "electric installation",
+         "electric installations"
       ]
    },
    {
@@ -4283,7 +5936,10 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "turbine works",
+         "turbine work"
+      ]
    },
    {
       "code": 45315300,
@@ -4292,7 +5948,10 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "electricity supply installations",
+         "electricity supply installation"
+      ]
    },
    {
       "code": 45315400,
@@ -4301,7 +5960,14 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "high voltage installation work",
+         "high voltage installation works",
+         "high-voltage installation work",
+         "high-voltage installations work",
+         "hv installation work",
+         "hv installation works"
+      ]
    },
    {
       "code": 45315500,
@@ -4310,7 +5976,14 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "medium-voltage installation work",
+         "medium-voltage installation works",
+         "medium voltage installation work",
+         "medium voltage installation works",
+         "mv installation work",
+         "mv installation works"
+      ]
    },
    {
       "code": 45315600,
@@ -4319,7 +5992,14 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "low-voltage installation work",
+         "low-voltage installation works",
+         "low voltage installation work",
+         "low voltage installation works",
+         "lv installation work",
+         "lv installation works"
+      ]
    },
    {
       "code": 45315700,
@@ -4328,7 +6008,10 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "switching station installation work",
+         "switching station installation work"
+      ]
    },
    {
       "code": 45317000,
@@ -4338,7 +6021,8 @@
       "picture": "",
       "category": "Construction/CW/Installation",
       "words": [
-         "installation"
+         "electrical installation",
+         "electrical installations"
       ]
    },
    {
@@ -4357,7 +6041,13 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "electrical installation work of transformers",
+         "electric installation work of transformers",
+         "transformer installation",
+         "transformer installation",
+         "transformers commissioning"
+      ]
    },
    {
       "code": 45317300,
@@ -4366,7 +6056,10 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "electrical installation work of electrical distribution apparatus",
+         "electric installation work of electric distribution apparatus"
+      ]
    },
    {
       "code": 45251141,
@@ -4383,7 +6076,10 @@
       "logo": "",
       "picture": "",
       "category": "Transformers",
-      "words": []
+      "words": [
+         "repair and maintenance services of transformers",
+         "repair and maintenance service of transformers"
+      ]
    },
    {
       "code": 50532300,
@@ -4392,7 +6088,10 @@
       "logo": "",
       "picture": "",
       "category": "Generation",
-      "words": []
+      "words": [
+         "repair and maintenance services of generators",
+         "repair and maintenance service of generator"
+      ]
    },
    {
       "code": 50532400,
@@ -4401,7 +6100,11 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "repair and maintenance services of electrical distribution equipment",
+         "repair and maintenance service of electrical distribution equipment",
+         "repair and maintenance service of electric distribution equipment"
+      ]
    },
    {
       "code": 65000000,
@@ -4410,7 +6113,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "public utilities",
+         "public utility"
+      ]
    },
    {
       "code": 65300000,
@@ -4419,7 +6125,9 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electricity distribution and related services"
+      ]
    },
    {
       "code": 65310000,
@@ -4428,7 +6136,9 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electricity distribution"
+      ]
    },
    {
       "code": 65320000,
@@ -4438,7 +6148,14 @@
       "picture": "",
       "category": "Others",
       "words": [
-         "electrical installations"
+         "electrical installations",
+         "electrical installation",
+         "eletric installation",
+         "electric installations",
+         "installations électriques",
+         "installation électrique",
+         "installations electriques",
+         "installation electrique"
       ]
    },
    {
@@ -4448,7 +6165,9 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "other sources of energy supplies and distribution"
+      ]
    },
    {
       "code": 65410000,
@@ -4457,7 +6176,9 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "operation of a power plant"
+      ]
    },
    {
       "code": 65500000,
@@ -4468,16 +6189,33 @@
       "category": "Others",
       "words": [
          "metering",
+         "meterings",
          "smartmeters",
+         "smartmeter",
          "wattmeters",
+         "wattmeter",
          "watt-meters",
+         "watt-meter",
          "voltmeters",
+         "voltmeter",
          "volt-meters",
+         "volt-meter",
          "ammeters",
+         "ammmeter",
          "wattmètres",
+         "wattmètre",
+         "wattmetres",
+         "wattmetre",
          "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
          "compteurs",
-         "voltmètres"
+         "compteur",
+         "voltmètres",
+         "voltmètre",
+         "voltmetres",
+         "voltmetre"
       ]
    },
    {
@@ -4487,7 +6225,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "energy and related service",
+         "energy and related services"
+      ]
    },
    {
       "code": 71314100,
@@ -4496,7 +6237,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "electrical service",
+         "electrical services"
+      ]
    },
    {
       "code": 71314200,
@@ -4505,7 +6249,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "energy-management service",
+         "energy-management services"
+      ]
    },
    {
       "code": 71314300,
@@ -4514,7 +6261,10 @@
       "logo": "",
       "picture": "",
       "category": "Others",
-      "words": []
+      "words": [
+         "energy-efficiency consultancy services",
+         "energy-efficiency consultancy service"
+      ]
    },
    {
       "code": 9000000,
@@ -4523,7 +6273,11 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "petroleum products",
+         "fuel",
+         "electricity and other sources of energy"
+      ]
    },
    {
       "code": 9000000,
@@ -4532,7 +6286,11 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "petroleum products",
+         "fuel",
+         "electricity and other sources of energy"
+      ]
    },
    {
       "code": 9000000,
@@ -4541,7 +6299,11 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
-      "words": []
+      "words": [
+         "petroleum products",
+         "fuel",
+         "electricity and other sources of energy"
+      ]
    },
    {
       "code": 14000000,
@@ -4550,7 +6312,10 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_17.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "mining",
+         "basic metals and related products"
+      ]
    },
    {
       "code": 14000000,
@@ -4559,7 +6324,10 @@
       "logo": "http://arread.fr/deepbloo/Logo5.png",
       "picture": "http://arread.fr/deepbloo/id_17.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "mining",
+         "basic metals and related products"
+      ]
    },
    {
       "code": 76000000,
@@ -4568,7 +6336,10 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": []
+      "words": [
+         "services related to the oil and gas industry",
+         "services related to the oil and gas industries"
+      ]
    },
    {
       "code": 10000001,
@@ -4579,21 +6350,57 @@
       "category": "",
       "words": [
          "microgrids",
-         "minigrids",
+         "microgrid",
          "micro-grids",
+         "micro-grid",
+         "micro grid",
+         "micro grids",
+         "minigrids",
+         "minigrid",
+         "mini grid",
+         "mini grids",
          "mini-grids",
+         "mini-grid",
          "decentralized energy",
          "offgrid",
-         "distributed energy",
+         "offgrids",
+         "off grid",
+         "off grids",
          "off-grid",
+         "off-grids",
+         "distributed energy",
          "hors réseau",
-         "micro-réseaux",
+         "hors réseaux",
+         "hors-réseau",
+         "hors-réseaux",
          "micro-réseau",
+         "micro-réseaux",
          "micro réseau",
+         "micro réseaux",
+         "micro-reseau",
+         "micro reseau",
+         "micro-reseau",
+         "micro-reseaux",
+         "mini-réseau",
+         "mini-réseaux",
+         "mini réseau",
+         "mini réseaux",
          "mini solar",
          "mini-solar",
-         "mini-photovotalic",
-         "mini photovotaic"
+         "mini solaire",
+         "mini-solaire",
+         "mini solaires",
+         "mini-solaires",
+         "mini-photovoltaic",
+         "mini photovoltaic",
+         "mini-photovoltaïque",
+         "mini-photovoltaïques",
+         "mini-photovoltaique",
+         "mini-photovoltaiques",
+         "mini photovoltaique",
+         "mini photovoltaiques",
+         "mini photovoltaïque",
+         "mini photovoltaïques"
       ]
    },
    {
@@ -4605,21 +6412,57 @@
       "category": "",
       "words": [
          "microgrids",
-         "minigrids",
+         "microgrid",
          "micro-grids",
+         "micro-grid",
+         "micro grid",
+         "micro grids",
+         "minigrids",
+         "minigrid",
+         "mini grid",
+         "mini grids",
          "mini-grids",
+         "mini-grid",
          "decentralized energy",
          "offgrid",
-         "distributed energy",
+         "offgrids",
+         "off grid",
+         "off grids",
          "off-grid",
+         "off-grids",
+         "distributed energy",
          "hors réseau",
-         "micro-réseaux",
+         "hors réseaux",
+         "hors-réseau",
+         "hors-réseaux",
          "micro-réseau",
+         "micro-réseaux",
          "micro réseau",
+         "micro réseaux",
+         "micro-reseau",
+         "micro reseau",
+         "micro-reseau",
+         "micro-reseaux",
+         "mini-réseau",
+         "mini-réseaux",
+         "mini réseau",
+         "mini réseaux",
          "mini solar",
          "mini-solar",
-         "mini-photovotalic",
-         "mini photovotaic"
+         "mini solaire",
+         "mini-solaire",
+         "mini solaires",
+         "mini-solaires",
+         "mini-photovoltaic",
+         "mini photovoltaic",
+         "mini-photovoltaïque",
+         "mini-photovoltaïques",
+         "mini-photovoltaique",
+         "mini-photovoltaiques",
+         "mini photovoltaique",
+         "mini photovoltaiques",
+         "mini photovoltaïque",
+         "mini photovoltaïques"
       ]
    },
    {
@@ -4631,11 +6474,47 @@
       "category": "",
       "words": [
          "bio énergies",
+         "bio énergie",
          "bioénergies",
+         "bioénergie",
          "bio energies",
+         "bio energie",
          "biomass",
          "biomasse",
-         "bio energy"
+         "bio energy",
+         "bio energies",
+         "bioenergy",
+         "bioenergies"
+      ]
+   },
+   {
+      "code": 10000004,
+      "label": "consulting",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "survey",
+         "surveys",
+         "consulting",
+         "consultant",
+         "consultants",
+         "study",
+         "studies",
+         "research",
+         "researchs",
+         "report",
+         "reports",
+         "audit",
+         "audits",
+         "assessment",
+         "assessments",
+         "rapports",
+         "rapport",
+         "feasability",
+         "faisabilité",
+         "faisabilité"
       ]
    }
 ]
