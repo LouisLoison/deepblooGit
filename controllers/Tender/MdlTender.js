@@ -455,6 +455,12 @@ exports.TenderStatistic = (year, month, user) => {
         let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender)
         let isWeek = false
 
+        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > nowTimestamp) {
+          statistic.liveCount++
+        } else {
+          continue
+        }
+
         if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > weekTimestamp) {
           statistic.weekCount++
           isWeek = true
@@ -466,12 +472,6 @@ exports.TenderStatistic = (year, month, user) => {
 
         if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > weekNextTimestamp) {
           statistic.liveWeekNextCount++
-        }
-
-        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > nowTimestamp) {
-          statistic.liveCount++
-        } else {
-          continue
         }
 
         // buyer name count
