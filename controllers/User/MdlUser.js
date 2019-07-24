@@ -207,6 +207,17 @@ exports.Memberships = (userId) => {
           isPremiumMembership = true
         }
       }
+      
+      let isBusinessMembership = false;
+      for (let membership of memberships) {
+        if (
+          membership.status === "paid"
+          && new Date(membership.expires_at) > new Date()
+          && membership.type_name.startsWith('Business')
+        ) {
+          isBusinessMembership = true
+        }
+      }
 
       let userUpdate = false
       if (isPremiumMembership && user.type !== 1 && user.type !== 2) {
@@ -223,6 +234,7 @@ exports.Memberships = (userId) => {
 
       resolve({
         isPremiumMembership,
+        isBusinessMembership,
         memberships,
         hasFree : user.membershipFree > 0
       });
@@ -364,8 +376,19 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
       let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}/experiences`)
       if (userExperiencesResponse.data.experiences.length > 0) {
         let experiences = userExperiencesResponse.data.experiences.sort((a, b) => {
-          return a.id > b.id ? -1 : a.id < b.id ? 1 : 0;
+          let aValue = a.to
+          if (!aValue) {
+            aValue = '9999-99-99'
+          }
+          let bValue = b.to
+          if (!bValue) {
+            bValue = '9999-99-99'
+          }
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
         });
+        // for (let experience of experiences) {
+        //   let userExperienceResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/experiences/${experience.id}`);
+        // }
         let organizationDgmarketId = experiences[0].companies_company_id
         organization = organizationsBdd.find(a => a.dgmarketId === organizationDgmarketId)
         if (organization) {

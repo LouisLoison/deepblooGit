@@ -247,7 +247,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         let orCondition = ''
         for (let cpvLabel of cpvLabels) {
           if (orCondition !== '') { orCondition += 'OR '}
-          orCondition += `cpvDescriptions LIKE '%${BddTool.ChaineFormater(cpvLabel, BddEnvironnement, BddId)}%' `
+          orCondition += `REPLACE(cpvDescriptions, '-', ' ') LIKE '%${BddTool.ChaineFormater(cpvLabel, BddEnvironnement, BddId)}%' `
         }
         where += `(${orCondition}) `
       }
