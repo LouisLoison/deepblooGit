@@ -115,7 +115,9 @@ exports.CpvCreateJson = () => {
         if (!lineArray[i] || lineArray[i].trim() === '') {
           continue
         }
-        category.words.push(lineArray[i].trim().toLowerCase())
+        if (lineArray[i].trim() !== '') {
+          category.words.push(lineArray[i].trim().toLowerCase())
+        }
       }
       let family = familys.find(a => a.category === category.category)
       if (family) {
@@ -128,13 +130,15 @@ exports.CpvCreateJson = () => {
       let lineArray = line.split('|')
       let cpvLabels = lineArray[0].trim()
       let words = []
-      for (let i = 2; i < lineArray.length; i++) {
+      for (let i = 3; i < lineArray.length; i++) {
         if (!lineArray[i] || lineArray[i].trim() === '') {
           continue
         }
         let wordTextes = lineArray[i].trim().toLowerCase()
         for (let word of wordTextes.split(',')) {
-          words.push(word.trim().toLowerCase())
+          if (word.trim() !== '') {
+            words.push(word.trim().toLowerCase())
+          }
         }
       }
       for (let cpvLabel of cpvLabels.split(',')) {

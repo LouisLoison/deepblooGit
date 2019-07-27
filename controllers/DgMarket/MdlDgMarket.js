@@ -222,6 +222,7 @@ exports.FileParse = (fileLocation) => {
         let title = tool.getXmlJsonData(notice.noticeTitle)
         let cpvOkCount = 0
         let cpvsText = tool.getXmlJsonData(notice.cpvs)
+        let cpvsOrigine = tool.getXmlJsonData(notice.cpvs)
         let cpvDescriptionsText = tool.getXmlJsonData(notice.cpvDescriptions)
         if (cpvsText) {
           let cpvsTextTemp = cpvsText.split(',')
@@ -273,8 +274,9 @@ exports.FileParse = (fileLocation) => {
           estimatedCost: tool.getXmlJsonData(notice.estimatedCost),
           currency: tool.getXmlJsonData(notice.currency),
           publicationDate: tool.getXmlJsonData(notice.publicationDate),
-          cpvs: cpvsText,
-          cpvDescriptions: cpvDescriptionsText,
+          cpvsOrigine: cpvsOrigine.split(',').slice(0, 25).join(),
+          cpvs: cpvsText.split(',').slice(0, 25).join(),
+          cpvDescriptions: cpvDescriptionsText.split(',').slice(0, 25).join(),
           words: words,
           bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
           sourceUrl: tool.getXmlJsonData(notice.sourceUrl).substring(0, 1900),

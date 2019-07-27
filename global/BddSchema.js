@@ -25,6 +25,7 @@ var Schema = {
       estimatedCost: { type: "String" },
       currency: { type: "String" },
       publicationDate: { type: "String" },
+      cpvsOrigine:  { type: "String" },
       cpvs: { type: "String" },
       cpvDescriptions: { type: "String" },
       words: { type: "String" },

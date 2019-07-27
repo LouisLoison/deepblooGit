@@ -9,6 +9,10 @@
       "words": [
          "heater",
          "heaters",
+         "heat pump",
+         "heat pumps",
+         "heat pumping",
+         "heat pumpings",
          "heating"
       ]
    },
@@ -19,27 +23,7 @@
       "logo": "http://arread.fr/deepbloo/default.png",
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
-      "words": [
-         "renewables",
-         "energy",
-         "power",
-         "transmission",
-         "distribution",
-         "t&d",
-         "generation",
-         "voltage",
-         "grid",
-         "electricity",
-         "electrical",
-         "electrification",
-         "electric",
-         "electrified",
-         "electrically",
-         "frequency",
-         "discharge",
-         "énergies renouvelables",
-         "énergie renouvelable"
-      ]
+      "words": []
    },
    {
       "code": 9320000,
@@ -327,6 +311,8 @@
          "convertor",
          "power converters",
          "power converter",
+         "power convertor",
+         "power convertors",
          "power supply converters",
          "power supply converter"
       ]
@@ -824,9 +810,7 @@
          "alternators",
          "alternator",
          "redresseurs",
-         "redresseur",
-         "rectifer",
-         "rectifers"
+         "redresseur"
       ]
    },
    {
@@ -855,9 +839,7 @@
          "alternators",
          "alternator",
          "redresseurs",
-         "redresseur",
-         "inverter",
-         "inverters"
+         "redresseur"
       ]
    },
    {
@@ -926,7 +908,9 @@
       "category": "Energy storage",
       "words": [
          "superchargers",
-         "supercharger"
+         "supercharger",
+         "super charger",
+         "super chargers"
       ]
    },
    {
@@ -937,8 +921,10 @@
       "picture": "http://arread.fr/deepbloo/id_9.jpg",
       "category": "Energy storage",
       "words": [
-         "tubocharger",
-         "tubocharger"
+         "turbocharger",
+         "turbochargers",
+         "turbo charger",
+         "turbo chargers"
       ]
    },
    {
@@ -968,7 +954,7 @@
       "category": "Others",
       "words": [
          "excitation systems",
-         "exitation system"
+         "excitation system"
       ]
    },
    {
@@ -1194,36 +1180,38 @@
          "sensor",
          "metering",
          "meterings",
-         "meters",
-         "smartmeters",
-         "smartmeter",
-         "lv equipments",
-         "lv equipment",
-         "lv apparatus",
-         "lv devices",
-         "lv device",
-         "wattmeters",
-         "wattmeter",
-         "watt meter",
-         "watt meters",
-         "watt-meters",
-         "watt-meter",
-         "voltmeters",
-         "voltmeter",
-         "volt-meters",
-         "volt-meter",
-         "ammeters",
-         "ammeter",
-         "wattmètres",
-         "wattmètre",
-         "ampèremètres",
-         "ampèremètre",
          "compteurs",
          "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
+         "smartmeters",
+         "smartmeter",
+         "smart meter",
+         "smart meters",
+         "wattmeters",
+         "wattmeter",
+         "watt-meters",
+         "watt-meter",
+         "wattmètre",
+         "wattmètres",
+         "wattmetres",
+         "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
          "voltmètres",
          "voltmètre",
-         "scada",
-         "feeder automation",
+         "volt-meters",
+         "volt-meter",
+         "ampèremètres",
+         "ampèremètre",
+         "amperemetres",
+         "amperemetre",
+         "ammeters",
+         "ammmeter",
          "network & telecommunication",
          "network management system",
          "motor control centers",
@@ -1993,8 +1981,7 @@
          "voltage protection",
          "voltage protections",
          "feeder protection",
-         "feeder",
-         "protections",
+         "feeder protections",
          "numerical protection",
          "numerical protections",
          "directional protection",
@@ -2058,8 +2045,7 @@
          "voltage protection",
          "voltage protections",
          "feeder protection",
-         "feeder",
-         "protections",
+         "feeder protections",
          "numerical protection",
          "numerical protections",
          "directional protection",
@@ -2123,8 +2109,7 @@
          "voltage protection",
          "voltage protections",
          "feeder protection",
-         "feeder",
-         "protections",
+         "feeder protections",
          "numerical protection",
          "numerical protections",
          "directional protection",
@@ -2661,8 +2646,7 @@
          "cable sousmarin",
          "cable sous-marin",
          "cable sous marin",
-         "câble sous-marin",
-         ""
+         "câble sous-marin"
       ]
    },
    {
@@ -2686,8 +2670,7 @@
          "cable sousmarin",
          "cable sous-marin",
          "cable sous marin",
-         "câble sous-marin",
-         ""
+         "câble sous-marin"
       ]
    },
    {
@@ -4114,7 +4097,11 @@
          "electric pumpings",
          "electric pumping",
          "electrical pumpings",
-         "electrical pumping"
+         "electrical pumping",
+         "heat pump",
+         "heat pumps",
+         "heat pumping",
+         "heat pumpings"
       ]
    },
    {
@@ -5739,8 +5726,6 @@
       "words": [
          "cogénération",
          "cogeneration",
-         "cogeneration project",
-         "cogeneration projects",
          "cogeneration plant",
          "cogeneration plants"
       ]
@@ -5755,6 +5740,8 @@
       "words": [
          "steam generation plant",
          "steam generation plants",
+         "steam plant",
+         "steam plants",
          "steam generation project",
          "steam generation projects"
       ]
@@ -6026,7 +6013,14 @@
       "logo": "",
       "picture": "",
       "category": "Construction/CW/Installation",
-      "words": []
+      "words": [
+         "pump installation",
+         "pumping installation",
+         "pumps installation",
+         "installation of electrical pump",
+         "installation of electrical pumps",
+         "installation of pumping"
+      ]
    },
    {
       "code": 45317200,
@@ -6039,8 +6033,9 @@
          "electrical installation work of transformers",
          "electric installation work of transformers",
          "transformer installation",
-         "transformer installation",
-         "transformers commissioning"
+         "transformers installation",
+         "transformers commissioning",
+         "transformer commissioning"
       ]
    },
    {
@@ -6072,7 +6067,13 @@
       "category": "Transformers",
       "words": [
          "repair and maintenance services of transformers",
-         "repair and maintenance service of transformers"
+         "repair and maintenance service of transformers",
+         "transformer commissioning",
+         "transformers commissioning",
+         "transformers maintenance",
+         "transformer maintenance",
+         "transformer service",
+         "transformer services"
       ]
    },
    {
@@ -6084,7 +6085,9 @@
       "category": "Generation",
       "words": [
          "repair and maintenance services of generators",
-         "repair and maintenance service of generator"
+         "repair and maintenance service of generator",
+         "generator maintenance",
+         "generators maintenance"
       ]
    },
    {
@@ -6097,7 +6100,8 @@
       "words": [
          "repair and maintenance services of electrical distribution equipment",
          "repair and maintenance service of electrical distribution equipment",
-         "repair and maintenance service of electric distribution equipment"
+         "repair and maintenance service of electric distribution equipment",
+         "repair and maintenance"
       ]
    },
    {
@@ -6120,7 +6124,7 @@
       "picture": "",
       "category": "Others",
       "words": [
-         "electricity distribution and related services"
+         "electricity distribution services"
       ]
    },
    {
@@ -6131,7 +6135,8 @@
       "picture": "",
       "category": "Others",
       "words": [
-         "electricity distribution"
+         "electricity distribution",
+         "distribution of electricity"
       ]
    },
    {
@@ -6144,7 +6149,7 @@
       "words": [
          "electrical installations",
          "electrical installation",
-         "eletric installation",
+         "electric installation",
          "electric installations",
          "installations électriques",
          "installation électrique",
@@ -6171,7 +6176,9 @@
       "picture": "",
       "category": "Others",
       "words": [
-         "operation of a power plant"
+         "operation of a power plant",
+         "powerplant operation",
+         "power plant operation"
       ]
    },
    {
@@ -6184,32 +6191,38 @@
       "words": [
          "metering",
          "meterings",
+         "compteurs",
+         "compteur",
+         "energy meters",
+         "energy meter",
+         "electricty meter",
+         "electricity meters",
          "smartmeters",
          "smartmeter",
+         "smart meter",
+         "smart meters",
          "wattmeters",
          "wattmeter",
          "watt-meters",
          "watt-meter",
-         "voltmeters",
-         "voltmeter",
-         "volt-meters",
-         "volt-meter",
-         "ammeters",
-         "ammmeter",
-         "wattmètres",
          "wattmètre",
+         "wattmètres",
          "wattmetres",
          "wattmetre",
+         "voltmeters",
+         "voltmeter",
+         "voltmetres",
+         "voltmetre",
+         "voltmètres",
+         "voltmètre",
+         "volt-meters",
+         "volt-meter",
          "ampèremètres",
          "ampèremètre",
          "amperemetres",
          "amperemetre",
-         "compteurs",
-         "compteur",
-         "voltmètres",
-         "voltmètre",
-         "voltmetres",
-         "voltmetre"
+         "ammeters",
+         "ammmeter"
       ]
    },
    {
@@ -6221,7 +6234,9 @@
       "category": "Others",
       "words": [
          "energy and related service",
-         "energy and related services"
+         "energy and related services",
+         "energy service",
+         "energy services"
       ]
    },
    {
@@ -6245,7 +6260,8 @@
       "category": "Others",
       "words": [
          "energy-management service",
-         "energy-management services"
+         "energy-management services",
+         "energy management"
       ]
    },
    {
@@ -6256,8 +6272,18 @@
       "picture": "",
       "category": "Others",
       "words": [
-         "energy-efficiency consultancy services",
-         "energy-efficiency consultancy service"
+         "energy-efficiency consultancy",
+         "energy-efficiency consultant",
+         "energy-efficiency consultants",
+         "energy-efficiency consulting",
+         "energy-efficiency service",
+         "energy-efficiency services",
+         "energy efficiency consultancy",
+         "energy efficiency consultant",
+         "energy efficiency consultants",
+         "energy efficiency consulting",
+         "energy efficiency service",
+         "energy efficiency services"
       ]
    },
    {
@@ -6268,9 +6294,7 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
-         "petroleum products",
-         "fuel",
-         "electricity and other sources of energy"
+         "petroleum products"
       ]
    },
    {
@@ -6281,9 +6305,7 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
-         "petroleum products",
-         "fuel",
-         "electricity and other sources of energy"
+         "petroleum products"
       ]
    },
    {
@@ -6294,9 +6316,7 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Generation",
       "words": [
-         "petroleum products",
-         "fuel",
-         "electricity and other sources of energy"
+         "petroleum products"
       ]
    },
    {
@@ -6308,7 +6328,9 @@
       "category": "Others",
       "words": [
          "mining",
-         "basic metals and related products"
+         "mines",
+         "metal",
+         "electrolyse"
       ]
    },
    {
@@ -6320,7 +6342,9 @@
       "category": "Others",
       "words": [
          "mining",
-         "basic metals and related products"
+         "mines",
+         "metal",
+         "electrolyse"
       ]
    },
    {
@@ -6331,8 +6355,10 @@
       "picture": "http://arread.fr/deepbloo/FondBleu.jpg",
       "category": "Others",
       "words": [
-         "services related to the oil and gas industry",
-         "services related to the oil and gas industries"
+         "oil and gas service",
+         "oil and gas services",
+         "o&g service",
+         "o&g services"
       ]
    },
    {
@@ -6508,7 +6534,7 @@
          "rapport",
          "feasability",
          "faisabilité",
-         "faisabilité"
+         "faisabilite"
       ]
    }
 ]
