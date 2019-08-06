@@ -1,4 +1,4 @@
-exports.TenderAdd = (tender) => {
+exports.OpportunityAdd = (opportunity) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -8,53 +8,53 @@ exports.TenderAdd = (tender) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      if (tender.algoliaId && tender.algoliaId > 0 && !tender.id) {
+      if (opportunity.algoliaId && opportunity.algoliaId > 0 && !opportunity.id) {
         let query = `
           SELECT      id AS "id" 
-          FROM        dgmarket 
-          WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId, BddEnvironnement, BddId)} 
+          FROM        opportunity 
+          WHERE       algoliaId = ${BddTool.NumericFormater(opportunity.algoliaId, BddEnvironnement, BddId)} 
         `
         let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         for (var record of recordset) {
-          tender.id = record.id
+          opportunity.id = record.id
         }
       }
 
-      if (tender.cpvs) {
-        let cpvDescriptions = tender.cpvs
-        tender.cpvs = ''
-        tender.cpvDescriptions = ''
+      if (opportunity.cpvs) {
+        let cpvDescriptions = opportunity.cpvs
+        opportunity.cpvs = ''
+        opportunity.cpvDescriptions = ''
         for (let description of cpvDescriptions) {
           let cpv = CpvList.find(a => a.label === description.split('-').join(' ').trim())
           if (cpv) {
-            if (tender.cpvDescriptions !== '') {
-              tender.cpvs += ','
-              tender.cpvDescriptions += ','
+            if (opportunity.cpvDescriptions !== '') {
+              opportunity.cpvs += ','
+              opportunity.cpvDescriptions += ','
             }
-            tender.cpvs += cpv.code
-            tender.cpvDescriptions += cpv.label
+            opportunity.cpvs += cpv.code
+            opportunity.cpvDescriptions += cpv.label
           }
         }
       }
 
-      let bidDeadlineDateText = `${tender.bidDeadlineDate.substring(0, 4)}-${tender.bidDeadlineDate.substring(4, 6)}-${tender.bidDeadlineDate.substring(6, 8)}`
+      let bidDeadlineDateText = `${opportunity.bidDeadlineDate.substring(0, 4)}-${opportunity.bidDeadlineDate.substring(4, 6)}-${opportunity.bidDeadlineDate.substring(6, 8)}`
       let termDate = new Date(bidDeadlineDateText)
       if (isNaN(termDate)) {
         throw new Error('BID deadline invalide !')
       }
 
       // Search cpv by key words
-      let cpvFound = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(tender.description, tender.cpvs, tender.cpvDescriptions)
-      tender.cpvs = cpvFound.cpvsText
-      tender.cpvDescriptions = cpvFound.cpvDescriptionsText
+      let cpvFound = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(opportunity.description, opportunity.cpvs, opportunity.cpvDescriptions)
+      opportunity.cpvs = cpvFound.cpvsText
+      opportunity.cpvDescriptions = cpvFound.cpvDescriptionsText
 
-      tender.dgmarketId = 0
-      tender.userId = config.user.userId
-      tender.status = 0
-      tender.creationDate = new Date()
-      tender.updateDate = tender.creationDate
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
+      opportunity.opportunityId = 0
+      opportunity.userId = config.user.userId
+      opportunity.status = 0
+      opportunity.creationDate = new Date()
+      opportunity.updateDate = opportunity.creationDate
+      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'opportunity', opportunity)
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').OpportunitysImport()
       resolve(data)
     } catch (err) {
       reject(err)
@@ -62,7 +62,7 @@ exports.TenderAdd = (tender) => {
   })
 }
 
-exports.TenderGet = (id, algoliaId) => {
+exports.OpportunityGet = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -73,7 +73,7 @@ exports.TenderGet = (id, algoliaId) => {
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    opportunityId AS "opportunityId",
                     procurementId AS "procurementId",
                     title AS "title",
                     description AS "description",
@@ -106,7 +106,7 @@ exports.TenderGet = (id, algoliaId) => {
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        opportunity 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
@@ -123,11 +123,11 @@ exports.TenderGet = (id, algoliaId) => {
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      let tender = {}
+      let opportunity = {}
       for (var record of recordset) {
-        tender = {
+        opportunity = {
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          opportunityId: record.opportunityId,
           procurementId: record.procurementId,
           title: record.title,
           description: record.description,
@@ -163,14 +163,14 @@ exports.TenderGet = (id, algoliaId) => {
         }
       }
 
-      resolve(tender)
+      resolve(opportunity)
     } catch (err) {
       reject(err)
     }
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions) => {
+exports.OpportunityList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -182,7 +182,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    opportunityId AS "opportunityId",
                     procurementId AS "procurementId",
                     title AS "title",
                     description AS "description",
@@ -215,7 +215,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        opportunity 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
@@ -253,16 +253,16 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      let tenders = []
+      let opportunitys = []
       for (var record of recordset) {
         // Get country region
-        let region1Tender = null
-        let region2Tender = null
+        let region1Opportunity = null
+        let region2Opportunity = null
         if (record.country && record.country !== '') {
           for (let region1 of RegionList) {
             if (region1.countrys) {
               if (region1.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
-                region1Tender = region1
+                region1Opportunity = region1
                 break
               }
             }
@@ -270,13 +270,13 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
               for (let region2 of region1.regions) {
                 if (region2.countrys) {
                   if (region2.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
-                    region1Tender = region1
-                    region2Tender = region2
+                    region1Opportunity = region1
+                    region2Opportunity = region2
                     break
                   }
                 }
               }
-              if (region1Tender) {
+              if (region1Opportunity) {
                 break
               }
             }
@@ -284,7 +284,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         }
         if (regions && regions.trim() !== '') {
           let isRegionOk = false
-          if (region1Tender) {
+          if (region1Opportunity) {
             for (let region of regions.split(',')) {
               let regionLabel = region.trim()
               let regionLabel1 = regionLabel.split('-')[0].trim()
@@ -295,9 +295,9 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                 if (regionLabel.includes('-')) {
                   regionLabel2 = regionLabel.trim().split('-')[1].trim()
                 }
-                if (regionLabel1.toLowerCase() === region1Tender.label.toLowerCase()) {
-                  if (region2Tender && regionLabel2.toLowerCase() !== 'all') {
-                    if (region2Tender && regionLabel2.toLowerCase() === region2Tender.label.toLowerCase()) {
+                if (regionLabel1.toLowerCase() === region1Opportunity.label.toLowerCase()) {
+                  if (region2Opportunity && regionLabel2.toLowerCase() !== 'all') {
+                    if (region2Opportunity && regionLabel2.toLowerCase() === region2Opportunity.label.toLowerCase()) {
                       isRegionOk = true
                     }
                   } else {
@@ -311,25 +311,9 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
             continue
           }
         }
-
-        // Check CPV filter
-        let cpvOk = true
-        if (cpvLabels && cpvLabels.length) {
-          cpvOk = false
-          for (let cpv of record.cpvDescriptions.split(',')) {
-            if (cpvLabels.includes(cpv.split('-').join(' ').trim())) {
-              cpvOk = true
-              break
-            }
-          }
-        }
-        if (!cpvOk) {
-          continue
-        }
-
-        tenders.push({
+        opportunitys.push({
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          opportunityId: record.opportunityId,
           procurementId: record.procurementId,
           title: record.title,
           description: record.description,
@@ -365,14 +349,14 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         })
       }
 
-      resolve(tenders)
+      resolve(opportunitys)
     } catch (err) {
       reject(err)
     }
   })
 }
 
-exports.TenderRemove = (id, algoliaId) => {
+exports.OpportunityRemove = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -386,7 +370,7 @@ exports.TenderRemove = (id, algoliaId) => {
       const BddEnvironnement = config.prefixe
 
       let query = `
-        UPDATE      dgmarket 
+        UPDATE      opportunity 
         SET         status = -1 
       `
       let where = ``
@@ -404,7 +388,7 @@ exports.TenderRemove = (id, algoliaId) => {
       }
       if (where !== '') { query += '  WHERE ' + where }
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').OpportunitysPurge()
 
       resolve()
     } catch (err) {
@@ -413,7 +397,7 @@ exports.TenderRemove = (id, algoliaId) => {
   })
 }
 
-exports.TenderStatistic = (year, month, user) => {
+exports.OpportunityStatistic = (year, month, user) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -436,9 +420,9 @@ exports.TenderStatistic = (year, month, user) => {
         creationDateMax.setDate(creationDateMin.getDate() - 1)
         termDateMin = new Date(year, month, 1)
       }
-      let tenders = await this.TenderList(null, null, null, null, termDateMin, null, cpvLabels, userData? userData.regions : null)
+      let opportunitys = await this.OpportunityList(null, null, null, null, termDateMin, null, cpvLabels, userData? userData.regions : null)
       let statistic = {
-        count: tenders.length,
+        count: opportunitys.length,
         weekCount: 0,
         monthCount: 0,
         liveCount: 0,
@@ -467,35 +451,35 @@ exports.TenderStatistic = (year, month, user) => {
       weekNextDate.setDate(weekNextDate.getDate() + 7);
       let weekNextTimestamp = weekNextDate.getTime()
 
-      for (let tender of tenders) {
-        let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender)
+      for (let opportunity of opportunitys) {
+        let opportunityFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').OpportunityFormat(opportunity)
         let isWeek = false
 
-        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > nowTimestamp) {
+        if (opportunityFormat.bidDeadline_timestamp && opportunityFormat.bidDeadline_timestamp > nowTimestamp) {
           statistic.liveCount++
         } else {
           continue
         }
 
-        if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > weekTimestamp) {
+        if (opportunityFormat.publication_timestamp && opportunityFormat.publication_timestamp > weekTimestamp) {
           statistic.weekCount++
           isWeek = true
         }
 
-        if (tenderFormat.publication_timestamp && tenderFormat.publication_timestamp > monthTimestamp) {
+        if (opportunityFormat.publication_timestamp && opportunityFormat.publication_timestamp > monthTimestamp) {
           statistic.monthCount++
         }
 
-        if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > weekNextTimestamp) {
+        if (opportunityFormat.bidDeadline_timestamp && opportunityFormat.bidDeadline_timestamp > weekNextTimestamp) {
           statistic.liveWeekNextCount++
         }
 
         // buyer name count
-        if (tenderFormat.buyer && tenderFormat.buyer.name) {
-          let buyerNameFind = statistic.buyerNames.find(a => a.label === tenderFormat.buyer.name)
+        if (opportunityFormat.buyer && opportunityFormat.buyer.name) {
+          let buyerNameFind = statistic.buyerNames.find(a => a.label === opportunityFormat.buyer.name)
           if(!buyerNameFind) {
             statistic.buyerNames.push({
-              label: tenderFormat.buyer.name,
+              label: opportunityFormat.buyer.name,
               count: 1,
               weekCount: isWeek ? 1 : 0,
             })
@@ -508,7 +492,7 @@ exports.TenderStatistic = (year, month, user) => {
         }
 
         // CPVs count
-        for(let cpvLabel of tenderFormat.cpvs) {
+        for(let cpvLabel of opportunityFormat.cpvs) {
           if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
             continue
           }
@@ -528,7 +512,7 @@ exports.TenderStatistic = (year, month, user) => {
         }
 
         // Categories count
-        for(let categorie of tenderFormat.categories) {
+        for(let categorie of opportunityFormat.categories) {
           let categorieFind = statistic.categories.find(a => a.categorie === categorie)
           if(!categorieFind) {
             statistic.categories.push({
@@ -545,7 +529,7 @@ exports.TenderStatistic = (year, month, user) => {
         }
 
         // Families count
-        for(let familie of tenderFormat.families) {
+        for(let familie of opportunityFormat.families) {
           let familieFind = statistic.families.find(a => a.familie === familie)
           if(!familieFind) {
             statistic.families.push({
@@ -562,10 +546,10 @@ exports.TenderStatistic = (year, month, user) => {
         }
 
         // Country count
-        if (tender.country && tender.country !== '') {
+        if (opportunity.country && opportunity.country !== '') {
           // Search for region and sub-region
           for (let region of RegionList) {
-            if (region.countrys && region.countrys.includes(tender.country)) {
+            if (region.countrys && region.countrys.includes(opportunity.country)) {
               let regionFind = statistic.regions.find(a => a.region === region.label)
               if(!regionFind) {
                 regionFind = {
@@ -584,7 +568,7 @@ exports.TenderStatistic = (year, month, user) => {
                   regionFind.weekCount++
                 }
               }
-              for(let cpvLabel of tenderFormat.cpvs) {
+              for(let cpvLabel of opportunityFormat.cpvs) {
                 if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
                   continue
                 }
@@ -602,7 +586,7 @@ exports.TenderStatistic = (year, month, user) => {
                   }
                 }
               }
-              for(let categorie of tenderFormat.categories) {
+              for(let categorie of opportunityFormat.categories) {
                 let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
                 if(!categorieFind) {
                   regionFind.categories.push({
@@ -617,7 +601,7 @@ exports.TenderStatistic = (year, month, user) => {
                   }
                 }
               }
-              for(let familie of tenderFormat.families) {
+              for(let familie of opportunityFormat.families) {
                 let familieFind = regionFind.families.find(a => a.familie === familie)
                 if(!familieFind) {
                   regionFind.families.push({
@@ -636,7 +620,7 @@ exports.TenderStatistic = (year, month, user) => {
 
             if (region.regions) {
               for (let region2 of region.regions) {
-                if (region2.countrys && region2.countrys.includes(tender.country)) {
+                if (region2.countrys && region2.countrys.includes(opportunity.country)) {
                   let regionFind = statistic.regions.find(a => a.region === region.label)
                   if(!regionFind) {
                     regionFind = {
@@ -655,7 +639,7 @@ exports.TenderStatistic = (year, month, user) => {
                       regionFind.weekCount++
                     }
                   }
-                  for(let cpvLabel of tenderFormat.cpvs) {
+                  for(let cpvLabel of opportunityFormat.cpvs) {
                     if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
                       continue
                     }
@@ -673,7 +657,7 @@ exports.TenderStatistic = (year, month, user) => {
                       }
                     }
                   }
-                  for(let categorie of tenderFormat.categories) {
+                  for(let categorie of opportunityFormat.categories) {
                     let categorieFind = regionFind.categories.find(a => a.categorie === categorie)
                     if(!categorieFind) {
                       regionFind.categories.push({
@@ -688,7 +672,7 @@ exports.TenderStatistic = (year, month, user) => {
                       }
                     }
                   }
-                  for(let familie of tenderFormat.families) {
+                  for(let familie of opportunityFormat.families) {
                     let familieFind = regionFind.families.find(a => a.familie === familie)
                     if(!familieFind) {
                       regionFind.families.push({
@@ -719,7 +703,7 @@ exports.TenderStatistic = (year, month, user) => {
                       regionSubFind.weekCount++
                     }
                   }
-                  for(let cpvLabel of tenderFormat.cpvs) {
+                  for(let cpvLabel of opportunityFormat.cpvs) {
                     if (cpvLabels && cpvLabels.length && !cpvLabels.find(a => a.trim().toLowerCase() === cpvLabel.trim().toLowerCase())) {
                       continue
                     }
@@ -737,7 +721,7 @@ exports.TenderStatistic = (year, month, user) => {
                       }
                     }
                   }
-                  for(let categorie of tenderFormat.categories) {
+                  for(let categorie of opportunityFormat.categories) {
                     let categorieFind = regionSubFind.categories.find(a => a.categorie === categorie)
                     if(!categorieFind) {
                       regionSubFind.categories.push({
@@ -752,7 +736,7 @@ exports.TenderStatistic = (year, month, user) => {
                       }
                     }
                   }
-                  for(let familie of tenderFormat.families) {
+                  for(let familie of opportunityFormat.families) {
                     let familieFind = regionSubFind.families.find(a => a.familie === familie)
                     if(!familieFind) {
                       regionSubFind.families.push({
@@ -773,10 +757,10 @@ exports.TenderStatistic = (year, month, user) => {
           }
 
           // Country count
-          let country = statistic.countrys.find(a => a.country === tender.country)
+          let country = statistic.countrys.find(a => a.country === opportunity.country)
           if(!country) {
             statistic.countrys.push({
-              country: tender.country,
+              country: opportunity.country,
               count: 1,
             });
           } else {

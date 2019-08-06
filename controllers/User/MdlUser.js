@@ -197,8 +197,16 @@ exports.Memberships = (userId) => {
         memberships = membershipsResponse.data.memberships
       }
       
+      let isFreeMembership = false;
       let isPremiumMembership = false;
+      let isBusinessMembership = false;
       for (let membership of memberships) {
+        if (
+          membership.type_name.startsWith('Premium Free Trial')
+          && new Date(membership.expires_at) > new Date()
+        ) {
+          isFreeMembership = true
+        }
         if (
           membership.status === "paid"
           && new Date(membership.expires_at) > new Date()
@@ -206,10 +214,6 @@ exports.Memberships = (userId) => {
         ) {
           isPremiumMembership = true
         }
-      }
-      
-      let isBusinessMembership = false;
-      for (let membership of memberships) {
         if (
           membership.status === "paid"
           && new Date(membership.expires_at) > new Date()
@@ -219,20 +223,26 @@ exports.Memberships = (userId) => {
         }
       }
 
-      let userUpdate = false
-      if (isPremiumMembership && user.type !== 1 && user.type !== 2) {
-        user.type = 2
-        userUpdate = true
-      }
-      if (!isPremiumMembership && user.type === 2) {
-        user.type = 3
-        userUpdate = true
-      }
-      if (userUpdate) {
-        await this.AddUpdate(user)
+      if (user.type !== 1) {
+        let userUpdate = false
+        if (isBusinessMembership && user.type !== 4) {
+          user.type = 4
+          userUpdate = true
+        } else if (isPremiumMembership && user.type !== 2) {
+          user.type = 2
+          userUpdate = true
+        }
+        if (!isPremiumMembership && !isBusinessMembership && user.type !== 3) {
+          user.type = 3
+          userUpdate = true
+        }
+        if (userUpdate) {
+          await this.AddUpdate(user)
+        }
       }
 
       resolve({
+        isFreeMembership,
         isPremiumMembership,
         isBusinessMembership,
         memberships,
@@ -494,6 +504,9 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
         };
         await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv);
       }
+
+      // Synchro membership
+      await this.Memberships(userBdd.userId);
 
       resolve(userBdd);
     } catch (err) { reject(err) }

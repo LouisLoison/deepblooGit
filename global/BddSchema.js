@@ -39,10 +39,51 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    opportunity: {
+      id: { type: "Int", key: true },
+      opportunityId: { type: "Int" },
+      title: { type: "String" },
+      background: { type: "String" },
+      information: { type: "String" },
+      requestForProposal: { type: "String" },
+      projectDevelopmentStatus: { type: "String" },
+      projectAttractiveness: { type: "String" },
+      projectLocation: { type: "String" },
+      projectOverallCost: { type: "String" },
+      requiredInvestments: { type: "String" },
+
+      publicationDate: { type: "String" },
+      submissionDeadlineDate: { type: "String" },
+
+      organizationName: { type: "String" },
+      organizationType: { type: "String" },
+
+      projectOverallCost: { type: "String" },
+      capitalCosts: { type: "String" },
+      internalFundsInvested: { type: "String" },
+      availableFunds: { type: "String" },
+      requiredInvestments: { type: "String" },
+      tariff: { type: "String" },
+
+      requiredAmountOfInvestments: { type: "String" },
+      investorParticipationFrom: { type: "String" },
+      investmentReturn: { type: "String" },
+      opportunity: { type: "String" },
+
+      contactName: { type: "String" },
+      contactEmail: { type: "String" },
+      contactPhone: { type: "String" },
+
+      userId: { type: "Int" },
+      algoliaId: { type: "Int" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     user: {
       userId: { type: "Int", key: true },
       hivebriteId: { type: "Int" },
-      type: { type: "Int", description: '1 = Admin | 2 = Premium | 3 = Public' },
+      type: { type: "Int", description: '1 = Admin | 2 = Premium | 3 = Public | 4 = Business' },
       email: { type: "String" },
       username: { type: "String" },
       password: { type: "String" },
