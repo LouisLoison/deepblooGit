@@ -39,17 +39,25 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    tenderGroup: {
+      tenderGroupId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      label: { type: "String" },
+      color: { type: "String" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     opportunity: {
       id: { type: "Int", key: true },
       opportunityId: { type: "Int" },
       title: { type: "String" },
-      background: { type: "String" },
+      description: { type: "String" },
       information: { type: "String" },
       requestForProposal: { type: "String" },
       projectDevelopmentStatus: { type: "String" },
       projectAttractiveness: { type: "String" },
       projectLocation: { type: "String" },
-      projectOverallCost: { type: "String" },
+      projectImplementationPeriod: { type: "String" },
       requiredInvestments: { type: "String" },
 
       publicationDate: { type: "String" },
@@ -61,6 +69,7 @@ var Schema = {
       projectOverallCost: { type: "String" },
       capitalCosts: { type: "String" },
       internalFundsInvested: { type: "String" },
+      internalRateReturn: { type: "String" },
       availableFunds: { type: "String" },
       requiredInvestments: { type: "String" },
       tariff: { type: "String" },

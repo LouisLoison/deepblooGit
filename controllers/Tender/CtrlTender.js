@@ -27,3 +27,15 @@ exports.TenderStatistic = (req, res) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.TenderGroupAdd = (req, res) => {
+    require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupAdd(req.body.tenderGroup).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.TenderGroupList = (req, res) => {
+    require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupList(req.body.tenderGroupId, req.body.userId).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}

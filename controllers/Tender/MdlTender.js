@@ -830,3 +830,70 @@ exports.TenderStatistic = (year, month, user) => {
     }
   })
 }
+
+exports.TenderGroupAdd = (tenderGroup) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!tenderGroup.tenderGroupId) {
+        tenderGroup.creationDate = new Date()
+      }
+      tenderGroup.updateDate = new Date()
+      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroup', tenderGroup)
+      resolve(data)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderGroupList = (tenderGroupId, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      tenderGroupId AS "tenderGroupId",
+                    userId AS "userId",
+                    label AS "label",
+                    color AS "color",
+                    creationDate AS "creationDate",
+                    updateDate AS "updateDate"
+        FROM        tenderGroup 
+      `
+      let where = ``
+      if (tenderGroupId && tenderGroupId !== '' && tenderGroupId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)} \n`
+      }
+      if (userId && userId !== '' && userId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+      }
+      if (where !== '') { query += 'WHERE ' + where }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let tenderGroups = []
+      for (var record of recordset) {
+        tenderGroups.push({
+          tenderGroupId: record.tenderGroupId,
+          userId: record.userId,
+          label: record.label,
+          color: record.color,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+
+      resolve(tenderGroups)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}

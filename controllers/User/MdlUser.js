@@ -202,7 +202,7 @@ exports.Memberships = (userId) => {
       let isBusinessMembership = false;
       for (let membership of memberships) {
         if (
-          membership.type_name.startsWith('Premium Free Trial')
+          membership.type_name.startsWith('Free Trial')
           && new Date(membership.expires_at) > new Date()
         ) {
           isFreeMembership = true
