@@ -327,135 +327,78 @@ exports.TendersRemove = (algoliaIds, index) => {
   })
 }
 
-exports.TendersAddOld = () => {
-  return new Promise((resolve, reject) => {
-    const algoliasearch = require('algoliasearch')
-    let applicationId = '583JWW9ARP'
-    let apiKey = '5cc468809130d45b76cf76598a09ff21'
-    let client = algoliasearch(applicationId, apiKey, {
-      timeout: 4000,
-    })
+exports.OpportunitysImport = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
 
-    let index = client.initIndex('dev_tenders')
-    let tenders = [
-      {
-        "firstname": "Essie",
-        "lastname": "Vaill",
-        "company": "Litronic Industries",
-        "address": "14225 Hancock Dr",
-        "city": "Anchorage",
-        "county": "Anchorage",
-        "state": "AK",
-        "zip": "99515",
-        "phone": "907-345-0962",
-        "fax": "907-345-1215",
-        "email": "essie@vaill.com",
-        "web": "http://www.essievaill.com",
-        "followers": 3574
-      },
-      {
-        "firstname": "Cruz",
-        "lastname": "Roudabush",
-        "company": "Meridian Products",
-        "address": "2202 S Central Ave",
-        "city": "Phoenix",
-        "county": "Maricopa",
-        "state": "AZ",
-        "zip": "85004",
-        "phone": "602-252-4827",
-        "fax": "602-252-4009",
-        "email": "cruz@roudabush.com",
-        "web": "http://www.cruzroudabush.com",
-        "followers": 6548
-      },
-    ]
-    index.addObjects(tenders, (err, content) => {
-      if (err) {
-        console.error(err)
-        reject(err)
-        return
-      }
-      console.error(content)
-      for (let i = 0; i < tenders.length; i++) {
-        tenders[i].objectID = content[i]
-      }
-      resolve()
-    })
-  })
-}
+      const opportunitys = await require(process.cwd() + '/controllers/Opportunity/MdlOpportunity').OpportunityList({
+        status: 0
+      })
 
-exports.Test = () => {
-  return new Promise((resolve, reject) => {
-    const algoliasearch = require('algoliasearch')
-    let applicationId = '583JWW9ARP'
-    let apiKey = '5cc468809130d45b76cf76598a09ff21'
-    let client = algoliasearch(applicationId, apiKey, {
-      timeout: 4000,
-    })
-
-    let index = client.initIndex('contacts')
-    index.search({
-      query: ''
-    }, function searchDone(err, content) {
-        if (err) {
-          throw err;
+      for (const opportunity of opportunitys) {
+        if (opportunity.region && opportunity.region !== '') {
+          const regions = opportunity.region.split('-');
+          opportunity.country = regions[regions.length - 1];
+          if (regions.length === 3) {
+            opportunity.regionLvl0 = [regions[0]];
+            opportunity.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
+            opportunity.regionLvl2 = [`${regions[0]} > ${regions[1]} > ${regions[2]}`];
+          } else if (regions.length === 2) {
+            opportunity.regionLvl0 = [regions[0]];
+            opportunity.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
+          }
         }
-        console.log(content.hits);
       }
-    );
-    resolve()
+
+      const tranches = []
+      let borneMin = 0
+      let occurence = 20
+      do {
+        tranches.push(opportunitys.slice(borneMin, (borneMin + occurence)))
+        borneMin += occurence
+      } while (borneMin < opportunitys.length && tranches.length < 100)
+
+      const algoliasearch = require('algoliasearch')
+      let applicationId = '583JWW9ARP'
+      let apiKey = '5cc468809130d45b76cf76598a09ff21'
+      let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
+      let index = client.initIndex(`${config.prefixe}_opportunitys`)
+      for (tranche of tranches) {
+        if (tranche.length > 0) {
+          await this.OpportunitysAdd(tranche, index)
+        }
+      }
+      resolve(opportunitys.length)
+    } catch (err) { reject(err) }
   })
 }
 
-exports.Test2 = () => {
-  return new Promise((resolve, reject) => {
-    const algoliasearch = require('algoliasearch')
-    let applicationId = '583JWW9ARP'
-    let apiKey = '5cc468809130d45b76cf76598a09ff21'
-    let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
-
-    let index = client.initIndex('contacts')
-    let contactsJSON = [
-      {
-        "firstname": "Essie",
-        "lastname": "Vaill",
-        "company": "Litronic Industries",
-        "address": "14225 Hancock Dr",
-        "city": "Anchorage",
-        "county": "Anchorage",
-        "state": "AK",
-        "zip": "99515",
-        "phone": "907-345-0962",
-        "fax": "907-345-1215",
-        "email": "essie@vaill.com",
-        "web": "http://www.essievaill.com",
-        "followers": 3574
-      },
-      {
-        "firstname": "Cruz",
-        "lastname": "Roudabush",
-        "company": "Meridian Products",
-        "address": "2202 S Central Ave",
-        "city": "Phoenix",
-        "county": "Maricopa",
-        "state": "AZ",
-        "zip": "85004",
-        "phone": "602-252-4827",
-        "fax": "602-252-4009",
-        "email": "cruz@roudabush.com",
-        "web": "http://www.cruzroudabush.com",
-        "followers": 6548
-      },
-    ]
-
-    index.addObjects(contactsJSON, function(err, content) {
+exports.OpportunitysAdd = (opportunitys, index) => {
+  return new Promise(async (resolve, reject) => {
+    index.addObjects(opportunitys, async (err, content) => {
       if (err) {
         console.error(err)
         reject(err)
         return
       }
-      console.error(content)
-      resolve()
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      for (let i = 0; i < opportunitys.length; i++) {
+        opportunitys[i].objectID = content.objectIDs[i]
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+          UPDATE      opportunity 
+          SET         algoliaId = '${BddTool.ChaineFormater(opportunitys[i].objectID, BddEnvironnement, BddId)}', 
+                      status = 20 
+          WHERE       opportunityId = ${BddTool.NumericFormater(opportunitys[i].opportunityId, BddEnvironnement, BddId)} 
+        `)
+      }
+      resolve(opportunitys)
     })
   })
 }

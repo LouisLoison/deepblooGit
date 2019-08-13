@@ -47,25 +47,44 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    tenderGroupLink: {
+      tenderGroupLinkId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      tenderGroupId: { type: "Int" },
+      tenderId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    tenderDetail: {
+      tenderDetailId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      tenderId: { type: "Int" },
+      comment: { type: "String" },
+      salesManagerId: { type: "Int" },
+      captureTeamId: { type: "Int" },
+      amoutOffer: { type: "String" },
+      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     opportunity: {
-      id: { type: "Int", key: true },
-      opportunityId: { type: "Int" },
+      opportunityId: { type: "Int", key: true },
+      category: { type: "String" },
       title: { type: "String" },
+      size: { type: "String" },
       description: { type: "String" },
       information: { type: "String" },
       requestForProposal: { type: "String" },
       projectDevelopmentStatus: { type: "String" },
       projectAttractiveness: { type: "String" },
+      region: { type: "String" },
       projectLocation: { type: "String" },
       projectImplementationPeriod: { type: "String" },
       requiredInvestments: { type: "String" },
-
       publicationDate: { type: "String" },
       submissionDeadlineDate: { type: "String" },
-
       organizationName: { type: "String" },
       organizationType: { type: "String" },
-
       projectOverallCost: { type: "String" },
       capitalCosts: { type: "String" },
       internalFundsInvested: { type: "String" },
@@ -73,16 +92,13 @@ var Schema = {
       availableFunds: { type: "String" },
       requiredInvestments: { type: "String" },
       tariff: { type: "String" },
-
       requiredAmountOfInvestments: { type: "String" },
       investorParticipationFrom: { type: "String" },
       investmentReturn: { type: "String" },
-      opportunity: { type: "String" },
-
+      privateDeals: { type: "String" },
       contactName: { type: "String" },
       contactEmail: { type: "String" },
       contactPhone: { type: "String" },
-
       userId: { type: "Int" },
       algoliaId: { type: "Int" },
       status: { type: "Int" },

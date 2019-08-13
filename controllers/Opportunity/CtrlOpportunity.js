@@ -1,5 +1,5 @@
 exports.OpportunityAdd = (req, res) => {
-    require(process.cwd() + '/controllers/Opportunity/MdlOpportunity').OpportunityAdd(req.body.Opportunity).then((data) => {
+    require(process.cwd() + '/controllers/Opportunity/MdlOpportunity').OpportunityAdd(req.body.opportunity).then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

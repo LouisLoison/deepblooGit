@@ -831,7 +831,7 @@ exports.TenderStatistic = (year, month, user) => {
   })
 }
 
-exports.TenderGroupAdd = (tenderGroup) => {
+exports.TenderGroupAddUpdate = (tenderGroup) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -845,6 +845,27 @@ exports.TenderGroupAdd = (tenderGroup) => {
       tenderGroup.updateDate = new Date()
       let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroup', tenderGroup)
       resolve(data)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderGroupDelete = (tenderGroupId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        DELETE FROM   tenderGroup 
+        WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)}
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      resolve()
     } catch (err) {
       reject(err)
     }
@@ -892,6 +913,267 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
       }
 
       resolve(tenderGroups)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderGroupMove = (userId, tenderGroupId, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        DELETE FROM   tenderGroupLink 
+        WHERE         tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      const tenderGroupLink = {
+        userId: userId,
+        tenderGroupId: tenderGroupId,
+        tenderId: tenderId,
+        creationDate: new Date(),
+        updateDate: new Date(),
+      }
+      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
+
+      resolve(tenderGroup)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderArchiveMove = (userId, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        DELETE FROM   tenderGroupLink 
+        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+
+      let tenderDetail = {
+        userId: userId,
+        tenderId: tenderId,
+        creationDate: new Date(),
+      };
+      const tenderDetails = await this.TenderDetailList(userId, tenderId);
+      if (tenderDetails.length) {
+        tenderDetail = tenderDetails[0];
+      }
+
+      tenderDetail.status = -2;
+      tenderDetail.updateDate = new Date();
+      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+
+      resolve(tenderGroup)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderDeleteMove = (userId, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        DELETE FROM   tenderGroupLink 
+        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+
+      let tenderDetail = {
+        userId: userId,
+        tenderId: tenderId,
+        creationDate: new Date(),
+      };
+      const tenderDetails = await this.TenderDetailList(userId, tenderId);
+      if (tenderDetails.length) {
+        tenderDetail = tenderDetails[0];
+      }
+
+      tenderDetail.status = -1;
+      tenderDetail.updateDate = new Date();
+      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+
+      resolve(tenderGroup)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderGroupLinkList = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
+                    userId AS "userId",
+                    tenderGroupId AS "tenderGroupId",
+                    tenderId AS "tenderId",
+                    creationDate AS "creationDate",
+                    updateDate AS "updateDate"
+        FROM        tenderGroupLink 
+      `
+      let where = ``
+      if (userId && userId !== '' && userId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+      }
+      if (where !== '') { query += 'WHERE ' + where }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let tenderGroupLinks = []
+      for (var record of recordset) {
+        tenderGroupLinks.push({
+          tenderGroupLinkId: record.tenderGroupLinkId,
+          userId: record.userId,
+          tenderGroupId: record.tenderGroupId,
+          tenderId: record.tenderId,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+
+      resolve(tenderGroupLinks)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderDetailList = (userId, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      tenderDetailId AS "tenderDetailId", 
+                    userId AS "userId",
+                    tenderId AS "tenderId",
+                    comment AS "comment",
+                    salesManagerId AS "salesManagerId",
+                    captureTeamId AS "captureTeamId",
+                    amoutOffer AS "amoutOffer",
+                    status AS "status",
+                    creationDate AS "creationDate",
+                    updateDate AS "updateDate"
+        FROM        tenderDetail 
+      `
+      let where = ``
+      if (userId && userId !== '' && userId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+      }
+      if (tenderId && tenderId !== '' && tenderId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
+      }
+      if (where !== '') { query += 'WHERE ' + where }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let tenderDetails = []
+      for (var record of recordset) {
+        tenderDetails.push({
+          tenderDetailId: record.tenderDetailId,
+          userId: record.userId,
+          tenderId: record.tenderId,
+          comment: record.comment,
+          salesManagerId: record.salesManagerId,
+          captureTeamId: record.captureTeamId,
+          amoutOffer: record.amoutOffer,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+
+      resolve(tenderDetails)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.TenderDetailAddUpdate = (tenderDetail) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!tenderDetail.tenderDetailId) {
+        tenderDetail.creationDate = new Date()
+      }
+      tenderDetail.updateDate = new Date()
+      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      resolve(data)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.UserNotify = (userIds, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const htmlToText = require('html-to-text');
+      const tender = await this.TenderGet(tenderId);
+
+      // Send email
+      for (const userId of userIds) {
+        const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
+        if (!user || !user.email || user.email.trim() === '') {
+          continue;
+        }
+        const title = htmlToText.fromString(tender.title);
+        const description = htmlToText.fromString(tender.description);
+
+        let to = user.email
+        let subject = 'Deepbloo - this tender should interest you'
+        let text = `
+          Dear ${user.username},
+
+          Title : ${title.substring(0, 50)}...
+
+          Description
+          ${description.substring(0, 200)}...
+
+          <a href="https://platform.deepbloo.com/">Open this tender #${tender.id}</a>
+
+          The Deepbloo team
+        `
+        let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+        await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+      }
+      resolve()
     } catch (err) {
       reject(err)
     }
