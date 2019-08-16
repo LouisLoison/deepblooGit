@@ -626,3 +626,24 @@ exports.OpportunityDownloadCsv = (tenders) => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.Notify = (userIds, subject, body, footerHtml) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Send email
+      for (const userId of userIds) {
+        const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
+        if (!user || !user.email || user.email.trim() === '') {
+          continue;
+        }
+        let to = user.email;
+        let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+        let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+        await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+      }
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}

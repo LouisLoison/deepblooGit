@@ -71,3 +71,9 @@ exports.OpportunityDownloadCsv = (req, res) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.Notify = (req, res) => {
+  require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
