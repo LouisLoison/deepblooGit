@@ -1,4 +1,4 @@
-exports.OpportunityAdd = (opportunity) => {
+exports.PrivateDealAdd = (privateDeal) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -6,31 +6,31 @@ exports.OpportunityAdd = (opportunity) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      if (opportunity.algoliaId && opportunity.algoliaId > 0 && !opportunity.id) {
+      if (privateDeal.algoliaId && privateDeal.algoliaId > 0 && !privateDeal.id) {
         let query = `
-          SELECT      opportunityId AS "opportunityId" 
-          FROM        opportunity 
-          WHERE       algoliaId = ${BddTool.NumericFormater(opportunity.algoliaId, BddEnvironnement, BddId)} 
+          SELECT      privateDealId AS "privateDealId" 
+          FROM        privateDeal 
+          WHERE       algoliaId = ${BddTool.NumericFormater(privateDeal.algoliaId, BddEnvironnement, BddId)} 
         `
         let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         for (var record of recordset) {
-          opportunity.opportunityId = record.opportunityId
+          privateDeal.privateDealId = record.privateDealId
         }
       }
 
-      let submissionDeadlineDateText = `${opportunity.submissionDeadlineDate.substring(0, 4)}-${opportunity.submissionDeadlineDate.substring(4, 6)}-${opportunity.submissionDeadlineDate.substring(6, 8)}`
+      let submissionDeadlineDateText = `${privateDeal.submissionDeadlineDate.substring(0, 4)}-${privateDeal.submissionDeadlineDate.substring(4, 6)}-${privateDeal.submissionDeadlineDate.substring(6, 8)}`
       let termDate = new Date(submissionDeadlineDateText)
       if (isNaN(termDate)) {
         throw new Error('Submission deadline invalide !')
       }
 
-      opportunity.opportunityId = 0
-      opportunity.userId = config.user.userId
-      opportunity.status = 0
-      opportunity.creationDate = new Date()
-      opportunity.updateDate = opportunity.creationDate
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'opportunity', opportunity)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').OpportunitysImport()
+      privateDeal.privateDealId = 0
+      privateDeal.userId = config.user.userId
+      privateDeal.status = 0
+      privateDeal.creationDate = new Date()
+      privateDeal.updateDate = privateDeal.creationDate
+      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'privateDeal', privateDeal)
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').PrivateDealsImport()
       resolve(data)
     } catch (err) {
       reject(err)
@@ -38,7 +38,7 @@ exports.OpportunityAdd = (opportunity) => {
   })
 }
 
-exports.OpportunityGet = (id, algoliaId) => {
+exports.PrivateDealGet = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -48,7 +48,7 @@ exports.OpportunityGet = (id, algoliaId) => {
 
       let query = `
         SELECT      id AS "id",
-                    opportunityId AS "opportunityId",
+                    privateDealId AS "privateDealId",
                     procurementId AS "procurementId",
                     title AS "title",
                     description AS "description",
@@ -81,7 +81,7 @@ exports.OpportunityGet = (id, algoliaId) => {
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        opportunity 
+        FROM        privateDeal 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
@@ -98,11 +98,11 @@ exports.OpportunityGet = (id, algoliaId) => {
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      let opportunity = {}
+      let privateDeal = {}
       for (var record of recordset) {
-        opportunity = {
+        privateDeal = {
           id: record.id,
-          opportunityId: record.opportunityId,
+          privateDealId: record.privateDealId,
           procurementId: record.procurementId,
           title: record.title,
           description: record.description,
@@ -138,14 +138,14 @@ exports.OpportunityGet = (id, algoliaId) => {
         }
       }
 
-      resolve(opportunity)
+      resolve(privateDeal)
     } catch (err) {
       reject(err)
     }
   })
 }
 
-exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, status) => {
+exports.PrivateDealList = (privateDealId, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, status) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -154,7 +154,7 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
       const BddEnvironnement = config.prefixe
 
       let query = `
-        SELECT      opportunityId AS "opportunityId",
+        SELECT      privateDealId AS "privateDealId",
                     category AS "category",
                     title AS "title",
                     size AS "size",
@@ -181,7 +181,7 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
                     requiredAmountOfInvestments AS "requiredAmountOfInvestments",
                     investorParticipationFrom AS "investorParticipationFrom",
                     investmentReturn AS "investmentReturn",
-                    privateDeals AS "privateDeals",
+                    opportunity AS "opportunity",
                     contactName AS "contactName",
                     contactEmail AS "contactEmail",
                     contactPhone AS "contactPhone",
@@ -190,12 +190,12 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        opportunity 
+        FROM        privateDeal 
       `
       let where = ``
-      if (opportunityId && opportunityId !== '' && opportunityId > 0) {
+      if (privateDealId && privateDealId !== '' && privateDealId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `opportunityId = ${BddTool.NumericFormater(opportunityId, BddEnvironnement, BddId)} \n`
+        where += `privateDealId = ${BddTool.NumericFormater(privateDealId, BddEnvironnement, BddId)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') { where += 'AND ' }
@@ -232,10 +232,10 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      let opportunitys = []
+      let privateDeals = []
       for (var record of recordset) {
-        opportunitys.push({
-          opportunityId: record.opportunityId,
+        privateDeals.push({
+          privateDealId: record.privateDealId,
           category: record.category,
           title: record.title,
           size: record.size,
@@ -262,7 +262,7 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
           requiredAmountOfInvestments: record.requiredAmountOfInvestments,
           investorParticipationFrom: record.investorParticipationFrom,
           investmentReturn: record.investmentReturn,
-          privateDeals: record.privateDeals,
+          opportunity: record.opportunity,
           contactName: record.contactName,
           contactEmail: record.contactEmail,
           contactPhone: record.contactPhone,
@@ -274,14 +274,14 @@ exports.OpportunityList = (opportunityId, algoliaId, creationDateMin, creationDa
         })
       }
 
-      resolve(opportunitys)
+      resolve(privateDeals)
     } catch (err) {
       reject(err)
     }
   })
 }
 
-exports.OpportunityRemove = (id, algoliaId) => {
+exports.PrivateDealRemove = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -295,7 +295,7 @@ exports.OpportunityRemove = (id, algoliaId) => {
       const BddEnvironnement = config.prefixe
 
       let query = `
-        UPDATE      opportunity 
+        UPDATE      privateDeal 
         SET         status = -1 
       `
       let where = ``
@@ -313,7 +313,7 @@ exports.OpportunityRemove = (id, algoliaId) => {
       }
       if (where !== '') { query += '  WHERE ' + where }
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').OpportunitysPurge()
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').PrivateDealsPurge()
 
       resolve()
     } catch (err) {

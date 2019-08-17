@@ -61,14 +61,14 @@ var Schema = {
       tenderId: { type: "Int" },
       comment: { type: "String" },
       salesManagerId: { type: "Int" },
-      captureTeamId: { type: "Int" },
+      bidManagerId: { type: "Int" },
       amoutOffer: { type: "String" },
       status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
-    opportunity: {
-      opportunityId: { type: "Int", key: true },
+    privateDeal: {
+      privateDealId: { type: "Int", key: true },
       category: { type: "String" },
       title: { type: "String" },
       size: { type: "String" },
@@ -95,7 +95,7 @@ var Schema = {
       requiredAmountOfInvestments: { type: "String" },
       investorParticipationFrom: { type: "String" },
       investmentReturn: { type: "String" },
-      privateDeals: { type: "String" },
+      privateDeal: { type: "String" },
       contactName: { type: "String" },
       contactEmail: { type: "String" },
       contactPhone: { type: "String" },

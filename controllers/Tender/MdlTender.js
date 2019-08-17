@@ -1023,7 +1023,7 @@ exports.TenderDeleteMove = (userId, tenderId) => {
   })
 }
 
-exports.TenderGroupLinkList = (userId) => {
+exports.TenderGroupLinkList = (userId, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -1044,6 +1044,10 @@ exports.TenderGroupLinkList = (userId) => {
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
         where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+      }
+      if (tenderId && tenderId !== '' && tenderId > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
@@ -1080,7 +1084,7 @@ exports.TenderDetailList = (userId, tenderId) => {
                     tenderId AS "tenderId",
                     comment AS "comment",
                     salesManagerId AS "salesManagerId",
-                    captureTeamId AS "captureTeamId",
+                    bidManagerId AS "bidManagerId",
                     amoutOffer AS "amoutOffer",
                     status AS "status",
                     creationDate AS "creationDate",
@@ -1106,7 +1110,7 @@ exports.TenderDetailList = (userId, tenderId) => {
           tenderId: record.tenderId,
           comment: record.comment,
           salesManagerId: record.salesManagerId,
-          captureTeamId: record.captureTeamId,
+          bidManagerId: record.bidManagerId,
           amoutOffer: record.amoutOffer,
           status: record.status,
           creationDate: record.creationDate,

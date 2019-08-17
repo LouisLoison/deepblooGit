@@ -327,7 +327,7 @@ exports.TendersRemove = (algoliaIds, index) => {
   })
 }
 
-exports.OpportunitysImport = () => {
+exports.PrivateDealsImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -335,21 +335,21 @@ exports.OpportunitysImport = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      const opportunitys = await require(process.cwd() + '/controllers/Opportunity/MdlOpportunity').OpportunityList({
+      const privateDeals = await require(process.cwd() + '/controllers/PrivateDeal/MdlPrivateDeal').PrivateDealList({
         status: 0
       })
 
-      for (const opportunity of opportunitys) {
-        if (opportunity.region && opportunity.region !== '') {
-          const regions = opportunity.region.split('-');
-          opportunity.country = regions[regions.length - 1];
+      for (const privateDeal of privateDeals) {
+        if (privateDeal.region && privateDeal.region !== '') {
+          const regions = privateDeal.region.split('-');
+          privateDeal.country = regions[regions.length - 1];
           if (regions.length === 3) {
-            opportunity.regionLvl0 = [regions[0]];
-            opportunity.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
-            opportunity.regionLvl2 = [`${regions[0]} > ${regions[1]} > ${regions[2]}`];
+            privateDeal.regionLvl0 = [regions[0]];
+            privateDeal.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
+            privateDeal.regionLvl2 = [`${regions[0]} > ${regions[1]} > ${regions[2]}`];
           } else if (regions.length === 2) {
-            opportunity.regionLvl0 = [regions[0]];
-            opportunity.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
+            privateDeal.regionLvl0 = [regions[0]];
+            privateDeal.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
           }
         }
       }
@@ -358,28 +358,28 @@ exports.OpportunitysImport = () => {
       let borneMin = 0
       let occurence = 20
       do {
-        tranches.push(opportunitys.slice(borneMin, (borneMin + occurence)))
+        tranches.push(privateDeals.slice(borneMin, (borneMin + occurence)))
         borneMin += occurence
-      } while (borneMin < opportunitys.length && tranches.length < 100)
+      } while (borneMin < privateDeals.length && tranches.length < 100)
 
       const algoliasearch = require('algoliasearch')
       let applicationId = '583JWW9ARP'
       let apiKey = '5cc468809130d45b76cf76598a09ff21'
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
-      let index = client.initIndex(`${config.prefixe}_opportunitys`)
+      let index = client.initIndex(`${config.prefixe}_privateDeals`)
       for (tranche of tranches) {
         if (tranche.length > 0) {
-          await this.OpportunitysAdd(tranche, index)
+          await this.PrivateDealsAdd(tranche, index)
         }
       }
-      resolve(opportunitys.length)
+      resolve(privateDeals.length)
     } catch (err) { reject(err) }
   })
 }
 
-exports.OpportunitysAdd = (opportunitys, index) => {
+exports.PrivateDealsAdd = (privateDeals, index) => {
   return new Promise(async (resolve, reject) => {
-    index.addObjects(opportunitys, async (err, content) => {
+    index.addObjects(privateDeals, async (err, content) => {
       if (err) {
         console.error(err)
         reject(err)
@@ -389,16 +389,16 @@ exports.OpportunitysAdd = (opportunitys, index) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
-      for (let i = 0; i < opportunitys.length; i++) {
-        opportunitys[i].objectID = content.objectIDs[i]
+      for (let i = 0; i < privateDeals.length; i++) {
+        privateDeals[i].objectID = content.objectIDs[i]
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
-          UPDATE      opportunity 
-          SET         algoliaId = '${BddTool.ChaineFormater(opportunitys[i].objectID, BddEnvironnement, BddId)}', 
+          UPDATE      privateDeal 
+          SET         algoliaId = '${BddTool.ChaineFormater(privateDeals[i].objectID, BddEnvironnement, BddId)}', 
                       status = 20 
-          WHERE       opportunityId = ${BddTool.NumericFormater(opportunitys[i].opportunityId, BddEnvironnement, BddId)} 
+          WHERE       privateDealId = ${BddTool.NumericFormater(privateDeals[i].privateDealId, BddEnvironnement, BddId)} 
         `)
       }
-      resolve(opportunitys)
+      resolve(privateDeals)
     })
   })
 }
