@@ -217,6 +217,10 @@ exports.FileParse = (fileLocation) => {
         if (!descriptionLowerCase.includes("<br") || !descriptionLowerCase.includes("<table") || !descriptionLowerCase.includes("<div")) {
           description = description.replace(/\r/gm, '<br>')
         }
+        
+        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 29298084) {
+          let toto = 123456;
+        }
 
         // CPV list
         let title = tool.getXmlJsonData(notice.noticeTitle)
@@ -237,8 +241,28 @@ exports.FileParse = (fileLocation) => {
           }
         }
 
-        // Search by key words
+        // Tyres exception
         let textToParse = `${title} ${description}`
+        let exceptionLabels = ['batterie', 'batteries']
+        for (let exceptionLabel of exceptionLabels) {
+          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+          if (textToParse.match(regExExceptionLabel)) {
+            let exceptionFound = false
+            let exceptionWords = ['tyres', 'tyre']
+            for (let exceptionWord of exceptionWords) {
+              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+              if (textToParse.match(regExException)) {
+                exceptionFound = true
+                break
+              }
+            }
+            if (exceptionFound) {
+              return false
+            }
+          }
+        }
+
+        // Search by key words
         let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0])
         let words = cpvFound.words
         cpvsText = cpvFound.cpvsText
@@ -336,12 +360,13 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
         let regEx = new RegExp("\\b" + word + "\\b", 'gi')
         if (description.match(regEx)) {
 
+          /*
           // Tyres exception
           let exceptionFound = false
           let exceptionWords = ['tyres', 'tyre']
           for (let exceptionWord of exceptionWords) {
             let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
-            if (constCpv.code === 31158100 && description.match(regExException)) {
+            if (description.match(regExException)) {
               exceptionFound = true
               break
             }
@@ -349,6 +374,7 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
           if (exceptionFound) {
             continue
           }
+          */
 
           if (!cpvs.includes(constCpv.code)) {
             cpvs.push(constCpv.code)

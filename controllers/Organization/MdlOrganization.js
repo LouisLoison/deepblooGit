@@ -258,6 +258,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         let organizationCpvFlg = false
         let organizationCountryFlg = false
         let userRegionFlg = false
+        let userSubRegionFlg = false
         let userCountryFlg = false
         let userCpvFlg = false
 
@@ -266,6 +267,10 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         for (let user of organization.users) {
+          if (user.hivebriteId === 1937699) {
+            let toto = 10;
+          }
+
           // Test user region
           if (region1Source) {
             let region1 = null
@@ -280,19 +285,22 @@ exports.ListFromCpvs = (cpvs, country) => {
                   if (region1) {
                     if (regionLabel.includes('-')) {
                       regionLabel2 = regionLabel.trim().split('-')[1].trim()
-                      region2 = region1.regions.find(a => a.label.toLowerCase() === regionLabel1.toLowerCase())
+                      region2 = region1.regions.find(a => a.label.toLowerCase() === regionLabel2.toLowerCase())
                     }
+                    break;
                   }
                 }
               }
             }
             if (region1 && region1.label === region1Source.label) {
+              userRegionFlg = true
               if (region2 && regionLabel2.toLowerCase() !== 'all') {
                 if (region2Source && region2 && region2.label === region2Source.label) {
-                  userRegionFlg = true
+                  userSubRegionFlg = true
                 }
-              } else {
-                userRegionFlg = true
+              }
+              if (!region2 && regionLabel2.toLowerCase() === 'all') {
+                userSubRegionFlg = true
               }
             }
           }
@@ -329,12 +337,25 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         organization.cpvRating = 0
-        if (userCpvFlg && userRegionFlg && userCountryFlg) {
+        if (userCpvFlg && userSubRegionFlg && userCountryFlg) {
           organization.cpvRating = 5
-        } else if (userCpvFlg && userRegionFlg) {
+        } else if (userCpvFlg && userSubRegionFlg) {
           organization.cpvRating = 3
         } else if (userCpvFlg) {
           organization.cpvRating = 1
+        }
+
+        organization.userRegionFlg = userRegionFlg
+        organization.userSubRegionFlg = userSubRegionFlg
+        organization.userCountryFlg = userCountryFlg
+        organization.userCpvFlg = userCpvFlg
+
+        // Get all user of the organization
+        organization.organization = await this.Organization(organization.organizationId);
+        if (organization.organization) {
+          organization.organization.users  = await require(process.cwd() + '/controllers/User/MdlUser').List({
+            organizationId: organization.organizationId
+          });
         }
       }
 
@@ -352,7 +373,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       });
-      resolve(organizations.slice(0, 30));
+      resolve(organizations);
     } catch (err) { reject(err) }
   })
 }

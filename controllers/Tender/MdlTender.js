@@ -933,14 +933,17 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId) => {
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
 
-      const tenderGroupLink = {
-        userId: userId,
-        tenderGroupId: tenderGroupId,
-        tenderId: tenderId,
-        creationDate: new Date(),
-        updateDate: new Date(),
+      let tenderGroup = null;
+      if (tenderGroupId) {
+        const tenderGroupLink = {
+          userId: userId,
+          tenderGroupId: tenderGroupId,
+          tenderId: tenderId,
+          creationDate: new Date(),
+          updateDate: new Date(),
+        }
+        tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
       }
-      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
 
       resolve(tenderGroup)
     } catch (err) {

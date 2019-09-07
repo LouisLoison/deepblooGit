@@ -50,6 +50,9 @@ exports.TendersImport = () => {
         if (!tender) {
           continue
         }
+        if (tender.algoliaId) {
+          tender.objectID = tender.algoliaId;
+        }
         tenders.push(tender)
       }
 
@@ -298,7 +301,7 @@ exports.TendersPurge = () => {
           await this.TendersRemove(algoliaIds, index)
         }
       }
-      resolve(tenders.length)
+      resolve()
     } catch (err) { reject(err) }
   })
 }
@@ -322,7 +325,7 @@ exports.TendersRemove = (algoliaIds, index) => {
           WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
         `)
       }
-      resolve(tenders)
+      resolve()
     })
   })
 }
@@ -331,15 +334,15 @@ exports.PrivateDealsImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
-      const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       const privateDeals = await require(process.cwd() + '/controllers/PrivateDeal/MdlPrivateDeal').PrivateDealList({
         status: 0
       })
 
       for (const privateDeal of privateDeals) {
+        if (privateDeal.algoliaId) {
+          privateDeal.objectID = privateDeal.algoliaId;
+        }
         if (privateDeal.region && privateDeal.region !== '') {
           const regions = privateDeal.region.split('-');
           privateDeal.country = regions[regions.length - 1];
@@ -352,6 +355,7 @@ exports.PrivateDealsImport = () => {
             privateDeal.regionLvl1 = [`${regions[0]} > ${regions[1]}`];
           }
         }
+        privateDeal.lookingFor= privateDeal.lookingFor ? privateDeal.lookingFor.split(',') : [];
       }
 
       const tranches = []
@@ -399,6 +403,72 @@ exports.PrivateDealsAdd = (privateDeals, index) => {
         `)
       }
       resolve(privateDeals)
+    })
+  })
+}
+
+exports.PrivateDealsPurge = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      let query = `
+        SELECT      algoliaId AS "algoliaId" 
+        FROM        privateDeal 
+        WHERE       status = -1 
+        LIMIT       300
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const algoliaIds = []
+      for (let record of recordset) {
+        algoliaIds.push(record.algoliaId);
+      }
+
+      const tranches = []
+      let borneMin = 0
+      let occurence = 100
+      do {
+        tranches.push(algoliaIds.slice(borneMin, (borneMin + occurence)))
+        borneMin += occurence
+      } while (borneMin < algoliaIds.length && tranches.length < 100)
+
+      const algoliasearch = require('algoliasearch')
+      let applicationId = '583JWW9ARP'
+      let apiKey = '5cc468809130d45b76cf76598a09ff21'
+      let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
+      let index = client.initIndex(`${config.prefixe}_privateDeals`)
+      for (tranche of tranches) {
+        if (tranche.length > 0) {
+          await this.PrivateDealsRemove(algoliaIds, index)
+        }
+      }
+      resolve()
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.PrivateDealsRemove = (algoliaIds, index) => {
+  return new Promise(async (resolve, reject) => {
+    index.deleteObjects(algoliaIds, async (err, content) => {
+      if (err) {
+        console.error(err)
+        reject(err)
+        return
+      }
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      for (let i = 0; i < algoliaIds.length; i++) {
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+          UPDATE      privateDeal 
+          SET         status = -2 
+          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
+        `)
+      }
+      resolve()
     })
   })
 }

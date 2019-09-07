@@ -336,13 +336,9 @@ exports.SynchroAllFull = () => {
 
       let usersBdd = await this.List()
       let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      users = users.reverse();
 
       // Update user bdd list
-      const config = require(process.cwd() + '/config')
-      const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       for (let user of users) {
         let userBdd = usersBdd.find(a => a.email === user.email);
         await this.SynchroFull(userBdd.userId, user, usersBdd, organizationsBdd);
@@ -481,8 +477,8 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
         if (cpvLabels && cpvLabels.length > 0) {
           for (cpvLabel of cpvLabels) {
             let label = cpvLabel.split('-').join(' ').trim();
-            let cpv = CpvList.find(a => a.label === label);
-            if (cpv && !cpvs.find(a => a.label === label)) {
+            let cpv = CpvList.find(a => a.label.toUpperCase() === label.toUpperCase());
+            if (cpv && !cpvs.find(a => a.label.toUpperCase() === label.toUpperCase())) {
               cpvs.push(cpv);
             }
           }

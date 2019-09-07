@@ -92,7 +92,11 @@
                "Sao Tome and Principe"
             ]
          }
-      ]
+      ],
+      "continents": [{
+         "code": "AF",
+         "label": "Africa"
+      }]
    },
    {
       "label": "America",
@@ -134,14 +138,22 @@
                "Saint Vincent and the Grenadines",
                "Trinidad and Tobago",
                "Turks and Caicos Islands"
-            ]
+            ],
+            "continents": [{
+               "code": "AF",
+               "label": "North America"
+            }]
          },
          {
             "label": "North/Canada",
             "countrys": [
                "Canada",
                "United States"
-            ]
+            ],
+            "continents": [{
+               "code": "NA",
+               "label": "North America"
+            }]
          },
          {
             "label": "South",
@@ -160,7 +172,11 @@
                "Suriname",
                "Uruguay",
                "Venezuela"
-            ]
+            ],
+            "continents": [{
+               "code": "SA",
+               "label": "South America"
+            }]
          }
       ]
    },
@@ -211,7 +227,11 @@
                "Viet Nam"
             ]
          }
-      ]
+      ],
+      "continents": [{
+         "code": "AS",
+         "label": "Asia"
+      }]
    },
    {
       "label": "Europe",
@@ -263,13 +283,21 @@
                "Vatican"
             ]
          }
-      ]
+      ],
+      "continents": [{
+         "code": "EU",
+         "label": "Europe"
+      }]
    },
    {
       "label": "India",
       "countrys": [
          "India"
-      ]
+      ],
+      "continents": [{
+         "code": "AS",
+         "label": "Asia"
+      }]
    },
    {
       "label": "Near & Middle East",
@@ -292,7 +320,14 @@
          "Turkey",
          "United Arab Emirates",
          "Yemen"
-      ]
+      ],
+      "continents": [{
+         "code": "AS",
+         "label": "Asia"
+      }, {
+         "code": "EU",
+         "label": "Europe"
+      }]
    },
    {
       "label": "Pacific",
@@ -318,7 +353,11 @@
          "Vanuatu",
          "Wallis & Futuna Islands",
          "Micronesia"
-      ]
+      ],
+      "continents": [{
+         "code": "OC",
+         "label": "Oceania"
+      }]
    },
    {
       "label": "Russia and CIS",
@@ -335,13 +374,24 @@
          "Turkmenistan",
          "Ukraine",
          "Uzbekistan."
-      ]
+      ],
+      "continents": [{
+         "code": "AS",
+         "label": "Asia"
+      }, {
+         "code": "EU",
+         "label": "Europe"
+      }]
    },
    {
       "label": "China",
       "countrys": [
          "China"
-      ]
+      ],
+      "continents": [{
+         "code": "AS",
+         "label": "Asia"
+      }]
    },
    {
       "label": "Worldwide"

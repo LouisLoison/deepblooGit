@@ -73,6 +73,7 @@ var Schema = {
       title: { type: "String" },
       size: { type: "String" },
       description: { type: "String" },
+      lookingFor: { type: "String" },
       information: { type: "String" },
       requestForProposal: { type: "String" },
       projectDevelopmentStatus: { type: "String" },
@@ -80,6 +81,7 @@ var Schema = {
       region: { type: "String" },
       projectLocation: { type: "String" },
       projectImplementationPeriod: { type: "String" },
+      projectGlobalAmount: { type: "String" },
       requiredInvestments: { type: "String" },
       publicationDate: { type: "String" },
       submissionDeadlineDate: { type: "String" },
@@ -95,7 +97,7 @@ var Schema = {
       requiredAmountOfInvestments: { type: "String" },
       investorParticipationFrom: { type: "String" },
       investmentReturn: { type: "String" },
-      privateDeal: { type: "String" },
+      opportunity: { type: "String" },
       contactName: { type: "String" },
       contactEmail: { type: "String" },
       contactPhone: { type: "String" },
@@ -144,7 +146,29 @@ var Schema = {
       cpvName: { type: "String" },
       origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
       rating: { type: "Int" },
-    }
+    },
+    annonce: {
+      annonceId: { type: "Int", key: true },
+      title: { type: "String" },
+      description: { type: "String" },
+      image: { type: "String" },
+      url: { type: "String" },
+      priority: { type: "Int" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    annonceClick: {
+      annonceClickId: { type: "Int", key: true },
+      annonceId: { type: "Int" },
+      userId: { type: "Int" },
+      screen: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
   }
 }
 
