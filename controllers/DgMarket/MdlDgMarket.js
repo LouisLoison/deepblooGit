@@ -186,7 +186,7 @@ exports.FileParse = (fileLocation) => {
           return false
         }
         if (termDate < dateLimit) {
-          return false
+         return false
         }
 
         // description
@@ -218,9 +218,11 @@ exports.FileParse = (fileLocation) => {
           description = description.replace(/\r/gm, '<br>')
         }
         
-        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 29298084) {
+        /*
+        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 29072466) {
           let toto = 123456;
         }
+        */
 
         // CPV list
         let title = tool.getXmlJsonData(notice.noticeTitle)
@@ -347,11 +349,9 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
       continue
     }
 
-    /*
-    if (id === "28923966" && constCpv.code === 31173000) {
+    if (id === "29072466" && constCpv.code === 10000005) {
       let toto = 123;
     }
-    */
 
     if (constCpv.words) {
       let cpvWords = JSON.parse(JSON.stringify(constCpv.words))
@@ -359,23 +359,6 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
       for (let word of cpvWords) {
         let regEx = new RegExp("\\b" + word + "\\b", 'gi')
         if (description.match(regEx)) {
-
-          /*
-          // Tyres exception
-          let exceptionFound = false
-          let exceptionWords = ['tyres', 'tyre']
-          for (let exceptionWord of exceptionWords) {
-            let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
-            if (description.match(regExException)) {
-              exceptionFound = true
-              break
-            }
-          }
-          if (exceptionFound) {
-            continue
-          }
-          */
-
           if (!cpvs.includes(constCpv.code)) {
             cpvs.push(constCpv.code)
             cpvFoundCount++

@@ -395,16 +395,17 @@ exports.TenderRemove = (id, algoliaId) => {
           where += 'AND '
         }
         where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
-      }
-      if (algoliaId && algoliaId !== '' && algoliaId > 0) {
+      } else if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
         where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
-      if (where !== '') { query += '  WHERE ' + where }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
+      if (where !== '') {
+        query += '  WHERE ' + where
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
+      }
 
       resolve()
     } catch (err) {

@@ -239,6 +239,20 @@ exports.ListFromCpvs = (cpvs, country) => {
               cpvs: [],
               cpvFounds: [],
             }
+            if ((!user.regions || user.regions.trim() === '') && user.country) {
+              for (const Region of RegionList) {
+                if (Region.countrys && Region.countrys.find(a => a.toUpperCase() === user.country.toUpperCase())) {
+                  user.regions = Region.label
+                }
+                if (Region.regions) {
+                  for (const RegionSub of Region.regions) {
+                    if (RegionSub.countrys && RegionSub.countrys.find(a => a.toUpperCase() === user.country.toUpperCase())) {
+                      user.regions = Region.label
+                    }
+                  }
+                }
+              }
+            }
             organization.users.push(user)
           }
         }
@@ -267,9 +281,6 @@ exports.ListFromCpvs = (cpvs, country) => {
         }
 
         for (let user of organization.users) {
-          if (user.hivebriteId === 1937699) {
-            let toto = 10;
-          }
 
           // Test user region
           if (region1Source) {
