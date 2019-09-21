@@ -176,9 +176,21 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
+      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
+
+      let cpvCodes = null
+      if (cpvLabels && cpvLabels.length) {
+        cpvCodes = []
+        for (let cpvLabel of cpvLabels) {
+          const CpvFound = CpvList.find(a => a.label.split('-').join(' ').trim() === cpvLabel.split('-').join(' ').trim())
+          if (CpvFound) {
+            cpvCodes.push(CpvFound.code)
+          }
+        }
+      }
 
       let query = `
         SELECT      id AS "id",
@@ -242,12 +254,12 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         if (where !== '') { where += 'AND '}
         where += `termDate <= ${BddTool.DateFormater(termDateMax, BddEnvironnement, BddId)} `
       }
-      if (cpvLabels && cpvLabels.length) {
+      if (cpvCodes && cpvCodes.length) {
         if (where !== '') { where += 'AND '}
         let orCondition = ''
-        for (let cpvLabel of cpvLabels) {
+        for (let cpvCode of cpvCodes) {
           if (orCondition !== '') { orCondition += 'OR '}
-          orCondition += `REPLACE(cpvDescriptions, '-', ' ') LIKE '%${BddTool.ChaineFormater(cpvLabel, BddEnvironnement, BddId)}%' `
+          orCondition += `cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
         }
         where += `(${orCondition}) `
       }
