@@ -189,6 +189,12 @@ exports.FileParse = (fileLocation) => {
          return false
         }
 
+        /*
+        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 30347262) {
+          let toto = 123456;
+        }
+        */
+
         // description
         let lang = ''
         let description = ''
@@ -198,7 +204,7 @@ exports.FileParse = (fileLocation) => {
             let description = descriptions.find(a => a.lang === noticeText.$.lang)
             if (description) {
               description.text += noticeText._ + '<br><br>'
-              description.text = description.text.substring(0, 1000)
+              description.text = description.text
             } else {
               descriptions.push({
                 lang: noticeText.$.lang,
@@ -208,7 +214,7 @@ exports.FileParse = (fileLocation) => {
           })
           if (descriptions && descriptions.length > 0) {
             lang = descriptions[0].lang
-            description = descriptions[0].text.substring(0, 5000)
+            description = descriptions[0].text
           }
         }
 
@@ -217,12 +223,6 @@ exports.FileParse = (fileLocation) => {
         if (!descriptionLowerCase.includes("<br") || !descriptionLowerCase.includes("<table") || !descriptionLowerCase.includes("<div")) {
           description = description.replace(/\r/gm, '<br>')
         }
-        
-        /*
-        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 29072466) {
-          let toto = 123456;
-        }
-        */
 
         // CPV list
         let title = tool.getXmlJsonData(notice.noticeTitle)
@@ -283,7 +283,7 @@ exports.FileParse = (fileLocation) => {
           procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
           title: title.substring(0, 450),
           lang: lang,
-          description: description,
+          description: description.substring(0, 5000),
           contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName).substring(0, 90),
           contactLastName: tool.getXmlJsonData(notice.contactAddress[0].lastName).substring(0, 90),
           contactAddress: tool.getXmlJsonData(notice.contactAddress[0].address).substring(0, 490),

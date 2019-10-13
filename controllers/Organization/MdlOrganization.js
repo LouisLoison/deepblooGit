@@ -256,7 +256,7 @@ exports.ListFromCpvs = (cpvs, country) => {
             organization.users.push(user)
           }
         }
-        if (user && record.userCpvCode && userCpvCode !== record.userCpvCode) {
+        if (user && record.userCpvCode && userCpvCode !== record.userCpvCode && !user.cpvs.find(a => a.code === record.userCpvCode)) {
           user.cpvs.push({
             code: record.userCpvCode,
             name: record.userCpvName.trim(),
@@ -269,8 +269,6 @@ exports.ListFromCpvs = (cpvs, country) => {
 
       // Init CPV rating
       for (let organization of organizations) {
-        let organizationCpvFlg = false
-        let organizationCountryFlg = false
         let userRegionFlg = false
         let userSubRegionFlg = false
         let userCountryFlg = false

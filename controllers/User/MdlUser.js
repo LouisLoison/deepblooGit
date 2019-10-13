@@ -231,8 +231,11 @@ exports.Memberships = (userId) => {
         } else if (isPremiumMembership && user.type !== 2) {
           user.type = 2
           userUpdate = true
+        } else if (isFreeMembership && user.type !== 5) {
+          user.type = 5
+          userUpdate = true
         }
-        if (!isPremiumMembership && !isBusinessMembership && user.type !== 3) {
+        if (!isPremiumMembership && !isBusinessMembership && !isFreeMembership && user.type !== 3) {
           user.type = 3
           userUpdate = true
         }

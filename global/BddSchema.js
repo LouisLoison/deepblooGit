@@ -110,7 +110,7 @@ var Schema = {
     user: {
       userId: { type: "Int", key: true },
       hivebriteId: { type: "Int" },
-      type: { type: "Int", description: '1 = Admin | 2 = Premium | 3 = Public | 4 = Business' },
+      type: { type: "Int", description: '1 = Admin | 2 = Premium | 3 = Public | 4 = Business | 5 = Free' },
       email: { type: "String" },
       username: { type: "String" },
       password: { type: "String" },
