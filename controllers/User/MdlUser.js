@@ -585,17 +585,19 @@ exports.Opportunity = (userId) => {
   })
 }
 
-exports.OpportunityDownloadCsv = (tenders) => {
+exports.OpportunityDownloadCsv = (tenderIds) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
       const fs = require('fs')
       const path = require('path')
       const moment = require('moment')
+      tenderIds = tenderIds
 
       let tenderText = `cpvs;region;country;title;description;publication;bidDeadline;buyerName;email\n`
-      if (tenders) {
-        for (let tender of tenders) {
+      if (tenderIds) {
+        for (let tenderId of tenderIds) {
+          const tender = await  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
           let description = tender.description.substring(0, 1000)
           description = description.split(';').join(',')
           description = description.split('\r\n').join(' ').trim()
@@ -626,19 +628,29 @@ exports.OpportunityDownloadCsv = (tenders) => {
   })
 }
 
-exports.Notify = (userIds, subject, body, footerHtml) => {
+exports.Notify = (userIds, subject, body, footerHtml, emails) => {
   return new Promise(async (resolve, reject) => {
     try {
       // Send email
-      for (const userId of userIds) {
-        const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
-        if (!user || !user.email || user.email.trim() === '') {
-          continue;
+      if (userIds) {
+        for (const userId of userIds) {
+          const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
+          if (!user || !user.email || user.email.trim() === '') {
+            continue;
+          }
+          let to = user.email;
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
         }
-        let to = user.email;
-        let text = `${body.trim()}\r\n\r\n${footerHtml}`;
-        let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
-        await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+      }
+      if (emails) {
+        for (const email of emails) {
+          let to = email;
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+        }
       }
       resolve()
     } catch (err) {

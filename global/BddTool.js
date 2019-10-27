@@ -365,14 +365,14 @@ var ChaineListeFormater = (Texte, Separateur, Environnement, BddId) => {
 exports.ChaineListeFormater = ChaineListeFormater
 
 exports.ArrayStringFormat = (ItemList, Environnement, BddId) => {
-    var Texte = ''
-    for (var Item of ItemList)
-    {
-        if (Texte !== '') { Texte += `','` }
-        Texte += ChaineFormater(Item.trim(), Environnement, BddId)
-    }
-    Texte = `'${Texte}'`
-    return Texte
+  var Texte = ''
+  for (var Item of ItemList)
+  {
+    if (Texte !== '') { Texte += `','` }
+    Texte += ChaineFormater(Item.trim(), Environnement, BddId)
+  }
+  Texte = `'${Texte}'`
+  return Texte
 }
 
 var NumericFormater = (Texte, Environnement, BddId) => {

@@ -170,7 +170,7 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -263,7 +263,18 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         }
         where += `(${orCondition}) `
       }
+      if (regions && regions.trim() !== '') {
+        const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
+        if (countrys) {
+          if (where !== '') { where += 'AND ' }
+          where += `country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+        }
+      }
       if (where !== '') { query += 'WHERE ' + where }
+      // query += ` ORDER BY bidDeadlineDate DESC `
+      if (limit && limit !== '') {
+        query += ` LIMIT ${limit} `
+      }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let tenders = []
       for (var record of recordset) {

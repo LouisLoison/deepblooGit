@@ -67,13 +67,13 @@ exports.Opportunity = (req, res) => {
 }
 
 exports.OpportunityDownloadCsv = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').OpportunityDownloadCsv(req.body.tenders).then((data) => {
+    require(process.cwd() + '/controllers/User/MdlUser').OpportunityDownloadCsv(req.body.tenderIds).then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
 exports.Notify = (req, res) => {
-  require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml).then((data) => {
+  require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml, req.body.emails).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

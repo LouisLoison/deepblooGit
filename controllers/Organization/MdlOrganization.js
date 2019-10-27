@@ -126,6 +126,7 @@ exports.ListFromCpvs = (cpvs, country) => {
       }
 
       // Get country region
+      const regionInfoSource = require(`${process.cwd()}/controllers/CtrlTool`).regionFromCountry(country)
       let region1Source = null
       let region2Source = null
       for (let region1 of RegionList) {
@@ -239,6 +240,7 @@ exports.ListFromCpvs = (cpvs, country) => {
               cpvs: [],
               cpvFounds: [],
             }
+            user.regionInfo = require(`${process.cwd()}/controllers/CtrlTool`).regionFromCountry(user.country)
             if ((!user.regions || user.regions.trim() === '') && user.country) {
               for (const Region of RegionList) {
                 if (Region.countrys && Region.countrys.find(a => a.toUpperCase() === user.country.toUpperCase())) {
@@ -274,50 +276,23 @@ exports.ListFromCpvs = (cpvs, country) => {
         let userCountryFlg = false
         let userCpvFlg = false
 
+        /*
+        if (organization.organizationId === 2858) {
+          organizationCountryFlg = true
+        }
+        */
+
         if (organization.countrys.includes(country)) {
           organizationCountryFlg = true
         }
 
         for (let user of organization.users) {
 
-          // Test user region
-          if (region1Source) {
-            let region1 = null
-            let region2 = null
-            let regionLabel2 = ''
-            if (user.regions) {
-              let regionLabels = user.regions.trim().split(',')
-              for (let regionLabel of regionLabels) {
-                let regionLabel1 = regionLabel.trim().split('-')[0].trim()
-                if (regionLabel1 !== '') {
-                  region1 = RegionList.find(a => a.label.toLowerCase() === regionLabel1.toLowerCase())
-                  if (region1) {
-                    if (regionLabel.includes('-')) {
-                      regionLabel2 = regionLabel.trim().split('-')[1].trim()
-                      region2 = region1.regions.find(a => a.label.toLowerCase() === regionLabel2.toLowerCase())
-                    }
-                    break;
-                  }
-                }
-              }
-            }
-            if (region1 && region1.label === region1Source.label) {
-              userRegionFlg = true
-              if (region2 && regionLabel2.toLowerCase() !== 'all') {
-                if (region2Source && region2 && region2.label === region2Source.label) {
-                  userSubRegionFlg = true
-                }
-              }
-              if (!region2 && regionLabel2.toLowerCase() === 'all') {
-                userSubRegionFlg = true
-              }
-            }
+          /*
+          if (user.hivebriteId === 1936117) {
+            let toto = 123456
           }
-
-          // Test user country
-          if (user.country === country) {
-            userCountryFlg = true
-          }
+          */
 
           // Test user CPV
           if (user.cpvs && user.cpvs.length > 0) {
@@ -332,6 +307,55 @@ exports.ListFromCpvs = (cpvs, country) => {
                 }
               }
             }
+          }
+          if (!user.cpvFounds.length) {
+            continue
+          }
+
+          // Test user region
+          if (user.regions) {
+            for (let regionLabel of user.regions.trim().split(',')) {
+              let regionLabel1 = regionLabel.trim().split('-')[0].trim()
+              if (regionLabel1.trim().toLowerCase() === 'worldwide') {
+                user.regionFound = regionInfoSource.region
+                userRegionFlg = true
+                user.subRegionFound = regionInfoSource.regionSub
+                userSubRegionFlg = true
+              } else if (regionLabel1.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
+                user.regionFound = regionLabel1
+                userRegionFlg = true
+                if (regionLabel.includes('-')) {
+                  let regionLabel2 = regionLabel.trim().split('-')[1].trim()
+                  if (regionLabel2.trim().toLowerCase() === 'all') {
+                    user.subRegionFound = regionLabel2
+                    userSubRegionFlg = true
+                  } else if (regionLabel2.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
+                    user.subRegionFound = regionLabel2
+                    userSubRegionFlg = true
+                  }
+                }
+              }
+            }
+          } else if (user.country && user.country.trim().toLowerCase() !== '') {
+            user.regionInfo = require(`${process.cwd()}/controllers/CtrlTool`).regionFromCountry(user.country)
+            if (user.regionInfo.region && user.regionInfo.region.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
+              user.regionFound = regionInfoSource.region
+              userRegionFlg = true
+              if (user.regionInfo.regionSub.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
+                user.subRegionFound = regionInfoSource.regionSub
+                userSubRegionFlg = true
+              }
+            }
+          }
+
+          // Test user country
+          if (
+            user.country
+            && user.country.trim().toLowerCase() !== ''
+            && user.country.trim().toLowerCase() === country.trim().toLowerCase()
+          ) {
+            user.countryFound = country
+            userCountryFlg = true
           }
         }
 
