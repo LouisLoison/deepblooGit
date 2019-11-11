@@ -173,27 +173,36 @@ exports.FileParse = (fileLocation) => {
       parseData.notices.notice.forEach(notice => {
         tenderCount++
 
-        // check biddeadline
-        let dateLimit = new Date()
-        dateLimit.setDate(dateLimit.getDate() - 15)
-        let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
-        if (!dateText || dateText.trim() === '') {
-          return false
-        }
-        let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-        let termDate = new Date(bidDeadlineDateText)
-        if (isNaN(termDate)) {
-          return false
-        }
-        if (termDate < dateLimit) {
-         return false
-        }
-
         /*
-        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 30347262) {
+        if (parseInt(tool.getXmlJsonData(notice.id), 10) === 30572446) {
           let toto = 123456;
         }
         */
+
+        // check biddeadline
+        let termDate = null
+        let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
+        if (dateText && dateText.trim() !== '') {
+          let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+          termDate = new Date(bidDeadlineDateText)
+        }
+        if (!termDate || isNaN(termDate)) {
+          dateText = tool.getXmlJsonData(notice.publicationDate)
+          if (dateText && dateText.trim() !== '') {
+            let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+            termDate = new Date(bidDeadlineDateText)
+          }
+        }
+        if (!termDate || isNaN(termDate)) {
+          termDate = new Date()
+        }
+
+        // check limit date
+        let dateLimit = new Date()
+        dateLimit.setDate(dateLimit.getDate() - 15)
+        if (termDate < dateLimit) {
+          return false
+        }
 
         // description
         let lang = ''
@@ -251,6 +260,24 @@ exports.FileParse = (fileLocation) => {
           if (textToParse.match(regExExceptionLabel)) {
             let exceptionFound = false
             let exceptionWords = ['tyres', 'tyre']
+            for (let exceptionWord of exceptionWords) {
+              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+              if (textToParse.match(regExException)) {
+                exceptionFound = true
+                break
+              }
+            }
+            if (exceptionFound) {
+              return false
+            }
+          }
+        }
+        exceptionLabels = ['fuel']
+        for (let exceptionLabel of exceptionLabels) {
+          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+          if (textToParse.match(regExExceptionLabel)) {
+            let exceptionFound = false
+            let exceptionWords = ['oil', 'lubricant', 'lubricants']
             for (let exceptionWord of exceptionWords) {
               let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
               if (textToParse.match(regExException)) {

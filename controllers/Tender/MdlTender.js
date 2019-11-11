@@ -170,7 +170,7 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -182,14 +182,17 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const BddEnvironnement = config.prefixe
 
       let cpvCodes = null
+      let cpvLabelFormats = []
       if (cpvLabels && cpvLabels.length) {
         cpvCodes = []
         for (let cpvLabel of cpvLabels) {
+          cpvLabelFormats.push(cpvLabel.split('-').join(' ').trim())
           const CpvFound = CpvList.find(a => a.label.split('-').join(' ').trim() === cpvLabel.split('-').join(' ').trim())
           if (CpvFound) {
             cpvCodes.push(CpvFound.code)
           }
         }
+        cpvLabels = cpvLabelFormats
       }
 
       let query = `
@@ -269,6 +272,10 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
           if (where !== '') { where += 'AND ' }
           where += `country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
         }
+      }
+      if (noticeType && noticeType !== '') {
+        if (where !== '') { where += 'AND ' }
+        where += `noticeType = '${BddTool.ChaineFormater(noticeType, BddEnvironnement, BddId)}' \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       // query += ` ORDER BY bidDeadlineDate DESC `

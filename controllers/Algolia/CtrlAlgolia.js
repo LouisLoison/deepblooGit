@@ -15,3 +15,9 @@ exports.Test = (req, res) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.TendersSynchro = (req, res) => {
+    require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersSynchro().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}

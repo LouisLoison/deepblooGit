@@ -7145,7 +7145,7 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000006,
       "label": "Fault location",
       "active": true,
       "logo": "",
@@ -7173,7 +7173,7 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000007,
       "label": "Diesel power",
       "active": true,
       "logo": "",
@@ -7188,7 +7188,7 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000008,
       "label": "Micro Hydro",
       "active": true,
       "logo": "",
@@ -7216,7 +7216,7 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000009,
       "label": "hybrid",
       "active": true,
       "logo": "",
@@ -7232,7 +7232,7 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000010,
       "label": "Grid connected",
       "active": true,
       "logo": "",
@@ -7247,7 +7247,35 @@
       ]
    },
    {
-      "code": 10000005,
+      "code": 10000011,
+      "label": "Industrial communication",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "fiber optic networks",
+         "optical networks",
+         "fiber optic network",
+         "optical network",
+         "optic network",
+         "wireless networks",
+         "wireless network",
+         "utilities communications",
+         "utilities communication",
+         "power line carrier",
+         "wireless routers",
+         "wireless router",
+         "broadband power line modem",
+         "modem",
+         "fiber optic",
+         "router",
+         "broadband",
+         "broad band"
+      ]
+   },
+   {
+      "code": 10000012,
       "label": "Mini Wind",
       "active": true,
       "logo": "",
@@ -7262,6 +7290,36 @@
          "mini eolica",
          "mini-eolica",
          "mini eólica"
+      ]
+   },
+   {
+      "code": 10000013,
+      "label": "Pumps",
+      "active": true,
+      "logo": "",
+      "picture": "",
+      "category": "",
+      "words": [
+         "electric pumps",
+         "electric pump",
+         "electrical pumps",
+         "electrical pump",
+         "electric pumpings",
+         "electric pumping",
+         "electrical pumpings",
+         "electrical pumping",
+         "heat pump",
+         "heat pumps",
+         "heat pumping",
+         "heat pumpings",
+         "heat pump",
+         "heatpumps",
+         "heatpump",
+         "thermopompe",
+         "pompe à chaleur",
+         "pompage de chaleur",
+         "refrigeration",
+         "heat transfer"
       ]
    }
 ]
