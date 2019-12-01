@@ -42,10 +42,16 @@ exports.Synchro = (req, res) => {
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.SynchroAllFullLight = (req, res) => {
+  require(process.cwd() + '/controllers/User/MdlUser').SynchroAllFullLight().then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.SynchroAllFull = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').SynchroAllFull().then((data) => {
-        res.end(JSON.stringify({ success: true, data: data }, null, 3))
-    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+  require(process.cwd() + '/controllers/User/MdlUser').SynchroAllFull(req.body.pageNbr, req.body.perPage).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
 exports.SynchroFull = (req, res) => {
@@ -74,6 +80,12 @@ exports.OpportunityDownloadCsv = (req, res) => {
 
 exports.Notify = (req, res) => {
   require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml, req.body.emails).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.SendPeriodicDashboard = (req, res) => {
+  require(process.cwd() + '/controllers/User/MdlUser').SendPeriodicDashboard().then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

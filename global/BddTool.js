@@ -376,16 +376,27 @@ exports.ArrayStringFormat = (ItemList, Environnement, BddId) => {
 }
 
 var NumericFormater = (Texte, Environnement, BddId) => {
-    var value = 0
-    try {
-        value = Number(Texte)
-    }
-    catch(err) {
-    }
-    if (isNaN(value)) { value = 0 }
-    return value
+  var value = 0
+  try {
+      value = Number(Texte)
+  }
+  catch(err) {
+  }
+  if (isNaN(value)) { value = 0 }
+  return value
 }
 exports.NumericFormater = NumericFormater
+
+exports.ArrayNumericFormater = (ItemList, Environnement, BddId) => {
+  var Texte = ''
+  for (var Item of ItemList)
+  {
+    if (Texte !== '') { Texte += `,` }
+    Texte += NumericFormater(Item, Environnement, BddId)
+  }
+  Texte = `${Texte}`
+  return Texte
+}
 
 exports.DateFormater = (Texte, Environnement, BddId) => {
     var moment = require('moment')

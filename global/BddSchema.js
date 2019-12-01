@@ -120,6 +120,7 @@ var Schema = {
       countryCode: { type: "String" },
       regions: { type: "String" },
       photo: { type: "String" },
+      doNotContact: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

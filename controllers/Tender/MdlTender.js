@@ -170,7 +170,7 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -272,6 +272,10 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
           if (where !== '') { where += 'AND ' }
           where += `country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
         }
+      }
+      if (country && country !== '') {
+        if (where !== '') { where += 'AND ' }
+        where += `country = '${BddTool.ChaineFormater(country, BddEnvironnement, BddId)}' \n`
       }
       if (noticeType && noticeType !== '') {
         if (where !== '') { where += 'AND ' }

@@ -194,75 +194,12 @@ exports.CpvCreateJson = () => {
   })
 }
 
-exports.Test = () => {
+exports.Test = (data1, data2) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
-      const fs = require('fs')
-      const path = require('path')
-      const horodatage = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
-      const fileLocation = path.join(config.WorkSpaceFolder, `ApiTest${horodatage}.txt`)
-
-
-      const testSector = `
-      `
-      const sectors = testSector.split('\n')
-      const SECTORS_LIST = []
-      for (const sector of sectors) {
-        if (sector.trim() === '') {
-          continue
-        }
-        NACECode = parseInt(sector.split(';')[2], 10)
-        TradeSector = sector.split(';')[3]
-        Description = sector.split(';')[4]
-        Industry = ''
-        if (NACECode >= 110 && NACECode <= 1450) {
-          Industry = 'Agriculture & mining'
-        } else if ((NACECode >= 1500 && NACECode <= 2330) || (NACECode >= 2600 && NACECode <= 2875)) {
-          Industry = 'Manufacturing of raw material (excl. mining)'
-        } else if ((NACECode >= 2900 && NACECode <= 3350) || (NACECode >= 3600 && NACECode <= 3720)) {
-          Industry = 'Other manufacturing of machinery & equipment'
-        } else if (NACECode >= 3400 && NACECode <= 3550) {
-          Industry = 'Automotive & aeronautics (incl. suppliers) manufacturing'
-        } else if (NACECode >= 4000 && NACECode <= 4100) {
-          Industry = 'Regulated energy/utilities'
-        } else if (NACECode >= 4500 && NACECode <= 4550) {
-          Industry = 'Construction'
-        } else if (NACECode >= 5010 && NACECode <= 5274) {
-          Industry = 'Wholesale & retail trade'
-        } else if ((NACECode >= 5510 && NACECode <= 5552) || (NACECode === 6420) || (NACECode >= 7200 && NACECode <= 7487)) {
-          Industry = 'Business & consumer services'
-        } else if (NACECode >= 6000 && NACECode <= 6412) {
-          Industry = 'Transportation'
-        } else if (NACECode >= 7000 && NACECode <= 7140) {
-          Industry = 'Real estate & rental'
-        } else if (NACECode >= 7511 && NACECode <= 9305) {
-          Industry = 'Public & community services'
-        } else if (NACECode >= 9500 && NACECode <= 9990) {
-          Industry = 'Misc'
-        } else if ((NACECode >= 1500 && NACECode <= 2330) || (NACECode >= 2600 && NACECode <= 2875)) {
-          Industry = 'Other chemicals'
-        } else if (NACECode >= 2440 && NACECode <= 2442) {
-          Industry = 'Specialized chemicals (pharmaceuticals, etc.)'
-        } else if (NACECode >= 4000 && NACECode <= 4100) {
-          Industry = 'Unregulated energy/utilities'
-        }
-        SECTORS_LIST.push({
-          NACECode: NACECode.toString(),
-          TradeSector,
-          Description,
-          Industry: Industry === '' ? null : Industry
-        })
-      }
-
-      fs.writeFile(fileLocation, JSON.stringify(SECTORS_LIST, null, 3), function (err) {
-        if (err) {
-          return console.log(err);
-        }
-      })
       resolve({
-        horodatage,
-        fileLocation
+        item1: data1,
+        item2: data2
       })
     } catch (err) { reject(err) }
   })
@@ -332,6 +269,80 @@ exports.Test3 = () => {
       resolve({
         horodatage1,
         horodatage2,
+        fileLocation
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.Test4 = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const horodatage = new Date().toISOString().split(':').join('').split('-').join('').substring(0, 15)
+      const fileLocation = path.join(config.WorkSpaceFolder, `ApiTest${horodatage}.txt`)
+
+
+      const testSector = `
+      `
+      const sectors = testSector.split('\n')
+      const SECTORS_LIST = []
+      for (const sector of sectors) {
+        if (sector.trim() === '') {
+          continue
+        }
+        NACECode = parseInt(sector.split(';')[2], 10)
+        TradeSector = sector.split(';')[3]
+        Description = sector.split(';')[4]
+        Industry = ''
+        if (NACECode >= 110 && NACECode <= 1450) {
+          Industry = 'Agriculture & mining'
+        } else if ((NACECode >= 1500 && NACECode <= 2330) || (NACECode >= 2600 && NACECode <= 2875)) {
+          Industry = 'Manufacturing of raw material (excl. mining)'
+        } else if ((NACECode >= 2900 && NACECode <= 3350) || (NACECode >= 3600 && NACECode <= 3720)) {
+          Industry = 'Other manufacturing of machinery & equipment'
+        } else if (NACECode >= 3400 && NACECode <= 3550) {
+          Industry = 'Automotive & aeronautics (incl. suppliers) manufacturing'
+        } else if (NACECode >= 4000 && NACECode <= 4100) {
+          Industry = 'Regulated energy/utilities'
+        } else if (NACECode >= 4500 && NACECode <= 4550) {
+          Industry = 'Construction'
+        } else if (NACECode >= 5010 && NACECode <= 5274) {
+          Industry = 'Wholesale & retail trade'
+        } else if ((NACECode >= 5510 && NACECode <= 5552) || (NACECode === 6420) || (NACECode >= 7200 && NACECode <= 7487)) {
+          Industry = 'Business & consumer services'
+        } else if (NACECode >= 6000 && NACECode <= 6412) {
+          Industry = 'Transportation'
+        } else if (NACECode >= 7000 && NACECode <= 7140) {
+          Industry = 'Real estate & rental'
+        } else if (NACECode >= 7511 && NACECode <= 9305) {
+          Industry = 'Public & community services'
+        } else if (NACECode >= 9500 && NACECode <= 9990) {
+          Industry = 'Misc'
+        } else if ((NACECode >= 1500 && NACECode <= 2330) || (NACECode >= 2600 && NACECode <= 2875)) {
+          Industry = 'Other chemicals'
+        } else if (NACECode >= 2440 && NACECode <= 2442) {
+          Industry = 'Specialized chemicals (pharmaceuticals, etc.)'
+        } else if (NACECode >= 4000 && NACECode <= 4100) {
+          Industry = 'Unregulated energy/utilities'
+        }
+        SECTORS_LIST.push({
+          NACECode: NACECode.toString(),
+          TradeSector,
+          Description,
+          Industry: Industry === '' ? null : Industry
+        })
+      }
+
+      fs.writeFile(fileLocation, JSON.stringify(SECTORS_LIST, null, 3), function (err) {
+        if (err) {
+          return console.log(err);
+        }
+      })
+      resolve({
+        horodatage,
         fileLocation
       })
     } catch (err) { reject(err) }
