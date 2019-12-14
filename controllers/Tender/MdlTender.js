@@ -170,7 +170,7 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -283,6 +283,9 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       }
       if (where !== '') { query += 'WHERE ' + where }
       // query += ` ORDER BY bidDeadlineDate DESC `
+      if (orderBy) {
+        query += ` ORDER BY ${orderBy} `
+      }
       if (limit && limit !== '') {
         query += ` LIMIT ${limit} `
       }

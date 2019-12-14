@@ -108,6 +108,10 @@ exports.List = (filter) => {
           if (where !== '') { where += 'AND ' }
           where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
         }
+        if (filter.hivebriteId) {
+          if (where !== '') { where += 'AND ' }
+          where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId, BddEnvironnement, BddId)} \n`
+        }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
           where += `organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
@@ -220,7 +224,7 @@ exports.Memberships = (userId) => {
         if (
           membership.status === "paid"
           && new Date(membership.expires_at) > new Date()
-          // && membership.type_name.startsWith('Premium Membership')
+          && membership.type_name.startsWith('Premium Membership')
         ) {
           isPremiumMembership = true
         }
@@ -250,17 +254,27 @@ exports.Memberships = (userId) => {
           userUpdate = true
         }
         if (userUpdate) {
+          const userBdds = await this.List({hivebriteId : user.hivebriteId});
+          if (userBdds && userBdds.length) {
+            const userBdd = userBdds[0]
+            user = {
+              ...userBdd,
+              ...user
+            }
+          }
           await this.AddUpdate(user)
         }
       }
 
-      resolve({
+      const data = {
+        ...user,
         isFreeMembership,
         isPremiumMembership,
         isBusinessMembership,
         memberships,
         hasFree : user.membershipFree > 0
-      });
+      }
+      resolve(data)
     } catch (err) { reject(err) }
   })
 }
@@ -307,7 +321,7 @@ exports.Synchro = () => {
             hivebriteId: user.id,
             type: 3,
             email: user.email,
-            username: user.name,
+            username: user.name.substring(0, 100),
             creationDate: new Date(),
             updateDate: new Date()
           }
@@ -317,11 +331,11 @@ exports.Synchro = () => {
             userBdd.hivebriteId !== user.id
             || userBdd.hivebriteId !== user.id
             || userBdd.email !== user.email
-            || userBdd.username !== user.name
+            || userBdd.username.substring(0, 100) !== user.name.substring(0, 100)
           ) {
             userBdd.hivebriteId = user.id
             userBdd.email = user.email
-            userBdd.username = user.name
+            userBdd.username = user.name.substring(0, 100)
             userBdd.updateDate = new Date()
             await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
           }
@@ -352,8 +366,10 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let users = []
       let userTotal = 1
       let currentPage = 1
+      let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=1&per_page=1`)
+      const pageTotal = Math.ceil(parseInt(usersResponse.headers["x-total"]) / perPage) + 1
       while (users.length < userTotal && currentPage < 200) {
-        let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${currentPage}&per_page=${perPage}`)
+        usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${pageTotal - currentPage}&per_page=${perPage}`)
         users = users.concat(usersResponse.data.users)
         userTotal = usersResponse.headers["x-total"]
         currentPage++
@@ -467,7 +483,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
           hivebriteId: userBdd.hivebriteId,
           type: 3,
           email: user.email,
-          username: user.name,
+          username: user.name.substring(0, 100),
           organizationId: organizationId,
           country: country,
           countryCode: countryCode,
@@ -481,7 +497,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
       } else {
         if (
           userBdd.email !== user.email
-          || userBdd.username !== user.name
+          || userBdd.username.substring(0, 100) !== user.name.substring(0, 100)
           || userBdd.organizationId !== organizationId
           || userBdd.country !== country
           || userBdd.countryCode !== countryCode
@@ -490,7 +506,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
           || userBdd.doNotContact !== userData.do_not_contact
         ) {
           userBdd.email = user.email
-          userBdd.username = user.name
+          userBdd.username = user.name.substring(0, 100)
           userBdd.organizationId = organizationId
           userBdd.country = country
           userBdd.countryCode = countryCode
@@ -535,9 +551,15 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
       }
 
       // Synchro membership
-      await this.Memberships(userBdd.userId);
+      const userMembership = await this.Memberships(userBdd.userId);
+      if (userMembership) {
+        userBdd = {
+          ...userBdd,
+          ...userMembership
+        }
+      }
 
-      resolve(userBdd);
+      resolve(userBdd)
     } catch (err) { reject(err) }
   })
 }
@@ -624,7 +646,7 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
       const moment = require('moment')
       tenderIds = tenderIds
 
-      let tenderText = `region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;cpvs\n`
+      let tenderText = `tenderId;region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;cpvs\n`
       if (tenderIds) {
         for (let tenderId of tenderIds) {
           const tender = await  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
@@ -675,7 +697,7 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
               console.log(err)
             }
           }
-          tenderText += `${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${cpvDescriptions}\n`
+          tenderText += `${tenderId};${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${cpvDescriptions}\n`
         }
       }
       const fileName = `opportunities_${moment().format("YYYYMMDD_HHmmss")}.csv`
@@ -732,7 +754,7 @@ exports.SendPeriodicDashboard = () => {
       const htmlToText = require('html-to-text')
 
       let users = await this.List({
-        types: [1, 4],
+        types: [1, 2, 4, 5],
       })
 
       let emailSents = []
@@ -743,12 +765,19 @@ exports.SendPeriodicDashboard = () => {
         let userCpvs = await this.UserCpvs(user.userId)
         let cpvLabels = userCpvs.map(a => a.cpvName)
         let regions = user.regions.trim()
+        let termDateMin = new Date()
         let to = user.email.trim();
-        if (cpvLabels === '' || regions === '' || to === '') {
+        /*
+        if (to !== 'pieter@ist.co.za') {
+          continue
+        }
+        */
+        if (cpvLabels === '' || to === '') {
           continue
         }
         let limit = 10000
-        let tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, null, null, cpvLabels, regions, limit, null, null)
+        let orderBy = 'updateDate DESC'
+        let tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, termDateMin, null, cpvLabels, regions, limit, null, null, orderBy)
         if (!tenders || !tenders.length) {
           continue
         }
@@ -756,19 +785,15 @@ exports.SendPeriodicDashboard = () => {
           return a.creationDate < b.creationDate ? 1 : -1
         })
         let tenderMax = 4
-        let subject = `DeepBloo - Notification emails`
+        let subject = `DeepBloo - Business opportunities`
 
         // Text version
         let text = ``
         text += `Dear ${user.username},\r\n`
         text += `\r\n`
-        text += `Please find your summary of business opportunities corresponding to your opportunities (${cpvLabels} in ${regions}).\r\n`
+        text += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions}).\r\n`
         text += `\r\n`
-        text += `There are ${tenders.length - tenderMax} more opportunities corresponding to your criteria. To check them, go to your Business + interface\r\n`
-        text += `\r\n`
-        text += `You can as well  update your business preferences in order change CPV and Business areas to adjust your pipeline and the opportunities you will receive by email.\r\n`
-        text += `\r\n`
-        text += `If you want to add more sources, to specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline, please contact us.\r\n`
+        text += `There are ${tenders.length} live opportunities (not yet expired) corresponding to your criteria.\r\n`
         text += `\r\n`
         text += `Regards\r\n`
         text += `The Deepbloo Team\r\n`
@@ -778,7 +803,7 @@ exports.SendPeriodicDashboard = () => {
         let html = ``
         html += `Dear ${user.username},<br>`
         html += `<br>`
-        html += `Please find your summary of business opportunities corresponding to your opportunities (${cpvLabels} in ${regions}).<br>`
+        html += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions}).<br>`
         html += `<br>`
 
         html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
@@ -805,10 +830,10 @@ exports.SendPeriodicDashboard = () => {
           html += `      ${tender.country}`
           html += `    </td>`
           html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      ${moment(tender.creationDate).format('YYYY-MM-DD')}`
+          html += `      ${moment(tender.updateDate).format('YYYY-MM-DD')}`
           html += `    </td>`
           html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      ${tender.bidDeadlineDate}`
+          html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
           html += `    </td>`
           html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
           html += `      ${description.substring(0, 150)}...`
@@ -819,19 +844,44 @@ exports.SendPeriodicDashboard = () => {
           html += `  </tr>`
         }
         html += `</table>`
+        html += `<br>`
 
-        html += `<br>`
-        html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more opportunities corresponding to your criteria. To check them, go to your Business + interface<br>`
-        html += `<br>`
-        html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS +</a></div>`
-        html += `<br>`
-        html += `You can as well  update your business preferences in order change CPV and Business areas to adjust your pipeline and the opportunities you will receive by email.<br>`
-        html += `<br>`
-        html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
-        html += `<br>`
-        html += `If you want to add more sources, to specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline, please contact us.<br>`
-        html += `<br>`
-        html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+        if (user.type === 1 || user.type === 4) {
+          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria. To check them, go to your Business+ interface<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
+          html += `<br>`
+          html += `You can as well  update your business preferences in order to change your CPV's and Business areas to adjust your pipeline and the opportunities you will receive by email.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+          html += `<br>`
+          html += `If you want to add more sources, to specify your own keywords to find relevant tenders or access to stats and dashboards of your pipeline, please contact us.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+        } else if (user.type === 2) {
+          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria.<br>`
+          html += `<br>`
+          html += `You can update your business preferences in order to change your CPV’s and Business areas to adjust the type of opportunities you will receive by email.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+          html += `<br>`
+          html += `If you want to Go on "Business+" membership in order to a access to a private pipeline of opportunities, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or ask any other question, please contact us.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+        } else if (user.type === 5) {
+          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria.  To check them, go to your Business+ interface.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
+          html += `<br>`
+          html += `You can as well update your business preferences in order to change your CPV’s and Business areas to adjust your private pipeline and the opportunities you will receive by email.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+          html += `<br>`
+          html += `If you want to get a demo, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or for any other queries, please contact us.<br>`
+          html += `<br>`
+          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+        }
+
         html += `<br>`
         html += `<br>`
         html += `Regards<br>`
@@ -850,7 +900,7 @@ exports.SendPeriodicDashboard = () => {
           email: user.email,
           tendersLength: tenders.length
         })
-        // to = "jeancazaux@hotmail.com"
+        to = "jeancazaux@hotmail.com"
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
       }
 

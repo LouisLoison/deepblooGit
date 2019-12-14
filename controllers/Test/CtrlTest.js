@@ -25,10 +25,17 @@ exports.ArchiveTest = (req, res) => {
 }
 
 exports.CpvCreateJson = (req, res) => {
-    require(process.cwd() + '/controllers/Test/MdlTest').CpvCreateJson().then((data) => {
-        res.end(JSON.stringify({ success: true, data: data }, null, 3))
-    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+  require(process.cwd() + '/controllers/Test/MdlTest').CpvCreateJson().then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.CountryCreateCsv = (req, res) => {
+  require(process.cwd() + '/controllers/Test/MdlTest').CountryCreateCsv().then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 
 exports.OracleTest = (req, res) => {
     require(process.cwd() + '/controllers/Test/MdlTest').OracleTest().then(() => {

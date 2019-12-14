@@ -194,6 +194,47 @@ exports.CpvCreateJson = () => {
   })
 }
 
+exports.CountryCreateCsv = () => {
+  return new Promise(async (resolve, reject) => {
+    fs = require('fs')
+    const regionList = require(process.cwd() + '/public/constants/regions.json')
+
+    let countrys = []
+    for(const region of regionList) {
+      if (region.countrys && region.countrys.length) {
+        for(const country of region.countrys) {
+          countrys.push({
+            country,
+            region: region.label,
+            subRegion: '',
+          })
+        }        
+      }
+      if (region.regions && region.regions.length) {
+        for(const subRegion of region.regions) {
+          if (subRegion.countrys && subRegion.countrys.length) {
+            for(const country of subRegion.countrys) {
+              countrys.push({
+                country,
+                region: region.label,
+                subRegion: subRegion.label,
+              })
+            }        
+          }        
+        }        
+      }
+    }
+
+    countryText = 'country;region;subRegion\n'
+    for(const country of countrys) {
+      countryText += `${country.country};${country.region};${country.subRegion}\n`
+    }
+    fs.writeFileSync('c:/Temp/Country.csv', countryText)
+
+    resolve()
+  })
+}
+
 exports.Test = (data1, data2) => {
   return new Promise(async (resolve, reject) => {
     try {

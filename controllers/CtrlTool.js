@@ -15,9 +15,9 @@ exports.countrysFromRegions = (regions) => {
           if (regionLabel.includes('-')) {
             regionLabel2 = regionLabel.trim().split('-')[1].trim()
           }
-          if (regionLabel2.toLowerCase() === 'all'){
+          if (regionLabel2.toLowerCase() === 'all' || regionLabel2.trim() === ''){
             if (regionFind.countrys) {
-              countrys.concat(regionFind.countrys)
+              countrys = countrys.concat(regionFind.countrys)
             }
             if (regionFind.regions) {
               for (const regionSub of regionFind.regions) {
