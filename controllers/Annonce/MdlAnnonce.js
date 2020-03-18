@@ -40,7 +40,7 @@ exports.List = (filter) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      // Get ticket list
+      // Get annonce list
       var annonces = []
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe

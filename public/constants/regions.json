@@ -21,9 +21,7 @@
           "Seychelles",
           "Somalia",
           "Tanzania",
-          "Uganda",
-          "Zambia",
-          "Zimbabwe"
+          "Uganda"
         ]
       },
       {
@@ -42,13 +40,11 @@
         "label": "Southern",
         "countrys": [
           "South Africa",
-          "Angola",
-          "Botswana.",
-          "Comores.",
-          "Eswatini.",
-          "Lesotho.",
-          "Madagascar.",
-          "Malawi.",
+          "Botswana",
+          "Comores",
+          "Eswatini",
+          "Lesotho",
+          "Malawi",
           "Namibia",
           "Swaziland",
           "Zambia",
@@ -63,6 +59,7 @@
           "Cape Verde",
           "Cote d'Ivoire (Ivory Coast)",
           "Côte d'Ivoire",
+          "Cote d'Ivoire",
           "Gambia",
           "Ghana",
           "Guinea",
@@ -89,8 +86,7 @@
           "Congo",
           "Democratic Republic of the Congo",
           "Equatorial Guinea",
-          "Gabon",
-          "Sao Tome and Principe"
+          "Gabon"
         ]
       }
     ],
@@ -118,7 +114,6 @@
           "Dominica",
           "Dominican Republic",
           "El Salvador",
-          "Greenland",
           "Grenada",
           "Guadeloupe",
           "Guatemala",
@@ -149,6 +144,7 @@
         "label": "North/Canada",
         "countrys": [
           "Canada",
+          "Greenland",
           "United States"
         ],
         "continents": [{
@@ -187,11 +183,12 @@
       {
         "label": "Central",
         "countrys": [
+          "Afghanistan",
           "Kazakhstan",
           "Kyrgyzstan",
           "Tajikistan",
           "Turkmenistan",
-          "Uzbekistan "
+          "Uzbekistan"
         ]
       },
       {
@@ -200,21 +197,21 @@
           "Democratic People's Republic of Korea",
           "Japan",
           "Mongolia",
+          "North Korea",
           "Republic of Korea",
-          "China"
+          "South Korea",
+          "Taiwan"
         ]
       },
       {
         "label": "Southern",
         "countrys": [
-          "Afghanistan",
           "Bangladesh",
           "Bhutan",
           "Iran (Islamic Republic of)",
           "Iran",
           "Maldives",
           "Nepal",
-          "Pakistan",
           "Sri Lanka",
           "Brunei Darussalam",
           "Cambodia",
@@ -247,7 +244,6 @@
           "Bulgaria",
           "Croatia",
           "Czech Republic",
-          "Greece",
           "Hungary",
           "Kosovo",
           "Macedonia",
@@ -256,6 +252,7 @@
           "Poland",
           "Romania",
           "Russia",
+          "Russian Federation",
           "Serbia",
           "Slovakia",
           "Slovenia",
@@ -268,11 +265,18 @@
           "Austria",
           "Belgium",
           "Denmark",
+          "Estonia",
           "Finland",
           "France",
           "Germany",
+          "Greece",
+          "Iceland",
           "Ireland",
           "Italy",
+          "Latvia",
+          "Lithuania",
+          "Luxembourg",
+          "Malta",
           "Netherlands",
           "Northern Ireland",
           "Norway",
@@ -303,17 +307,19 @@
   {
     "label": "Near & Middle East",
     "countrys": [
-      "Armenia",
       "Azerbaijan",
       "Bahrain",
       "Cyprus",
-      "Georgia",
+      "Iran",
+      "Iran (Islamic Republic of)",
       "Iraq",
       "Israel",
       "Jordan",
       "Kuwait",
       "Lebanon",
       "Oman",
+      "Pakistan",
+      "Palestinian Territory, Occupied",
       "Qatar",
       "Saudi Arabia",
       "State of Palestine",
@@ -342,6 +348,7 @@
       "French Polynesia",
       "Guam",
       "Kiribati",
+      "Marshall Islands",
       "Nauru",
       "New Caledonia",
       "New Zealand",
@@ -364,17 +371,8 @@
     "label": "Russia and CIS",
     "countrys": [
       "Armenia",
-      "Azerbaijan",
-      "Belarus",
       "Georgia",
-      "Kazakhstan",
-      "Kyrgyzstan",
-      "Moldova",
-      "Russia",
-      "Tajikistan",
-      "Turkmenistan",
-      "Ukraine",
-      "Uzbekistan."
+      "Uzbekistan"
     ],
     "continents": [{
       "code": "AS",

@@ -99,7 +99,22 @@ exports.List = (filter) => {
                   countryCode AS "countryCode", 
                   regions AS "regions", 
                   photo AS "photo", 
-                  doNotContact AS "doNotContact" 
+                  doNotContact AS "doNotContact",
+                  notifPostEmail AS "notifPostEmail",
+                  notifTripEmail AS "notifTripEmail",
+                  notifEventEmail AS "notifEventEmail",
+                  notifDigestEmail AS "notifDigestEmail",
+                  notifCommentEmail AS "notifCommentEmail",
+                  notifVentureEmail AS "notifVentureEmail",
+                  notifBusinessRequest AS "notifBusinessRequest",
+                  notifCurrentLocationEmail AS "notifCurrentLocationEmail",
+                  notifEmailingComEmail AS "notifEmailingComEmail",
+                  notifForumPostEmail AS "notifForumPostEmail",
+                  notifContactByPhone AS "notifContactByPhone",
+                  notifContactBySms AS "notifContactBySms",
+                  notifContactByPost AS "notifContactByPost",
+                  creationDate AS "creationDate",
+                  updateDate AS "updateDate"
         FROM      user 
       `
       if (filter) {
@@ -146,6 +161,19 @@ exports.List = (filter) => {
           regions: record.regions,
           photo: record.photo,
           doNotContact: record.doNotContact,
+          notifPostEmail: record.notifPostEmail,
+          notifTripEmail: record.notifTripEmail,
+          notifEventEmail: record.notifEventEmail,
+          notifDigestEmail: record.notifDigestEmail,
+          notifCommentEmail: record.notifCommentEmail,
+          notifVentureEmail: record.notifVentureEmail,
+          notifBusinessRequest: record.notifBusinessRequest,
+          notifCurrentLocationEmail: record.notifCurrentLocationEmail,
+          notifEmailingComEmail: record.notifEmailingComEmail,
+          notifForumPostEmail: record.notifForumPostEmail,
+          notifContactByPhone: record.notifContactByPhone,
+          notifContactBySms: record.notifContactBySms,
+          notifContactByPost: record.notifContactByPost,
         })
       }
       resolve(users);
@@ -448,6 +476,25 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
         }
       }
 
+      // Get user notification settings
+      let userNotificationSettingsResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}/notification_settings`)
+      if (userNotificationSettingsResponse.data.notification_settings) {
+        const notificationSetting = userNotificationSettingsResponse.data.notification_settings
+        user.notifBusinessRequest = notificationSetting.businessopportunities_request
+        user.notifCommentEmail = notificationSetting.comment_email
+        user.notifContactByPhone = notificationSetting.contact_by_phone
+        user.notifContactByPost = notificationSetting.contact_by_post
+        user.notifContactBySms = notificationSetting.contact_by_sms
+        user.notifCurrentLocationEmail = notificationSetting.current_location_email
+        user.notifDigestEmail = notificationSetting.digest_email
+        user.notifEmailingComEmail = notificationSetting.emailing_communication_email
+        user.notifEventEmail = notificationSetting.event_email
+        user.notifForumPostEmail = notificationSetting.forum_post_email
+        user.notifPostEmail = notificationSetting.post_email
+        user.notifTripEmail = notificationSetting.trip_email
+        user.notifVentureEmail = notificationSetting.ventures_comment_email
+      }
+
       // Get user country
       let userResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`)
       let userData = userResponse.data.user
@@ -490,6 +537,19 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
           regions: regions,
           photo: photo,
           doNotContact: userData.do_not_contact,
+          notifPostEmail: user.notifPostEmail,
+          notifTripEmail: user.notifTripEmail,
+          notifEventEmail: user.notifEventEmail,
+          notifDigestEmail: user.notifDigestEmail,
+          notifCommentEmail: user.notifCommentEmail,
+          notifVentureEmail: user.notifVentureEmail,
+          notifBusinessRequest: user.notifBusinessRequest,
+          notifCurrentLocationEmail: user.notifCurrentLocationEmail,
+          notifEmailingComEmail: user.notifEmailingComEmail,
+          notifForumPostEmail: user.notifForumPostEmail,
+          notifContactByPhone: user.notifContactByPhone,
+          notifContactBySms: user.notifContactBySms,
+          notifContactByPost: user.notifContactByPost,
           creationDate: new Date(),
           updateDate: new Date()
         }
@@ -503,7 +563,20 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
           || userBdd.countryCode !== countryCode
           || userBdd.regions !== regions
           || userBdd.photo !== photo
-          || userBdd.doNotContact !== userData.do_not_contact
+          || userBdd.doNotContact !== userData.do_not_contact          
+          || userBdd.notifPostEmail !== user.notifPostEmail
+          || userBdd.notifTripEmail !== user.notifTripEmail
+          || userBdd.notifEventEmail !== user.notifEventEmail
+          || userBdd.notifDigestEmail !== user.notifDigestEmail
+          || userBdd.notifCommentEmail !== user.notifCommentEmail
+          || userBdd.notifVentureEmail !== user.notifVentureEmail
+          || userBdd.notifBusinessRequest !== user.notifBusinessRequest
+          || userBdd.notifCurrentLocationEmail !== user.notifCurrentLocationEmail
+          || userBdd.notifEmailingComEmail !== user.notifEmailingComEmail
+          || userBdd.notifForumPostEmail !== user.notifForumPostEmail
+          || userBdd.notifContactByPhone !== user.notifContactByPhone
+          || userBdd.notifContactBySms !== user.notifContactBySms
+          || userBdd.notifContactByPost !== user.notifContactByPost
         ) {
           userBdd.email = user.email
           userBdd.username = user.name.substring(0, 100)
@@ -513,6 +586,19 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
           userBdd.regions = regions
           userBdd.photo = photo
           userBdd.doNotContact = userData.do_not_contact
+          userBdd.notifPostEmail = user.notifPostEmail
+          userBdd.notifTripEmail = user.notifTripEmail
+          userBdd.notifEventEmail = user.notifEventEmail
+          userBdd.notifDigestEmail = user.notifDigestEmail
+          userBdd.notifCommentEmail = user.notifCommentEmail
+          userBdd.notifVentureEmail = user.notifVentureEmail
+          userBdd.notifBusinessRequest = user.notifBusinessRequest
+          userBdd.notifCurrentLocationEmail = user.notifCurrentLocationEmail
+          userBdd.notifEmailingComEmail = user.notifEmailingComEmail
+          userBdd.notifForumPostEmail = user.notifForumPostEmail
+          userBdd.notifContactByPhone = user.notifContactByPhone
+          userBdd.notifContactBySms = user.notifContactBySms
+          userBdd.notifContactByPost = user.notifContactByPost
           userBdd.updateDate = new Date()
           await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
         }
@@ -753,36 +839,50 @@ exports.SendPeriodicDashboard = () => {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
 
-      let users = await this.List({
-        types: [1, 2, 4, 5],
-      })
+      const types = [1, 2, 4, 5]
+      let users = await this.List({ types })
 
       let emailSents = []
       for (const user of users) {
-        if (user.doNotContact === 1) {
+        const dataSynchroFull = await this.SynchroFull(user.userId)
+        if (
+          !dataSynchroFull
+          || !dataSynchroFull.type
+          || !types.includes(dataSynchroFull.type)
+        ) {
           continue
         }
-        let userCpvs = await this.UserCpvs(user.userId)
-        let cpvLabels = userCpvs.map(a => a.cpvName)
-        let regions = user.regions.trim()
-        let termDateMin = new Date()
-        let to = user.email.trim();
+        let to = user.email.trim()
         /*
-        if (to !== 'pieter@ist.co.za') {
+        if (to !== 'rob@rvesol.com') {
+          continue
+        }
+        if (user.userId !== 2) {
           continue
         }
         */
+        if (dataSynchroFull.doNotContact === 1) {
+          continue
+        }
+        if (dataSynchroFull.notifEmailingComEmail !== 1) {
+          continue
+        }
+        let userCpvs = await this.UserCpvs(dataSynchroFull.userId)
+        let cpvLabels = userCpvs.map(a => a.cpvName)
+        let regions = dataSynchroFull.regions.trim()
+        let termDateMin = new Date()
         if (cpvLabels === '' || to === '') {
           continue
         }
-        let limit = 10000
-        let orderBy = 'updateDate DESC'
+        let limit = 5000
+        let orderBy = 'publicationDate DESC'
         let tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, termDateMin, null, cpvLabels, regions, limit, null, null, orderBy)
+        tenders = tenders.filter(a => a.noticeType !== 'Contract Award')
         if (!tenders || !tenders.length) {
           continue
         }
         tenders.sort((a, b) => {
-          return a.creationDate < b.creationDate ? 1 : -1
+          return a.publicationDate < b.publicationDate ? 1 : -1
         })
         let tenderMax = 4
         let subject = `DeepBloo - Business opportunities`
@@ -810,7 +910,7 @@ exports.SendPeriodicDashboard = () => {
         html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
         html += `    <td>CPV</td>`
         html += `    <td>Country</td>`
-        html += `    <td style="min-width: 100px; max-width: 100px;">Creation date</td>`
+        html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
         html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
         html += `    <td>Description</td>`
         html += `    <td>Link to tender</td>`
@@ -830,7 +930,7 @@ exports.SendPeriodicDashboard = () => {
           html += `      ${tender.country}`
           html += `    </td>`
           html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      ${moment(tender.updateDate).format('YYYY-MM-DD')}`
+          html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
           html += `    </td>`
           html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
           html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
