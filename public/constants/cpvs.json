@@ -5701,11 +5701,7 @@
          "ammeters",
          "ammmeter",
          "compteurs",
-         "compteur",
-         "voltmètres",
-         "voltmètre",
-         "voltmetres",
-         "voltmetre"
+         "compteur"
       ]
    },
    {
@@ -6139,7 +6135,14 @@
       "logo": "",
       "picture": "",
       "category": "Hydro/Thermal",
-      "words": []
+      "words": [
+         "géothermie",
+         "géothermique",
+         "énergie calorifique",
+         "geothermal",
+         "geothermie",
+         "geothermique"
+      ]
    },
    {
       "code": 45251141,

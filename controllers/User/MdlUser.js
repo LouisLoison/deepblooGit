@@ -732,7 +732,7 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
       const moment = require('moment')
       tenderIds = tenderIds
 
-      let tenderText = `tenderId;region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;cpvs\n`
+      let tenderText = `tenderId;region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;cpvs;url\n`
       if (tenderIds) {
         for (let tenderId of tenderIds) {
           const tender = await  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
@@ -783,7 +783,8 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
               console.log(err)
             }
           }
-          tenderText += `${tenderId};${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${cpvDescriptions}\n`
+          let tenderUrl = `https://dsqgapbuwsfze.cloudfront.net/#/tenders?tenderId=${tenderId}`
+          tenderText += `${tenderId};${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${cpvDescriptions};${tenderUrl}\n`
         }
       }
       const fileName = `opportunities_${moment().format("YYYYMMDD_HHmmss")}.csv`
