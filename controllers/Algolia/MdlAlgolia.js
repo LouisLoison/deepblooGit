@@ -82,7 +82,7 @@ exports.TendersImport = () => {
 exports.TenderFormat = (tender) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
 
@@ -483,7 +483,7 @@ exports.TendersSynchro = () => {
       let apiKey = '5cc468809130d45b76cf76598a09ff21'
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
-      const cpvsConst = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let tenderNbr = 0
@@ -512,7 +512,7 @@ exports.TendersSynchro = () => {
           let cpvs = []
           let cpvDescriptions = hit.cpvs.join(',')
           for (const cpv of hit.cpvs) {
-            const cpvFound = cpvsConst.find(a => a.label ===cpv)
+            const cpvFound = CpvList.find(a => a.label === cpv)
             if (cpvFound) {
               cpvs.push(cpvFound.code)
             }

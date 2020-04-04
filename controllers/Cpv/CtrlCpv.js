@@ -5,7 +5,7 @@ exports.CpvAddUpdate = (req, res) => {
 }
 
 exports.cpvDelete = (req, res) => {
-  require(process.cwd() + '/controllers/Cpv/MdlCpv').cpvDelete().then((data) => {
+  require(process.cwd() + '/controllers/Cpv/MdlCpv').cpvDelete(req.body.cpvId).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

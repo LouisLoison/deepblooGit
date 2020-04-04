@@ -432,7 +432,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
       if (!organizationsBdd) {
         organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
       }
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       // Update user bdd list
@@ -732,7 +732,7 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
       const moment = require('moment')
       tenderIds = tenderIds
 
-      let tenderText = `tenderId;region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;cpvs;url\n`
+      let tenderText = `tenderId;region;regionSub;country;title;description;publication;bidDeadline;bidDeadlineStatus;buyerName;email;noticeType;url;doc1;doc2;doc3;doc4;cpvs\n`
       if (tenderIds) {
         for (let tenderId of tenderIds) {
           const tender = await  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
@@ -784,7 +784,24 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
             }
           }
           let tenderUrl = `https://dsqgapbuwsfze.cloudfront.net/#/tenders?tenderId=${tenderId}`
-          tenderText += `${tenderId};${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${cpvDescriptions};${tenderUrl}\n`
+          let doc1 = ''
+          let doc2 = ''
+          let doc3 = ''
+          let doc4 = ''
+          if (tender.sourceUrl) {
+            let sourceUrls = tender.sourceUrl.split(",")
+            doc1 = sourceUrls[0]
+            if (sourceUrls.length > 1) {
+              doc2 = sourceUrls[1]
+            }
+            if (sourceUrls.length > 2) {
+              doc3 = sourceUrls[2]
+            }
+            if (sourceUrls.length > 3) {
+              doc4 = sourceUrls[3]
+            }
+          }
+          tenderText += `${tenderId};${regionInfoSource.region || ''};${regionInfoSource.regionSub || ''};${tender.country};${title};${description};${publicationDate};${bidDeadlineDateText};${bidDeadlineStatus};${tender.buyerName};${tender.contactEmail};${tender.noticeType};${tenderUrl};${doc1};${doc2};${doc3};${doc4};${cpvDescriptions}\n`
         }
       }
       const fileName = `opportunities_${moment().format("YYYYMMDD_HHmmss")}.csv`

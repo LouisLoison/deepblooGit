@@ -164,7 +164,7 @@ exports.FileParse = (fileLocation) => {
       const parseString = util.promisify(parser.parseString)
       let parseData = await parseString(fileData)
 
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       let tenderCount = 0
       let tenderOkCount = 0
@@ -292,7 +292,7 @@ exports.FileParse = (fileLocation) => {
         }
 
         // Search by key words
-        let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0])
+        let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0], CpvList)
         let words = cpvFound.words
         cpvsText = cpvFound.cpvsText
         cpvDescriptionsText = cpvFound.cpvDescriptionsText
@@ -348,16 +348,14 @@ exports.FileParse = (fileLocation) => {
   })
 }
 
-exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
-  const constCpvs = require(process.cwd() + '/public/constants/cpvs.json')
-
+exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id, CpvList) => {
   let cpvs = []
   let words = []
   let cpvFoundCount = 0
   if (!cpvsText) {
     cpvsText = ''
   }
-  for (let constCpv of constCpvs) {
+  for (let constCpv of CpvList) {
     if (!constCpv.code) {
       continue
     }
@@ -376,13 +374,17 @@ exports.DescriptionParseForCpv = (description, cpvsText, cpvLabelsText, id) => {
       continue
     }
 
+    /*
     if (id === "29072466" && constCpv.code === 10000005) {
       let toto = 123;
     }
+    */
 
-    if (constCpv.words) {
-      let cpvWords = JSON.parse(JSON.stringify(constCpv.words))
-      cpvWords.push(constCpv.label)
+    if (constCpv.cpvWords) {
+      let cpvWords = JSON.parse(JSON.stringify(constCpv.cpvWords.map(a => a.word)))
+      if (!cpvWords.includes(constCpv.label)) {
+        cpvWords.push(constCpv.label)
+      }
       for (let word of cpvWords) {
         let regEx = new RegExp("\\b" + word + "\\b", 'gi')
         if (description.match(regEx)) {
@@ -424,6 +426,7 @@ exports.CpvList = () => {
       const readFile = util.promisify(fs.readFile)
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -448,8 +451,6 @@ exports.CpvList = () => {
         var parser = new xml2js.Parser()
         const parseString = util.promisify(parser.parseString)
         let parseData = await parseString(fileData)
-
-        const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
         parseData.notices.notice.forEach(notice => {
 
@@ -526,7 +527,7 @@ exports.CpvList = () => {
             }
           }
           // Search by key words
-          let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText)
+          let cpvFound = this.DescriptionParseForCpv(description, cpvsText, cpvDescriptionsText, CpvList)
           let words = cpvFound.words
           cpvsText = cpvFound.cpvsText
           cpvDescriptionsText = cpvFound.cpvDescriptionsText
@@ -625,6 +626,7 @@ exports.CpvListOld = () => {
       const util = require('util')
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -645,8 +647,6 @@ exports.CpvListOld = () => {
         var parser = new xml2js.Parser()
         const parseString = util.promisify(parser.parseString)
         let parseData = await parseString(fileData)
-
-        const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
 
         parseData.notices.notice.forEach(notice => {
           // CPV list

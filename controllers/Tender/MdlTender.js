@@ -3,7 +3,7 @@ exports.TenderAdd = (tender) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -176,7 +176,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
-      const CpvList = require(process.cwd() + '/public/constants/cpvs.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -363,6 +363,11 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         if (!cpvOk) {
           continue
         }
+        /*
+        if (tenders.length > 20) {
+          continue
+        }
+        */
 
         tenders.push({
           id: record.id,
