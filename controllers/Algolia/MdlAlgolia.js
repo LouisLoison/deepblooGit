@@ -2,6 +2,8 @@ exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -45,9 +47,13 @@ exports.TendersImport = () => {
       `
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
+      const tenderIdDeletes = []
       for (let record of recordset) {
-        let tender = await this.TenderFormat(record)
+        let tender = await this.TenderFormat(record, CpvList)
         if (!tender) {
+          if (record.id) {
+            tenderIdDeletes.push(record.id)
+          }
           continue
         }
         if (tender.algoliaId) {
@@ -74,15 +80,26 @@ exports.TendersImport = () => {
           await this.TendersAdd(tranche, index)
         }
       }
+
+      for (const tenderId of tenderIdDeletes) {
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+          DELETE FROM dgmarket 
+          WHERE       id = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} 
+        `)
+      }
+      
       resolve(tenders.length)
     } catch (err) { reject(err) }
   })
 }
 
-exports.TenderFormat = (tender) => {
+exports.TenderFormat = (tender, CpvList) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      if (!CpvList) {
+        console.log('[TenderFormat] no CPV list !')
+        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      }
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
 
@@ -484,6 +501,7 @@ exports.TendersSynchro = () => {
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let tenderNbr = 0

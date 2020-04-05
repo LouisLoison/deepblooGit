@@ -28,10 +28,10 @@ config.bdd = {
     prod: {
       config: {
         type: 'MySql',
-        user: 'root',
-        password: 'root',
-        server: '127.0.0.1', 
-        database: 'DeepBloo'
+        server: 'database-deepbloo-prd.cxvdonhye3yz.eu-west-1.rds.amazonaws.com', 
+        database: 'deepbloo',
+        user: 'admin',
+        password: 'Deep1806'
       }
     },
     prodAws: {

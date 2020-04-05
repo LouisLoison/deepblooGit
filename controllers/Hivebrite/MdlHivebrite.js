@@ -289,7 +289,7 @@ exports.CompanieSynchro = () => {
         if (companie.long_description && companie.long_description !== '') {
           let cpvsText = '';
           let cpvDescriptionsText = '';
-          companie.cpvFound = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(companie.long_description, cpvsText, cpvDescriptionsText)
+          companie.cpvFound = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(companie.long_description, cpvsText, cpvDescriptionsText, null, CpvList)
         }
         companies.push(companie)
       }

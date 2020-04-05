@@ -31,12 +31,13 @@ exports.BddImport = () => {
         dgmarket.updateDate = new Date()
 
         // Search for internal id
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+        let query = `
           SELECT     id AS "id"
           FROM       dgmarket 
           WHERE      dgmarketId = ${BddTool.NumericFormater(tender.dgmarketId, BddEnvironnement, BddId)} 
-        `)
-        for (let record of recordset) {
+        `
+        const recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        for (const record of recordset) {
           dgmarket.id = record.id
           dgmarket.creationDate = new Date()
         }
@@ -165,6 +166,7 @@ exports.FileParse = (fileLocation) => {
       let parseData = await parseString(fileData)
 
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       let tenderCount = 0
       let tenderOkCount = 0
@@ -427,6 +429,7 @@ exports.CpvList = () => {
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -627,6 +630,7 @@ exports.CpvListOld = () => {
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -703,6 +707,8 @@ exports.ExportUrlFromFile = () => {
       const fs = require('fs')
       const path = require('path')
       const BddTool = require(process.cwd() + '/global/BddTool')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -746,7 +752,7 @@ exports.ExportUrlFromFile = () => {
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
       for (let record of recordset) {
-        let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record)
+        let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList)
         if (!tender) {
           continue
         }

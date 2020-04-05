@@ -28,23 +28,47 @@ var QueryExecMsSql = async function(onError, onSuccess, Query, BddId, Environnem
 }
 
 var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement) => {
-    var sql = require('mysql')
-    var configBdd = Config.bdd[BddId][Environnement].config
-    var connection = sql.createConnection({
-        host: configBdd.server,
-        user: configBdd.user,
-        password: configBdd.password,
-        database: configBdd.database
+  const mysql = require('mysql')
+  const configBdd = Config.bdd[BddId][Environnement].config
+
+  const pool  = mysql.createPool({
+    connectionLimit : 5,
+    host: configBdd.server,
+    user: configBdd.user,
+    password: configBdd.password,
+    database: configBdd.database
+  });
+  
+  pool.getConnection(function(err, connection) {
+    connection.query(Query, (err, results) => {
+      if (err) {
+        err.Query = Query
+        onError(err)
+        return false
+      }
+      onSuccess(results)
+      connection.release()
     })
-    connection.query(Query, function (err, results, fields) {
-        if (err) {
-            err.Query = Query
-            onError(err)
-            return false
-        }
-        onSuccess(results)
-    })
-    connection.end()
+  })
+
+  /*
+  const connection = mysql.createConnection({
+    host: configBdd.server,
+    user: configBdd.user,
+    password: configBdd.password,
+    database: configBdd.database
+  })
+  connection.connect()
+  connection.query(Query, (err, results, fields) => {
+    if (err) {
+      err.Query = Query
+      onError(err)
+      return false
+    }
+    onSuccess(results)
+  })
+  connection.end()
+  */
 }
 
 var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environnement) {

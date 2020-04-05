@@ -4,6 +4,7 @@ exports.TenderAdd = (tender) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -44,7 +45,7 @@ exports.TenderAdd = (tender) => {
       }
 
       // Search cpv by key words
-      let cpvFound = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(tender.description, tender.cpvs, tender.cpvDescriptions)
+      let cpvFound = require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(tender.description, tender.cpvs, tender.cpvDescriptions, null, CpvList)
       tender.cpvs = cpvFound.cpvsText
       tender.cpvDescriptions = cpvFound.cpvDescriptionsText
 
@@ -177,6 +178,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -461,6 +463,8 @@ exports.TenderStatistic = (year, month, user) => {
     try {
       const config = require(process.cwd() + '/config')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      console.log('CPV list !')
 
       let userData = null
       let userCpvs = []
@@ -511,7 +515,7 @@ exports.TenderStatistic = (year, month, user) => {
       let weekNextTimestamp = weekNextDate.getTime()
 
       for (let tender of tenders) {
-        let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender)
+        let tenderFormat = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(tender, CpvList)
         let isWeek = false
 
         if (tenderFormat.bidDeadline_timestamp && tenderFormat.bidDeadline_timestamp > nowTimestamp) {
