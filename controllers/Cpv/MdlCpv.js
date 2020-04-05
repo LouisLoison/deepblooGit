@@ -173,9 +173,9 @@ exports.CpvSynchro = () => {
           }
         }
       }
-      resolve(cpvs);
+      resolve(cpvs)
     } catch (err) {
-      reject(err);
+      reject(err)
     }
   })
 }

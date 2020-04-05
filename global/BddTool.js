@@ -31,43 +31,31 @@ var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement) => {
   const mysql = require('mysql')
   const configBdd = Config.bdd[BddId][Environnement].config
 
-  const pool  = mysql.createPool({
-    connectionLimit : 5,
-    host: configBdd.server,
-    user: configBdd.user,
-    password: configBdd.password,
-    database: configBdd.database
-  });
-  
-  pool.getConnection(function(err, connection) {
-    connection.query(Query, (err, results) => {
-      if (err) {
-        err.Query = Query
-        onError(err)
-        return false
-      }
-      onSuccess(results)
-      connection.release()
-    })
-  })
-
-  /*
   const connection = mysql.createConnection({
     host: configBdd.server,
     user: configBdd.user,
     password: configBdd.password,
     database: configBdd.database
   })
-  connection.connect()
   connection.query(Query, (err, results, fields) => {
+    /*
+    connection.end((err) => {
+      err.Query = Query
+      onError(err)
+      return false
+    })
+    */
     if (err) {
       err.Query = Query
       onError(err)
       return false
     }
+    connection.destroy()
     onSuccess(results)
   })
-  connection.end()
+  /*
+  SET GLOBAL wait_timeout=28800
+  SET GLOBAL interactive_timeout=28800
   */
 }
 

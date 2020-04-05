@@ -501,7 +501,6 @@ exports.TendersSynchro = () => {
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let tenderNbr = 0

@@ -433,7 +433,6 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
         organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
       }
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       // Update user bdd list

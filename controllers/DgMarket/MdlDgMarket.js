@@ -166,7 +166,6 @@ exports.FileParse = (fileLocation) => {
       let parseData = await parseString(fileData)
 
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
 
       let tenderCount = 0
       let tenderOkCount = 0
@@ -429,7 +428,6 @@ exports.CpvList = () => {
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -630,7 +628,6 @@ exports.CpvListOld = () => {
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
@@ -708,7 +705,6 @@ exports.ExportUrlFromFile = () => {
       const path = require('path')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      console.log('CPV list !')
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
