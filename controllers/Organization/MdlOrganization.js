@@ -109,7 +109,7 @@ exports.AddUpdate = (organization) => {
 
 exports.ListFromCpvs = (cpvs, country) => {
   return new Promise(async (resolve, reject) => {
-    try {
+    //try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
@@ -187,8 +187,8 @@ exports.ListFromCpvs = (cpvs, country) => {
         let where = ``
         if (where !== '') { where += 'AND ' }
         where += `( \n`
-        where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
-        where += `OR userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
+        // where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) OR \n`
+        where += `userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
         where += `) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -203,7 +203,7 @@ exports.ListFromCpvs = (cpvs, country) => {
           organization = {
             organizationId: record.organizationId,
             dgmarketId: record.dgmarketId,
-            name: record.name.trim(),
+            name: record.name ? record.name.trim() : '',
             countrys: record.countrys ? record.countrys.trim().split(',') : [],
             cpvs: [],
             users: [],
@@ -220,7 +220,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         if (record.cpvCode && cpvCode !== record.cpvCode) {
           organization.cpvs.push({
             code: record.cpvCode,
-            name: record.cpvName.trim(),
+            name: record.cpvName ? record.cpvName.trim() : '',
             origineType: record.origineType,
             rating: record.rating,
           })
@@ -261,7 +261,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         if (user && record.userCpvCode && userCpvCode !== record.userCpvCode && !user.cpvs.find(a => a.code === record.userCpvCode)) {
           user.cpvs.push({
             code: record.userCpvCode,
-            name: record.userCpvName.trim(),
+            name: record.userCpvName ? record.userCpvName.trim() : '',
             origineType: record.userOrigineType,
             rating: record.userRating,
           })
@@ -321,15 +321,15 @@ exports.ListFromCpvs = (cpvs, country) => {
                 userRegionFlg = true
                 user.subRegionFound = regionInfoSource.regionSub
                 userSubRegionFlg = true
-              } else if (regionLabel1.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
+              } else if (regionInfoSource.region && regionLabel1.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
                 user.regionFound = regionLabel1
                 userRegionFlg = true
                 if (regionLabel.includes('-')) {
                   let regionLabel2 = regionLabel.trim().split('-')[1].trim()
-                  if (regionLabel2.trim().toLowerCase() === 'all') {
+                  if (regionLabel2 && regionLabel2.trim().toLowerCase() === 'all') {
                     user.subRegionFound = regionLabel2
                     userSubRegionFlg = true
-                  } else if (regionLabel2.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
+                  } else if (regionLabel2 && regionInfoSource.regionSub && regionLabel2.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
                     user.subRegionFound = regionLabel2
                     userSubRegionFlg = true
                   }
@@ -338,10 +338,10 @@ exports.ListFromCpvs = (cpvs, country) => {
             }
           } else if (user.country && user.country.trim().toLowerCase() !== '') {
             user.regionInfo = require(`${process.cwd()}/controllers/CtrlTool`).regionFromCountry(user.country)
-            if (user.regionInfo.region && user.regionInfo.region.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
+            if (user.regionInfo.region && regionInfoSource.region && user.regionInfo.region.trim().toLowerCase() === regionInfoSource.region.trim().toLowerCase()) {
               user.regionFound = regionInfoSource.region
               userRegionFlg = true
-              if (user.regionInfo.regionSub.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
+              if (regionInfoSource.regionSub && user.regionInfo.regionSub.trim().toLowerCase() === regionInfoSource.regionSub.trim().toLowerCase()) {
                 user.subRegionFound = regionInfoSource.regionSub
                 userSubRegionFlg = true
               }
@@ -407,6 +407,6 @@ exports.ListFromCpvs = (cpvs, country) => {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       });
       resolve(organizations);
-    } catch (err) { reject(err) }
+    //} catch (err) { reject(err) }
   })
 }

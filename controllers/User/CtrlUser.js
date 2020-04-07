@@ -79,7 +79,7 @@ exports.OpportunityDownloadCsv = (req, res) => {
 }
 
 exports.Notify = (req, res) => {
-  require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml, req.body.emails).then((data) => {
+  require(process.cwd() + '/controllers/User/MdlUser').Notify(req.body.userIds, req.body.subject, req.body.body, req.body.footerHtml, req.body.emails, req.body.tenderId).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
@@ -88,4 +88,10 @@ exports.SendPeriodicDashboard = (req, res) => {
   require(process.cwd() + '/controllers/User/MdlUser').SendPeriodicDashboard().then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.userNotifyList = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').userNotifyList(req.body.filter, req.body.userData, req.body.tenderData).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

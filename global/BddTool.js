@@ -31,32 +31,62 @@ var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement) => {
   const mysql = require('mysql')
   const configBdd = Config.bdd[BddId][Environnement].config
 
-  const connection = mysql.createConnection({
-    host: configBdd.server,
-    user: configBdd.user,
-    password: configBdd.password,
-    database: configBdd.database
-  })
-  connection.query(Query, (err, results, fields) => {
+  try {
+    let connection = null
     /*
-    connection.end((err) => {
+    try {
+      connection = mysql.createConnection({
+        host: configBdd.server,
+        user: configBdd.user,
+        password: configBdd.password,
+        database: configBdd.database
+      })
+      connection.destroy()
+    } catch (err) {
       err.Query = Query
       onError(err)
-      return false
-    })
-    */
-    if (err) {
-      err.Query = Query
-      onError(err)
-      return false
     }
-    connection.destroy()
-    onSuccess(results)
-  })
-  /*
-  SET GLOBAL wait_timeout=28800
-  SET GLOBAL interactive_timeout=28800
-  */
+    */
+    connection = mysql.createConnection({
+      host: configBdd.server,
+      user: configBdd.user,
+      password: configBdd.password,
+      database: configBdd.database
+    })
+    connection.query(Query, (err, results, fields) => {
+      /*
+      connection.end((err) => {
+        err.Query = Query
+        onError(err)
+        return false
+      })
+      */
+      if (err) {
+        err.Query = Query
+        onError(err)
+        return false
+      }
+      /*
+        connection.destroy()
+      } catch (err) {
+        console.log('[QueryExecMySql]')
+        console.log(err)
+      }
+      */
+      // connection.end()
+      setTimeout(() => {
+        connection.destroy()
+      }, 800)
+      onSuccess(results)
+    })
+    /*
+    SET GLOBAL wait_timeout=28800
+    SET GLOBAL interactive_timeout=28800
+    */
+  } catch (err) {
+    err.Query = Query
+    onError(err)
+  }
 }
 
 var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environnement) {

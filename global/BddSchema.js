@@ -147,6 +147,15 @@ var Schema = {
       origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
       rating: { type: "Int" },
     },
+    userNotify: {
+      userNotifyId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      recipientId: { type: "Int" },
+      recipientEmail: { type: "String" },
+      tenderId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     organization: {
       organizationId: { type: "Int", key: true },
       dgmarketId: { type: "Int" },

@@ -82,7 +82,7 @@ exports.List = (filter) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      // Get ticket list
+      // Get user list
       var users = []
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -315,7 +315,7 @@ exports.AddUpdate = (user) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
-      resolve(userNew);
+      resolve(userNew)
     } catch (err) { reject(err) }
   })
 }
@@ -820,9 +820,11 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
   })
 }
 
-exports.Notify = (userIds, subject, body, footerHtml, emails) => {
+exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
+
       // Send email
       if (userIds) {
         for (const userId of userIds) {
@@ -834,6 +836,14 @@ exports.Notify = (userIds, subject, body, footerHtml, emails) => {
           let text = `${body.trim()}\r\n\r\n${footerHtml}`;
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+          this.userNotifyAddUpdate({
+            userId: config.user.userId,
+            recipientId: userId,
+            recipientEmail: user.email,
+            tenderId: tenderId,
+            creationDate: new Date(),
+            updateDate: new Date()
+          })
         }
       }
       if (emails) {
@@ -842,6 +852,13 @@ exports.Notify = (userIds, subject, body, footerHtml, emails) => {
           let text = `${body.trim()}\r\n\r\n${footerHtml}`;
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+          this.userNotifyAddUpdate({
+            userId: config.user.userId,
+            recipientEmail: email,
+            tenderId: tenderId,
+            creationDate: new Date(),
+            updateDate: new Date()
+          })
         }
       }
       resolve()
@@ -878,6 +895,9 @@ exports.SendPeriodicDashboard = () => {
         if (user.userId !== 2) {
           continue
         }
+        if (user.hivebriteId !== 446799) {
+          continue
+        }
         */
         if (dataSynchroFull.doNotContact === 1) {
           continue
@@ -900,6 +920,9 @@ exports.SendPeriodicDashboard = () => {
           continue
         }
         tenders.sort((a, b) => {
+          if (a.publicationDate === b.publicationDate){
+            return 0
+          }
           return a.publicationDate < b.publicationDate ? 1 : -1
         })
         let tenderMax = 4
@@ -909,7 +932,12 @@ exports.SendPeriodicDashboard = () => {
         let text = ``
         text += `Dear ${user.username},\r\n`
         text += `\r\n`
-        text += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions}).\r\n`
+        if (cpvLabels && cpvLabels.length && regions && regions.length) {
+          text += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions.split(',').join(', ')}).\r\n`
+        } else {
+          text += `Please find your summary of business opportunities corresponding to your profile.\r\n`
+          text += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences. Please complete your profile with the CPV codes and Regions to get a personalized pipeline.\r\n`
+        }
         text += `\r\n`
         text += `There are ${tenders.length} live opportunities (not yet expired) corresponding to your criteria.\r\n`
         text += `\r\n`
@@ -921,7 +949,14 @@ exports.SendPeriodicDashboard = () => {
         let html = ``
         html += `Dear ${user.username},<br>`
         html += `<br>`
-        html += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions}).<br>`
+        if (cpvLabels && cpvLabels.length && regions && regions.trim() !== '') {
+          html += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels.join(', ')} in ${regions.split(',').join(', ')}).<br>`
+        } else {
+          html += `Please find your summary of business opportunities corresponding to your profile.<br>`
+          html += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences.`
+          html += `<a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank">Please complete your profile with the CPV codes and Regions to get a personalized pipeline.</a><br>`
+          html += `<br>`
+        }
         html += `<br>`
 
         html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
@@ -1018,7 +1053,7 @@ exports.SendPeriodicDashboard = () => {
           email: user.email,
           tendersLength: tenders.length
         })
-        to = "jeancazaux@hotmail.com"
+        // to = "jeancazaux@hotmail.com"
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
       }
 
@@ -1026,5 +1061,102 @@ exports.SendPeriodicDashboard = () => {
     } catch (err) {
       reject(err)
     }
+  })
+}
+
+exports.userNotifyAddUpdate = (userNotify) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let userNotifyNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userNotify', userNotify)
+      resolve(userNotifyNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.userNotifyList = (filter, userData, tenderData) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get userNotify list
+      var userNotifys = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    userNotify.userNotifyId AS "userNotifyId", 
+                  userNotify.userId AS "userId", 
+                  userNotify.recipientId AS "recipientId", 
+                  userNotify.recipientEmail AS "recipientEmail", 
+                  userNotify.tenderId AS "tenderId", 
+                  userNotify.creationDate AS "creationDate",
+                  userNotify.updateDate AS "updateDate"`
+      if (userData) {
+        query += `,
+                    user.username AS "userName",
+                    user.email AS "userEmail",
+                    user.hivebriteId AS "userHivebriteId",
+                    user.photo AS "userPhoto",
+                    recipient.username AS "recipientName",
+                    recipient.hivebriteId AS "recipientHivebriteId",
+                    recipient.photo AS "recipientPhoto" `
+      }
+      if (tenderData) {
+        query += `,
+                    dgmarket.title AS "tenderTitle" `
+      }
+      query += `
+        FROM      userNotify `
+      if (userData) {
+        query += `LEFT JOIN  user ON user.userId = userNotify.userId \n`
+        query += `LEFT JOIN  user AS recipient ON recipient.userId = userNotify.recipientId \n`
+      }
+      if (tenderData) {
+        query += `LEFT JOIN  dgmarket ON dgmarket.id = userNotify.tenderId \n`
+      }
+      if (filter) {
+        let where = ``
+        if (filter.userId) {
+          if (where !== '') { where += '        AND       ' }
+          where += `userNotify.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.recipientId) {
+          if (where !== '') { where += '        AND       ' }
+          where += `userNotify.recipientId = ${BddTool.NumericFormater(filter.recipientId, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.tenderId) {
+          if (where !== '') { where += '        AND       ' }
+          where += `userNotify.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += '        WHERE     ' + where }
+      }
+      query += `                  
+        ORDER BY userNotify.creationDate DESC `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        userNotifys.push({
+          userNotifyId: record.userNotifyId,
+          userId: record.userId,
+          recipientId: record.recipientId,
+          recipientEmail: record.recipientEmail,
+          tenderId: record.tenderId,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate,
+          userName: record.userName,
+          userEmail: record.userEmail,
+          userHivebriteId: record.userHivebriteId,
+          userPhoto: record.userPhoto,
+          recipientName: record.recipientName,
+          recipientHivebriteId: record.recipientHivebriteId,
+          recipientPhoto: record.recipientPhoto,
+          tenderTitle: record.tenderTitle
+        })
+      }
+      resolve(userNotifys);
+    } catch (err) { reject(err) }
   })
 }
