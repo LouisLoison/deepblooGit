@@ -113,6 +113,7 @@ exports.List = (filter) => {
                   notifContactByPhone AS "notifContactByPhone",
                   notifContactBySms AS "notifContactBySms",
                   notifContactByPost AS "notifContactByPost",
+                  dashboardUrl AS "dashboardUrl",
                   creationDate AS "creationDate",
                   updateDate AS "updateDate"
         FROM      user 
@@ -174,6 +175,9 @@ exports.List = (filter) => {
           notifContactByPhone: record.notifContactByPhone,
           notifContactBySms: record.notifContactBySms,
           notifContactByPost: record.notifContactByPost,
+          dashboardUrl: record.dashboardUrl,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
         })
       }
       resolve(users);

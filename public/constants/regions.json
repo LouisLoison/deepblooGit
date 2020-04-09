@@ -73,7 +73,8 @@
           "Senegal",
           "Sierra Leone",
           "Sao Tome and Principe",
-          "Togo"
+          "Togo",
+          "Western Sahara"
         ]
       },
       {
@@ -84,6 +85,8 @@
           "Central African Republic",
           "Chad",
           "Congo",
+          "Congo, Democratic Republic",
+          "Congo, the Democratic Republic of the",
           "Democratic Republic of the Congo",
           "Equatorial Guinea",
           "Gabon"
@@ -133,7 +136,8 @@
           "Saint-Pierre and Miquelon",
           "Saint Vincent and the Grenadines",
           "Trinidad and Tobago",
-          "Turks and Caicos Islands"
+          "Turks and Caicos Islands",
+          "Virgin Islands, U.S."
         ],
         "continents": [{
           "code": "AF",
@@ -157,6 +161,7 @@
         "countrys": [
           "Argentina",
           "Bolivia",
+          "Bolivia, Plurinational State of",
           "Brazil",
           "Chile",
           "Colombia",
@@ -183,7 +188,6 @@
       {
         "label": "Central",
         "countrys": [
-          "Afghanistan",
           "Kazakhstan",
           "Kyrgyzstan",
           "Tajikistan",
@@ -195,7 +199,9 @@
         "label": "Eastern",
         "countrys": [
           "Democratic People's Republic of Korea",
+          "Hong Kong",
           "Japan",
+          "Macao",
           "Mongolia",
           "North Korea",
           "Republic of Korea",
@@ -206,6 +212,7 @@
       {
         "label": "Southern",
         "countrys": [
+          "Afghanistan",
           "Bangladesh",
           "Bhutan",
           "Iran (Islamic Republic of)",
@@ -247,6 +254,7 @@
           "Hungary",
           "Kosovo",
           "Macedonia",
+          "Macedonia, the former Yugoslav Republic of",
           "Moldova",
           "Montenegro",
           "Poland",
@@ -272,6 +280,7 @@
           "Greece",
           "Iceland",
           "Ireland",
+          "Isle of Man",
           "Italy",
           "Latvia",
           "Lithuania",
@@ -319,6 +328,7 @@
       "Lebanon",
       "Oman",
       "Pakistan",
+      "Palestinian Territory",
       "Palestinian Territory, Occupied",
       "Qatar",
       "Saudi Arabia",
@@ -349,6 +359,7 @@
       "Guam",
       "Kiribati",
       "Marshall Islands",
+      "Micronesia, Federated States of",
       "Nauru",
       "New Caledonia",
       "New Zealand",

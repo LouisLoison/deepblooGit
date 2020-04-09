@@ -136,6 +136,7 @@ var Schema = {
       notifContactByPost: { type: "Int" },
       connexionTender: { type: "DateTime" },
       connexionBusiness: { type: "DateTime" },
+      dashboardUrl: { type: "String" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
