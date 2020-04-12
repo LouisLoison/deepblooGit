@@ -71,7 +71,7 @@ exports.Organization = (organizationId) => {
       if (organizations && organizations.length > 0) {
         organization = organizations[0]
       }
-      resolve(organization);
+      resolve(organization)
     } catch (err) { reject(err) }
   })
 }

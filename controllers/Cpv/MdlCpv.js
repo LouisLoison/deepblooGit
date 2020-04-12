@@ -180,6 +180,68 @@ exports.CpvSynchro = () => {
   })
 }
 
+exports.CpvWord = (cpvWordId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let cpvWord = null
+      let filter = {
+        cpvWordId
+      }
+      let cpvWords = await this.CpvWordList(filter)
+      if (cpvWords && cpvWords.length > 0) {
+        cpvWord = cpvWords[0]
+      }
+      resolve(cpvWord)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.CpvWordList = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get cpv list
+      var cpvWords = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    cpvWord.cpvWordId AS "cpvWordId", 
+                  cpvWord.cpvId AS "cpvId", 
+                  cpvWord.word AS "word", 
+                  cpvWord.status AS "status", 
+                  cpvWord.creationDate AS "creationDate", 
+                  cpvWord.updateDate AS "updateDate" 
+        FROM      cpvWord 
+      `
+      if (filter) {
+        let where = ``
+        if (filter.cpvWordId) {
+          if (where !== '') { where += 'AND ' }
+          where += `cpvWord.cpvWordId = ${BddTool.NumericFormater(filter.cpvWordId, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      query += '  ORDER BY cpvWord.word '
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        cpvWords.push({
+          cpvWordId: record.cpvWordId,
+          cpvId: record.cpvId,
+          word: record.word,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+      resolve(cpvWords)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.CpvWordAddUpdate = (cpvWord) => {
   return new Promise(async (resolve, reject) => {
     try {

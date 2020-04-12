@@ -22,6 +22,12 @@ exports.CpvSynchro = (req, res) => {
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.CpvWord = (req, res) => {
+  require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvWord(req.body.cpvWordId).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.CpvWordAddUpdate = (req, res) => {
   require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvWordAddUpdate(req.body.cpvWord).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))

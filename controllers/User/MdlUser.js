@@ -114,6 +114,8 @@ exports.List = (filter) => {
                   notifContactBySms AS "notifContactBySms",
                   notifContactByPost AS "notifContactByPost",
                   dashboardUrl AS "dashboardUrl",
+                  connexionTender AS "connexionTender",
+                  connexionBusiness AS "connexionBusiness",
                   creationDate AS "creationDate",
                   updateDate AS "updateDate"
         FROM      user 
@@ -143,6 +145,10 @@ exports.List = (filter) => {
         if (filter.doNotContact) {
           if (where !== '') { where += 'AND ' }
           where += `doNotContact = ${BddTool.NumericFormater(filter.doNotContact, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.hasConnexionTender) {
+          if (where !== '') { where += 'AND ' }
+          where += `connexionTender IS NOT NULL \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -176,6 +182,8 @@ exports.List = (filter) => {
           notifContactBySms: record.notifContactBySms,
           notifContactByPost: record.notifContactByPost,
           dashboardUrl: record.dashboardUrl,
+          connexionTender: record.connexionTender,
+          connexionBusiness: record.connexionBusiness,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })
