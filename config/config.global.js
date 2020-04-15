@@ -66,4 +66,8 @@ config.bdd = {
 config.algolia = {
   applicationId: '583JWW9ARP',
   apiKey: '5cc468809130d45b76cf76598a09ff21'
-}
+},
+config.zohoRefreshToken = '1000.8ee2f4d33fb3cb6dc41d1575883911f3.96100d4d3fc2cb937efb568a1e3ba879',
+config.zohoClientId = '1000.W5CSCR17PF6LE8K6B58JZK2ISFGGIH',
+config.zohoClientSecret = '4a3ddb40eaf5269b38ba5496bd99643a8f709b8bc1',
+config.zohoUrl = 'https://www.zohoapis.com/'

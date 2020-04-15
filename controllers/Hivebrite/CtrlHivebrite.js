@@ -21,3 +21,10 @@ exports.CompanieSynchro = (req, res) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.userSynchro = (req, res) => {
+    require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').userSynchro(req.body.pageStart, req.body.pageMax, req.body.perPage).then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+

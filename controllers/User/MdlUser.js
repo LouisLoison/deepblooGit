@@ -239,6 +239,31 @@ exports.UserCpvs = (userId) => {
   })
 }
 
+exports.UserDelete = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!userId) {
+        throw new Error("No available id !")
+      }
+
+      let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      query = `DELETE FROM user WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.Memberships = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -328,6 +353,118 @@ exports.AddUpdate = (user) => {
       const BddEnvironnement = config.prefixe
       let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
       resolve(userNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.synchroNew = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
+      
+      let deepblooUsers = await this.List()
+
+      // Remove deleted user
+      const deletedUsers = []
+      for (let user of deepblooUsers) {
+        if (!user.hivebriteId) {
+          continue
+        }
+        let hivebriteUser = hivebriteUsers.find(a => a.id === user.hivebriteId)
+        if (!hivebriteUser) {
+          deletedUsers.push(user)
+          await this.UserDelete(user.userId)
+        }
+      }
+
+      // Add/Update hivebrite users
+      for (let hivebriteUser of hivebriteUsers) {
+        let user = deepblooUsers.find(a => a.hivebriteId === hivebriteUser.id)
+        let computed = {
+          hivebriteId: hivebriteUser.id,
+          email: hivebriteUser.email,
+          username: hivebriteUser.name.substring(0, 100),
+          doNotContact: hivebriteUser.do_not_contact ? 1 : 0,
+        }
+        
+        // New user
+        if (user) {
+          computed.userId = user.userId
+        } else {
+          computed.type = 3
+          computed.creationDate = new Date()
+        }
+
+        // Synchro user notification settings
+        if (hivebriteUser.notification_settings) {
+          computed.notifBusinessRequest = hivebriteUser.notification_settings.businessopportunities_request ? 1 : 0
+          computed.notifCommentEmail = hivebriteUser.notification_settings.comment_email ? 1 : 0
+          computed.notifContactByPhone = hivebriteUser.notification_settings.contact_by_phone ? 1 : 0
+          computed.notifContactByPost = hivebriteUser.notification_settings.contact_by_post ? 1 : 0
+          computed.notifContactBySms = hivebriteUser.notification_settings.contact_by_sms ? 1 : 0
+          computed.notifCurrentLocationEmail = hivebriteUser.notification_settings.current_location_email ? 1 : 0
+          computed.notifDigestEmail = hivebriteUser.notification_settings.digest_email ? 1 : 0
+          computed.notifEmailingComEmail = hivebriteUser.notification_settings.emailing_communication_email ? 1 : 0
+          computed.notifEventEmail = hivebriteUser.notification_settings.event_email ? 1 : 0
+          computed.notifForumPostEmail = hivebriteUser.notification_settings.forum_post_email ? 1 : 0
+          computed.notifPostEmail = hivebriteUser.notification_settings.post_email ? 1 : 0
+          computed.notifTripEmail = hivebriteUser.notification_settings.trip_email ? 1 : 0
+          computed.notifVentureEmail = hivebriteUser.notification_settings.ventures_comment_email ? 1 : 0
+        }
+
+        // Get user country
+        if (hivebriteUser.live_location) {
+          computed.country = hivebriteUser.live_location.country
+          computed.countryCode = hivebriteUser.live_location.country_code
+        }
+
+        // Get user photo
+        if (hivebriteUser.photo && hivebriteUser.photo['large-url']) {
+          computed.photo = hivebriteUser.photo['large-url']
+        }
+
+        // organizationId
+
+        // Get user cpv
+        let cpvData = hivebriteUser.custom_attributes.find(a => a.name === '_CPV')
+        let cpvs = []
+        if (cpvData) {
+          let cpvLabels = cpvData.value
+          if (cpvLabels && cpvLabels.length > 0) {
+            for (cpvLabel of cpvLabels) {
+              let label = cpvLabel.split('-').join(' ').trim()
+              let cpv = CpvList.find(a => a.label.toUpperCase() === label.toUpperCase())
+              if (cpv && !cpvs.find(a => a.label.toUpperCase() === label.toUpperCase())) {
+                cpvs.push(cpv)
+              }
+            }
+          }
+        }
+
+        let update = false
+        for (const entrie in computed) {
+          if (computed[entrie] !== user[entrie]) {
+            update = true
+          }
+        }
+
+        if (update) {
+          computed.updateDate = new Date()
+          const response = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', computed)
+          if (response) {
+            let error = response
+          }
+        }
+      }
+
+      resolve({
+        deletedUsers: deletedUsers.length,
+      });
     } catch (err) { reject(err) }
   })
 }

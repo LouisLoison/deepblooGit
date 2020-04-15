@@ -1,3 +1,14 @@
+exports.countryFromCode = (code) => {
+  try {
+    const countrys = require(process.cwd() + '/public/constants/countrys.json')
+    const country = countrys.find(a => a.code === code)
+    if (country) {
+      return country.name
+    }
+  } catch (err) { }
+  return null
+}
+
 exports.countrysFromRegions = (regions) => {
   let countrys = []
   try {
@@ -358,10 +369,10 @@ exports.unzipAsync = (zipLocation, deployPath) => {
 }
 
 exports.readFile = (fileName) => {
-    return new Promise(function(resolve, reject) {
-        const fs = require('fs-extra')
-        fs.readFile(fileName, (err, data) => {
-            err ? reject(err) : resolve(data)
-        })
+  return new Promise(function(resolve, reject) {
+    const fs = require('fs-extra')
+    fs.readFile(fileName, (err, data) => {
+      err ? reject(err) : resolve(data)
     })
+  })
 }

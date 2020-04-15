@@ -357,3 +357,169 @@ exports.CompanieSynchro = () => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.users = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const fileLocation = path.join(config.WorkSpaceFolder, 'hivebrite.json')
+
+      // Get user from local hivebrite file
+      let users = []
+      if (fs.existsSync(fileLocation)) {
+        users = JSON.parse(await require(`${process.cwd()}/controllers/CtrlTool`).readFile(fileLocation))
+      }
+      resolve(users)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.userSynchro = (pageStart, pageMax, perPage) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const fileLocation = path.join(config.WorkSpaceFolder, 'hivebrite.json')
+
+      // Get user from local hivebrite file
+      let users = await this.users()
+
+      // Get hivebrite user list
+      if (!perPage) {
+        perPage = 500
+      }
+      if (!pageStart) {
+        pageStart = 1
+      }
+      await this.TokenGet()
+      let dataUsers = []
+      let total = 1
+      let page = pageStart
+      while (dataUsers.length < total && page < 200) {
+        let response = await this.get(`api/admin/v1/users?page=${page}&per_page=${perPage}&order=-updated_at&full_profile=true`)
+
+        let users = []
+        for (const user of response.data.users) {
+          if (user.name && user.name.trim().startsWith('How to invest in Cryptocurrency and receive from')) {
+            continue
+          }
+          if (user.name && user.name.trim().startsWith('How to earn')) {
+            continue
+          }
+          if (user.name && user.name.trim().startsWith('Invest $ ')) {
+            continue
+          }
+          if (user.name && user.name.trim().startsWith('Verified earnings on')) {
+            continue
+          }
+          users.push(user)
+        }
+        
+        dataUsers = dataUsers.concat(users)
+        total = response.headers["x-total"]
+        page++
+        if (pageMax && page > pageMax) {
+          break
+        }
+      }
+
+      // Remove deleted user
+      allUsers = []
+      total = 1
+      page = pageStart
+      while (allUsers.length < total && page < 200) {
+        let response = await this.get(`api/admin/v1/users?page=${page}&per_page=500`)
+        allUsers = allUsers.concat(response.data.users)
+        total = response.headers["x-total"]
+        page++
+      }
+
+      // Get user details
+      let updatedAtMin = '9999-99-99T99:99:99Z'
+      for (let dataUser of dataUsers) {
+        let index = users.findIndex(a => a.id === dataUser.id)
+
+        if (updatedAtMin > dataUser.updated_at) {
+          updatedAtMin = dataUser.updated_at
+        }
+  
+        // Get user notification settings
+        let userNotificationSettingsResponse = await this.get(`api/admin/v1/users/${dataUser.id}/notification_settings`)
+        dataUser.notification_settings = userNotificationSettingsResponse.data.notification_settings
+        
+        if (index >= 0) {
+          users[index] = {
+            ...users[index],
+            ...dataUser,
+          }
+        } else {
+          users.push(dataUser)
+        }
+      }
+
+      // Get user experiences
+      let experiences = []
+      total = 1
+      page = 1
+      while (experiences.length < total && page < 200) {
+        let response = await this.get(`api/admin/v1/experiences?page=${page}&per_page=500`)
+        experiences = experiences.concat(response.data.experiences)
+        total = response.headers["x-total"]
+        page++
+      }
+      if (experiences && experiences.length) {
+        experiences = experiences.sort((a, b) => {
+          let aValue = a.to
+          if (!aValue) {
+            aValue = `9999-99-99 ${a.id}`
+          }
+          let bValue = b.to
+          if (!bValue) {
+            bValue = `9999-99-99 ${b.id}`
+          }
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+        })
+      }
+
+      // Get user memberships
+      let memberships = []
+      total = 1
+      page = 1
+      while (memberships.length < total && page < 200) {
+        let response = await this.get(`api/admin/v2/memberships?page=${page}&per_page=500`)
+        memberships = memberships.concat(response.data.memberships)
+        total = response.headers["x-total"]
+        page++
+      }
+      if (memberships && memberships.length) {
+        memberships = memberships.sort((a, b) => {
+          let aValue = `${a.status === 'paid' ? '9999-' : '0000-'} ${a.expires_at}`
+          let bValue = `${b.status === 'paid' ? '9999-' : '0000-'} ${b.expires_at}`
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+        })
+      }
+
+      // Add user details
+      let userNum = 0
+      for (const user of users) {
+        let userExperiences = experiences.filter(a => a.user_id === user.id)
+        user.experiences = userExperiences
+
+        let userMemberships = memberships.filter(a => a.user_id === user.id)
+        user.memberships = userMemberships
+        
+        userNum = userNum + 1
+      }
+
+      fs.writeFileSync(fileLocation, JSON.stringify(users, null, 3))
+
+      resolve({
+        userCount: users.length,
+        updatedAtMin,
+      })
+    } catch (err) { reject(err) }
+  })
+}

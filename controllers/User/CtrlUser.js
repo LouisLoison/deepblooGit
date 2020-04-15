@@ -36,6 +36,12 @@ exports.AddUpdate = (req, res) => {
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.synchroNew = (req, res) => {
+    require(process.cwd() + '/controllers/User/MdlUser').synchroNew().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.Synchro = (req, res) => {
     require(process.cwd() + '/controllers/User/MdlUser').Synchro().then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))
