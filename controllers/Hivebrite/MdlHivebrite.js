@@ -436,6 +436,9 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
         total = response.headers["x-total"]
         page++
       }
+      let userDeletedCount = users.length
+      users = users.filter(a => allUsers.find(b => b.id === a.id))
+      userDeletedCount = userDeletedCount - users.length
 
       // Get user details
       let updatedAtMin = '9999-99-99T99:99:99Z'
@@ -518,6 +521,7 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
 
       resolve({
         userCount: users.length,
+        userDeletedCount: userDeletedCount,
         updatedAtMin,
       })
     } catch (err) { reject(err) }

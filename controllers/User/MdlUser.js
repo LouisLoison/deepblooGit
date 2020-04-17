@@ -364,12 +364,14 @@ exports.synchroNew = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
       
       let deepblooUsers = await this.List()
 
       // Remove deleted user
+      let updateCount = 0
       const deletedUsers = []
       for (let user of deepblooUsers) {
         if (!user.hivebriteId) {
@@ -457,13 +459,15 @@ exports.synchroNew = () => {
           computed.updateDate = new Date()
           const response = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', computed)
           if (response) {
-            let error = response
+            user.userId = response.userId
           }
+          updateCount = updateCount + 1
         }
       }
 
       resolve({
-        deletedUsers: deletedUsers.length,
+        updateCount,
+        deletedCount: deletedUsers.length,
       });
     } catch (err) { reject(err) }
   })
@@ -546,7 +550,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=1&per_page=1`)
       const pageTotal = Math.ceil(parseInt(usersResponse.headers["x-total"]) / perPage) + 1
       while (users.length < userTotal && currentPage < 200) {
-        usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${pageTotal - currentPage}&per_page=${perPage}`)
+        usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${pageTotal - currentPage}&per_page=${perPage}&order=-updated_at`)
         users = users.concat(usersResponse.data.users)
         userTotal = usersResponse.headers["x-total"]
         currentPage++
@@ -660,7 +664,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
         photo = userData.photo['large-url']
       }
 
-      // Get _Interested_in_business_opportunities_in_these_areas"
+      // Get _Interested_in_business_opportunities_in_these_areas
       let interesteAreaData = userData.custom_attributes.find(a => a.name === '_Interested_in_business_opportunities_in_these_areas');
       let interesteAreas = [];
       if (interesteAreaData) {

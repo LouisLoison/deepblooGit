@@ -5,7 +5,6 @@ exports.synchro = () => {
       const moment = require('moment')
 
       let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
-      hivebriteUsers = hivebriteUsers.filter(a => a.is_active)
 
       // Get zoho access token
       let zohoTokenResponse = await require('axios').post(`https://accounts.zoho.com/oauth/v2/token?refresh_token=${config.zohoRefreshToken}&client_id=${config.zohoClientId}&client_secret=${config.zohoClientSecret}&grant_type=refresh_token`)
@@ -53,15 +52,21 @@ exports.synchro = () => {
           cpvs = Array.from(new Set(cpvs))
         }
 
+        let DB_Do_not_contact = 'true'
+        if (user.notifEmailingComEmail && !hivebriteUser.do_not_contact) {
+          DB_Do_not_contact = 'false'
+        }
+
         // Computed data
         const computed = {
           Email: hivebriteUser.email,
+          Status_DB: hivebriteUser.confirmed_at ? 'YES' : 'NO',
           Secondary_Email: hivebriteUser.email2 && hivebriteUser.email2.trim() !== '' ? hivebriteUser.email2.trim() : null,
           First_Name: hivebriteUser.firstname,
           Last_Name: hivebriteUser.lastname,
           Full_Name: `${hivebriteUser.firstname} ${hivebriteUser.lastname}`,
           DB_ID: user.hivebriteId,
-          DB_Do_not_contact: user.notifEmailingComEmail ? 'false' : 'true',
+          DB_Do_not_contact,
           Mobile: hivebriteUser.mobile_pro || hivebriteUser.mobile_perso,
           Phone: hivebriteUser.landline_pro || hivebriteUser.landline_perso,
           CPV: cpvs,
@@ -193,7 +198,7 @@ exports.synchro = () => {
         let response = await require('axios').put(`${config.zohoUrl}crm/v2/Contacts/${contactId}`, data, { headers: zohoHeaders })
         if (response.data.data[0].code !== 'SUCCESS') {
           let returnData = response.data.data[0]
-          returnData = returnData
+          console.log(returnData)
         }
       }
 
