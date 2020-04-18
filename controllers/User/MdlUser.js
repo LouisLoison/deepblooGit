@@ -116,6 +116,7 @@ exports.List = (filter) => {
                   dashboardUrl AS "dashboardUrl",
                   connexionTender AS "connexionTender",
                   connexionBusiness AS "connexionBusiness",
+                  status AS "status",
                   creationDate AS "creationDate",
                   updateDate AS "updateDate"
         FROM      user 
@@ -149,6 +150,14 @@ exports.List = (filter) => {
         if (filter.hasConnexionTender) {
           if (where !== '') { where += 'AND ' }
           where += `connexionTender IS NOT NULL \n`
+        }
+        if (filter.hasConnexionBusiness) {
+          if (where !== '') { where += 'AND ' }
+          where += `connexionBusiness IS NOT NULL \n`
+        }
+        if (filter.status) {
+          if (where !== '') { where += 'AND ' }
+          where += `status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -184,6 +193,7 @@ exports.List = (filter) => {
           dashboardUrl: record.dashboardUrl,
           connexionTender: record.connexionTender,
           connexionBusiness: record.connexionBusiness,
+          status: record.status,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })
@@ -392,6 +402,7 @@ exports.synchroNew = () => {
           email: hivebriteUser.email,
           username: hivebriteUser.name.substring(0, 100),
           doNotContact: hivebriteUser.do_not_contact ? 1 : 0,
+          status: hivebriteUser.confirmed_at ? 1 : 0,
         }
         
         // New user
