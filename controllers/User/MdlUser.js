@@ -207,12 +207,14 @@ exports.User = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
       let user = null;
-      let filter = {
-        userId
-      }
-      let users = await this.List(filter);
-      if (users && users.length > 0) {
-        user = users[0];
+      if (userId) {
+        let filter = {
+          userId
+        }
+        let users = await this.List(filter);
+        if (users && users.length > 0) {
+          user = users[0];
+        }
       }
       resolve(user);
     } catch (err) { reject(err) }
@@ -843,38 +845,40 @@ exports.Opportunity = (userId) => {
       const BddEnvironnement = config.prefixe
       let query = ''
       let recordset = null
-
-      let user = await this.User(userId)
       let organization = null
-      if (user.organizationId) {
-        organization = await require(process.cwd() + '/controllers/Organization/MdlOrganization').Organization(user.organizationId)
-        let filter = {
-          organizationId: organization.organizationId
-        }
-        organization.users = await this.List(filter)
-      }
-
       let cpvs = []
-      query = `
-        SELECT      userCpv.cpvCode AS "userCpvCode", 
-                    userCpv.cpvName AS "userCpvName", 
-                    userCpv.origineType AS "userOrigineType", 
-                    userCpv.rating AS "userRating" 
-        FROM        userCpv 
-        WHERE       userCpv.userId = ${user.userId} 
-      `
-      query += '  ORDER BY userCpv.cpvCode '
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      let userCpvCode = null
-      for (var record of recordset) {
-        if (userCpvCode !== record.userCpvCode) {
-          cpvs.push({
-            code: record.userCpvCode,
-            name: record.userCpvName.trim(),
-            origineType: record.userOrigineType,
-            rating: record.userRating,
-          })
-          userCpvCode = record.userCpvCode
+      const user = await this.User(userId)
+
+      if (userId) {
+        if (user.organizationId) {
+          organization = await require(process.cwd() + '/controllers/Organization/MdlOrganization').Organization(user.organizationId)
+          let filter = {
+            organizationId: organization.organizationId
+          }
+          organization.users = await this.List(filter)
+        }
+
+        query = `
+          SELECT      userCpv.cpvCode AS "userCpvCode", 
+                      userCpv.cpvName AS "userCpvName", 
+                      userCpv.origineType AS "userOrigineType", 
+                      userCpv.rating AS "userRating" 
+          FROM        userCpv 
+          WHERE       userCpv.userId = ${user.userId} 
+        `
+        query += '  ORDER BY userCpv.cpvCode '
+        recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let userCpvCode = null
+        for (var record of recordset) {
+          if (userCpvCode !== record.userCpvCode) {
+            cpvs.push({
+              code: record.userCpvCode,
+              name: record.userCpvName.trim(),
+              origineType: record.userOrigineType,
+              rating: record.userRating,
+            })
+            userCpvCode = record.userCpvCode
+          }
         }
       }
 

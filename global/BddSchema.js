@@ -2,6 +2,72 @@ var Config = require(process.cwd() + '/config')
 
 var Schema = {
   deepbloo: {
+    annonce: {
+      annonceId: { type: "Int", key: true },
+      title: { type: "String" },
+      description: { type: "String" },
+      image: { type: "String" },
+      url: { type: "String" },
+      priority: { type: "Int" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    annonceClick: {
+      annonceClickId: { type: "Int", key: true },
+      annonceId: { type: "Int" },
+      userId: { type: "Int" },
+      screen: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    cpv: {
+      cpvId: { type: "Int", key: true },
+      code: { type: "Int" },
+      label: { type: "String" },
+      active: { type: "Int" },
+      logo: { type: "String" },
+      picture: { type: "String" },
+      category: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    cpvWord: {
+      cpvWordId: { type: "Int", key: true },
+      cpvId: { type: "Int" },
+      word: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    document: {
+      documentId: { type: "Int", key: true },
+      tenderId: { type: "Int" },
+      cpvs: { type: "String" },
+      filename: { type: "String" },
+      size: { type: "Int" },
+      sourceUrl: { type: "String" },
+      s3Url: { type: "String" },
+      boxFolderId: { type: "String" },
+      boxFileId: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    documentMessage: {
+      documentMessageId: { type: "Int", key: true },
+      documentId: { type: "Int" },
+      organizationId: { type: "Int" },
+      userId: { type: "Int" },
+      message: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     dgmarket: {
       id: { type: "Int", key: true },
       dgmarketId: { type: "Int" },
@@ -173,48 +239,6 @@ var Schema = {
       cpvName: { type: "String" },
       origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
       rating: { type: "Int" },
-    },
-    annonce: {
-      annonceId: { type: "Int", key: true },
-      title: { type: "String" },
-      description: { type: "String" },
-      image: { type: "String" },
-      url: { type: "String" },
-      priority: { type: "Int" },
-      userId: { type: "Int" },
-      organizationId: { type: "Int" },
-      status: { type: "Int" },
-      creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
-    },
-    annonceClick: {
-      annonceClickId: { type: "Int", key: true },
-      annonceId: { type: "Int" },
-      userId: { type: "Int" },
-      screen: { type: "String" },
-      status: { type: "Int" },
-      creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
-    },
-    cpv: {
-      cpvId: { type: "Int", key: true },
-      code: { type: "Int" },
-      label: { type: "String" },
-      active: { type: "Int" },
-      logo: { type: "String" },
-      picture: { type: "String" },
-      category: { type: "String" },
-      status: { type: "Int" },
-      creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
-    },
-    cpvWord: {
-      cpvWordId: { type: "Int", key: true },
-      cpvId: { type: "Int" },
-      word: { type: "String" },
-      status: { type: "Int" },
-      creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
     },
   }
 }
