@@ -1230,3 +1230,18 @@ exports.UserNotify = (userIds, tenderId) => {
     }
   })
 }
+
+exports.tenderCriterionAddUpdate = (tenderCriterion) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      resolve(data)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}

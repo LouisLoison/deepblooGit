@@ -309,6 +309,36 @@ var fileSearch = (dir, fileName) => {
 }
 exports.fileSearch = fileSearch
 
+exports.readFileSync = (fileLocation) => {
+  const fs = require('fs')
+
+  var d = new Buffer.alloc(5, [0, 0, 0, 0, 0])
+  var fd = fs.openSync(fileLocation, 'r')
+  fs.readSync(fd, d, 0, 5, 0)
+  fs.closeSync(fd)
+  let encoding = 'ascii'
+  if (d[0] === 0xEF && d[1] === 0xBB && d[2] === 0xBF) {
+    encoding = 'utf8'
+  } else if (d[0] === 0xFE && d[1] === 0xFF) {
+    encoding = 'utf16be'
+  } else if (d[0] === 0xFF && d[1] === 0xFE) {
+    encoding = 'utf16le'
+  } else {
+    const chardet = require('chardet')
+    let returnTest = chardet.detectFileSync(fileLocation)
+    if (returnTest === 'windows-1252') {
+      encoding = 'latin1'
+    }
+  }
+
+  return fs.readFileSync(fileLocation, encoding)
+}
+
+exports.removeDiacritics = (str) => {
+  str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  return str
+}
+
 exports.leftPad = function(str, length, carac) {
     if (!carac) { carac = ' ' }
     return `${carac.repeat(Math.max(length - str.length,0))}${str}`;

@@ -54,6 +54,7 @@ var Schema = {
       s3Url: { type: "String" },
       boxFolderId: { type: "String" },
       boxFileId: { type: "String" },
+      parseResult: { type: "String" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
@@ -105,6 +106,32 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    tenderCriterion: {
+      tenderCriterionId: { type: "Int", key: true },
+      tenderId: { type: "Int" },
+      documentId: { type: "Int" },
+      textParseId: { type: "Int" },
+      word: { type: "String" },
+      match: { type: "String" },
+      number: { type: "Int" },
+      index: { type: "Int" },
+      context: { type: "String" },
+      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    tenderDetail: {
+      tenderDetailId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      tenderId: { type: "Int" },
+      comment: { type: "String" },
+      salesManagerId: { type: "Int" },
+      bidManagerId: { type: "Int" },
+      amoutOffer: { type: "String" },
+      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     tenderGroup: {
       tenderGroupId: { type: "Int", key: true },
       userId: { type: "Int" },
@@ -118,18 +145,6 @@ var Schema = {
       userId: { type: "Int" },
       tenderGroupId: { type: "Int" },
       tenderId: { type: "Int" },
-      creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
-    },
-    tenderDetail: {
-      tenderDetailId: { type: "Int", key: true },
-      userId: { type: "Int" },
-      tenderId: { type: "Int" },
-      comment: { type: "String" },
-      salesManagerId: { type: "Int" },
-      bidManagerId: { type: "Int" },
-      amoutOffer: { type: "String" },
-      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

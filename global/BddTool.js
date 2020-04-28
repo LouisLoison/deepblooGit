@@ -138,9 +138,9 @@ exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
         let Schema = BddSchema.getSchema()
         let Table = Schema[BddId][TableName]
         for(let ColumnName in Table) {
-          if (ColumnName === 'CreationDate') { continue }
-          if (ColumnName === 'ModificationDate') { continue }
-          if (ColumnName === 'Responsable') { continue }
+          if (ColumnName === 'creationDate') { continue }
+          if (ColumnName === 'updateDate') { continue }
+          if (ColumnName === 'owner') { continue }
           let Column = Table[ColumnName]
           if (Column.key) {
             ColumnKey = ColumnName
@@ -171,8 +171,8 @@ exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
               UpdateListText += `${Record[ColumnName]} `
             }
           }
-          if (Table['ModificationDate'] !== undefined) { UpdateListText += `, ModificationDate = ${DateNow(Environnement, BddId)}` }
-          if (Table['Responsable'] !== undefined && Config.user.Identifiant) { UpdateListText += `, Responsable = '${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}'` }
+          if (Table['updateDate'] !== undefined) { UpdateListText += `, updateDate = ${DateNow(Environnement, BddId)}` }
+          if (Table['owner'] !== undefined && Config.user.Identifiant) { UpdateListText += `, owner = '${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}'` }
           
           Query = `
             UPDATE ${TableName} 
@@ -203,21 +203,21 @@ exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
                 ValueListText += `'${Record[ColumnName]}'`
             }
           }
-          if (Table['ModificationDate'] !== undefined) {
+          if (Table['updateDate'] !== undefined) {
             if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"ModificationDate"`
+            ColumnListText += `"updateDate"`
             if (ValueListText !== '') { ValueListText += `, ` }
             ValueListText += `${DateNow(Environnement, BddId)} `
           }
-          if (Table['CreationDate'] !== undefined) {
+          if (Table['creationDate'] !== undefined) {
             if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"CreationDate"`
+            ColumnListText += `"creationDate"`
             if (ValueListText !== '') { ValueListText += `, ` }
             ValueListText += `${DateNow(Environnement, BddId)} `
           }
-          if (Table['Responsable'] !== undefined && Config.user.Identifiant) {
+          if (Table['owner'] !== undefined && Config.user.Identifiant) {
             if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"Responsable"`
+            ColumnListText += `"owner"`
             if (ValueListText !== '') { ValueListText += `, ` }
             ValueListText += `'${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}' `
           }
