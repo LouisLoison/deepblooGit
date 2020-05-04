@@ -27,7 +27,7 @@ var QueryExecMsSql = async function(onError, onSuccess, Query, BddId, Environnem
     }
 }
 
-var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement) => {
+var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement, rowsCount) => {
   const mysql = require('mysql')
   const configBdd = Config.bdd[BddId][Environnement].config
 
@@ -74,10 +74,28 @@ var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement) => {
       }
       */
       // connection.end()
-      setTimeout(() => {
-        connection.destroy()
-      }, 800)
-      onSuccess(results)
+      if (!rowsCount) {
+        setTimeout(() => {
+          connection.destroy()
+        }, 800)
+        onSuccess(results)
+      } else {
+        connection.query('SELECT FOUND_ROWS()', (err2, results2, fields) => {
+          if (err2) {
+            err2.Query = Query
+            onError(err2)
+            return false
+          }
+          setTimeout(() => {
+            connection.destroy()
+          }, 800)
+          onSuccess({
+            results,
+            total: results2[0]['FOUND_ROWS()']
+          })
+        })
+    
+      }
     })
     /*
     SET GLOBAL wait_timeout=28800
@@ -110,20 +128,20 @@ var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environne
     .catch((err) => { onError(err) })
 }
 
-var QueryExecBdd = (BddId, Environnement, Query, onError, onSuccess) => {
+var QueryExecBdd = (BddId, Environnement, Query, onError, onSuccess, rowsCount) => {
   if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
     QueryExecMsSql(onError, onSuccess, Query, BddId, Environnement)
   } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
-    QueryExecMySql(onError, onSuccess, Query, BddId, Environnement)
+    QueryExecMySql(onError, onSuccess, Query, BddId, Environnement, rowsCount)
   } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
     QueryExecOracle(onError, onSuccess, Query, BddId, Environnement)
   }
 }
 exports.QueryExecBdd = QueryExecBdd
 
-exports.QueryExecBdd2 = (BddId, Environnement, Query) => {
+exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
   return new Promise((resolve, reject) => {
-    this.QueryExecBdd(BddId, Environnement, Query, reject, resolve)
+    this.QueryExecBdd(BddId, Environnement, Query, reject, resolve, rowsCount)
   })
 }
 

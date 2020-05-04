@@ -170,6 +170,263 @@ exports.TenderGet = (id, algoliaId) => {
   })
 }
 
+exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let cpvCodes = null
+      let cpvLabelFormats = []
+      if (filter && filter.cpvs && filter.cpvs.length) {
+        cpvCodes = filter.cpvs.map(a => a.code)
+      }
+      if (filter && filter.cpvLabels && filter.cpvLabels.length) {
+        const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        cpvCodes = []
+        for (let cpvLabel of filter.cpvLabels) {
+          cpvLabelFormats.push(cpvLabel.split('-').join(' ').trim())
+          const CpvFound = CpvList.find(a => a.label.split('-').join(' ').trim() === cpvLabel.split('-').join(' ').trim())
+          if (CpvFound) {
+            cpvCodes.push(CpvFound.code)
+          }
+        }
+        filter.cpvLabels = cpvLabelFormats
+      }
+
+      let query = `
+        SELECT      SQL_CALC_FOUND_ROWS 
+                    dgmarket.id AS "id",
+                    dgmarket.dgmarketId AS "dgmarketId",
+                    dgmarket.procurementId AS "procurementId",
+                    dgmarket.title AS "title",
+                    dgmarket.description AS "description",
+                    dgmarket.lang AS "lang",
+                    dgmarket.contactFirstName AS "contactFirstName",
+                    dgmarket.contactLastName AS "contactLastName",
+                    dgmarket.contactAddress AS "contactAddress",
+                    dgmarket.contactCity AS "contactCity",
+                    dgmarket.contactState AS "contactState",
+                    dgmarket.contactCountry AS "contactCountry",
+                    dgmarket.contactEmail AS "contactEmail",
+                    dgmarket.contactPhone AS "contactPhone",
+                    dgmarket.buyerName AS "buyerName",
+                    dgmarket.buyerCountry AS "buyerCountry",
+                    dgmarket.procurementMethod AS "procurementMethod",
+                    dgmarket.noticeType AS "noticeType",
+                    dgmarket.country AS "country",
+                    dgmarket.estimatedCost AS "estimatedCost",
+                    dgmarket.currency AS "currency",
+                    dgmarket.publicationDate AS "publicationDate",
+                    dgmarket.cpvs AS "cpvs",
+                    dgmarket.cpvDescriptions AS "cpvDescriptions",
+                    dgmarket.words AS "words",
+                    dgmarket.bidDeadlineDate AS "bidDeadlineDate",
+                    dgmarket.sourceUrl AS "sourceUrl",
+                    dgmarket.termDate AS "termDate",
+                    dgmarket.fileSource AS "fileSource",
+                    dgmarket.userId AS "userId",
+                    dgmarket.algoliaId AS "algoliaId",
+                    dgmarket.status AS "status",
+                    dgmarket.creationDate AS "creationDate",
+                    dgmarket.updateDate AS "updateDate" `
+      if (filter && filter.textParses) {
+        query += `,\n              tenderCriterion.tenderCriterionId AS "tenderCriterionId" `
+      }
+      if (filter && filter.tenderGroupId && filter.tenderGroupId > 0) {
+        query += `,\n              tenderGroupLink.tenderGroupLinkId AS "tenderGroupLinkId" `
+      }
+      query += `\nFROM        dgmarket `
+      if (filter && filter.textParses) {
+        query += `\nINNER JOIN tenderCriterion ON tenderCriterion.tenderId = dgmarket.id `
+      }
+      if (filter && filter.tenderGroupId && filter.tenderGroupId > -1) {
+        query += `\nINNER JOIN tenderGroupLink ON tenderGroupLink.tenderId = dgmarket.id `
+      }
+      let where = ``
+      if (filter) {
+        if (filter.tenderGroupId) {
+          if (where !== '') { where += 'AND ' }
+          if (filter.tenderGroupId === -1) {
+            where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = dgmarket.id) \n`
+          } else {
+            where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId, BddEnvironnement, BddId)} \n`
+          }
+        }
+        if (filter && filter.textParses && filter.textParses.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `tenderCriterion.textParseId IN (${BddTool.ArrayNumericFormater(filter.textParses.map(a => a.textParseId), BddEnvironnement, BddId)}) \n`
+        }
+        if (cpvCodes && cpvCodes.length) {
+          if (where !== '') { where += 'AND '}
+          let orCondition = ''
+          for (let cpvCode of cpvCodes) {
+            if (orCondition !== '') { orCondition += 'OR '}
+            orCondition += `dgmarket.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+          }
+          where += `(${orCondition}) `
+        }
+        if (filter.regions && filter.regions.trim() !== '') {
+          const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
+          if (countrys) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+          }
+        }
+        if (filter.countrys && filter.countrys !== '') {
+          if (where !== '') { where += 'AND ' }
+          where += `dgmarket.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
+        }
+      }
+      if (where !== '') { query += '\nWHERE ' + where }
+      if (orderBy) {
+        query += `\nORDER BY ${orderBy} `
+      }
+      query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
+
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let tenders = []
+      for (const record of recordset.results) {
+        let tender = tenders.find(a => a.id === record.id)
+        if (!tender) {
+          // Get country region
+          let region1Tender = null
+          let region2Tender = null
+          if (record.country && record.country !== '') {
+            for (let region1 of RegionList) {
+              if (region1.countrys) {
+                if (region1.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
+                  region1Tender = region1
+                  break
+                }
+              }
+              if (region1.regions) {
+                for (let region2 of region1.regions) {
+                  if (region2.countrys) {
+                    if (region2.countrys.find(a => a.toLowerCase() === record.country.toLowerCase())) {
+                      region1Tender = region1
+                      region2Tender = region2
+                      break
+                    }
+                  }
+                }
+                if (region1Tender) {
+                  break
+                }
+              }
+            }
+          }
+          if (filter && filter.regions && filter.regions.trim() !== '') {
+            let isRegionOk = false
+            if (region1Tender) {
+              for (let region of filter.regions.split(',')) {
+                let regionLabel = region.trim()
+                let regionLabel1 = regionLabel.split('-')[0].trim()
+                if (regionLabel1.toLowerCase() === 'worldwide') {
+                  isRegionOk = true
+                } else {
+                  let regionLabel2 = ''
+                  if (regionLabel.includes('-')) {
+                    regionLabel2 = regionLabel.trim().split('-')[1].trim()
+                  }
+                  if (regionLabel1.toLowerCase() === region1Tender.label.toLowerCase()) {
+                    if (region2Tender && regionLabel2.toLowerCase() !== 'all') {
+                      if (region2Tender && regionLabel2.toLowerCase() === region2Tender.label.toLowerCase()) {
+                        isRegionOk = true
+                      }
+                    } else {
+                      isRegionOk = true
+                    }
+                  }
+                }
+              }
+            }
+            if (!isRegionOk) {
+              continue
+            }
+          }
+
+          // Check CPV filter
+          let cpvOk = true
+          if (filter && filter.cpvLabels && filter.cpvLabels.length) {
+            cpvOk = false
+            for (let cpv of record.cpvDescriptions.split(',')) {
+              if (filter.cpvLabels.includes(cpv.split('-').join(' ').trim())) {
+                cpvOk = true
+                break
+              }
+            }
+          }
+          if (!cpvOk) {
+            continue
+          }
+          tender = {
+            id: record.id,
+            dgmarketId: record.dgmarketId,
+            procurementId: record.procurementId,
+            title: record.title,
+            description: record.description,
+            lang: record.lang,
+            contactFirstName: record.contactFirstName,
+            contactLastName: record.contactLastName,
+            contactAddress: record.contactAddress,
+            contactCity: record.contactCity,
+            contactState: record.contactState,
+            contactCountry: record.contactCountry,
+            contactEmail: record.contactEmail,
+            contactPhone: record.contactPhone,
+            buyerName: record.buyerName,
+            buyerCountry: record.buyerCountry,
+            procurementMethod: record.procurementMethod,
+            noticeType: record.noticeType,
+            country: record.country,
+            estimatedCost: record.estimatedCost,
+            currency: record.currency,
+            publicationDate: record.publicationDate,
+            cpvs: record.cpvs,
+            cpvDescriptions: record.cpvDescriptions,
+            words: record.words,
+            bidDeadlineDate: record.bidDeadlineDate,
+            sourceUrl: record.sourceUrl,
+            termDate: record.termDate,
+            fileSource: record.fileSource,
+            userId: record.userId,
+            algoliaId: record.algoliaId,
+            status: record.status,
+            creationDate: record.creationDate,
+            updateDate: record.updateDate,
+            tenderCriterions: []
+          }
+          tenders.push(tender)
+        }
+        if (record.tenderCriterionId) {
+          let tenderCriterion = tender.tenderCriterions.find(a => a.tenderCriterionId === record.tenderCriterionId)
+          if (!tenderCriterion) {
+            tenderCriterion = {
+              tenderCriterionId: record.tenderCriterionId,
+            }
+            tender.tenderCriterions.push(tenderCriterion)
+          }
+        }
+      }
+
+      resolve({
+        entries: tenders,
+        limit,
+        page,
+        pageLimit,
+        totalCount: recordset.total,
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -1245,3 +1502,104 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
     }
   })
 }
+
+exports.tenderFilterAddUpdate = (tenderFilter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let tenderFilterNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderFilter', tenderFilter)
+      resolve(tenderFilterNew);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.tenderFilterDelete = (tenderFilterId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!tenderFilterId) {
+        throw new Error("No available id !")
+      }
+
+      let query = `
+        DELETE FROM   tenderFilter 
+      `
+      let where = ``
+      if (tenderFilterId && tenderFilterId !== '' && tenderFilterId > 0) {
+        if (where !== '') {
+          where += 'AND '
+        }
+        where += `tenderFilterId = ${BddTool.NumericFormater(tenderFilterId, BddEnvironnement, BddId)} \n`
+      }
+      if (where !== '') { query += '  WHERE ' + where }
+      else {
+        throw new Error("No available filter !")
+      }
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.tenderFilterList = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get tenderFilter list
+      const tenderFilters = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    tenderFilter.tenderFilterId AS "tenderFilterId", 
+                  tenderFilter.userId AS "userId", 
+                  tenderFilter.label AS "label", 
+                  tenderFilter.parseData AS "parseData", 
+                  tenderFilter.status AS "status", 
+                  tenderFilter.creationDate AS "creationDate", 
+                  tenderFilter.updateDate AS "updateDate" 
+        FROM      tenderFilter 
+      `
+      if (filter) {
+        let where = ``
+        if (filter.tenderFilterId) {
+          if (where !== '') { where += 'AND ' }
+          where += `tenderFilter.tenderFilterId = ${BddTool.NumericFormater(filter.tenderFilterId, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.userId) {
+          if (where !== '') { where += 'AND ' }
+          where += `tenderFilter.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      query += '\nORDER BY tenderFilter.label '
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        tenderFilters.push({
+          tenderFilterId: record.tenderFilterId,
+          userId: record.userId,
+          label: record.label,
+          parseData: record.parseData,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate,
+          tenderFilterWords: [],
+        })
+      }
+      resolve(tenderFilters);
+    } catch (err) {
+      reject(err);
+    }
+  })
+}
+

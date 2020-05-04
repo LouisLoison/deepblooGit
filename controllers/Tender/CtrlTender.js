@@ -10,6 +10,12 @@ exports.TenderGet = (req, res) => {
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.tenders = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenders(req.body.filter, req.body.orderBy, req.body.limit, req.body.page, req.body.pageLimit).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.TenderList = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(req.body.id, req.body.algoliaId, req.body.creationDateMin, req.body.creationDateMax, req.body.termDateMin, req.body.termDateMax, req.body.cpvLabels, req.body.regions, req.body.limit, req.body.noticeType, req.body.country, req.body.orderBy).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
@@ -45,7 +51,6 @@ exports.TenderGroupList = (req, res) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
-
 
 exports.TenderGroupMove = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupMove(req.body.userId, req.body.tenderGroupId, req.body.tenderId).then((data) => {
@@ -85,6 +90,24 @@ exports.TenderDetailList = (req, res) => {
 
 exports.UserNotify = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlTender').UserNotify(req.body.userIds, req.body.tenderId).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.tenderFilterAddUpdate = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderFilterAddUpdate(req.body.tenderFilter).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.tenderFilterDelete = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderFilterDelete(req.body.tenderFilterId).then((data) => {
+    res.end(JSON.stringify({ success: true, data: data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.tenderFilterList = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderFilterList(req.body.filter).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

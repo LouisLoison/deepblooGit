@@ -12,7 +12,7 @@ exports.synchro = () => {
         'Authorization': `Zoho-oauthtoken ${zohoTokenResponse.data.access_token}`
       }
 
-      // Get zoho contacts
+      // Get zoho contacts : DB_Membership_Type
       let contacts = []
       let moreRecord = true
       let page = 1
@@ -25,6 +25,20 @@ exports.synchro = () => {
 
       // Get DeepBloo users
       const users = await require(process.cwd() + '/controllers/User/MdlUser').List()
+
+      // Find user to delete
+      const userDeletes = []
+      for (const contact of contacts) {
+        const user = users.find(a => a.hivebriteId === contact.DB_ID)
+        if (!user) {
+          let response = await require('axios').delete(`${config.zohoUrl}crm/v2/Contacts/${contact.id}`, { headers: zohoHeaders })
+          if (response.data.data[0].code !== 'SUCCESS') {
+            let returnData = response.data.data[0]
+            console.log(returnData)
+          }
+          userDeletes.push(contact)
+        }
+      }
 
       // Find users to add or update
       const userAdds = []
@@ -99,10 +113,19 @@ exports.synchro = () => {
           }
         }
 
+        computed.DB_Membership_Type = []
         if (hivebriteUser.memberships && hivebriteUser.memberships.length) {
           const membership = hivebriteUser.memberships[0]
-          computed.DB_Membership_expiry_date = membership.expires_at ? membership.expires_at.replace('Z', '+01:00') : null
-          computed.DB_Membership_Type = []
+          computed.Live_Membership = "NO"
+          if (membership.expires_at) {
+            computed.DB_Membership_expiry_date = membership.expires_at.replace('Z', '+01:00')
+            let expiryDate = new Date(membership.expires_at)
+            if (expiryDate > new Date()) {
+              computed.Live_Membership = "YES"
+            }
+          } else {
+            computed.DB_Membership_expiry_date = null
+          }
           computed.DB_Membership_Type.push(membership.type_name)
         }
 
@@ -205,6 +228,7 @@ exports.synchro = () => {
       resolve({
         addCount,
         updateCount: userUpdates.length,
+        deleteCount: userDeletes.length,
       })
     } catch (err) { reject(err) }
   })

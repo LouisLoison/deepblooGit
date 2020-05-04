@@ -261,7 +261,7 @@ exports.textParseTreat = (text, textParses) => {
       let positions = matching_positions(textNew, wordTemp, true, true, true)
       for (const position of positions) {
         let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
-        let number = ''
+        let value = ''
         
         if (textParse.type === "METRIC") {
           let index = 0
@@ -269,21 +269,21 @@ exports.textParseTreat = (text, textParses) => {
           while (true) {
             let char = text.substring(position.index - index - 1, position.index - index)
             if (char.match(regex)) {
-              number = char + number
+              value = char + value
             } else {
               break
             }
             index = index + 1
           }
-          number = number.trim()
+          value = value.trim()
         }
 
         tenderCriterions.push({
           textParseId: textParse.textParseId,
           word: word.trim(),
-          match: text.substring(position.index, position.index + position.word.length).trim(),
-          number,
-          index: position.index,
+          wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
+          startIndex: position.index,
+          value,
           context,
         })
       }

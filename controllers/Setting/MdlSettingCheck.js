@@ -97,16 +97,15 @@ exports.ColumnScriptSql = (Environnement, BddName, TableName, ColumnName) => {
 }
 
 exports.TableAddBdd = (Environnement, BddName, TableName) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      this.TableScriptSql(Environnement, BddName, TableName).then((ScriptSql) => {
-        var BddTool = require(process.cwd() + '/global/BddTool')
-        let BddId = BddName
-        let BddEnvironnement = Environnement
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, ScriptSql, reject, (recordset) => { 
-          resolve()
-        })
-      }).catch((err) => { reject(err) })
+      const ScriptSql = await this.TableScriptSql(Environnement, BddName, TableName)
+      var BddTool = require(process.cwd() + '/global/BddTool')
+      let BddId = BddName
+      let BddEnvironnement = Environnement
+      BddTool.QueryExecBdd(BddId, BddEnvironnement, ScriptSql, reject, (recordset) => { 
+        resolve(recordset)
+      })
     } catch (err) { reject(err) }
   })
 }

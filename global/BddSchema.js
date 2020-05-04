@@ -111,11 +111,9 @@ var Schema = {
       tenderId: { type: "Int" },
       documentId: { type: "Int" },
       textParseId: { type: "Int" },
+      value: { type: "String" },
       word: { type: "String" },
-      match: { type: "String" },
-      number: { type: "Int" },
-      index: { type: "Int" },
-      context: { type: "String" },
+      findCount: { type: "Int" },
       status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
@@ -129,6 +127,15 @@ var Schema = {
       bidManagerId: { type: "Int" },
       amoutOffer: { type: "String" },
       status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    tenderFilter: {
+      tenderFilterId: { type: "Int", key: true },
+      userId: { type: "Int" },
+      label: { type: "String" },
+      parseData: { type: "String" },
+      status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

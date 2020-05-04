@@ -53,6 +53,10 @@ exports.documentDelete = (documentId) => {
         await this.fileDeleteAws(document.tenderId, document.filename)
       } catch (err) {}
 
+      try {
+        await this.tenderCriterionDelete(null, documentId)
+      } catch (err) {}
+
       // Remove document from Deepbloo BDD
       let query = `DELETE FROM document WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
@@ -217,6 +221,40 @@ exports.documentMessageAddUpdate = (documentMessage) => {
   })
 }
 
+exports.tenderCriterionAddUpdate = (tenderCriterion) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let tenderCriterionNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      resolve(tenderCriterionNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.tenderCriterionDelete = (tenderCriterionId, documentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      // Remove document from Deepbloo BDD
+      let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId, BddEnvironnement, BddId)}`
+      if (documentId) {
+        query = `DELETE FROM tenderCriterion WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
+      }
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.tenderFileImport = (tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -237,34 +275,54 @@ exports.tenderFileImport = (tenderId) => {
             continue
           }
           const fileInfo = await this.fileDownload(sourceUrl)
-          const tenderCriterions = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses)
+          const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
           const exportBox = await this.fileExportBox(tenderId, fileInfo.fileLocation, fileInfo.filename)
           let documentNew = await this.documentAddUpdate({
             documentId: document ? document.documentId : undefined,
             tenderId,
-            cpvs: tenderCriterions.cpvs.cpvsText,
+            cpvs: textParseResults.cpvs.cpvsText,
             filename: fileInfo.filename,
             size: fileInfo.size,
             sourceUrl,
             s3Url: exportAws.location,
             boxFolderId: exportBox.folderId,
             boxFileId: exportBox.fileId,
-            parseResult: JSON.stringify(tenderCriterions.textParseResults),
+            parseResult: JSON.stringify(textParseResults.tenderCriterions),
             status: 1,
             creationDate: new Date(),
             updateDate: new Date(),
           })
+          const tenderCriterions = []
+          for (const tenderCriterion of textParseResults.tenderCriterions) {
+            let tenderCriterionFind = tenderCriterions.find(a => 
+              a.textParseId === tenderCriterion.textParseId
+              && ((a.value.trim() === "" && a.value === tenderCriterion.value) || (a.value.trim() !== "" && a.value === tenderCriterion.value && a.word === tenderCriterion.word))
+            )
+            if (!tenderCriterionFind) {
+              tenderCriterionFind = {
+                tenderId: documentNew.tenderId,
+                documentId: documentNew.documentId,
+                textParseId: tenderCriterion.textParseId,
+                value: tenderCriterion.value,
+                word: tenderCriterion.word,
+                findCount: 0,
+                status: 1,
+              }
+              tenderCriterions.push(tenderCriterionFind)
+            }
+            tenderCriterionFind.findCount = tenderCriterionFind.findCount + 1
+          }
           const tenderCriterionNews = []
           for (const tenderCriterion of tenderCriterions) {
-            tenderCriterion.documentId = documentNew.documentId
-            tenderCriterion.tenderId = documentNew.tenderId
-            const tenderCriterionNew = tenderCriterion
+            const tenderCriterionNew = await this.tenderCriterionAddUpdate(tenderCriterion)
             tenderCriterionNews.push(tenderCriterionNew)
           }
           documentNew.tenderCriterions = tenderCriterionNews
           documentNews.push(documentNew)
-        } catch (err) {}
+        } catch (err) {
+          console.log(err)
+        }
       }
       
       resolve(documentNews)
@@ -331,11 +389,11 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses) => {
       }
       const cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(text, '', '', null, CpvList)
 
-      const textParseResults = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
+      const tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
 
       resolve({
         cpvs,
-        textParseResults,
+        tenderCriterions,
       })
     } catch (err) { reject(err) }
   })
@@ -422,6 +480,12 @@ exports.fileExportAws = (tenderId, fileLocation) => {
         || fileLocation.toLowerCase().endsWith('.html')
       ) {
         params.ContentType = "text/html"
+      } else if (fileLocation.toLowerCase().endsWith('.png')) {
+        params.ContentType = "image/png"
+      } else if (fileLocation.toLowerCase().endsWith('.jpg')) {
+        params.ContentType = "image/jpg"
+      } else if (fileLocation.toLowerCase().endsWith('.pdf')) {
+        params.ContentType = "application/pdf"
       }
 
       s3.upload(params, (err, data) => {
