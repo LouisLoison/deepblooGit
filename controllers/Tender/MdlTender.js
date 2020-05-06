@@ -249,6 +249,54 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
       }
       let where = ``
       if (filter) {
+        if (filter.items && filter.items.length) {
+          const bidDeadLineItems = filter.items.filter(a => a.other === 'bidDeadLine')
+          if (bidDeadLineItems && bidDeadLineItems.length) {
+            let bidDeadLineCase = ''
+            for (const bidDeadLineItem of bidDeadLineItems) {
+              if (bidDeadLineItem.value === 'NOT_EXPIRED') {
+                if (bidDeadLineCase !== '') { bidDeadLineCase += 'OR ' }
+                bidDeadLineCase += `termDate <= ${BddTool.DateNow(BddEnvironnement, BddId)} `
+              } else if (bidDeadLineItem.value === 'EXPIRED_MORE_1_WEEK') {
+                if (bidDeadLineCase !== '') { bidDeadLineCase += 'OR ' }
+                bidDeadLineCase += `termDate >= ${BddTool.DateNow(BddEnvironnement, BddId)} + 7 `
+              } else if (bidDeadLineItem.value === 'EXPIRED_LESS_1_WEEK') {
+                if (bidDeadLineCase !== '') { bidDeadLineCase += 'OR ' }
+                bidDeadLineCase += `termDate <= ${BddTool.DateNow(BddEnvironnement, BddId)} + 7 `
+              } else if (bidDeadLineItem.value === 'EXPIRED') {
+                if (bidDeadLineCase !== '') { bidDeadLineCase += 'OR ' }
+                bidDeadLineCase += `termDate > ${BddTool.DateNow(BddEnvironnement, BddId)} `
+              }
+            }
+            if (where !== '') { where += 'AND ' }
+            where += `(${bidDeadLineCase}) \n`
+          }
+
+          const noticeTypeItems = filter.items.filter(a => a.other === 'noticeType')
+          if (noticeTypeItems && noticeTypeItems.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+          }
+
+          const useridItems = filter.items.filter(a => a.other === 'userid' && a.value === 'USERID')
+          if (useridItems && useridItems.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.userId > 0 \n`
+          }
+
+          const procurementMethodItems = filter.items.filter(a => a.other === 'procurementMethod')
+          if (procurementMethodItems && procurementMethodItems.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+          }
+
+          const langItems = filter.items.filter(a => a.other === 'lang')
+          if (langItems && langItems.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+          }
+        }
+
         if (filter.tenderGroupId) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderGroupId === -1) {
