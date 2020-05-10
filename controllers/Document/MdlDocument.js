@@ -271,12 +271,15 @@ exports.tenderFileImport = (tenderId) => {
       for (const sourceUrl of sourceUrls) {
         try {
           let document = documents.find(a => a.sourceUrl === sourceUrl)
+          if (sourceUrl.trim() === '') {
+            continue
+          }
           if (document) {
             continue
           }
           const fileInfo = await this.fileDownload(sourceUrl)
-          const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
+          const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId)
           const exportBox = await this.fileExportBox(tenderId, fileInfo.fileLocation, fileInfo.filename)
           let documentNew = await this.documentAddUpdate({
             documentId: document ? document.documentId : undefined,
@@ -334,16 +337,57 @@ exports.fileDownload = (url) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
-      const https = require('https')
-      const fs = require('fs')
-      const path = require('path')
-  
-      https.get(url, (response) => {
-        if (response.statusCode !== 200) {
-          reject(new Error('HTTP error ' + response.statusCode))
+
+      // File get http
+      const fileGet = async (fileUrl) => {
+        if (fileUrl.startsWith('http:')) {
+          fileGetHttp(fileUrl)
+        } else if (fileUrl.startsWith('https:')) {
+          fileGetHttps(fileUrl)
+        } else {
+          reject(new Error('URL format not recognize : ' + url))
         }
-  
-        let filename = decodeURI(response.headers["content-disposition"])
+      }
+
+      // File get http
+      const fileGetHttp = async (fileUrl) => {
+        const http = require('http')
+        http.get(fileUrl, (response) => {
+          if (response.statusCode === 302 && response.headers && response.headers.location) {
+            fileGet(response.headers.location)
+            return
+          }
+          if (response.statusCode !== 200) {
+            reject(new Error('HTTP error ' + response.statusCode))
+          }
+          fileDownload(response)
+        }).on('error', (err) => {
+          reject(err)
+        })
+      }
+
+      // File get https
+      const fileGetHttps = async (fileUrl) => {
+        const https = require('https')
+        https.get(fileUrl, (response) => {
+          if (response.statusCode === 302 && response.headers && response.headers.location) {
+            fileGet(response.headers.location)
+            return
+          }
+          if (response.statusCode !== 200) {
+            reject(new Error('HTTP error ' + response.statusCode))
+          }
+          fileDownload(response)
+        }).on('error', (err) => {
+          reject(err)
+        })
+      }
+
+      // File download
+      const fileDownload = async (fileResponse) => {
+        const fs = require('fs')
+        const path = require('path')
+        let filename = decodeURI(fileResponse.headers["content-disposition"])
         filename = filename.split('filename=')[1]
         const folderTemp = path.join(config.WorkSpaceFolder, '/Temp/')
         const fileLocation = path.join(folderTemp, filename)
@@ -351,7 +395,7 @@ exports.fileDownload = (url) => {
           fs.unlinkSync(fileLocation)
         }
         let file = fs.createWriteStream(fileLocation)
-        response.pipe(file)
+        fileResponse.pipe(file)
   
         file.on('finish', function() {
           file.close()
@@ -363,21 +407,21 @@ exports.fileDownload = (url) => {
           })
         })
       
-        response.on('data', (d) => {
+        fileResponse.on('data', (d) => {
           process.stdout.write(d);
         })
-      
-      }).on('error', (err) => {
-        reject(err)
-      })
+      }
+
+      fileGet(url)
     } catch (err) { reject(err) }
   })
 }
 
-exports.fileParse = (fileLocation, filename, CpvList, textParses) => {
+exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let text = ''
+      let text = null
+      let textData = null
       if (filename.toLowerCase().endsWith('.pdf')) {
         text = await this.fileParsePdf(fileLocation)
       } else if (filename.toLowerCase().endsWith('.doc')) {
@@ -386,10 +430,32 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses) => {
         text = await this.fileParseDocx(fileLocation)
       } else if (filename.toLowerCase().endsWith('.htm') || filename.toLowerCase().endsWith('.html') || filename.toLowerCase().endsWith('.php')) {
         text = await this.fileParseHtml(fileLocation)
+      } else if (filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png')) {
+        textData = await this.fileParseImage(fileLocation, tenderId)
       }
-      const cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(text, '', '', null, CpvList)
-
-      const tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
+      let cpvs = null
+      let tenderCriterions = []
+      if (text) {
+        cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(text, '', '', null, CpvList)
+        tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
+      } else if (textData && textData.Blocks) {
+        const lines = textData.Blocks.filter(a => a.BlockType === 'LINE')
+        for (const line of lines) {
+          cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(line.Text, '', '', null, CpvList)
+          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses)
+          if (tenderCriterionNews) {
+            for (const tenderCriterionNew of tenderCriterionNews) {
+              tenderCriterionNew.boundingBox = {
+                left: line.Geometry.BoundingBox.Left,
+                top: line.Geometry.BoundingBox.Top,
+                width: line.Geometry.BoundingBox.Width,
+                height: line.Geometry.BoundingBox.Height,
+              }
+              tenderCriterions.push(tenderCriterionNew)
+            }
+          }
+        }
+      }
 
       resolve({
         cpvs,
@@ -455,6 +521,41 @@ exports.fileParseHtml = (fileLocation) => {
   })
 }
 
+exports.fileParseImage = (fileLocation, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const AWS = require('aws-sdk')
+      const path = require('path')
+
+      AWS.config.update({
+        accessKeyId: config.awsAccessKeyId,
+        secretAccessKey: config.awsSecretAccessKey
+      });
+      AWS.config.region = "eu-west-1";
+      const textract = new AWS.Textract();
+
+      var params = {
+        Document: {
+          S3Object: {
+            Bucket: config.awsBucket,
+            Name: `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+          }
+        },
+        FeatureTypes: ['FORMS']
+      };
+      textract.analyzeDocument(params, (err, data) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(data)
+      });
+
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.fileExportAws = (tenderId, fileLocation) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -470,7 +571,7 @@ exports.fileExportAws = (tenderId, fileLocation) => {
       const s3 = new AWS.S3()
     
       const params = {
-        Bucket: 'tender-document-bucket',
+        Bucket: config.awsBucket,
         Body : fs.createReadStream(fileLocation),
         Key : `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
       }
@@ -484,6 +585,8 @@ exports.fileExportAws = (tenderId, fileLocation) => {
         params.ContentType = "image/png"
       } else if (fileLocation.toLowerCase().endsWith('.jpg')) {
         params.ContentType = "image/jpg"
+      } else if (fileLocation.toLowerCase().endsWith('.png')) {
+          params.ContentType = "image/png"
       } else if (fileLocation.toLowerCase().endsWith('.pdf')) {
         params.ContentType = "application/pdf"
       }
@@ -518,7 +621,7 @@ exports.fileDeleteAws = (tenderId, filename) => {
       const s3 = new AWS.S3()
     
       var params = {
-        Bucket: 'tender-document-bucket',
+        Bucket: config.awsBucket,
         Key : `tenders/tender#${tenderId}/${filename}`
       }
     

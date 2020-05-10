@@ -171,7 +171,7 @@ exports.FileParse = (fileLocation) => {
       let tenderOkCount = 0
       let tenderFoundCount = 0
       let tenders = []
-      parseData.notices.notice.forEach(notice => {
+      parseData.notices.notice.forEach(async notice => {
         tenderCount++
 
         /*
@@ -253,43 +253,14 @@ exports.FileParse = (fileLocation) => {
           }
         }
 
-        // Tyres exception
         let textToParse = `${title} ${description}`
-        let exceptionLabels = ['batterie', 'batteries']
-        for (let exceptionLabel of exceptionLabels) {
-          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
-          if (textToParse.match(regExExceptionLabel)) {
-            let exceptionFound = false
-            let exceptionWords = ['tyres', 'tyre']
-            for (let exceptionWord of exceptionWords) {
-              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
-              if (textToParse.match(regExException)) {
-                exceptionFound = true
-                break
-              }
-            }
-            if (exceptionFound) {
-              return false
-            }
-          }
+        let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(title, 'TITLE')
+        if (!isOk) {
+          return false
         }
-        exceptionLabels = ['fuel']
-        for (let exceptionLabel of exceptionLabels) {
-          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
-          if (textToParse.match(regExExceptionLabel)) {
-            let exceptionFound = false
-            let exceptionWords = ['oil', 'lubricant', 'lubricants']
-            for (let exceptionWord of exceptionWords) {
-              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
-              if (textToParse.match(regExException)) {
-                exceptionFound = true
-                break
-              }
-            }
-            if (exceptionFound) {
-              return false
-            }
-          }
+        isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(description, 'DESCRIPTION')
+        if (!isOk) {
+          return false
         }
 
         // Search by key words

@@ -389,3 +389,36 @@ exports.Test4 = () => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.Test5 = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let creationDateMin = new Date()
+      creationDateMin.setDate(creationDateMin.getDate()-12);
+      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, creationDateMin)
+      const tendersToDelete = []
+      for (const tender of tenders) {
+        let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(tender.title, 'TITLE')
+        if (!isOk) {
+          tendersToDelete.push(tender)
+          continue
+        }
+        isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(tender.description, 'DESCRIPTION')
+        if (!isOk) {
+          tendersToDelete.push(tender)
+          continue
+        }
+      }
+
+      for (const tender of tendersToDelete) {
+        if (!tender.id || !tender.algoliaId) {
+          continue
+        }
+        // console.log(`http://deepbloo.arread.fr/#/tenders?tenderId=${tender.id}`)
+        await require(process.cwd() + '/controllers/Tender/MdlTender').TenderRemove(tender.id, tender.algoliaId)
+      }
+
+      resolve({ tenderIds })
+    } catch (err) { reject(err) }
+  })
+}

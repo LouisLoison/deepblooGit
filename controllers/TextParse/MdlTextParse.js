@@ -1,3 +1,102 @@
+exports.textExclusion = (text, scope) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!text) {
+        resolve(true)
+        return true
+      }
+
+      // Tyres exception
+      let exceptionLabels = ['batterie', 'batteries', 'battery']
+      for (let exceptionLabel of exceptionLabels) {
+        let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+        if (text.match(regExExceptionLabel)) {
+          let exceptionFound = false
+          let exceptionWords = ['tyres', 'tyre', 'tire', 'tires', 'cars', 'car', 'vehicles', 'vehicle', 'trucks', 'walkie talkie', 'walkie-talkie', 'talkie-walkie', 'talkie walkie', 'tractor', 'motor vehicles']
+          for (let exceptionWord of exceptionWords) {
+            let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+            if (text.match(regExException)) {
+              exceptionFound = true
+              break
+            }
+          }
+          if (exceptionFound) {
+            resolve(false)
+            return false
+          }
+        }
+      }
+
+      // Oil exception
+      exceptionLabels = ['fuel']
+      for (let exceptionLabel of exceptionLabels) {
+        let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+        if (text.match(regExExceptionLabel)) {
+          let exceptionFound = false
+          let exceptionWords = ['oil', 'lubricant', 'lubricants']
+          for (let exceptionWord of exceptionWords) {
+            let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+            if (text.match(regExException)) {
+              exceptionFound = true
+              break
+            }
+          }
+          if (exceptionFound) {
+            resolve(false)
+            return false
+          }
+        }
+      }
+
+      if (scope === 'TITLE') {
+        // Protection exception
+        exceptionLabels = ['Protection', 'Protections']
+        for (let exceptionLabel of exceptionLabels) {
+          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+          if (text.match(regExExceptionLabel)) {
+            let exceptionFound = false
+            let exceptionWords = ['social', 'gender', 'genders', 'civil', 'video', 'videos', 'consumer', 'consumers', 'labor', 'labour', 'child', 'children', 'car', 'cars', 'corrosion', 'flood', 'flooddings', 'sun']
+            for (let exceptionWord of exceptionWords) {
+              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+              if (text.match(regExException)) {
+                exceptionFound = true
+                break
+              }
+            }
+            if (exceptionFound) {
+              resolve(false)
+              return false
+            }
+          }
+        }
+
+        // Hybrid exception
+        exceptionLabels = ['hybrid']
+        for (let exceptionLabel of exceptionLabels) {
+          let regExExceptionLabel = new RegExp("\\b" + exceptionLabel + "\\b", 'gi')
+          if (text.match(regExExceptionLabel)) {
+            let exceptionFound = false
+            let exceptionWords = ['Operating room', 'Vehicle', 'Bus', 'cars', 'truck', 'taxi', 'mail']
+            for (let exceptionWord of exceptionWords) {
+              let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
+              if (text.match(regExException)) {
+                exceptionFound = true
+                break
+              }
+            }
+            if (exceptionFound) {
+              resolve(false)
+              return false
+            }
+          }
+        }
+      }
+
+      resolve(true)
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.textParseList = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {

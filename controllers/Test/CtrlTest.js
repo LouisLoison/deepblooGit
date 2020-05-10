@@ -16,6 +16,12 @@ exports.Test3 = (req, res) => {
     }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.Test5 = (req, res) => {
+    require(process.cwd() + '/controllers/Test/MdlTest').Test5().then((data) => {
+        res.end(JSON.stringify({ success: true, data: data }, null, 3))
+    }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.ArchiveTest = (req, res) => {
     require(process.cwd() + '/controllers/Test/MdlTest').ArchiveTest().then((data) => {
         res.end(JSON.stringify({ success: true, data: data }, null, 3))

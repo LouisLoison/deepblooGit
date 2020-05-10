@@ -76,4 +76,5 @@ config.boxClientSecret = '15kkcfx63PRLutnRMUub30bqHFAKspdv',
 config.boxToken = '15kkcfx63PRLutnRMUub30bqHFAKspdv',
 config.boxFolderTendersId = '111690013396',
 config.awsAccessKeyId = 'AKIAI3MOVDQQCFHNPKLQ',
-config.awsSecretAccessKey = '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'
+config.awsSecretAccessKey = 'IoUwLTJiGubhwOzkqp+p4A6Hx9fRiHWA3h33/DWq',
+config.awsBucket = 'tender-document-bucket-v2'
