@@ -74,8 +74,8 @@ exports.CpvList = (filter) => {
         FROM      cpv 
         LEFT JOIN cpvWord ON cpvWord.cpvId = cpv.cpvId 
       `
+      let where = ``
       if (filter) {
-        let where = ``
         if (filter.cpvId) {
           if (where !== '') { where += 'AND ' }
           where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId, BddEnvironnement, BddId)} \n`
@@ -85,7 +85,7 @@ exports.CpvList = (filter) => {
       query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let cpv = null
-      for (var record of recordset) {
+      for (const record of recordset) {
         if (!cpv || cpv.cpvId !== record.cpvId) {
           cpv = {
             cpvId: record.cpvId,
@@ -99,6 +99,7 @@ exports.CpvList = (filter) => {
             creationDate: record.creationDate,
             updateDate: record.updateDate,
             cpvWords: [],
+            cpvExclusions: [],
           }
           cpvs.push(cpv)
         }
@@ -113,22 +114,35 @@ exports.CpvList = (filter) => {
           });
         }
       }
+      query = `
+        SELECT    cpvExclusion.cpvExclusionId AS "cpvExclusionId", 
+                  cpvExclusion.cpvId AS "cpvId", 
+                  cpvExclusion.word AS "word", 
+                  cpvExclusion.status AS "status", 
+                  cpvExclusion.creationDate AS "creationDate", 
+                  cpvExclusion.updateDate AS "updateDate" 
+        FROM      cpvExclusion 
+      `
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (const record of recordset) {
+        cpv = cpvs.find(a => a.cpvId === record.cpvId)
+        if (cpv) {
+          cpv.cpvExclusions.push({
+            cpvExclusionId: record.cpvExclusionId,
+            cpvId: record.cpvId,
+            word: record.word,
+            status: record.status,
+            creationDate: record.creationDate,
+            updateDate: record.updateDate
+          });
+        }
+      }
       cpvs.sort((a, b) => {
         let na = a.priority;
         let nb = b.priority;
         return na < nb ? 1 : na > nb ? -1 : 0;
       });
       resolve(cpvs);
-
-      /*
-      const cpvs = require(process.cwd() + '/public/constants/cpvs.json')
-      let cpvId = -1;
-      for (const cpv of cpvs) {
-        cpv.cpvId = cpvId;
-        cpvId++;
-      }
-      resolve(cpvs);
-      */
     } catch (err) {
       reject(err);
     }
@@ -283,6 +297,182 @@ exports.cpvWordDelete = (cpvWordId) => {
       }
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.CpvExclusion = (cpvExclusionId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let cpvExclusion = null
+      let filter = {
+        cpvExclusionId
+      }
+      let cpvExclusions = await this.CpvExclusionList(filter)
+      if (cpvExclusions && cpvExclusions.length > 0) {
+        cpvExclusion = cpvExclusions[0]
+      }
+      resolve(cpvExclusion)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.CpvExclusionList = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get cpv list
+      var cpvExclusions = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    cpvExclusion.cpvExclusionId AS "cpvExclusionId", 
+                  cpvExclusion.cpvId AS "cpvId", 
+                  cpvExclusion.word AS "word", 
+                  cpvExclusion.status AS "status", 
+                  cpvExclusion.creationDate AS "creationDate", 
+                  cpvExclusion.updateDate AS "updateDate" 
+        FROM      cpvExclusion 
+      `
+      if (filter) {
+        let where = ``
+        if (filter.cpvExclusionId) {
+          if (where !== '') { where += 'AND ' }
+          where += `cpvExclusion.cpvExclusionId = ${BddTool.NumericFormater(filter.cpvExclusionId, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      query += '  ORDER BY cpvExclusion.word '
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        cpvExclusions.push({
+          cpvExclusionId: record.cpvExclusionId,
+          cpvId: record.cpvId,
+          word: record.word,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+      resolve(cpvExclusions)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.CpvExclusionAddUpdate = (cpvExclusion) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let cpvExclusionNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpvExclusion', cpvExclusion)
+      resolve(cpvExclusionNew);
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.cpvExclusionDelete = (cpvExclusionId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!cpvExclusionId) {
+        throw new Error("No available id !")
+      }
+
+      let query = `
+        DELETE FROM   cpvExclusion 
+      `
+      let where = ``
+      if (cpvExclusionId && cpvExclusionId !== '' && cpvExclusionId > 0) {
+        if (where !== '') {
+          where += 'AND '
+        }
+        where += `cpvExclusionId = ${BddTool.NumericFormater(cpvExclusionId, BddEnvironnement, BddId)} \n`
+      }
+      if (where !== '') { query += '  WHERE ' + where }
+      else {
+        throw new Error("No available filter !")
+      }
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.downloadCsv = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const moment = require('moment')
+      const cpvs = await this.CpvList()
+
+      let cpvText = `cpvId;category;code;label;logo;picture;word\n`
+      if (cpvs) {
+        for (const cpv of cpvs) {
+          const words = cpv.cpvWords.map(a => a.word).join(';')
+          cpvText += `${cpv.cpvId};${cpv.category || ''};${cpv.code || ''};${cpv.label || ''};${cpv.logo || ''};${cpv.picture || ''};${words}\n`
+        }
+      }
+      const fileName = `cpvs_${moment().format("YYYYMMDD_HHmmss")}.csv`
+      const downloadPath = path.join(config.WorkSpaceFolder, 'Download/')
+      if (!fs.existsSync(downloadPath)) {
+        fs.mkdirSync(downloadPath)
+      }
+      const cpvListLocation = path.join(downloadPath, fileName)
+      fs.writeFileSync(cpvListLocation, cpvText)
+
+      resolve({
+        fileName: fileName, 
+        url: `download/${fileName}`,
+      });
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.cpvCategories = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      // Get cpv list
+      var categories = []
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT    cpv.category AS "category" 
+        FROM      cpv 
+        GROUP BY  cpv.category 
+      `
+      if (filter) {
+        let where = ``
+        if (filter.cpvId) {
+          if (where !== '') { where += 'AND ' }
+          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId, BddEnvironnement, BddId)} \n`
+        }
+        if (where !== '') { query += 'WHERE ' + where }
+      }
+      query += '  ORDER BY cpv.category '
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (var record of recordset) {
+        categories.push(record.category)
+      }
+      resolve(categories)
     } catch (err) {
       reject(err)
     }

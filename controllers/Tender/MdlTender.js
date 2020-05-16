@@ -62,6 +62,19 @@ exports.TenderAdd = (tender) => {
   })
 }
 
+exports.tenderAddUpdate = (tender) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
+      resolve(tenderNew)
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.TenderGet = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -103,6 +116,8 @@ exports.TenderGet = (id, algoliaId) => {
                     fileSource AS "fileSource",
                     userId AS "userId",
                     algoliaId AS "algoliaId",
+                    contractType1 AS "contractType1",
+                    brand AS "brand",
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
@@ -157,6 +172,8 @@ exports.TenderGet = (id, algoliaId) => {
           fileSource: record.fileSource,
           userId: record.userId,
           algoliaId: record.algoliaId,
+          contractType1: record.contractType1,
+          brand: record.brand,
           status: record.status,
           creationDate: record.creationDate,
           updateDate: record.updateDate
@@ -231,6 +248,8 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
                     dgmarket.fileSource AS "fileSource",
                     dgmarket.userId AS "userId",
                     dgmarket.algoliaId AS "algoliaId",
+                    dgmarket.brand AS "brand",
+                    dgmarket.contractType1 AS "contractType1",
                     dgmarket.status AS "status",
                     dgmarket.creationDate AS "creationDate",
                     dgmarket.updateDate AS "updateDate" `
@@ -294,6 +313,18 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           if (langItems && langItems.length) {
             if (where !== '') { where += 'AND ' }
             where += `dgmarket.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+          }
+
+          const brandItems = filter.items.filter(a => a.other === 'brand')
+          if (brandItems && brandItems.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+          }
+
+          const contractType1Items = filter.items.filter(a => a.other === 'contractType1')
+          if (contractType1Items && contractType1Items.length) {
+            if (where !== '') { where += 'AND ' }
+            where += `dgmarket.contractType1 = 1 \n`
           }
         }
 
@@ -444,6 +475,8 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
             fileSource: record.fileSource,
             userId: record.userId,
             algoliaId: record.algoliaId,
+            brand: record.brand,
+            contractType1: record.contractType1,
             status: record.status,
             creationDate: record.creationDate,
             updateDate: record.updateDate,
@@ -719,7 +752,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
   })
 }
 
-exports.TenderRemove = (id, algoliaId) => {
+exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -752,6 +785,11 @@ exports.TenderRemove = (id, algoliaId) => {
         query += '  WHERE ' + where
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
+      }
+
+      if (permanentlyDelete && where && where.trim() !== '') {
+        query = `DELETE FROM dgmarket WHERE ${where} AND status = -2 `
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       }
 
       resolve()

@@ -394,9 +394,10 @@ exports.Test5 = () => {
   return new Promise(async (resolve, reject) => {
     try {
       let creationDateMin = new Date()
-      creationDateMin.setDate(creationDateMin.getDate()-12);
+      creationDateMin.setDate(creationDateMin.getDate() - 12);
       const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, creationDateMin)
       const tendersToDelete = []
+      const tendersToUpdate = []
       for (const tender of tenders) {
         let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(tender.title, 'TITLE')
         if (!isOk) {
@@ -407,18 +408,47 @@ exports.Test5 = () => {
         if (!isOk) {
           tendersToDelete.push(tender)
           continue
+        } else {
+          const textParseResult = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseSearch(tender.title, 'TITLE')
+          let isUpdate = false
+          if (
+            textParseResult.isLongTermFrameAgreement &&
+            !tender.contractType1
+          ) {
+            tender.contractType1 = true
+            isUpdate = true
+          }
+          if (
+            textParseResult.brand
+            && textParseResult.brand.trim() !== ''
+            && tender.brand !== textParseResult.brand
+          ) {
+            tender.brand = textParseResult.brand
+            isUpdate = true
+          }
+          if (isUpdate) {
+            tendersToUpdate.push(tender)
+          }
         }
       }
 
+      /*
       for (const tender of tendersToDelete) {
         if (!tender.id || !tender.algoliaId) {
           continue
         }
-        // console.log(`http://deepbloo.arread.fr/#/tenders?tenderId=${tender.id}`)
-        await require(process.cwd() + '/controllers/Tender/MdlTender').TenderRemove(tender.id, tender.algoliaId)
+        // await require(process.cwd() + '/controllers/Tender/MdlTender').TenderRemove(tender.id, tender.algoliaId, true)
+      }
+      */
+
+      for (const tender of tendersToUpdate) {
+        if (!tender.id || !tender.algoliaId) {
+          continue
+        }
+        await require(process.cwd() + '/controllers/Tender/MdlTender').tenderAddUpdate(tender)
       }
 
-      resolve({ tenderIds })
+      resolve()
     } catch (err) { reject(err) }
   })
 }

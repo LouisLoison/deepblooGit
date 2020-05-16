@@ -83,6 +83,7 @@ exports.documentList = (filter) => {
                   document.cpvs AS "cpvs", 
                   document.filename AS "filename", 
                   document.size AS "size", 
+                  document.pageCount AS "pageCount", 
                   document.sourceUrl AS "sourceUrl", 
                   document.s3Url AS "s3Url", 
                   document.boxFolderId AS "boxFolderId", 
@@ -114,6 +115,7 @@ exports.documentList = (filter) => {
           cpvs: record.cpvs,
           filename: record.filename,
           size: record.size,
+          pageCount: record.pageCount,
           sourceUrl: record.sourceUrl,
           s3Url: record.s3Url,
           boxFolderId: record.boxFolderId,
@@ -280,17 +282,18 @@ exports.tenderFileImport = (tenderId) => {
           const fileInfo = await this.fileDownload(sourceUrl)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
           const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId)
-          const exportBox = await this.fileExportBox(tenderId, fileInfo.fileLocation, fileInfo.filename)
+          // const exportBox = await this.fileExportBox(tenderId, fileInfo.fileLocation, fileInfo.filename)
           let documentNew = await this.documentAddUpdate({
             documentId: document ? document.documentId : undefined,
             tenderId,
-            cpvs: textParseResults.cpvs.cpvsText,
+            cpvs: textParseResults.cpvs ? textParseResults.cpvs.cpvsText : null,
             filename: fileInfo.filename,
             size: fileInfo.size,
+            pageCount: textParseResults.pageCount,
             sourceUrl,
             s3Url: exportAws.location,
-            boxFolderId: exportBox.folderId,
-            boxFileId: exportBox.fileId,
+            boxFolderId: null, // exportBox.folderId,
+            boxFileId: null, // exportBox.fileId,
             parseResult: JSON.stringify(textParseResults.tenderCriterions),
             status: 1,
             creationDate: new Date(),
@@ -423,34 +426,63 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
       let text = null
       let textData = null
       if (filename.toLowerCase().endsWith('.pdf')) {
-        text = await this.fileParsePdf(fileLocation)
+        text = await this.fileParsePdf(fileLocation, tenderId)
       } else if (filename.toLowerCase().endsWith('.doc')) {
         text = await this.fileParseDoc(fileLocation)
       } else if (filename.toLowerCase().endsWith('.docx')) {
         text = await this.fileParseDocx(fileLocation)
       } else if (filename.toLowerCase().endsWith('.htm') || filename.toLowerCase().endsWith('.html') || filename.toLowerCase().endsWith('.php')) {
-        text = await this.fileParseHtml(fileLocation)
+        textData = await this.fileParseHtml(fileLocation, tenderId)
       } else if (filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png')) {
         textData = await this.fileParseImage(fileLocation, tenderId)
       }
       let cpvs = null
       let tenderCriterions = []
+      const pages = []
       if (text) {
+        const page ={
+          location: null,
+          tenderCriterions: []
+        }
         cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(text, '', '', null, CpvList)
-        tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
-      } else if (textData && textData.Blocks) {
-        const lines = textData.Blocks.filter(a => a.BlockType === 'LINE')
-        for (const line of lines) {
-          cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(line.Text, '', '', null, CpvList)
-          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses)
-          if (tenderCriterionNews) {
-            for (const tenderCriterionNew of tenderCriterionNews) {
-              tenderCriterionNew.boundingBox = {
-                left: line.Geometry.BoundingBox.Left,
-                top: line.Geometry.BoundingBox.Top,
-                width: line.Geometry.BoundingBox.Width,
-                height: line.Geometry.BoundingBox.Height,
+        page.tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
+        pages.push(page)
+        tenderCriterions = page.tenderCriterions
+      } else if (textData) {
+        if (textData.pages) {
+          for (const pageData of textData.pages) {
+            const page ={
+              location: pageData.location,
+              tenderCriterions: []
+            }
+            if (pageData.textData && pageData.textData.Blocks) {
+              const lines = pageData.textData.Blocks.filter(a => a.BlockType === 'LINE')
+              for (const line of lines) {
+                cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(line.Text, '', '', null, CpvList)
+                const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses)
+                if (tenderCriterionNews) {
+                  for (const tenderCriterionNew of tenderCriterionNews) {
+                    tenderCriterionNew.boundingBox = {
+                      left: line.Geometry.BoundingBox.Left,
+                      top: line.Geometry.BoundingBox.Top,
+                      width: line.Geometry.BoundingBox.Width,
+                      height: line.Geometry.BoundingBox.Height,
+                    }
+                    page.tenderCriterions.push(tenderCriterionNew)
+                    tenderCriterions.push(tenderCriterionNew)
+                  }
+                }
               }
+            }
+            pages.push(page)
+          }
+        }
+        if (textData.text) {
+          cpvs = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(textData.text, '', '', null, CpvList)
+          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(textData.text, textParses)
+          for (const tenderCriterionNew of tenderCriterionNews) {
+            const tenderCriterionFind = tenderCriterions.find(a => a.textParseId === tenderCriterionNew.textParseId)
+            if (!tenderCriterionFind) {
               tenderCriterions.push(tenderCriterionNew)
             }
           }
@@ -460,6 +492,8 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
       resolve({
         cpvs,
         tenderCriterions,
+        pages,
+        pageCount: pages.length,
       })
     } catch (err) { reject(err) }
   })
@@ -469,6 +503,9 @@ exports.fileParsePdf = (fileLocation) => {
   return new Promise(async (resolve, reject) => {
     try {
       const PdfReader = require("pdfreader").PdfReader
+
+      // Convert PDF to image
+      // Put image on S3
 
       let text = ''
       new PdfReader().parseFileItems(fileLocation, (err, item) => {
@@ -506,17 +543,79 @@ exports.fileParseDocx = (fileLocation) => {
   })
 }
 
-exports.fileParseHtml = (fileLocation) => {
+exports.fileParseHtml = (fileLocation, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const htmlToText = require('html-to-text')
-
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const nodeHtmlToImage = require('node-html-to-image')
       const htmlText = require(process.cwd() + '/controllers/CtrlTool').readFileSync(fileLocation)
+
+      const htmlToText = require('html-to-text')
       const text = htmlToText.fromString(htmlText, {
         wordwrap: 130
       })
 
-      resolve(text)
+      const folderTemp = path.join(config.WorkSpaceFolder, '/Temp/')
+      let filename = path.basename(fileLocation)
+      filename = `${filename.split('.')[0]}.png`
+      const imageLocation = path.join(folderTemp, filename)
+      if (fs.existsSync(imageLocation)) {
+        fs.unlinkSync(imageLocation)
+      }
+
+      // Convert HTML to image
+      await nodeHtmlToImage({
+        output: imageLocation,
+        puppeteerArgs: { defaultViewport: { width: 2000, height: 2000 } },
+        html: htmlText,
+      })
+
+      // Put image on S3
+      const fileDestination = `tenders/tender#${tenderId}/textParse/${filename}`
+      const location = await this.awsFileAdd(imageLocation, fileDestination)
+      const textData = await this.textractAnalyzeDocument(fileDestination)
+      resolve({
+        text,
+        pages: [{
+          location,
+          textData,
+        }]
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.textractAnalyzeDocument = (awsLocation) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const AWS = require('aws-sdk')
+
+      AWS.config.update({
+        accessKeyId: config.awsAccessKeyId,
+        secretAccessKey: config.awsSecretAccessKey
+      });
+      AWS.config.region = "eu-west-1";
+      const textract = new AWS.Textract();
+
+      var params = {
+        Document: {
+          S3Object: {
+            Bucket: config.awsBucket,
+            Name: awsLocation
+          }
+        },
+        FeatureTypes: ['FORMS']
+      }
+      textract.analyzeDocument(params, (err, data) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(data)
+      })
     } catch (err) { reject(err) }
   })
 }
@@ -556,14 +655,13 @@ exports.fileParseImage = (fileLocation, tenderId) => {
   })
 }
 
-exports.fileExportAws = (tenderId, fileLocation) => {
+exports.awsFileAdd = (fileLocation, fileDestination) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
       const AWS = require('aws-sdk')
       const fs = require('fs')
-      const path = require('path')
-    
+      
       AWS.config.update({
         accessKeyId: config.awsAccessKeyId,
         secretAccessKey: config.awsSecretAccessKey
@@ -573,7 +671,7 @@ exports.fileExportAws = (tenderId, fileLocation) => {
       const params = {
         Bucket: config.awsBucket,
         Body : fs.createReadStream(fileLocation),
-        Key : `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+        Key : fileDestination
       }
 
       if (
@@ -584,9 +682,7 @@ exports.fileExportAws = (tenderId, fileLocation) => {
       } else if (fileLocation.toLowerCase().endsWith('.png')) {
         params.ContentType = "image/png"
       } else if (fileLocation.toLowerCase().endsWith('.jpg')) {
-        params.ContentType = "image/jpg"
-      } else if (fileLocation.toLowerCase().endsWith('.png')) {
-          params.ContentType = "image/png"
+        params.ContentType = "image/jpeg"
       } else if (fileLocation.toLowerCase().endsWith('.pdf')) {
         params.ContentType = "application/pdf"
       }
@@ -594,16 +690,25 @@ exports.fileExportAws = (tenderId, fileLocation) => {
       s3.upload(params, (err, data) => {
         if (err) {
           reject(err)
-        }
-    
-        //success
-        if (data) {
+        } else if (data) {
           resolve({
             location: data.Location
           })
         }
       })
     
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.fileExportAws = (tenderId, fileLocation) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const path = require('path')
+      
+      const fileDestination = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+      const location = await this.awsFileAdd(fileLocation, fileDestination)
+      resolve(location)
     } catch (err) { reject(err) }
   })
 }

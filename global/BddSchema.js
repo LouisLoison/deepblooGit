@@ -36,6 +36,14 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    cpvExclusion: {
+      cpvExclusionId: { type: "Int", key: true },
+      cpvId: { type: "Int" },
+      word: { type: "String" },
+      status: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     cpvWord: {
       cpvWordId: { type: "Int", key: true },
       cpvId: { type: "Int" },
@@ -50,6 +58,7 @@ var Schema = {
       cpvs: { type: "String" },
       filename: { type: "String" },
       size: { type: "Int" },
+      pageCount: { type: "Int" },
       sourceUrl: { type: "String" },
       s3Url: { type: "String" },
       boxFolderId: { type: "String" },
@@ -102,6 +111,8 @@ var Schema = {
       fileSource: { type: "String" },
       userId: { type: "Int" },
       algoliaId: { type: "Int" },
+      brand: { type: "String" },
+      contractType1: { type: "Int" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
@@ -114,6 +125,7 @@ var Schema = {
       value: { type: "String" },
       word: { type: "String" },
       findCount: { type: "Int" },
+      scope: { type: "String", description: 'TITLE | DESCRIPTION | DOCUMENT' },
       status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }

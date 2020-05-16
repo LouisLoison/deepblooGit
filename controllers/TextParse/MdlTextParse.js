@@ -97,6 +97,97 @@ exports.textExclusion = (text, scope) => {
   })
 }
 
+exports.textParseSearch = (text, scope) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!text) {
+        resolve()
+        return true
+      }
+
+      let isLongTermFrameAgreement = false
+      let brand = null
+      if (scope === 'TITLE') {
+        const wordCouples = [
+          {
+            word1: 'service',
+            word2: 'contract',
+          },
+          {
+            word1: 'biennal',
+            word2: 'contract',
+          },
+          {
+            word1: 'rate',
+            word2: 'contract',
+          },
+          {
+            word1: 'annual',
+            word2: 'contract',
+          },
+          {
+            word1: 'bi-annual',
+            word2: 'contract',
+          },
+          {
+            word1: 'year',
+            word2: 'contract',
+          },
+          {
+            word1: 'yearly',
+            word2: 'contract',
+          },
+          {
+            word1: 'umbrella',
+            word2: 'contract',
+          },
+          {
+            word1: 'umbrella',
+            word2: 'agreement',
+          },
+        ]
+
+        // Protection exception
+        for (const wordCouple of wordCouples) {
+          const regExWordCouple = new RegExp(`\\b${wordCouple.word1}\\b(.)\\b${wordCouple.word2}\\b`, 'gi')
+          if (text.match(regExWordCouple)) {
+            isLongTermFrameAgreement = true
+            break
+          }
+        }
+
+        const brands = [
+          'GE',
+          'Siemens',
+          'weidmuller',
+          'elgi',
+          'abb',
+          'phoenix',
+          'schneider electric',
+          'rittal',
+          'rexroth',
+          'bhel',
+          'emco',
+          'alstom',
+          'alsthom',
+        ]
+        for (const brandSearchs of brands) {
+          const regExWordCouple = new RegExp(`\\b${brandSearchs}\\b(.)\\bmake\\b`, 'gi')
+          if (text.match(regExWordCouple)) {
+            brand = brandSearchs
+            break
+          }
+        }
+      }
+
+      resolve({
+        isLongTermFrameAgreement,
+        brand,
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.textParseList = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -262,6 +353,7 @@ exports.textParseList = (filter) => {
           words: "aerial line, aerial lines, distribution line, distribution lines, high voltage line, high voltage lines, hv line, hv lines, ligne de distribution, ligne de transmission, ligne haute tension, ligne ht, lignes de distribution, lignes de transmission, lignes haute tension, lignes ht, overhead lines, overheadline, power line, powerline, transmission line",
           type: "KEYWORD",
         },
+        /*
         {
           textParseId: 24,
           theme: "Financing",
@@ -269,6 +361,7 @@ exports.textParseList = (filter) => {
           words: "African Development Bank, AfDB, Development Bank, Fund, grant, financing, financed, investor",
           type: "KEYWORD",
         },
+        */
         {
           textParseId: 25,
           theme: "Métriques",
@@ -290,6 +383,7 @@ exports.textParseList = (filter) => {
           words: "KV, volt",
           type: "METRIC",
         },
+        /*
         {
           textParseId: 28,
           theme: "Requested Experience",
@@ -297,6 +391,7 @@ exports.textParseList = (filter) => {
           words: "Have completed, has completed, following, experience, years, eligibility",
           type: "KEYWORD",
         },
+        */
         {
           textParseId: 29,
           theme: "Design",
