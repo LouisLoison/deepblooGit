@@ -414,30 +414,30 @@ exports.textParseList = (filter) => {
   })
 }
 
+exports.matching_positions = (_text, _word, _case_sensitive, _whole_words, _multiline) => {
+  var _match_pattern = "g" + (_case_sensitive ? "i" : "") + (_multiline ? "m" : "")
+  var _bound = _whole_words ? "\\b" : ""
+  var _re = new RegExp(_bound + _word + "(s|x|)" + _bound, _match_pattern)
+  var _pos = [], _chunk, _index = 0
+
+  while(true) {
+    _chunk = _re.exec(_text)
+    if (_chunk == null) {
+      break
+    }
+    _pos.push({
+      word: _chunk[0],
+      index: _chunk['index'],
+    })
+    _re.lastIndex = _chunk['index'] + 1
+  }
+
+  return _pos
+}
+
 exports.textParseTreat = (text, textParses) => {
   if (!textParses) {
     return null
-  }
-
-  matching_positions = (_text, _word, _case_sensitive, _whole_words, _multiline) => {
-    var _match_pattern = "g" + (_case_sensitive ? "i" : "") + (_multiline ? "m" : "")
-    var _bound = _whole_words ? "\\b" : ""
-    var _re = new RegExp(_bound + _word + "(s|x|)" + _bound, _match_pattern)
-    var _pos = [], _chunk, _index = 0
-
-    while(true) {
-      _chunk = _re.exec(_text)
-      if (_chunk == null) {
-        break
-      }
-      _pos.push({
-        word: _chunk[0],
-        index: _chunk['index'],
-      })
-      _re.lastIndex = _chunk['index'] + 1
-    }
-
-    return _pos
   }
 
   const contextLength = 40
@@ -452,7 +452,7 @@ exports.textParseTreat = (text, textParses) => {
     for (const word of words) {
       const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
 
-      let positions = matching_positions(textNew, wordTemp, true, true, true)
+      let positions = this.matching_positions(textNew, wordTemp, true, true, true)
       for (const position of positions) {
         let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
         let value = ''
@@ -485,4 +485,213 @@ exports.textParseTreat = (text, textParses) => {
   }
 
   return tenderCriterions
+}
+
+exports.cpvParseTreat = (text, CpvList) => {
+  if (!CpvList) {
+    return null
+  }
+
+  const contextLength = 40
+  const textNew = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(text).toUpperCase()
+
+  const tenderCriterions = []
+  for (let cpv of CpvList) {
+    if (!cpv.cpvWords || !cpv.cpvWords.length) {
+      continue
+    }
+    for (const cpvWord of cpv.cpvWords) {
+      const word = cpvWord.word.trim()
+      const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
+
+      let positions = this.matching_positions(textNew, wordTemp, true, true, true)
+      for (const position of positions) {
+        let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
+        let value = ''
+
+        tenderCriterions.push({
+          cpvId: cpvWord.cpvId,
+          cpvWordId: cpvWord.cpvWordId,
+          word: word,
+          wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
+          startIndex: position.index,
+          value,
+          context,
+        })
+      }
+    }
+  }
+
+  return tenderCriterions
+}
+
+exports.tenderCriterionAddUpdate = (tenderCriterion) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let tenderCriterionNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      resolve(tenderCriterionNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.tenderCriterionDelete = (tenderCriterionId, documentId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      // Remove document from Deepbloo BDD
+      let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId, BddEnvironnement, BddId)}`
+      if (documentId) {
+        query = `DELETE FROM tenderCriterion WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
+      }
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.tenderCriterionCpvAddUpdate = (tenderCriterionCpv) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let tenderCriterionCpvNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterionCpv', tenderCriterionCpv)
+      resolve(tenderCriterionCpvNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.tenderParse = (tender, CpvList, textParses) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      // Remove tenderCriterion of this tender
+      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const tenderCriterionCpvs = []
+      const tenderCriterions = []
+
+      // Check CPV on tender title
+      const tenderCriterionCpvTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.title, CpvList)
+      if (tenderCriterionCpvTitles) {
+        for (const tenderCriterionCpv of tenderCriterionCpvTitles) {
+          let tenderCriterionCpvFind = tenderCriterionCpvs.find(a => 
+            a.cpvId === tenderCriterionCpv.cpvId
+            && a.scope === 'TITLE'
+          )
+          if (!tenderCriterionCpvFind) {
+            tenderCriterionCpvFind = {
+              tenderId: tender.id,
+              cpvId: tenderCriterionCpv.cpvId,
+              value: tenderCriterionCpv.value,
+              word: tenderCriterionCpv.word,
+              findCount: 0,
+              status: 1,
+              scope: 'TITLE',
+            }
+            tenderCriterionCpvs.push(tenderCriterionCpvFind)
+          }
+          tenderCriterionCpvFind.findCount = tenderCriterionCpvFind.findCount + 1
+        }
+      }
+
+      // Check CPV on tender description
+      const tenderCriterionCpvDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.description, CpvList)
+      if (tenderCriterionCpvDescriptions) {
+        for (const tenderCriterionCpv of tenderCriterionCpvDescriptions) {
+          let tenderCriterionCpvFind = tenderCriterionCpvs.find(a => 
+            a.cpvId === tenderCriterionCpv.cpvId
+            && a.scope === 'DESCRIPTION'
+          )
+          if (!tenderCriterionCpvFind) {
+            tenderCriterionCpvFind = {
+              tenderId: tender.id,
+              cpvId: tenderCriterionCpv.cpvId,
+              value: tenderCriterionCpv.value,
+              word: tenderCriterionCpv.word,
+              findCount: 0,
+              status: 1,
+              scope: 'DESCRIPTION',
+            }
+            tenderCriterionCpvs.push(tenderCriterionCpvFind)
+          }
+          tenderCriterionCpvFind.findCount = tenderCriterionCpvFind.findCount + 1
+        }
+      }
+
+      for (const tenderCriterionCpv of tenderCriterionCpvs) {
+        await this.tenderCriterionCpvAddUpdate(tenderCriterionCpv)
+      }
+
+      // Parse tender title
+      const tenderCriterionTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.title, textParses)
+      for (const tenderCriterion of tenderCriterionTitles) {
+        let tenderCriterionFind = tenderCriterions.find(a => 
+          a.textParseId === tenderCriterion.textParseId
+          && a.scope === 'TITLE'
+        )
+        if (!tenderCriterionFind) {
+          tenderCriterionFind = {
+            tenderId: tender.id,
+            textParseId: tenderCriterion.textParseId,
+            value: tenderCriterion.value,
+            word: tenderCriterion.word,
+            findCount: 0,
+            status: 1,
+            scope: 'TITLE',
+          }
+          tenderCriterions.push(tenderCriterionFind)
+        }
+        tenderCriterionFind.findCount = tenderCriterionFind.findCount + 1
+      }
+
+      // Parse tender description
+      const tenderCriterionDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.description, textParses)
+      for (const tenderCriterion of tenderCriterionDescriptions) {
+        let tenderCriterionFind = tenderCriterions.find(a => 
+          a.textParseId === tenderCriterion.textParseId
+          && a.scope === 'DESCRIPTION'
+        )
+        if (!tenderCriterionFind) {
+          tenderCriterionFind = {
+            tenderId: tender.id,
+            textParseId: tenderCriterion.textParseId,
+            value: tenderCriterion.value,
+            word: tenderCriterion.word,
+            findCount: 0,
+            status: 1,
+            scope: 'DESCRIPTION',
+          }
+          tenderCriterions.push(tenderCriterionFind)
+        }
+        tenderCriterionFind.findCount = tenderCriterionFind.findCount + 1
+      }
+      const tenderCriterionNews = []
+      for (const tenderCriterion of tenderCriterions) {
+        const tenderCriterionNew = await this.tenderCriterionAddUpdate(tenderCriterion)
+        tenderCriterionNews.push(tenderCriterionNew)
+      }
+
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
 }

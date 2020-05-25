@@ -180,6 +180,9 @@ exports.FileParse = (fileLocation) => {
         }
         */
 
+        // Test exclusion
+        // TODO
+
         // check biddeadline
         let termDate = null
         let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)

@@ -100,6 +100,9 @@ exports.List = (filter) => {
                   regions AS "regions", 
                   photo AS "photo", 
                   doNotContact AS "doNotContact",
+                  notifSend AS "notifSend",
+                  notifCpvs AS "notifCpvs",
+                  notifRegions AS "notifRegions",
                   notifPostEmail AS "notifPostEmail",
                   notifTripEmail AS "notifTripEmail",
                   notifEventEmail AS "notifEventEmail",
@@ -155,6 +158,10 @@ exports.List = (filter) => {
           if (where !== '') { where += 'AND ' }
           where += `connexionBusiness IS NOT NULL \n`
         }
+        if (filter.notifSend) {
+          if (where !== '') { where += 'AND ' }
+          where += `notifSend = ${BddTool.NumericFormater(filter.notifSend, BddEnvironnement, BddId)} \n`
+        }
         if (filter.status) {
           if (where !== '') { where += 'AND ' }
           where += `status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
@@ -177,6 +184,9 @@ exports.List = (filter) => {
           regions: record.regions,
           photo: record.photo,
           doNotContact: record.doNotContact,
+          notifSend: record.notifSend,
+          notifCpvs: record.notifCpvs,
+          notifRegions: record.notifRegions,
           notifPostEmail: record.notifPostEmail,
           notifTripEmail: record.notifTripEmail,
           notifEventEmail: record.notifEventEmail,
@@ -1041,9 +1051,10 @@ exports.SendPeriodicDashboard = () => {
     try {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       const types = [1, 2, 4, 5]
-      let users = await this.List({ types })
+      let users = await this.List({ types, notifSend: 1 })
 
       let emailSents = []
       for (const user of users) {
@@ -1067,15 +1078,25 @@ exports.SendPeriodicDashboard = () => {
           continue
         }
         */
+        /*
         if (dataSynchroFull.doNotContact === 1) {
           continue
         }
         if (dataSynchroFull.notifEmailingComEmail !== 1) {
           continue
         }
+        */
         let userCpvs = await this.UserCpvs(dataSynchroFull.userId)
         let cpvLabels = userCpvs.map(a => a.cpvName)
+        if (user.notifCpvs && user.notifCpvs.trim() !== '') {
+          const notifCpvs = user.notifCpvs.split(',')
+          const cpvs = CpvList.filter(a => notifCpvs.includes(a.code.toString()))
+          cpvLabels = cpvs.map(a => a.label)
+        }
         let regions = dataSynchroFull.regions.trim()
+        if (user.notifRegions && user.notifRegions.trim() !== '') {
+          regions = user.notifRegions
+        }
         let termDateMin = new Date()
         if (cpvLabels === '' || to === '') {
           continue

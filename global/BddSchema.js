@@ -117,6 +117,19 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    tenderCriterionCpv: {
+      tenderCriterionCpvId: { type: "Int", key: true },
+      tenderId: { type: "Int" },
+      documentId: { type: "Int" },
+      cpvId: { type: "Int" },
+      value: { type: "String" },
+      word: { type: "String" },
+      findCount: { type: "Int" },
+      scope: { type: "String", description: 'TITLE | DESCRIPTION | DOCUMENT' },
+      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     tenderCriterion: {
       tenderCriterionId: { type: "Int", key: true },
       tenderId: { type: "Int" },
@@ -221,6 +234,9 @@ var Schema = {
       regions: { type: "String" },
       photo: { type: "String" },
       doNotContact: { type: "Int" },
+      notifSend: { type: "Int" },
+      notifCpvs: { type: "String" },
+      notifRegions: { type: "String" },
       notifPostEmail: { type: "Int" },
       notifTripEmail: { type: "Int" },
       notifEventEmail: { type: "Int" },
