@@ -400,12 +400,12 @@ exports.Test5 = () => {
       const tendersToUpdate = []
       for (const tender of tenders) {
         let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(tender.title, 'TITLE')
-        if (!isOk) {
+        if (!isOk.status) {
           tendersToDelete.push(tender)
           continue
         }
         isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(tender.description, 'DESCRIPTION')
-        if (!isOk) {
+        if (!isOk.status) {
           tendersToDelete.push(tender)
           continue
         } else {
@@ -447,6 +447,42 @@ exports.Test5 = () => {
         }
         await require(process.cwd() + '/controllers/Tender/MdlTender').tenderAddUpdate(tender)
       }
+
+      resolve()
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.importDgmarket = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+
+      // Get file
+      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/treat/')
+      const files = fs.readdirSync(fileFolder)
+
+      files.sort()
+      if (!files || files.length === 0) {
+        resolve()
+        return
+      }
+      const fileLocation = path.join(fileFolder, files[0])
+
+      const fileParseData = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').FileParse(fileLocation)
+      const importDgmarkets = fileParseData.importDgmarkets
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')      
+      await BddTool.bulkInsert(
+        BddId,
+        BddEnvironnement,
+        'importDgmarket',
+        importDgmarkets
+      )
 
       resolve()
     } catch (err) { reject(err) }

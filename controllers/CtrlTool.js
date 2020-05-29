@@ -504,7 +504,7 @@ exports.pdfToImages = (fileLocation) => {
         })
       }
 
-      const images = require("images");
+      const images = require("images")
       const imageDatas = []
       for (let i = 1; i <= pdfDocument.numPages; i++) {
         const imageLocation = await pageToImg(i)

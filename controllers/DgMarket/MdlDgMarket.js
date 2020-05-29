@@ -19,12 +19,21 @@ exports.BddImport = () => {
 
       // Get tenders
       const fileParseData = await this.FileParse(fileLocation)
-      const tenders = fileParseData.tenders
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      const BddTool = require(process.cwd() + '/global/BddTool')
-      for (let tender of tenders) {
+      const BddTool = require(process.cwd() + '/global/BddTool')      
+
+      // Bulk insert into Dgmarket import table
+      await BddTool.bulkInsert(
+        BddId,
+        BddEnvironnement,
+        'importDgmarket',
+        fileParseData.importDgmarkets
+      )
+
+      // Insert/Update tenders that are ok
+      for (let tender of fileParseData.tenders) {
         tendersCurrent = tender
         let dgmarket = tender
         dgmarket.status = 0
@@ -151,6 +160,7 @@ exports.FtpList = () => {
 exports.FileParse = (fileLocation) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
       const fs = require('fs')
       const path = require('path')
       const util = require('util')
@@ -170,8 +180,9 @@ exports.FileParse = (fileLocation) => {
       let tenderCount = 0
       let tenderOkCount = 0
       let tenderFoundCount = 0
+      const importDgmarkets = []
       let tenders = []
-      parseData.notices.notice.forEach(async notice => {
+      for (const notice of parseData.notices.notice) {
         tenderCount++
 
         /*
@@ -180,35 +191,10 @@ exports.FileParse = (fileLocation) => {
         }
         */
 
-        // Test exclusion
-        // TODO
+        // Format title
+        let title = tool.getXmlJsonData(notice.noticeTitle)
 
-        // check biddeadline
-        let termDate = null
-        let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
-        if (dateText && dateText.trim() !== '') {
-          let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-          termDate = new Date(bidDeadlineDateText)
-        }
-        if (!termDate || isNaN(termDate)) {
-          dateText = tool.getXmlJsonData(notice.publicationDate)
-          if (dateText && dateText.trim() !== '') {
-            let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-            termDate = new Date(bidDeadlineDateText)
-          }
-        }
-        if (!termDate || isNaN(termDate)) {
-          termDate = new Date()
-        }
-
-        // check limit date
-        let dateLimit = new Date()
-        dateLimit.setDate(dateLimit.getDate() - 15)
-        if (termDate < dateLimit) {
-          return false
-        }
-
-        // description
+        // Format description
         let lang = ''
         let description = ''
         if (notice.noticeText) {
@@ -230,6 +216,82 @@ exports.FileParse = (fileLocation) => {
             description = descriptions[0].text
           }
         }
+        
+        // TODO : importDgmarket
+        const importDgmarket = {
+          dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+          procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
+          title: title.substring(0, 450),
+          lang: lang,
+          description: description.substring(0, 5000),
+          contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName).substring(0, 90),
+          contactLastName: tool.getXmlJsonData(notice.contactAddress[0].lastName).substring(0, 90),
+          contactAddress: tool.getXmlJsonData(notice.contactAddress[0].address).substring(0, 490),
+          contactCity: tool.getXmlJsonData(notice.contactAddress[0].city).substring(0, 90),
+          contactState: tool.getXmlJsonData(notice.contactAddress[0].state).substring(0, 90),
+          contactCountry: tool.getXmlJsonData(notice.contactAddress[0].country).substring(0, 90),
+          contactEmail: tool.getXmlJsonData(notice.contactAddress[0].email).substring(0, 190),
+          contactPhone: tool.getXmlJsonData(notice.contactAddress[0].phone).substring(0, 90),
+          buyerName: tool.getXmlJsonData(notice.buyerName),
+          buyerCountry: tool.getXmlJsonData(notice.buyerCountry),
+          procurementMethod: tool.getXmlJsonData(notice.procurementMethod),
+          noticeType: tool.getXmlJsonData(notice.noticeType),
+          country: tool.getXmlJsonData(notice.country),
+          estimatedCost: tool.getXmlJsonData(notice.estimatedCost),
+          currency: tool.getXmlJsonData(notice.currency),
+          publicationDate: tool.getXmlJsonData(notice.publicationDate),
+          cpvs: tool.getXmlJsonData(notice.cpvs),
+          bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
+          sourceUrl: tool.getXmlJsonData(notice.sourceUrl).substring(0, 1900),
+          fileSource: fileSource,
+          exclusion: '',
+          exclusionWord: '',
+          status: 1,
+          creationDate: new Date(),
+          updateDate: new Date()
+        }
+        importDgmarkets.push(importDgmarket)
+
+        // check biddeadline
+        let termDate = null
+        let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
+        if (dateText && dateText.trim() !== '') {
+          let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+          termDate = new Date(bidDeadlineDateText)
+        }
+        if (!termDate || isNaN(termDate)) {
+          dateText = tool.getXmlJsonData(notice.publicationDate)
+          if (dateText && dateText.trim() !== '') {
+            let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
+            termDate = new Date(bidDeadlineDateText)
+          }
+        }
+        if (!termDate || isNaN(termDate)) {
+          termDate = new Date()
+        }
+
+        // Check limit date
+        let dateLimit = new Date()
+        dateLimit.setDate(dateLimit.getDate() - 15)
+        if (termDate < dateLimit) {
+          importDgmarket.exclusion = 'LIMIT DATE'
+          continue
+        }
+
+        // Test exclusion
+        let textToParse = `${title} ${description}`
+        let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(title, 'TITLE')
+        if (!isOk.status) {
+          importDgmarket.exclusion = 'TITLE'
+          importDgmarket.exclusionWord = isOk.origine
+          continue
+        }
+        isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(description, 'DESCRIPTION')
+        if (!isOk.status) {
+          importDgmarket.exclusion = 'DESCRIPTION'
+          importDgmarket.exclusionWord = isOk.origine
+          continue
+        }
 
         // HTML format
         const descriptionLowerCase = description.toLowerCase()
@@ -238,7 +300,6 @@ exports.FileParse = (fileLocation) => {
         }
 
         // CPV list
-        let title = tool.getXmlJsonData(notice.noticeTitle)
         let cpvOkCount = 0
         let cpvsText = tool.getXmlJsonData(notice.cpvs)
         let cpvsOrigine = tool.getXmlJsonData(notice.cpvs)
@@ -256,16 +317,6 @@ exports.FileParse = (fileLocation) => {
           }
         }
 
-        let textToParse = `${title} ${description}`
-        let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(title, 'TITLE')
-        if (!isOk) {
-          return false
-        }
-        isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(description, 'DESCRIPTION')
-        if (!isOk) {
-          return false
-        }
-
         // Search by key words
         let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0], CpvList)
         let words = cpvFound.words
@@ -277,7 +328,7 @@ exports.FileParse = (fileLocation) => {
           tenderFoundCount++
         }
         if (cpvOkCount === 0 && cpvFound.cpvFoundCount === 0) {
-          return false
+          continue
         }
 
         tenders.push({
@@ -311,12 +362,13 @@ exports.FileParse = (fileLocation) => {
           termDate: termDate,
           fileSource: fileSource
         })
-      })
+      }
 
       resolve({
         tenderCount,
         tenderOkCount,
         tenderFoundCount,
+        importDgmarkets,
         tenders,
       })
     } catch (err) { reject(err) }

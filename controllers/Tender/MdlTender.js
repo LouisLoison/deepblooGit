@@ -268,6 +268,11 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
       }
       let where = ``
       if (filter) {
+        if (filter.search && filter.search.trim() !== '') {
+          if (where !== '') { where += 'AND ' }
+          let search = filter.search.replace(/ /g,"%")
+          where += `dgmarket.title LIKE '%${BddTool.ChaineFormater(search, BddEnvironnement, BddId)}%' \n`
+        }
         if (filter.items && filter.items.length) {
           const bidDeadLineItems = filter.items.filter(a => a.other === 'bidDeadLine')
           if (bidDeadLineItems && bidDeadLineItems.length) {

@@ -249,7 +249,7 @@ exports.tenderFileImport = (tenderId) => {
           }
           const fileInfo = await this.fileDownload(sourceUrl)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
-          const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId)
+          const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId, exportAws)
           let documentNew = await this.documentAddUpdate({
             documentId: document ? document.documentId : undefined,
             tenderId,
@@ -386,7 +386,7 @@ exports.fileDownload = (url) => {
   })
 }
 
-exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
+exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, exportAws) => {
   return new Promise(async (resolve, reject) => {
     try {
       let text = null
@@ -400,7 +400,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
       } else if (filename.toLowerCase().endsWith('.htm') || filename.toLowerCase().endsWith('.html') || filename.toLowerCase().endsWith('.php')) {
         textData = await this.fileParseHtml(fileLocation, tenderId)
       } else if (filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.png')) {
-        textData = await this.fileParseImage(fileLocation, tenderId)
+        textData = await this.fileParseImage(fileLocation, tenderId, exportAws)
       }
       let cpvs = []
       let tenderCriterions = []
@@ -420,7 +420,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
             }
           }
         }
-        page.tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses)
+        page.tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses, 'DOCUMENT')
         pages.push(page)
         tenderCriterions = page.tenderCriterions
       } else if (textData) {
@@ -456,7 +456,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
                     })
                   }
                 }
-                const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses)
+                const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses, 'DOCUMENT')
                 if (tenderCriterionNews) {
                   for (const tenderCriterionNew of tenderCriterionNews) {
                     tenderCriterionNew.boundingBox = {
@@ -484,7 +484,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId) => {
               }
             }
           }
-          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(textData.text, textParses)
+          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(textData.text, textParses, 'DOCUMENT')
           for (const tenderCriterionNew of tenderCriterionNews) {
             const tenderCriterionFind = tenderCriterions.find(a => a.textParseId === tenderCriterionNew.textParseId)
             if (!tenderCriterionFind) {
@@ -564,9 +564,10 @@ exports.fileParseHtml = (fileLocation, tenderId) => {
       const fs = require('fs')
       const path = require('path')
       const nodeHtmlToImage = require('node-html-to-image')
-      const htmlText = require(process.cwd() + '/controllers/CtrlTool').readFileSync(fileLocation)
-
+      const images = require('images')
       const htmlToText = require('html-to-text')
+
+      const htmlText = require(process.cwd() + '/controllers/CtrlTool').readFileSync(fileLocation)
       const text = htmlToText.fromString(htmlText, {
         wordwrap: 130
       })
@@ -587,13 +588,18 @@ exports.fileParseHtml = (fileLocation, tenderId) => {
       })
 
       // Put image on S3
-      const fileDestination = `tenders/tender#${tenderId}/textParse/${filename}`
-      const location = await this.awsFileAdd(imageLocation, fileDestination)
-      const textData = await this.textractAnalyzeDocument(fileDestination)
+      const s3Location = `tenders/tender#${tenderId}/textParse/${filename}`
+      const location = await this.awsFileAdd(imageLocation, s3Location)
+      const textData = await this.textractAnalyzeDocument(s3Location)
+      const imgSizeInfo = images(imageLocation).size()
+
       resolve({
         text,
         pages: [{
-          location,
+          s3Location,
+          location: location.location,
+          imgWidth: imgSizeInfo.width,
+          imgHeight: imgSizeInfo.height,
           textData,
         }]
       })
@@ -634,13 +640,26 @@ exports.textractAnalyzeDocument = (awsLocation) => {
   })
 }
 
-exports.fileParseImage = (fileLocation, tenderId) => {
+exports.fileParseImage = (fileLocation, tenderId, exportAws) => {
   return new Promise(async (resolve, reject) => {
     try {
       const path = require('path')
+      const images = require('images')
+
       const s3Location = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
       const textData = await this.textractAnalyzeDocument(s3Location)
-      resolve(textData)
+      const imgSizeInfo = images(fileLocation).size()
+
+      resolve({
+        text: '',
+        pages: [{
+          s3Location,
+          location: exportAws.location,
+          imgWidth: imgSizeInfo.width,
+          imgHeight: imgSizeInfo.height,
+          textData,
+        }]
+      })
     } catch (err) { reject(err) }
   })
 }

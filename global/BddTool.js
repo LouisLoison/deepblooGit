@@ -146,134 +146,175 @@ exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
 }
 
 exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
-    return new Promise((resolve, reject) => {
-      try
-      {
-        const BddSchema = require(process.cwd() + '/global/BddSchema')
+  return new Promise((resolve, reject) => {
+    try
+    {
+      const BddSchema = require(process.cwd() + '/global/BddSchema')
 
-        let ColumnKey = ''
-        let ColumnList = []
-        let Schema = BddSchema.getSchema()
-        let Table = Schema[BddId][TableName]
-        for(let ColumnName in Table) {
-          if (ColumnName === 'creationDate') { continue }
-          if (ColumnName === 'updateDate') { continue }
-          if (ColumnName === 'owner') { continue }
-          let Column = Table[ColumnName]
-          if (Column.key) {
-            ColumnKey = ColumnName
-          } else {
-            if (Record[ColumnName] !== undefined && Record[ColumnName] !== null) {
-              ColumnList.push(ColumnName)
-            }
-          }
-        }
-
-        let Query = ''
-        if (Record[ColumnKey] && Record[ColumnKey] !== 0 && Record[ColumnKey] !== '') {
-          let UpdateListText = ''
-          for(let ColumnName of ColumnList) {
-            if (UpdateListText !== '') { UpdateListText += `, ` }
-            UpdateListText += `${ColumnName} = `
-            if (Table[ColumnName].type === 'String') {
-              UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Text') {
-              UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Time') {
-              UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Int') {
-              UpdateListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
-            } else if (Table[ColumnName].type === 'DateTime') {
-              UpdateListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
-            } else {
-              UpdateListText += `${Record[ColumnName]} `
-            }
-          }
-          if (Table['updateDate'] !== undefined) { UpdateListText += `, updateDate = ${DateNow(Environnement, BddId)}` }
-          if (Table['owner'] !== undefined && Config.user.Identifiant) { UpdateListText += `, owner = '${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}'` }
-          
-          Query = `
-            UPDATE ${TableName} 
-            SET ${UpdateListText} 
-            WHERE ${ColumnKey} = ${Record[ColumnKey]} 
-          `
-          QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => { 
-            resolve(Record)
-          })
+      let ColumnKey = ''
+      let ColumnList = []
+      let Schema = BddSchema.getSchema()
+      let Table = Schema[BddId][TableName]
+      for(let ColumnName in Table) {
+        if (ColumnName === 'creationDate') { continue }
+        if (ColumnName === 'updateDate') { continue }
+        if (ColumnName === 'owner') { continue }
+        let Column = Table[ColumnName]
+        if (Column.key) {
+          ColumnKey = ColumnName
         } else {
-          let ColumnListText = ''
-          let ValueListText = ''
-          for(let ColumnName of ColumnList) {
-            if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"${ColumnName}"`
-            if (ValueListText !== '') { ValueListText += `, ` }
-            if (Table[ColumnName].type === 'String') {
-                ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Text') {
-                ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Time') {
-                ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
-            } else if (Table[ColumnName].type === 'Int') {
-                ValueListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
-            } else if (Table[ColumnName].type === 'DateTime') {
-                ValueListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
-            } else {
-                ValueListText += `'${Record[ColumnName]}'`
-            }
+          if (Record[ColumnName] !== undefined && Record[ColumnName] !== null) {
+            ColumnList.push(ColumnName)
           }
-          if (Table['updateDate'] !== undefined) {
-            if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"updateDate"`
-            if (ValueListText !== '') { ValueListText += `, ` }
-            ValueListText += `${DateNow(Environnement, BddId)} `
-          }
-          if (Table['creationDate'] !== undefined) {
-            if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"creationDate"`
-            if (ValueListText !== '') { ValueListText += `, ` }
-            ValueListText += `${DateNow(Environnement, BddId)} `
-          }
-          if (Table['owner'] !== undefined && Config.user.Identifiant) {
-            if (ColumnListText !== '') { ColumnListText += `, ` }
-            ColumnListText += `"owner"`
-            if (ValueListText !== '') { ValueListText += `, ` }
-            ValueListText += `'${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}' `
-          }
-
-          if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
-            ColumnListText = ColumnListText.replace(/"/g, '')
-          }
-          Query = `
-            INSERT INTO ${TableName} (${ColumnListText}) 
-            VALUES (${ValueListText}) `
-          if (ColumnKey != '') {
-            if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
-              Query += `; 
-                SELECT @@IDENTITY AS \'identity\';`
-            } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
-              Query += ``
-            } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
-              Query += ''
-            }
-          }
-          QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
-            if (ColumnKey != '' && recordset) {
-              if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
-                if (recordset.length > 0) {
-                  Record[ColumnKey] = recordset[0].identity
-                }
-              } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
-                Record[ColumnKey] = recordset.insertId
-              } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
-              }
-            }
-            resolve(Record)
-          })
         }
-      } catch (err) {
-        reject(err)
       }
-    })
+
+      let Query = ''
+      if (Record[ColumnKey] && Record[ColumnKey] !== 0 && Record[ColumnKey] !== '') {
+        let UpdateListText = ''
+        for(let ColumnName of ColumnList) {
+          if (UpdateListText !== '') { UpdateListText += `, ` }
+          UpdateListText += `${ColumnName} = `
+          if (Table[ColumnName].type === 'String') {
+            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Text') {
+            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Time') {
+            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Int') {
+            UpdateListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
+          } else if (Table[ColumnName].type === 'DateTime') {
+            UpdateListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
+          } else {
+            UpdateListText += `${Record[ColumnName]} `
+          }
+        }
+        if (Table['updateDate'] !== undefined) { UpdateListText += `, updateDate = ${DateNow(Environnement, BddId)}` }
+        if (Table['owner'] !== undefined && Config.user.Identifiant) { UpdateListText += `, owner = '${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}'` }
+        
+        Query = `
+          UPDATE ${TableName} 
+          SET ${UpdateListText} 
+          WHERE ${ColumnKey} = ${Record[ColumnKey]} 
+        `
+        QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => { 
+          resolve(Record)
+        })
+      } else {
+        let ColumnListText = ''
+        let ValueListText = ''
+        for(let ColumnName of ColumnList) {
+          if (ColumnListText !== '') { ColumnListText += `, ` }
+          ColumnListText += `"${ColumnName}"`
+          if (ValueListText !== '') { ValueListText += `, ` }
+          if (Table[ColumnName].type === 'String') {
+              ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Text') {
+              ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Time') {
+              ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+          } else if (Table[ColumnName].type === 'Int') {
+              ValueListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
+          } else if (Table[ColumnName].type === 'DateTime') {
+              ValueListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
+          } else {
+              ValueListText += `'${Record[ColumnName]}'`
+          }
+        }
+        if (Table['updateDate'] !== undefined) {
+          if (ColumnListText !== '') { ColumnListText += `, ` }
+          ColumnListText += `"updateDate"`
+          if (ValueListText !== '') { ValueListText += `, ` }
+          ValueListText += `${DateNow(Environnement, BddId)} `
+        }
+        if (Table['creationDate'] !== undefined) {
+          if (ColumnListText !== '') { ColumnListText += `, ` }
+          ColumnListText += `"creationDate"`
+          if (ValueListText !== '') { ValueListText += `, ` }
+          ValueListText += `${DateNow(Environnement, BddId)} `
+        }
+        if (Table['owner'] !== undefined && Config.user.Identifiant) {
+          if (ColumnListText !== '') { ColumnListText += `, ` }
+          ColumnListText += `"owner"`
+          if (ValueListText !== '') { ValueListText += `, ` }
+          ValueListText += `'${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}' `
+        }
+
+        if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+          ColumnListText = ColumnListText.replace(/"/g, '')
+        }
+        Query = `
+          INSERT INTO ${TableName} (${ColumnListText}) 
+          VALUES (${ValueListText}) `
+        if (ColumnKey != '') {
+          if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+            Query += `; 
+              SELECT @@IDENTITY AS \'identity\';`
+          } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+            Query += ``
+          } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+            Query += ''
+          }
+        }
+        QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
+          if (ColumnKey != '' && recordset) {
+            if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+              if (recordset.length > 0) {
+                Record[ColumnKey] = recordset[0].identity
+              }
+            } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+              Record[ColumnKey] = recordset.insertId
+            } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+            }
+          }
+          resolve(Record)
+        })
+      }
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.bulkInsert = (BddId, Environnement, TableName, records) => {
+  return new Promise((resolve, reject) => {
+    try
+    {
+      const mysql = require('mysql')
+      const configBdd = Config.bdd[BddId][Environnement].config
+
+      const columns = []
+      for (const column in records[0]) {
+        columns.push(column)
+      }
+
+      const values = []
+      for (const record of records) {
+        const value = []
+        for (const column of columns) {
+          value.push(record[column])
+        }
+        values.push(value)
+      }
+
+      const conn = mysql.createConnection({
+        host: configBdd.server,
+        user: configBdd.user,
+        password: configBdd.password,
+        database: configBdd.database
+      })
+      
+      const sql = `INSERT INTO ${TableName} (${columns.join(',')}) VALUES ?`
+      conn.query(sql, [values], function(err) {
+        if (err) throw err
+        conn.end()
+      })
+
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
 }
 
 exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {

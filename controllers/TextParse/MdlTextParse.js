@@ -2,9 +2,12 @@ exports.textExclusion = (text, scope) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (!text) {
-        resolve(true)
+        resolve({
+          status: true
+        })
         return true
       }
+      let origine = null
 
       // Tyres exception
       let exceptionLabels = ['batterie', 'batteries', 'battery']
@@ -17,11 +20,15 @@ exports.textExclusion = (text, scope) => {
             let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
             if (text.match(regExException)) {
               exceptionFound = true
+              origine = `${exceptionLabel}|${exceptionWord}`
               break
             }
           }
           if (exceptionFound) {
-            resolve(false)
+            resolve({
+              origine,
+              status: false
+            })
             return false
           }
         }
@@ -38,11 +45,15 @@ exports.textExclusion = (text, scope) => {
             let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
             if (text.match(regExException)) {
               exceptionFound = true
+              origine = `${exceptionLabel}|${exceptionWord}`
               break
             }
           }
           if (exceptionFound) {
-            resolve(false)
+            resolve({
+              origine,
+              status: false
+            })
             return false
           }
         }
@@ -60,11 +71,15 @@ exports.textExclusion = (text, scope) => {
               let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
               if (text.match(regExException)) {
                 exceptionFound = true
+                origine = `${exceptionLabel}|${exceptionWord}`
                 break
               }
             }
             if (exceptionFound) {
-              resolve(false)
+              resolve({
+                origine,
+                status: false
+              })
               return false
             }
           }
@@ -81,18 +96,24 @@ exports.textExclusion = (text, scope) => {
               let regExException = new RegExp("\\b" + exceptionWord + "\\b", 'gi')
               if (text.match(regExException)) {
                 exceptionFound = true
+                origine = `${exceptionLabel}|${exceptionWord}`
                 break
               }
             }
             if (exceptionFound) {
-              resolve(false)
+              resolve({
+                origine,
+                status: false
+              })
               return false
             }
           }
         }
       }
 
-      resolve(true)
+      resolve({
+        status: true
+      })
     } catch (err) { reject(err) }
   })
 }
@@ -365,22 +386,29 @@ exports.textParseList = (filter) => {
         {
           textParseId: 25,
           theme: "Métriques",
-          group: "Distance",
-          words: "kms, kilomètres, mètres",
+          group: "Distance (KM)",
+          words: "kms, kilomètres",
           type: "METRIC",
         },
         {
           textParseId: 26,
           theme: "Métriques",
-          group: "Puissance",
-          words: "KWp, KW, KWh, MW, GW, KVA, watt, watts, kilo-watt, kilowatt, mégawatt, mega-watt, megawatt",
+          group: "Puissance (KVA)",
+          words: "MVA,megavolt-amp,KVA,Kilovolt-amp",
+          type: "METRIC",
+        },
+        {
+          textParseId: 1000,
+          theme: "Métriques",
+          group: "Puissance (MW)",
+          words: "GW,giga-watt,giga watt,MW,mega-watt,megawatt,KW,Kilowatt-hour,kWh,KWp,kilo-watt,kilowatt",
           type: "METRIC",
         },
         {
           textParseId: 27,
           theme: "Métriques",
-          group: "Tension",
-          words: "KV, volt",
+          group: "Voltage (kV)",
+          words: "KV, kilovolt, kilo volt, kilo-volt",
           type: "METRIC",
         },
         /*
@@ -405,6 +433,118 @@ exports.textParseList = (filter) => {
           group: "AC/DC",
           words: "AC/DC, AC, DC",
           type: "KEYWORD",
+        },
+        {
+          textParseId: 31,
+          theme: "Contract type",
+          group: "Long term / Frame Agreement",
+          words: "service|contract,biennal|contract,rate|contract,annual|contract,bi-annual|contract,year|contract,yearly|contract,umbrella|contract,umbrella|agreement",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 32,
+          theme: "Brand",
+          group: "GE",
+          words: "GE|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 33,
+          theme: "Brand",
+          group: "Siemens",
+          words: "Siemens|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 34,
+          theme: "Brand",
+          group: "Weidmuller",
+          words: "weidmuller|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 35,
+          theme: "Brand",
+          group: "elgi",
+          words: "elgi|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 36,
+          theme: "Brand",
+          group: "abb",
+          words: "abb|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 37,
+          theme: "Brand",
+          group: "phoenix",
+          words: "phoenix|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 38,
+          theme: "Brand",
+          group: "schneider electric",
+          words: "schneider electric|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 39,
+          theme: "Brand",
+          group: "rittal",
+          words: "rittal|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 40,
+          theme: "Brand",
+          group: "rexroth",
+          words: "rexroth|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 41,
+          theme: "Brand",
+          group: "bhel",
+          words: "bhel|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 42,
+          theme: "Brand",
+          group: "emco",
+          words: "emco|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 43,
+          theme: "Brand",
+          group: "alstom",
+          words: "alstom|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 44,
+          theme: "Brand",
+          group: "alsthom",
+          words: "alsthom|make",
+          type: "WORD_COUPLE",
+          scopes: 'TITLE',
         },
       ]
       resolve(textParses)
@@ -435,7 +575,7 @@ exports.matching_positions = (_text, _word, _case_sensitive, _whole_words, _mult
   return _pos
 }
 
-exports.textParseTreat = (text, textParses) => {
+exports.textParseTreat = (text, textParses, scope) => {
   if (!textParses) {
     return null
   }
@@ -445,41 +585,66 @@ exports.textParseTreat = (text, textParses) => {
 
   const tenderCriterions = []
   for (let textParse of textParses) {
+    if (textParse.scopes && !textParse.scopes.includes(scope)) {
+      continue
+    }
+  
     if (!textParse.words || textParse.words.trim() === '') {
       continue
     }
-    const words = textParse.words.split(',')
-    for (const word of words) {
-      const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
 
-      let positions = this.matching_positions(textNew, wordTemp, true, true, true)
-      for (const position of positions) {
-        let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
-        let value = ''
-        
-        if (textParse.type === "METRIC") {
-          let index = 0
-          const regex = /^-?\d*(\,|\.|\s)?\d*$/
-          while (true) {
-            let char = text.substring(position.index - index - 1, position.index - index)
-            if (char.match(regex)) {
-              value = char + value
-            } else {
-              break
-            }
-            index = index + 1
-          }
-          value = value.trim()
+    if (textParse.type === 'WORD_COUPLE') {
+      const wordCouples = textParse.words.trim().split(',')
+      for (const wordCouple of wordCouples) {
+        let word1 = wordCouple.split('|')[0].trim()
+        let word2 = wordCouple.split('|')[1].trim()
+        const regExWordCouple = new RegExp(`\\b${word1}\\b(.)\\b${word2}\\b`, 'gi')
+        const matchResult = text.match(regExWordCouple)
+        if (matchResult) {
+          tenderCriterions.push({
+            textParseId: textParse.textParseId,
+            word: word1.trim(),
+            wordMatch: matchResult[0],
+            startIndex: -1,
+            value: '',
+            context: text,
+          })
         }
+      }
+    } else {
+      const words = textParse.words.split(',')
+      for (const word of words) {
+        const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
 
-        tenderCriterions.push({
-          textParseId: textParse.textParseId,
-          word: word.trim(),
-          wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
-          startIndex: position.index,
-          value,
-          context,
-        })
+        let positions = this.matching_positions(textNew, wordTemp, true, true, true)
+        for (const position of positions) {
+          let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
+          let value = ''
+          
+          if (textParse.type === 'METRIC') {
+            let index = 0
+            const regex = /^-?\d*(\,|\.|\s)?\d*$/
+            while (true) {
+              let char = text.substring(position.index - index - 1, position.index - index)
+              if (char.match(regex)) {
+                value = char + value
+              } else {
+                break
+              }
+              index = index + 1
+            }
+            value = value.trim()
+          }
+
+          tenderCriterions.push({
+            textParseId: textParse.textParseId,
+            word: word.trim(),
+            wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
+            startIndex: position.index,
+            value,
+            context,
+          })
+        }
       }
     }
   }
@@ -641,7 +806,7 @@ exports.tenderParse = (tender, CpvList, textParses) => {
       }
 
       // Parse tender title
-      const tenderCriterionTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.title, textParses)
+      const tenderCriterionTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.title, textParses, 'TITLE')
       for (const tenderCriterion of tenderCriterionTitles) {
         let tenderCriterionFind = tenderCriterions.find(a => 
           a.textParseId === tenderCriterion.textParseId
@@ -663,7 +828,7 @@ exports.tenderParse = (tender, CpvList, textParses) => {
       }
 
       // Parse tender description
-      const tenderCriterionDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.description, textParses)
+      const tenderCriterionDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.description, textParses, 'DESCRIPTION')
       for (const tenderCriterion of tenderCriterionDescriptions) {
         let tenderCriterionFind = tenderCriterions.find(a => 
           a.textParseId === tenderCriterion.textParseId
