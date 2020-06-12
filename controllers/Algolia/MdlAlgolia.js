@@ -281,6 +281,35 @@ exports.TendersAdd = (tenders, index) => {
   })
 }
 
+exports.tendersObsoleteRemove = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const BddTool = require(process.cwd() + '/global/BddTool')
+
+      let termDate = new Date()
+      termDate.setDate(termDate.getDate() - 180)
+      const status = 20
+      const orderBy = 'termDate ASC'
+      const limit = 250
+      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, null, termDate, null, null, limit, null, null, orderBy, true, status)
+
+      const tenderIds = tenders.map(a => a.id)
+      const query = `
+        UPDATE      dgmarket 
+        SET         status = -1 
+        WHERE       id  IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await this.TendersPurge()
+
+      resolve()
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.TendersPurge = () => {
   return new Promise(async (resolve, reject) => {
     try {

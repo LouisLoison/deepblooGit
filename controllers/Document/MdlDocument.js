@@ -43,11 +43,6 @@ exports.documentDelete = (documentId) => {
 
       const document = await this.document(documentId)
 
-      // Remove document from Box
-      try {
-        await this.fileDeleteBox(document.boxFileId)
-      } catch (err) {}
-
       // Remove document from AWS
       try {
         await this.fileDeleteAws(document.tenderId, document.filename)
@@ -148,6 +143,10 @@ exports.documentMessageList = (filter, userData) => {
                   documentMessage.documentId AS "documentId", 
                   documentMessage.organizationId AS "organizationId", 
                   documentMessage.userId AS "userId", 
+                  documentMessage.type AS "type", 
+                  documentMessage.groupId AS "groupId", 
+                  documentMessage.posX AS "posX", 
+                  documentMessage.posY AS "posY", 
                   documentMessage.message AS "message", 
                   documentMessage.status AS "status", 
                   documentMessage.creationDate AS "creationDate", 
@@ -193,6 +192,10 @@ exports.documentMessageList = (filter, userData) => {
           documentId: record.documentId,
           organizationId: record.organizationId,
           userId: record.userId,
+          type: record.type,
+          groupId: record.groupId,
+          posX: record.posX,
+          posY: record.posY,
           username: record.userName,
           userEmail: record.userEmail,
           userHivebriteId: record.userHivebriteId,
@@ -226,13 +229,42 @@ exports.documentMessageAddUpdate = (documentMessage) => {
 exports.tenderFileImport = (tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
       const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
       if (!tender) {
         resolve()
       }
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
-      await require(process.cwd() + '/controllers/TextParse/MdlTextParse').tenderParse(tender, CpvList, textParses)
+
+      for (const cpv of CpvList) {
+        const cpvWords = []
+        for (const cpvWord of cpv.cpvWords) {
+          let isOk = true
+          if (cpvWord.word.endsWith('S') || cpvWord.word.endsWith('X')) {
+            if (
+              cpvWords.find(a => a.word === cpvWord.word.slice(0, -1))
+            ) {
+              isOk = false
+            }
+          }
+          if (isOk) {
+            cpvWords.push(cpvWord)
+          }
+        }
+        cpv.cpvWords = cpvWords
+      }
+
+
+      // Remove tenderCriterion of this tender
+      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
 
       const documentNews = []
       const documents = await this.documentList({ tenderId })
@@ -411,15 +443,28 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
           cpvs: [],
           tenderCriterions: []
         }
-        const cpvNews = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(text, '', '', null, CpvList)
-        if (cpvNews && cpvNews.cpvsText && cpvNews.cpvsText.trim() !== '') {
-          for (const code of cpvNews.cpvsText.split(',')) {
-            const cpvFind = cpvs.find(a => a === code)
-            if (!cpvFind) {
-              cpvs.push(code)
+
+        const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(text, CpvList)
+        if (tenderCriterionCpvfounds) {
+          for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
+            const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
+            if (cpvFind) {
+              const cpv = {
+                tenderCriterionCpv,
+                code: cpvFind.code,
+                boundingBox: {
+                  left: line.Geometry.BoundingBox.Left,
+                  top: line.Geometry.BoundingBox.Top,
+                  width: line.Geometry.BoundingBox.Width,
+                  height: line.Geometry.BoundingBox.Height,
+                },
+              }
+              page.cpvs.push(cpv)
+              cpvs.push(cpv)
             }
           }
         }
+
         page.tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses, 'DOCUMENT')
         pages.push(page)
         tenderCriterions = page.tenderCriterions
@@ -436,24 +481,24 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
             if (pageData.textData && pageData.textData.Blocks) {
               const lines = pageData.textData.Blocks.filter(a => a.BlockType === 'LINE')
               for (const line of lines) {
-                const tenderCriterionCpvs = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(line.Text, CpvList)
-                if (tenderCriterionCpvs) {
-                  for (const tenderCriterionCpv of tenderCriterionCpvs) {
+                const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(line.Text, CpvList)
+                if (tenderCriterionCpvfounds) {
+                  for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
                     const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
-                    if (!cpvFind) {
-                      cpvs.push(cpvFind.code)
+                    if (cpvFind) {
+                      const cpv = {
+                        tenderCriterionCpv,
+                        code: cpvFind.code,
+                        boundingBox: {
+                          left: line.Geometry.BoundingBox.Left,
+                          top: line.Geometry.BoundingBox.Top,
+                          width: line.Geometry.BoundingBox.Width,
+                          height: line.Geometry.BoundingBox.Height,
+                        },
+                      }
+                      page.cpvs.push(cpv)
+                      cpvs.push(cpv)
                     }
-                    page.cpvs.push({
-                      tenderCriterionCpv,
-                      code: cpvFind.code,
-                      boundingBox: {
-                        left: line.Geometry.BoundingBox.Left,
-                        top: line.Geometry.BoundingBox.Top,
-                        width: line.Geometry.BoundingBox.Width,
-                        height: line.Geometry.BoundingBox.Height,
-                      },
-                      context: line.Text,
-                    })
                   }
                 }
                 const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses, 'DOCUMENT')
@@ -475,12 +520,22 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
           }
         }
         if (textData.text) {
-          const cpvNews = await require(process.cwd() + '/controllers/DgMarket/MdlDgMarket').DescriptionParseForCpv(textData.text, '', '', null, CpvList)
-          if (cpvNews && cpvNews.cpvsText && cpvNews.cpvsText.trim() !== '') {
-            for (const code of cpvNews.cpvsText.split(',')) {
-              const cpvFind = cpvs.find(a => a === code)
-              if (!cpvFind) {
-                cpvs.push(code)
+          const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(textData.text, CpvList)
+          if (tenderCriterionCpvfounds) {
+            for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
+              const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
+              if (cpvFind) {
+                const cpv = {
+                  tenderCriterionCpv,
+                  code: cpvFind.code,
+                  boundingBox: {
+                    left: line.Geometry.BoundingBox.Left,
+                    top: line.Geometry.BoundingBox.Top,
+                    width: line.Geometry.BoundingBox.Width,
+                    height: line.Geometry.BoundingBox.Height,
+                  },
+                }
+                cpvs.push(cpv)
               }
             }
           }
@@ -564,7 +619,7 @@ exports.fileParseHtml = (fileLocation, tenderId) => {
       const fs = require('fs')
       const path = require('path')
       const nodeHtmlToImage = require('node-html-to-image')
-      const images = require('images')
+      const imageSizeOf = require('image-size')
       const htmlToText = require('html-to-text')
 
       const htmlText = require(process.cwd() + '/controllers/CtrlTool').readFileSync(fileLocation)
@@ -591,7 +646,7 @@ exports.fileParseHtml = (fileLocation, tenderId) => {
       const s3Location = `tenders/tender#${tenderId}/textParse/${filename}`
       const location = await this.awsFileAdd(imageLocation, s3Location)
       const textData = await this.textractAnalyzeDocument(s3Location)
-      const imgSizeInfo = images(imageLocation).size()
+      const imgSizeInfo = imageSizeOf(imageLocation)
 
       resolve({
         text,
@@ -644,11 +699,11 @@ exports.fileParseImage = (fileLocation, tenderId, exportAws) => {
   return new Promise(async (resolve, reject) => {
     try {
       const path = require('path')
-      const images = require('images')
+      const imageSizeOf = require('image-size')
 
       const s3Location = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
       const textData = await this.textractAnalyzeDocument(s3Location)
-      const imgSizeInfo = images(fileLocation).size()
+      const imgSizeInfo = imageSizeOf(fileLocation)
 
       resolve({
         text: '',
@@ -750,92 +805,6 @@ exports.fileDeleteAws = (tenderId, filename) => {
         }
       })
     
-    } catch (err) { reject(err) }
-  })
-}
-
-exports.fileExportBox = (tenderId, fileLocation, fileName) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const config = require(process.cwd() + '/config')
-      const BoxSDK = require('box-node-sdk')
-      const fs = require('fs')
-
-      const sdk = new BoxSDK({
-        clientID: config.boxClientId,
-        clientSecret: config.boxClientSecret,
-      })
-      const client = sdk.getBasicClient(config.boxToken)
-
-      let file = null
-      let folderId = config.boxFolderTendersId
-      const folderName = `Tender#${tenderId}`
-      let folderItems = await client.folders.getItems(folderId, {
-        usemarker: 'false',
-        fields: 'name',
-        offset: 0,
-        limit: 100000
-      })
-      const folder = folderItems.entries.find(a => a.name === folderName)
-      if (folder) {
-        folderId = folder.id
-        folderItems = await client.folders.getItems(folderId, {
-          usemarker: 'false',
-          fields: 'name',
-          offset: 0,
-          limit: 100000
-        })
-        file = folderItems.entries.find(a => a.name === fileName)
-      } else {
-        const folderInfo = await client.folders.create(folderId, folderName)
-        folderId = folderInfo.id
-      }
-
-      if (!file) {
-        const stream = fs.createReadStream(fileLocation)
-        const files = await client.files.uploadFile(folderId, fileName, stream)
-        if (files && files.entries && files.entries.length) {
-          file = files.entries[0]
-        }
-      }
-
-      let thumbnail = null
-      /*
-      if (file) {
-          thumbnail = await client.files.getThumbnail(file.id, {
-            max_height: 320,
-            max_width: 320,
-            min_height: 32,
-            min_width: 32
-        })
-      }
-      */
-
-      resolve({
-        folderId,
-        fileId: file ? file.id : null,
-        thumbnail,
-      })
-    } catch (err) { reject(err) }
-  })
-}
-
-exports.fileDeleteBox = (fileId) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const config = require(process.cwd() + '/config')
-      const BoxSDK = require('box-node-sdk')
-      const fs = require('fs')
-
-      const sdk = new BoxSDK({
-        clientID: config.boxClientId,
-        clientSecret: config.boxClientSecret,
-      })
-      const client = sdk.getBasicClient(config.boxToken)
-
-      await client.files.delete(fileId)
-
-      resolve()
     } catch (err) { reject(err) }
   })
 }

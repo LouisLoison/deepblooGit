@@ -75,6 +75,30 @@ exports.tenderAddUpdate = (tender) => {
   })
 }
 
+exports.tenderCount = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `SELECT COUNT(*) AS tenderCount FROM dgmarket `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let count = 0
+      for (const record of recordset.results) {
+        count = record.tenderCount;
+      }
+
+      resolve({
+        count,
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.TenderGet = (id, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -513,7 +537,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy, hasAlgoliaId, status) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -584,6 +608,10 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         if (where !== '') { where += 'AND ' }
         where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
+      if (hasAlgoliaId) {
+        if (where !== '') { where += 'AND ' }
+        where += `algoliaId > 0 \n`
+      }
       if (creationDateMin && creationDateMin !== '') {
         if (where !== '') { where += 'AND '}
         where += `creationDate >= ${BddTool.DateFormater(creationDateMin, BddEnvironnement, BddId)} `
@@ -623,6 +651,10 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       if (noticeType && noticeType !== '') {
         if (where !== '') { where += 'AND ' }
         where += `noticeType = '${BddTool.ChaineFormater(noticeType, BddEnvironnement, BddId)}' \n`
+      }
+      if (status && status !== '' && status > 0) {
+        if (where !== '') { where += 'AND ' }
+        where += `status = ${BddTool.NumericFormater(status, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       // query += ` ORDER BY bidDeadlineDate DESC `
@@ -676,7 +708,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                   regionLabel2 = regionLabel.trim().split('-')[1].trim()
                 }
                 if (regionLabel1.toLowerCase() === region1Tender.label.toLowerCase()) {
-                  if (region2Tender && regionLabel2.toLowerCase() !== 'all') {
+                  if (region2Tender && regionLabel2.toLowerCase() !== 'all' && regionLabel2.toLowerCase() !== '') {
                     if (region2Tender && regionLabel2.toLowerCase() === region2Tender.label.toLowerCase()) {
                       isRegionOk = true
                     }

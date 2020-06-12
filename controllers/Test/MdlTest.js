@@ -393,9 +393,13 @@ exports.Test4 = () => {
 exports.Test5 = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+
+      let creationDateMax = new Date()
+      creationDateMax.setDate(creationDateMax.getDate() - 10);
       let creationDateMin = new Date()
-      creationDateMin.setDate(creationDateMin.getDate() - 12);
-      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, creationDateMin)
+      creationDateMin.setDate(creationDateMin.getDate() - 15);
+      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, creationDateMin, creationDateMax)
       const tendersToDelete = []
       const tendersToUpdate = []
       for (const tender of tenders) {
@@ -408,44 +412,59 @@ exports.Test5 = () => {
         if (!isOk.status) {
           tendersToDelete.push(tender)
           continue
-        } else {
-          const textParseResult = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseSearch(tender.title, 'TITLE')
-          let isUpdate = false
-          if (
-            textParseResult.isLongTermFrameAgreement &&
-            !tender.contractType1
-          ) {
-            tender.contractType1 = true
-            isUpdate = true
-          }
-          if (
-            textParseResult.brand
-            && textParseResult.brand.trim() !== ''
-            && tender.brand !== textParseResult.brand
-          ) {
-            tender.brand = textParseResult.brand
-            isUpdate = true
-          }
-          if (isUpdate) {
-            tendersToUpdate.push(tender)
+        }
+
+        /*
+        if (tender.id === 496662) {
+          const toto = 1
+        }
+        */
+        const tenderCriterionsTitle = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.title, CpvList)
+        if (tenderCriterionsTitle.length) {
+          isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusionIfNoCpv(tender.title, 'TITLE')
+          if (!isOk.status) {
+            tendersToDelete.push(tender)
+            continue
           }
         }
+        const tenderCriterionsDescription = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.description, CpvList)
+
+        /*
+        const textParseResult = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseSearch(tender.title, 'TITLE')
+        let isUpdate = false
+        if (
+          textParseResult.isLongTermFrameAgreement &&
+          !tender.contractType1
+        ) {
+          tender.contractType1 = true
+          isUpdate = true
+        }
+        if (
+          textParseResult.brand
+          && textParseResult.brand.trim() !== ''
+          && tender.brand !== textParseResult.brand
+        ) {
+          tender.brand = textParseResult.brand
+          isUpdate = true
+        }
+        if (isUpdate) {
+          tendersToUpdate.push(tender)
+        }
+        */
       }
 
-      /*
       for (const tender of tendersToDelete) {
         if (!tender.id || !tender.algoliaId) {
           continue
         }
-        // await require(process.cwd() + '/controllers/Tender/MdlTender').TenderRemove(tender.id, tender.algoliaId, true)
+        await require(process.cwd() + '/controllers/Tender/MdlTender').TenderRemove(tender.id, tender.algoliaId, true)
       }
-      */
 
       for (const tender of tendersToUpdate) {
         if (!tender.id || !tender.algoliaId) {
           continue
         }
-        await require(process.cwd() + '/controllers/Tender/MdlTender').tenderAddUpdate(tender)
+        // await require(process.cwd() + '/controllers/Tender/MdlTender').tenderAddUpdate(tender)
       }
 
       resolve()

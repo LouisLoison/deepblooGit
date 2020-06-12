@@ -73,6 +73,10 @@ var Schema = {
       documentId: { type: "Int" },
       organizationId: { type: "Int" },
       userId: { type: "Int" },
+      type: { type: "String" },
+      groupId: { type: "String" },
+      posX: { type: "Int" },
+      posY: { type: "Int" },
       message: { type: "String" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
@@ -113,7 +117,7 @@ var Schema = {
       algoliaId: { type: "Int" },
       brand: { type: "String" },
       contractType1: { type: "Int" },
-      status: { type: "Int" },
+      status: { type: "Int", description: '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
@@ -146,7 +150,7 @@ var Schema = {
       fileSource: { type: "String" },
       exclusion: { type: "String" },
       exclusionWord: { type: "String" },
-      status: { type: "Int" },
+      status: { type: "Int", description: '-10 = Exclus | 1 = tender ok' },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

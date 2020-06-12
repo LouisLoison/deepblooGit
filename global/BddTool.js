@@ -282,9 +282,16 @@ exports.bulkInsert = (BddId, Environnement, TableName, records) => {
     {
       const mysql = require('mysql')
       const configBdd = Config.bdd[BddId][Environnement].config
+      const BddSchema = require(process.cwd() + '/global/BddSchema')
+
+      let Schema = BddSchema.getSchema()
+      let Table = Schema[BddId][TableName]
 
       const columns = []
       for (const column in records[0]) {
+        if (Table[column] === undefined) {
+          continue
+        }
         columns.push(column)
       }
 
@@ -304,13 +311,18 @@ exports.bulkInsert = (BddId, Environnement, TableName, records) => {
         database: configBdd.database
       })
       
-      const sql = `INSERT INTO ${TableName} (${columns.join(',')}) VALUES ?`
-      conn.query(sql, [values], function(err) {
-        if (err) throw err
-        conn.end()
+      const Query = `INSERT INTO ${TableName} (${columns.join(',')}) VALUES ?`
+      conn.query(Query, [values], (err) => {
+        if (err) {
+          err.Query = Query
+          reject(err)
+          return false
+        }
+        setTimeout(() => {
+          conn.destroy()
+        }, 800)
+        resolve()
       })
-
-      resolve()
     } catch (err) {
       reject(err)
     }

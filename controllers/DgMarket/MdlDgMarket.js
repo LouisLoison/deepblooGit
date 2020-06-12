@@ -18,13 +18,23 @@ exports.BddImport = () => {
       const fileLocation = path.join(fileFolder, files[0])
 
       // Get tenders
+      //const dateDeb = new Date()
       const fileParseData = await this.FileParse(fileLocation)
+      //const dateFin = new Date()
+      
+      /*
+      const moment = require('moment')
+      const dateDiff = moment.utc(moment(dateFin).diff(moment(dateDeb))).format("HH:mm:ss")
+      console.log(dateDiff)
+      */
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')      
 
       // Bulk insert into Dgmarket import table
+      let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       await BddTool.bulkInsert(
         BddId,
         BddEnvironnement,
@@ -33,14 +43,14 @@ exports.BddImport = () => {
       )
 
       // Insert/Update tenders that are ok
-      for (let tender of fileParseData.tenders) {
+      for (const tender of fileParseData.tenders) {
         tendersCurrent = tender
         let dgmarket = tender
         dgmarket.status = 0
         dgmarket.updateDate = new Date()
 
         // Search for internal id
-        let query = `
+        query = `
           SELECT     id AS "id"
           FROM       dgmarket 
           WHERE      dgmarketId = ${BddTool.NumericFormater(tender.dgmarketId, BddEnvironnement, BddId)} 
@@ -48,10 +58,47 @@ exports.BddImport = () => {
         const recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         for (const record of recordset) {
           dgmarket.id = record.id
-          dgmarket.creationDate = new Date()
+          dgmarket.creationDate = undefined
         }
 
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', dgmarket)
+        // Remove tenderCriterion
+        if (dgmarket.id) {
+          query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(dgmarket.id, BddEnvironnement, BddId)}`
+          await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+          query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(dgmarket.id, BddEnvironnement, BddId)}`
+          await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        }
+
+        const dgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', dgmarket)
+
+        // Bulk insert into tenderCriterion table
+        if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {
+          for (const tenderCriterionCpv of tender.tenderCriterionCpvs) {
+            tenderCriterionCpv.tenderId = dgmarketNew.id
+            tenderCriterionCpv.cpv = undefined
+            tenderCriterionCpv.creationDate = new Date()
+            tenderCriterionCpv.updateDate = new Date()
+          }
+          await BddTool.bulkInsert(
+            BddId,
+            BddEnvironnement,
+            'tenderCriterionCpv',
+            tender.tenderCriterionCpvs
+          )  
+        }
+        if (tender.tenderCriterions && tender.tenderCriterions.length) {
+          for (const tenderCriterion of tender.tenderCriterions) {
+            tenderCriterion.tenderId = dgmarketNew.id
+            tenderCriterion.creationDate = new Date()
+            tenderCriterion.updateDate = new Date()
+          }
+          await BddTool.bulkInsert(
+            BddId,
+            BddEnvironnement,
+            'tenderCriterion',
+            tender.tenderCriterions
+          )  
+        }
       }
 
       // Move file to archive folder
@@ -176,6 +223,31 @@ exports.FileParse = (fileLocation) => {
       let parseData = await parseString(fileData)
 
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
+
+      for (const cpv of CpvList) {
+        const cpvWords = []
+        for (const cpvWord of cpv.cpvWords) {
+          cpvWord.word = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(cpvWord.word).toUpperCase()
+          let isOk = true
+          if (
+            cpvWords.find(a => a.word === cpvWord.word)
+          ) {
+            isOk = false
+          }
+          if (cpvWord.word.endsWith('S') || cpvWord.word.endsWith('X')) {
+            if (
+              cpvWords.find(a => a.word === cpvWord.word.slice(0, -1))
+            ) {
+              isOk = false
+            }
+          }
+          if (isOk) {
+            cpvWords.push(cpvWord)
+          }
+        }
+        cpv.cpvWords = cpvWords
+      }
 
       let tenderCount = 0
       let tenderOkCount = 0
@@ -217,7 +289,7 @@ exports.FileParse = (fileLocation) => {
           }
         }
         
-        // TODO : importDgmarket
+        // importDgmarket
         const importDgmarket = {
           dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
           procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
@@ -275,6 +347,7 @@ exports.FileParse = (fileLocation) => {
         dateLimit.setDate(dateLimit.getDate() - 15)
         if (termDate < dateLimit) {
           importDgmarket.exclusion = 'LIMIT DATE'
+          importDgmarket.status = -10
           continue
         }
 
@@ -284,12 +357,14 @@ exports.FileParse = (fileLocation) => {
         if (!isOk.status) {
           importDgmarket.exclusion = 'TITLE'
           importDgmarket.exclusionWord = isOk.origine
+          importDgmarket.status = -10
           continue
         }
         isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(description, 'DESCRIPTION')
         if (!isOk.status) {
           importDgmarket.exclusion = 'DESCRIPTION'
           importDgmarket.exclusionWord = isOk.origine
+          importDgmarket.status = -10
           continue
         }
 
@@ -299,36 +374,129 @@ exports.FileParse = (fileLocation) => {
           description = description.replace(/\r/gm, '<br>')
         }
 
-        // CPV list
-        let cpvOkCount = 0
-        let cpvsText = tool.getXmlJsonData(notice.cpvs)
+        // Search CPV by key words
         let cpvsOrigine = tool.getXmlJsonData(notice.cpvs)
-        let cpvDescriptionsText = tool.getXmlJsonData(notice.cpvDescriptions)
-        if (cpvsText) {
-          let cpvsTextTemp = cpvsText.split(',')
-          for (let i = 0; i < cpvsTextTemp.length; i++) {
-            let code = parseInt(cpvsTextTemp[i], 10)
-            let cpv = CpvList.find(a => a.code === code)
-            if (cpv) {
-              if (cpv.active) {
-                cpvOkCount++
-              }
-            }
+        const tenderCriterionCpvsTitle = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(title, CpvList, true, 'TITLE')
+        if (tenderCriterionCpvsTitle.length) {
+          isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusionIfNoCpv(title, 'TITLE')
+          if (!isOk.status) {
+            importDgmarket.exclusion = 'TITLE'
+            importDgmarket.exclusionWord = isOk.origine
+            continue
           }
         }
-
-        // Search by key words
-        let cpvFound = this.DescriptionParseForCpv(textToParse, cpvsText, cpvDescriptionsText, notice.id[0], CpvList)
-        let words = cpvFound.words
-        cpvsText = cpvFound.cpvsText
-        cpvDescriptionsText = cpvFound.cpvDescriptionsText
-        if (cpvOkCount > 0) {
-          tenderOkCount++
-        } else if (cpvFound.cpvFoundCount > 0) {
-          tenderFoundCount++
+        const tenderCriterionCpvsDescription = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(description, CpvList, true, 'DESCRIPTION')
+        const tenderCriterionCpvs = []
+        for (const cpvText of cpvsOrigine.split(',')) {
+          let cpvCode = parseInt(cpvText, 10)
+          const cpv = CpvList.find(
+            a => a.code === cpvCode
+          )
+          if (!cpv) {
+            continue
+          }
+          const tenderCriterionCpv = tenderCriterionCpvs.find(
+            a => a.cpvId === cpv.cpvId && a.scope === 'PROVIDER_DGMARKET'
+          )
+          if (!tenderCriterionCpv) {
+            tenderCriterionCpvs.push({
+              documentId: 0,
+              cpvId: cpv.cpvId,
+              value: cpv.label,
+              word: '',
+              findCount: 1,
+              scope: 'PROVIDER_DGMARKET',
+              status: 1,
+              cpv,
+            })
+          } else {
+            tenderCriterionCpv.findCount = tenderCriterionCpv.findCount + 1
+          }
         }
-        if (cpvOkCount === 0 && cpvFound.cpvFoundCount === 0) {
+        for (const tenderCriterionCpvTitle of tenderCriterionCpvsTitle) {
+          const tenderCriterionCpv = tenderCriterionCpvs.find(
+            a => a.cpvId === tenderCriterionCpvTitle.cpvId && a.scope === 'TITLE'
+          )
+          if (!tenderCriterionCpv) {
+            tenderCriterionCpvs.push({
+              documentId: 0,
+              cpvId: tenderCriterionCpvTitle.cpvId,
+              value: tenderCriterionCpvTitle.value,
+              word: tenderCriterionCpvTitle.word,
+              findCount: 1,
+              scope: 'TITLE',
+              status: 1,
+              cpv: tenderCriterionCpvTitle.cpv,
+            })
+          } else {
+            tenderCriterionCpv.findCount = tenderCriterionCpv.findCount + 1
+          }
+        }
+        for (const tenderCriterionCpvDescription of tenderCriterionCpvsDescription) {
+          const tenderCriterionCpv = tenderCriterionCpvs.find(
+            a => a.cpvId === tenderCriterionCpvDescription.cpvId && a.scope === 'DESCRIPTION'
+          )
+          if (!tenderCriterionCpv) {
+            tenderCriterionCpvs.push({
+              documentId: 0,
+              cpvId: tenderCriterionCpvDescription.cpvId,
+              value: tenderCriterionCpvDescription.value,
+              word: tenderCriterionCpvDescription.word,
+              findCount: 1,
+              scope: 'DESCRIPTION',
+              status: 1,
+              cpv: tenderCriterionCpvDescription.cpv,
+            })
+          } else {
+            tenderCriterionCpv.findCount = tenderCriterionCpv.findCount + 1
+          }
+        }
+        let words = [...new Set(tenderCriterionCpvs.filter(a => a.word.trim() !== '').map(a => a.word))]
+        let cpvCodes = [...new Set(tenderCriterionCpvs.map(a => a.cpv.code))]
+        let cpvDescriptions = [...new Set(tenderCriterionCpvs.map(a => a.cpv.label))]
+        if (!cpvCodes || !cpvCodes.length) {
           continue
+        }
+
+        // Search tenderCriterions
+        const tenderCriterionsTitle = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(title, textParses, 'TITLE')
+        const tenderCriterionsDescription = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(description, textParses, 'DESCRIPTION')
+        const tenderCriterions = []
+        for (const tenderCriterionTitle of tenderCriterionsTitle) {
+          const tenderCriterion = tenderCriterions.find(
+            a => a.textParseId === tenderCriterionTitle.textParseId && a.scope === 'TITLE'
+          )
+          if (!tenderCriterion) {
+            tenderCriterions.push({
+              documentId: 0,
+              textParseId: tenderCriterionTitle.textParseId,
+              value: tenderCriterionTitle.value,
+              word: tenderCriterionTitle.word,
+              findCount: 1,
+              scope: 'TITLE',
+              status: 1,
+            })
+          } else {
+            tenderCriterion.findCount = tenderCriterion.findCount + 1
+          }
+        }
+        for (const tenderCriterionDescription of tenderCriterionsDescription) {
+          const tenderCriterion = tenderCriterions.find(
+            a => a.textParseId === tenderCriterionDescription.textParseId && a.scope === 'DESCRIPTION'
+          )
+          if (!tenderCriterion) {
+            tenderCriterions.push({
+              documentId: 0,
+              textParseId: tenderCriterionDescription.textParseId,
+              value: tenderCriterionDescription.value,
+              word: tenderCriterionDescription.word,
+              findCount: 1,
+              scope: 'DESCRIPTION',
+              status: 1,
+            })
+          } else {
+            tenderCriterion.findCount = tenderCriterion.findCount + 1
+          }
         }
 
         tenders.push({
@@ -354,13 +522,17 @@ exports.FileParse = (fileLocation) => {
           currency: tool.getXmlJsonData(notice.currency),
           publicationDate: tool.getXmlJsonData(notice.publicationDate),
           cpvsOrigine: cpvsOrigine.split(',').slice(0, 25).join(),
-          cpvs: cpvsText.split(',').slice(0, 25).join(),
-          cpvDescriptions: cpvDescriptionsText.split(',').slice(0, 25).join(),
+          cpvs: cpvCodes.slice(0, 25).join(),
+          cpvDescriptions: cpvDescriptions.slice(0, 25).join(),
           words: words,
           bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
           sourceUrl: tool.getXmlJsonData(notice.sourceUrl).substring(0, 1900),
           termDate: termDate,
-          fileSource: fileSource
+          fileSource: fileSource,
+          creationDate: new Date(),
+          updateDate: new Date(),
+          tenderCriterionCpvs,
+          tenderCriterions,
         })
       }
 

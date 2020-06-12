@@ -118,6 +118,130 @@ exports.textExclusion = (text, scope) => {
   })
 }
 
+exports.textExclusionIfNoCpv = (text, scope) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!text) {
+        resolve({
+          status: true
+        })
+        return true
+      }
+      let wordCouples = [
+        {
+          word1: 'unaccompanied',
+          word2: 'children',
+        },
+        {
+          word1: 'violence',
+          word2: 'children',
+        },
+        {
+          word1: 'food',
+          word2: 'chidlren',
+        },
+        {
+          word1: 'meals',
+          word2: 'snack',
+        },
+        {
+          word1: 'meals',
+          word2: 'accomodation',
+        },
+        {
+          word1: 'accomodatiion',
+          word2: 'hotel',
+        },
+        {
+          word1: 'accomodation',
+          word2: 'catering',
+        },
+      ]
+
+      for (let wordCouple of wordCouples) {
+        let regExExceptionLabel = new RegExp("\\b" + wordCouple.word1 + "\\b", 'gi')
+        if (text.match(regExExceptionLabel)) {
+          let regExException = new RegExp("\\b" + wordCouple.word2 + "\\b", 'gi')
+          if (text.match(regExException)) {
+            resolve({
+              origine: `${wordCouple.word1}|${wordCouple.word2}`,
+              status: false
+            })
+            return false
+          }
+        }
+      }
+
+      
+      let words = [
+        'Catering service',
+        'cleaning service',
+        'cleanliness service',
+        'Laundry service',
+        'Printing',
+        'Print services',
+        'Photocopying',
+        'scanning',
+        'plantation of trees',
+        'cutting trees',
+        'cutting off trees',
+        'cutting of trees',
+        'trees cutting',
+        'Garden maintenance',
+        'gardening work',
+        'beautification',
+        'Kitchen cabinet',
+        'kitchen room',
+        'kitchen equipment',
+        'Kitchen ustensil',
+        'kitchen smoke',
+        'bakery products',
+        'pastery products',
+        'kitchen and bakery',
+        'Housekeeping services',
+        'medical services',
+        'insurance service',
+        'decontamination',
+        'transport service',
+        'diving service',
+        'diving equipment',
+        'diving system',
+        'diving gears',
+        'transport service for pupils',
+        'school children',
+        'school transport',
+        'transport service',
+        'school transportation',
+        'bus transport',
+        'delivery of meal',
+        'school meal',
+        'purchase of meals',
+        'cold-link meal',
+        'cold link meal',
+        'supply of meal',
+        'hot meal',
+        'cleaning marchine',
+        'washing machine',
+      ]
+
+      for (let word of words) {
+        let regExExceptionLabel = new RegExp("\\b" + word + "\\b", 'gi')
+        if (text.match(regExExceptionLabel)) {
+          resolve({
+            origine: word,
+            status: false
+          })
+          return false
+        }
+      }
+
+      resolve({
+        status: true
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.textParseSearch = (text, scope) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -575,6 +699,47 @@ exports.matching_positions = (_text, _word, _case_sensitive, _whole_words, _mult
   return _pos
 }
 
+exports.cpvParseTreat = (text, CpvList, CpvListFormated, scope) => {
+  if (!CpvList) {
+    return null
+  }
+
+  const contextLength = 40
+  const textNew = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(text).toUpperCase()
+
+  const tenderCriterions = []
+  for (let cpv of CpvList) {
+    if (!cpv.cpvWords || !cpv.cpvWords.length) {
+      continue
+    }
+    for (const cpvWord of cpv.cpvWords) {
+      const word = cpvWord.word.trim()
+      let wordTemp = word
+      if (!CpvListFormated) {
+        wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
+      }
+
+      let positions = this.matching_positions(textNew, wordTemp, true, true, true)
+      for (const position of positions) {
+        let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
+
+        tenderCriterions.push({
+          cpvId: cpvWord.cpvId,
+          cpvWordId: cpvWord.cpvWordId,
+          word: word,
+          wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
+          startIndex: position.index,
+          value: cpv.label,
+          context,
+          cpv,
+        })
+      }
+    }
+  }
+
+  return tenderCriterions
+}
+
 exports.textParseTreat = (text, textParses, scope) => {
   if (!textParses) {
     return null
@@ -625,6 +790,9 @@ exports.textParseTreat = (text, textParses, scope) => {
             let index = 0
             const regex = /^-?\d*(\,|\.|\s)?\d*$/
             while (true) {
+              if (position.index - index - 1 < 0) {
+                break
+              }
               let char = text.substring(position.index - index - 1, position.index - index)
               if (char.match(regex)) {
                 value = char + value
@@ -645,44 +813,6 @@ exports.textParseTreat = (text, textParses, scope) => {
             context,
           })
         }
-      }
-    }
-  }
-
-  return tenderCriterions
-}
-
-exports.cpvParseTreat = (text, CpvList) => {
-  if (!CpvList) {
-    return null
-  }
-
-  const contextLength = 40
-  const textNew = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(text).toUpperCase()
-
-  const tenderCriterions = []
-  for (let cpv of CpvList) {
-    if (!cpv.cpvWords || !cpv.cpvWords.length) {
-      continue
-    }
-    for (const cpvWord of cpv.cpvWords) {
-      const word = cpvWord.word.trim()
-      const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
-
-      let positions = this.matching_positions(textNew, wordTemp, true, true, true)
-      for (const position of positions) {
-        let context = text.substring(position.index - contextLength, position.index + word.length + contextLength).replace(/\n/g, " ")
-        let value = ''
-
-        tenderCriterions.push({
-          cpvId: cpvWord.cpvId,
-          cpvWordId: cpvWord.cpvWordId,
-          word: word,
-          wordMatch: text.substring(position.index, position.index + position.word.length).trim(),
-          startIndex: position.index,
-          value,
-          context,
-        })
       }
     }
   }
@@ -734,129 +864,5 @@ exports.tenderCriterionCpvAddUpdate = (tenderCriterionCpv) => {
       let tenderCriterionCpvNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterionCpv', tenderCriterionCpv)
       resolve(tenderCriterionCpvNew)
     } catch (err) { reject(err) }
-  })
-}
-
-exports.tenderParse = (tender, CpvList, textParses) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const config = require(process.cwd() + '/config')
-      const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
-
-      // Remove tenderCriterion of this tender
-      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      const tenderCriterionCpvs = []
-      const tenderCriterions = []
-
-      // Check CPV on tender title
-      const tenderCriterionCpvTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.title, CpvList)
-      if (tenderCriterionCpvTitles) {
-        for (const tenderCriterionCpv of tenderCriterionCpvTitles) {
-          let tenderCriterionCpvFind = tenderCriterionCpvs.find(a => 
-            a.cpvId === tenderCriterionCpv.cpvId
-            && a.scope === 'TITLE'
-          )
-          if (!tenderCriterionCpvFind) {
-            tenderCriterionCpvFind = {
-              tenderId: tender.id,
-              cpvId: tenderCriterionCpv.cpvId,
-              value: tenderCriterionCpv.value,
-              word: tenderCriterionCpv.word,
-              findCount: 0,
-              status: 1,
-              scope: 'TITLE',
-            }
-            tenderCriterionCpvs.push(tenderCriterionCpvFind)
-          }
-          tenderCriterionCpvFind.findCount = tenderCriterionCpvFind.findCount + 1
-        }
-      }
-
-      // Check CPV on tender description
-      const tenderCriterionCpvDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.description, CpvList)
-      if (tenderCriterionCpvDescriptions) {
-        for (const tenderCriterionCpv of tenderCriterionCpvDescriptions) {
-          let tenderCriterionCpvFind = tenderCriterionCpvs.find(a => 
-            a.cpvId === tenderCriterionCpv.cpvId
-            && a.scope === 'DESCRIPTION'
-          )
-          if (!tenderCriterionCpvFind) {
-            tenderCriterionCpvFind = {
-              tenderId: tender.id,
-              cpvId: tenderCriterionCpv.cpvId,
-              value: tenderCriterionCpv.value,
-              word: tenderCriterionCpv.word,
-              findCount: 0,
-              status: 1,
-              scope: 'DESCRIPTION',
-            }
-            tenderCriterionCpvs.push(tenderCriterionCpvFind)
-          }
-          tenderCriterionCpvFind.findCount = tenderCriterionCpvFind.findCount + 1
-        }
-      }
-
-      for (const tenderCriterionCpv of tenderCriterionCpvs) {
-        await this.tenderCriterionCpvAddUpdate(tenderCriterionCpv)
-      }
-
-      // Parse tender title
-      const tenderCriterionTitles = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.title, textParses, 'TITLE')
-      for (const tenderCriterion of tenderCriterionTitles) {
-        let tenderCriterionFind = tenderCriterions.find(a => 
-          a.textParseId === tenderCriterion.textParseId
-          && a.scope === 'TITLE'
-        )
-        if (!tenderCriterionFind) {
-          tenderCriterionFind = {
-            tenderId: tender.id,
-            textParseId: tenderCriterion.textParseId,
-            value: tenderCriterion.value,
-            word: tenderCriterion.word,
-            findCount: 0,
-            status: 1,
-            scope: 'TITLE',
-          }
-          tenderCriterions.push(tenderCriterionFind)
-        }
-        tenderCriterionFind.findCount = tenderCriterionFind.findCount + 1
-      }
-
-      // Parse tender description
-      const tenderCriterionDescriptions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(tender.description, textParses, 'DESCRIPTION')
-      for (const tenderCriterion of tenderCriterionDescriptions) {
-        let tenderCriterionFind = tenderCriterions.find(a => 
-          a.textParseId === tenderCriterion.textParseId
-          && a.scope === 'DESCRIPTION'
-        )
-        if (!tenderCriterionFind) {
-          tenderCriterionFind = {
-            tenderId: tender.id,
-            textParseId: tenderCriterion.textParseId,
-            value: tenderCriterion.value,
-            word: tenderCriterion.word,
-            findCount: 0,
-            status: 1,
-            scope: 'DESCRIPTION',
-          }
-          tenderCriterions.push(tenderCriterionFind)
-        }
-        tenderCriterionFind.findCount = tenderCriterionFind.findCount + 1
-      }
-      const tenderCriterionNews = []
-      for (const tenderCriterion of tenderCriterions) {
-        const tenderCriterionNew = await this.tenderCriterionAddUpdate(tenderCriterion)
-        tenderCriterionNews.push(tenderCriterionNew)
-      }
-
-      resolve()
-    } catch (err) {
-      reject(err)
-    }
   })
 }
