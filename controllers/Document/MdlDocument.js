@@ -528,12 +528,6 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
                 const cpv = {
                   tenderCriterionCpv,
                   code: cpvFind.code,
-                  boundingBox: {
-                    left: line.Geometry.BoundingBox.Left,
-                    top: line.Geometry.BoundingBox.Top,
-                    width: line.Geometry.BoundingBox.Width,
-                    height: line.Geometry.BoundingBox.Height,
-                  },
                 }
                 cpvs.push(cpv)
               }

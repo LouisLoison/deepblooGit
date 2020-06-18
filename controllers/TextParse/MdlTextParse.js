@@ -763,7 +763,7 @@ exports.textParseTreat = (text, textParses, scope) => {
       for (const wordCouple of wordCouples) {
         let word1 = wordCouple.split('|')[0].trim()
         let word2 = wordCouple.split('|')[1].trim()
-        const regExWordCouple = new RegExp(`\\b${word1}\\b(.)\\b${word2}\\b`, 'gi')
+        const regExWordCouple = new RegExp(`(\\b${word1}\\b(.)*\\b${word2}\\b)|\\b${word2}\\b(.)*\\b${word1}\\b`, 'gi')
         const matchResult = text.match(regExWordCouple)
         if (matchResult) {
           tenderCriterions.push({

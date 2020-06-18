@@ -61,6 +61,10 @@ exports.BddImport = () => {
           dgmarket.creationDate = undefined
         }
 
+        if (dgmarket.id === 553838) {
+          const toto = 1
+        }
+
         // Remove tenderCriterion
         if (dgmarket.id) {
           query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(dgmarket.id, BddEnvironnement, BddId)}`
@@ -372,6 +376,10 @@ exports.FileParse = (fileLocation) => {
         const descriptionLowerCase = description.toLowerCase()
         if (!descriptionLowerCase.includes("<br") || !descriptionLowerCase.includes("<table") || !descriptionLowerCase.includes("<div")) {
           description = description.replace(/\r/gm, '<br>')
+        }
+
+        if (importDgmarket.dgmarketId === 34493052) {
+          const toto = 1
         }
 
         // Search CPV by key words

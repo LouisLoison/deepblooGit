@@ -52,6 +52,7 @@ app.post('/upload', function(req, res) {
 })
 
 const urlPublics = [
+  '/api/Tender/tenderCount',
   '/api/PrivateDeal/PrivateDealGet',
   '/api/Annonce/List',
   '/api/Annonce/Click',

@@ -3,11 +3,47 @@ exports.TendersImport = () => {
     try {
       const config = require(process.cwd() + '/config')
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
+      
       let query = `
+        SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
+                    tenderCriterion.tenderId AS "tenderId", 
+                    tenderCriterion.documentId AS "documentId", 
+                    tenderCriterion.textParseId AS "textParseId", 
+                    tenderCriterion.value AS "value", 
+                    tenderCriterion.word AS "word", 
+                    tenderCriterion.findCount AS "findCount", 
+                    tenderCriterion.scope AS "scope", 
+                    tenderCriterion.status AS "status", 
+                    tenderCriterion.creationDate AS "creationDate", 
+                    tenderCriterion.updateDate AS "updateDate" 
+        FROM        dgmarket 
+        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
+        WHERE       dgmarket.status = 0 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const tenderCriterionAlls = []
+      for (let record of recordset) {
+        tenderCriterionAlls.push({
+          tenderCriterionId: record.tenderCriterionId,
+          tenderId: record.tenderId,
+          documentId: record.documentId,
+          textParseId: record.textParseId,
+          value: record.value,
+          word: record.word,
+          findCount: record.findCount,
+          scope: record.scope,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate,
+        })
+      }
+      
+      query = `
         SELECT      id AS "id", 
                     dgmarketId AS "dgmarketId", 
                     procurementId AS "procurementId", 
@@ -45,11 +81,12 @@ exports.TendersImport = () => {
         FROM        dgmarket 
         WHERE       status = 0 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
       const tenderIdDeletes = []
-      for (let record of recordset) {
-        let tender = await this.TenderFormat(record, CpvList)
+      for (const record of recordset) {
+        record.tenderCriterions = tenderCriterionAlls.filter(a => a.tenderId === record.id)
+        let tender = await this.TenderFormat(record, CpvList, textParses)
         if (!tender) {
           if (record.id) {
             tenderIdDeletes.push(record.id)
@@ -93,7 +130,7 @@ exports.TendersImport = () => {
   })
 }
 
-exports.TenderFormat = (tender, CpvList) => {
+exports.TenderFormat = (tender, CpvList, textParses) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (!CpvList) {
@@ -248,7 +285,32 @@ exports.TenderFormat = (tender, CpvList) => {
         // creation_timestamp: publication_timestamp,
         sourceUrls: sourceUrls,
         userId: tender.userId,
+        scopeOfWorks: [],
+        segments: [],
+        designs: [],
+        contractTypes: [],
+        brands: [],
         fileSource: tender.fileSource
+      }
+
+      if (tender.tenderCriterions) {
+        for (const tenderCriterion of tender.tenderCriterions) {
+          const textParse = textParses.find(a => a.textParseId === tenderCriterion.textParseId)
+          if (!textParse) {
+            continue
+          }
+          if (textParse.theme === "Scope of Work" && !tenderNew.scopeOfWorks.includes(textParse.group)) {
+            tenderNew.scopeOfWorks.push(textParse.group)
+          } else if (textParse.theme === "Segment" && !tenderNew.segments.includes(textParse.group)) {
+            tenderNew.segments.push(textParse.group)
+          } else if (textParse.theme === "Design" && !tenderNew.designs.includes(textParse.group)) {
+            tenderNew.designs.push(textParse.group)
+          } else if (textParse.theme === "Contract type" && !tenderNew.contractTypes.includes(textParse.group)) {
+            tenderNew.contractTypes.push(textParse.group)
+          } else if (textParse.theme === "Brand" && !tenderNew.brands.includes(textParse.group)) {
+            tenderNew.brands.push(textParse.group)
+          }
+        }
       }
       resolve(tenderNew)
     } catch (err) { reject(err) }
