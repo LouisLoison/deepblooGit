@@ -10,7 +10,7 @@ def getJobResults(api, jobId):
 
     pages = []
 
-    time.sleep(5)
+    time.sleep(1)
 
     client = AwsHelper().getClient('textract')
     if(api == "StartDocumentTextDetection"):
@@ -25,7 +25,7 @@ def getJobResults(api, jobId):
         print("Next token: {}".format(nextToken))
 
     while(nextToken):
-        time.sleep(5)
+        time.sleep(1)
 
         if(api == "StartDocumentTextDetection"):
             response = client.get_document_text_detection(JobId=jobId, NextToken=nextToken)
@@ -69,16 +69,13 @@ def processRequest(request):
         detectForms = True
         detectTables = True
 
-    dynamodb = AwsHelper().getResource('dynamodb')
-    ddb = dynamodb.Table(outputTable)
-
-    opg = OutputGenerator(jobTag, pages, bucketName, objectName, detectForms, detectTables, ddb)
+    opg = OutputGenerator(jobId, jobTag, pages, bucketName, objectName, detectForms, detectTables, ddb)
     opg.run()
 
     print("DocumentId: {}".format(jobTag))
 
     ds = datastore.DocumentStore(documentsTable, outputTable)
-    ds.markDocumentComplete(jobTag)
+    ds.markDocumentComplete(jobTag, jobId)
 
     output = "Processed -> Document: {}, Object: {}/{} processed.".format(jobTag, bucketName, objectName)
 
