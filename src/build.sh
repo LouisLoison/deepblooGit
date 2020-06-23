@@ -2,6 +2,7 @@ echo "Copying lambda functions..."
 mkdir -p ../textract-pipeline/lambda/helper/python
 cp -au helper.py ../textract-pipeline/lambda/helper/python/helper.py
 cp -au datastore.py ../textract-pipeline/lambda/helper/python/datastore.py
+cp -au esindex.py ../textract-pipeline/lambda/helper/python/esindex.py
 
 mkdir -p ../textract-pipeline/lambda/s3processor
 cp -au s3proc.py ../textract-pipeline/lambda/s3processor/lambda_function.py
