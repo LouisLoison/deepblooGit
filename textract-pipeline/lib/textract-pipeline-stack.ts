@@ -91,7 +91,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Helper Layer with helper functions
     const helperLayer = new lambda.LayerVersion(this, 'HelperLayer', {
       code: lambda.Code.fromAsset('lambda/helper'),
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_7],
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Helper layer.',
     });
@@ -99,16 +99,26 @@ export class TextractPipelineStack extends cdk.Stack {
     // Textractor helper layer
     const textractorLayer = new lambda.LayerVersion(this, 'Textractor', {
       code: lambda.Code.fromAsset('lambda/textractor'),
-      compatibleRuntimes: [lambda.Runtime.PYTHON_3_7],
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Textractor layer.',
     });
+
+    // Python libs helper layer
+    const pythonModulesLayer = new lambda.LayerVersion(this, 'PythonModules', {
+      code: lambda.Code.fromAsset('lambda/pipenv'),
+      compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
+      license: 'Apache-2.0, MIT',
+      description: 'Pipenv-installed pypi modules layer.',
+    });
+
+
 
     //------------------------------------------------------------
 
     // S3 Event processor
     const s3Processor = new lambda.Function(this, 'S3Processor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/s3processor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
@@ -120,6 +130,7 @@ export class TextractPipelineStack extends cdk.Stack {
     });
     //Layer
     s3Processor.addLayers(helperLayer)
+    s3Processor.addLayers(pythonModulesLayer)
     //Trigger
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
 
@@ -134,7 +145,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // S3 Batch Operations Event processor 
     const s3BatchProcessor = new lambda.Function(this, 'S3BatchProcessor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/s3batchprocessor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
@@ -158,7 +169,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Document processor (Router to Sync/Async Pipeline)
     const documentProcessor = new lambda.Function(this, 'TaskProcessor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/documentprocessor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
@@ -182,7 +193,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Sync Jobs Processor (Process jobs using sync APIs)
     const syncProcessor = new lambda.Function(this, 'SyncProcessor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/syncprocessor'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
@@ -216,11 +227,12 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Async Job Processor (Start jobs using Async APIs)
     const asyncProcessor = new lambda.Function(this, 'ASyncProcessor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/asyncprocessor'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(60),
+      memorySize: 500,
       environment: {
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
         SNS_TOPIC_ARN : jobCompletionTopic.topicArn,
@@ -262,10 +274,10 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Async Jobs Results Processor
     const jobResultProcessor = new lambda.Function(this, 'JobResultProcessor', {
-      runtime: lambda.Runtime.PYTHON_3_7,
+      runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/jobresultprocessor'),
       handler: 'lambda_function.lambda_handler',
-      memorySize: 2000,
+      memorySize: 1500,
       reservedConcurrentExecutions: 50,
       timeout: cdk.Duration.seconds(900),
       environment: {

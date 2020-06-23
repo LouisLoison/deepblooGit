@@ -5,30 +5,32 @@
     "textract-pipeline": "bin/textract-pipeline.js"
   },
   "scripts": {
-    "build": "tsc",
+    "postinstall": "(pipenv --version || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare",
+    "build": "(cd ../src && sh build.sh) && sh build.sh && tsc",
+    "clean": "rm -fr lambda/*/*.py lambda/*/*/*.py lambda/pipenv lib/textract-pipeline-stack.js cdk.out",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.27.0",
-    "@types/jest": "^24.0.22",
-    "@types/node": "10.17.5",
-    "jest": "^24.9.0",
-    "ts-jest": "^24.1.0",
-    "aws-cdk": "1.27.0",
-    "ts-node": "^8.1.0",
+    "@types/jest": "^24.0",
+    "@types/node": "^10.17",
+    "jest": "^24.9",
+    "ts-jest": "^24.1",
+    "aws-cdk": "^1.27",
+    "ts-node": "^8.1",
     "typescript": "~3.7.2"
   },
   "dependencies": {
-    "@aws-cdk/aws-dynamodb": "^1.27.0",
-    "@aws-cdk/aws-events-targets": "^1.27.0",
-    "@aws-cdk/aws-lambda": "^1.27.0",
-    "@aws-cdk/aws-lambda-event-sources": "^1.27.0",
-    "@aws-cdk/aws-sns": "^1.27.0",
-    "@aws-cdk/aws-sns-subscriptions": "^1.27.0",
-    "@aws-cdk/aws-sqs": "^1.27.0",
-    "@aws-cdk/core": "1.27.0",
-    "source-map-support": "^0.5.16"
+    "@aws-cdk/aws-dynamodb": "^1.27",
+    "@aws-cdk/aws-events-targets": "^1.27",
+    "@aws-cdk/aws-lambda": "^1.27",
+    "@aws-cdk/aws-lambda-event-sources": "^1.27",
+    "@aws-cdk/aws-sns": "^1.27",
+    "@aws-cdk/aws-sns-subscriptions": "^1.27",
+    "@aws-cdk/aws-sqs": "^1.27",
+    "@aws-cdk/core": "1.27",
+    "source-map-support": "^0.5"
   }
 }
