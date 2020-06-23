@@ -119,6 +119,7 @@ class S3Helper:
 
     @staticmethod
     def writeToS3(content, bucketName, s3FileName, awsRegion=None):
+        print ("Writing s3://%s/%s in %s" % (bucketName, s3FileName, awsRegion))
         s3 = AwsHelper().getResource('s3', awsRegion)
         object = s3.Object(bucketName, s3FileName)
         object.put(Body=content)
