@@ -38,7 +38,7 @@ class DocumentStore:
 
         return err
 
-    def updateDocumentStatus(self, documentId, documentStatus):
+    def updateDocumentStatus(self, documentId, documentStatus, jobId=None):
 
         err = None
 
@@ -48,10 +48,11 @@ class DocumentStore:
         try:
             table.update_item(
                 Key = { 'documentId': documentId },
-                UpdateExpression = 'SET documentStatus= :documentstatusValue',
+                UpdateExpression = 'SET documentStatus= :documentstatusValue, jobId= :jobIdValue',
                 ConditionExpression = 'attribute_exists(documentId)',
                 ExpressionAttributeValues = {
-                    ':documentstatusValue': documentStatus
+                    ':documentstatusValue': documentStatus,
+                    ':jobIdValue': jobId
                 }
             )
         except ClientError as e:
@@ -63,7 +64,8 @@ class DocumentStore:
 
         return err
 
-    def markDocumentComplete(self, documentId):
+
+    def markDocumentComplete(self, documentId, jobId=None):
 
         err = None
 
@@ -73,11 +75,12 @@ class DocumentStore:
         try:
             table.update_item(
                 Key = { 'documentId': documentId },
-                UpdateExpression = 'SET documentStatus= :documentstatusValue, documentCompletedOn = :documentCompletedOnValue',
+                UpdateExpression = 'SET documentStatus= :documentstatusValue, documentCompletedOn = :documentCompletedOnValue, jobId= :jobIdValue',
                 ConditionExpression = 'attribute_exists(documentId)',
                 ExpressionAttributeValues = {
                     ':documentstatusValue': "SUCCEEDED",
-                    ':documentCompletedOnValue': str(datetime.datetime.utcnow())
+                    ':documentCompletedOnValue': str(datetime.datetime.utcnow()),
+                    ':jobIdValue': jobId
                 }
             )
         except ClientError as e:

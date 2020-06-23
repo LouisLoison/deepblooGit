@@ -4,7 +4,8 @@ from trp import Document
 import boto3
 
 class OutputGenerator:
-    def __init__(self, documentId, response, bucketName, objectName, forms, tables, ddb):
+    def __init__(self, jobId, documentId, response, bucketName, objectName, forms, tables, ddb):
+        self.jobId = jobId
         self.documentId = documentId
         self.response = response
         self.bucketName = bucketName
@@ -20,6 +21,7 @@ class OutputGenerator:
     def saveItem(self, pk, sk, output):
 
         jsonItem = {}
+        jsonItem['jobId'] = self.jobId
         jsonItem['documentId'] = pk
         jsonItem['outputType'] = sk
         jsonItem['outputPath'] = output
@@ -86,6 +88,12 @@ class OutputGenerator:
         print("Total Pages in Document: {}".format(len(self.document.pages)))
 
         docText = ""
+        docTextInReadingOrder = ""
+
+        jsonPages = list(map(lambda x : x.blocks, self.document.pages))
+        opath = "{}pages.json".format(self.outputPath)
+        S3Helper.writeToS3(json.dumps(jsonPages), self.bucketName, opath)
+        self.saveItem(self.documentId, "All pages", opath)
 
         p = 1
         for page in self.document.pages:
@@ -97,6 +105,7 @@ class OutputGenerator:
             self._outputText(page, p)
 
             docText = docText + page.text + "\n"
+            docTextInReadingOrder = docTextInReadingOrder + page.getTextInReadingOrder() + "\n"
 
             if(self.forms):
                 self._outputForm(page, p)
@@ -105,3 +114,9 @@ class OutputGenerator:
                 self._outputTable(page, p)
 
             p = p + 1
+
+        opath = "{}text.txt".format(self.outputPath)
+        S3Helper.writeToS3(docText, self.bucketName, opath)
+
+        opath = "{}text-inreadingorder.txt".format(self.outputPath)
+        S3Helper.writeToS3(docTextInReadingOrder, self.bucketName, opath)
