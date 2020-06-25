@@ -43,12 +43,14 @@ def processRequest(request):
 
         client = AwsHelper().getClient('sqs')
         postMessage(client, qUrl, jsonMessage)
+        if (ext in ["pdf"]):
+            postMessage(client, request["pdftoimgQueueUrl"], jsonMessage)
 
     output = "Completed routing for documentId: {}, object: {}/{}".format(documentId, bucketName, objectName)
 
     print(output)
 
-def processRecord(record, syncQueueUrl, asyncQueueUrl):
+def processRecord(record, syncQueueUrl, asyncQueueUrl, pdftoimgQueueUrl ):
     
     newImage = record["dynamodb"]["NewImage"]
     
@@ -75,6 +77,7 @@ def processRecord(record, syncQueueUrl, asyncQueueUrl):
         request["objectName"] = objectName
         request['syncQueueUrl'] = syncQueueUrl
         request['asyncQueueUrl'] = asyncQueueUrl
+        request['pdftoimgQueueUrl'] = pdftoimgQueueUrl
 
         processRequest(request)
 
@@ -86,6 +89,7 @@ def lambda_handler(event, context):
 
         syncQueueUrl = os.environ['SYNC_QUEUE_URL']
         asyncQueueUrl = os.environ['ASYNC_QUEUE_URL']
+        pdftoimgQueueUrl = os.environ['PDFTOIMG_QUEUE_URL']
 
         if("Records" in event and event["Records"]):
             for record in event["Records"]:
@@ -94,7 +98,7 @@ def lambda_handler(event, context):
 
                     if("eventName" in record and record["eventName"] == "INSERT"):
                         if("dynamodb" in record and record["dynamodb"] and "NewImage" in record["dynamodb"]):
-                            processRecord(record, syncQueueUrl, asyncQueueUrl)
+                            processRecord(record, syncQueueUrl, asyncQueueUrl, pdftoimgQueueUrl)
 
                 except Exception as e:
                     print("Faild to process record. Exception: {}".format(e))

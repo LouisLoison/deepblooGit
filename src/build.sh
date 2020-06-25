@@ -25,6 +25,9 @@ cp -au jobresultsproc.py ../textract-pipeline/lambda/jobresultprocessor/lambda_f
 mkdir -p ../textract-pipeline/lambda/elasticindexer
 cp -au esindex.py ../textract-pipeline/lambda/elasticindexer/lambda_function.py
 
+mkdir -p ../textract-pipeline/lambda/pdftoimg
+cp -au pdftoimg.js ../textract-pipeline/lambda/pdftoimg/index.js
+
 mkdir -p ../textract-pipeline/lambda/textractor/python
 cp -au trp.py ../textract-pipeline/lambda/textractor/python/trp.py
 cp -au og.py ../textract-pipeline/lambda/textractor/python/og.py
