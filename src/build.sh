@@ -22,6 +22,9 @@ cp -au asyncproc.py ../textract-pipeline/lambda/asyncprocessor/lambda_function.p
 mkdir -p ../textract-pipeline/lambda/jobresultprocessor
 cp -au jobresultsproc.py ../textract-pipeline/lambda/jobresultprocessor/lambda_function.py
 
+mkdir -p ../textract-pipeline/lambda/elasticindexer
+cp -au esindex.py ../textract-pipeline/lambda/elasticindexer/lambda_function.py
+
 mkdir -p ../textract-pipeline/lambda/textractor/python
 cp -au trp.py ../textract-pipeline/lambda/textractor/python/trp.py
 cp -au og.py ../textract-pipeline/lambda/textractor/python/og.py

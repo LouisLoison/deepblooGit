@@ -41,6 +41,8 @@ export class TextractPipelineStack extends cdk.Stack {
     //S3 bucket for input documents and output
     const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { versioned: false});
 
+    const outputBucket = new s3.Bucket(this, 'OutputBucket', { versioned: false});
+
     const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', { versioned: false});
     existingContentBucket.grantReadWrite(s3BatchOperationsRole)
 
@@ -80,6 +82,12 @@ export class TextractPipelineStack extends cdk.Stack {
     const jobResultsQueue = new sqs.Queue(this, 'JobResults', {
       visibilityTimeout: cdk.Duration.seconds(900), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
+
+    //ES send queue
+    const esIndexQueue = new sqs.Queue(this, 'ElasticIndexDocument', {
+      visibilityTimeout: cdk.Duration.seconds(900), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    });
+
     //Trigger
     //jobCompletionTopic.subscribeQueue(jobResultsQueue);
     jobCompletionTopic.addSubscription(
@@ -130,7 +138,6 @@ export class TextractPipelineStack extends cdk.Stack {
     });
     //Layer
     s3Processor.addLayers(helperLayer)
-    s3Processor.addLayers(pythonModulesLayer)
     //Trigger
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
 
@@ -253,7 +260,9 @@ export class TextractPipelineStack extends cdk.Stack {
      rule.addTarget(new LambdaFunction(asyncProcessor));
 
     //Run when a job is successfully complete
-    asyncProcessor.addEventSource(new SnsEventSource(jobCompletionTopic))
+    // disabled as it seems unusefull
+    // asyncProcessor.addEventSource(new SnsEventSource(jobCompletionTopic))
+
     //Permissions
     contentBucket.grantRead(asyncProcessor)
     existingContentBucket.grantReadWrite(asyncProcessor)
@@ -281,6 +290,8 @@ export class TextractPipelineStack extends cdk.Stack {
       reservedConcurrentExecutions: 20,
       timeout: cdk.Duration.seconds(900),
       environment: {
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+        OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
         DOCUMENTS_TABLE: documentsTable.tableName,
         AWS_DATA_PATH : "models"
@@ -297,6 +308,7 @@ export class TextractPipelineStack extends cdk.Stack {
     outputTable.grantReadWriteData(jobResultProcessor)
     documentsTable.grantReadWriteData(jobResultProcessor)
     contentBucket.grantReadWrite(jobResultProcessor)
+    outputBucket.grantReadWrite(jobResultProcessor)
     existingContentBucket.grantReadWrite(jobResultProcessor)
     jobResultProcessor.addToRolePolicy(
       new iam.PolicyStatement({
@@ -305,8 +317,46 @@ export class TextractPipelineStack extends cdk.Stack {
       })
     );
 
+    // Elastic search Indexer
+    const elasticIndexer = new lambda.Function(this, 'ElasticIndexer', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('lambda/elasticindexer'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 1500,
+      reservedConcurrentExecutions: 20,
+      timeout: cdk.Duration.seconds(900),
+      environment: {
+        ElasticSearchHost: "undef",
+        OUTPUT_TABLE: outputTable.tableName,
+        DOCUMENTS_TABLE: documentsTable.tableName,
+        AWS_DATA_PATH : "models"
+      }
+    });
+    //Layer
+    elasticIndexer.addLayers(helperLayer)
+    // elasticIndexer.addLayers(textractorLayer)
+    elasticIndexer.addLayers(pythonModulesLayer)
+    //Triggers
+    elasticIndexer.addEventSource(new SqsEventSource(esIndexQueue, {
+      batchSize: 1
+    }));
+    //Permissions
+    outputTable.grantReadWriteData(elasticIndexer)
+    documentsTable.grantReadWriteData(elasticIndexer)
+    contentBucket.grantReadWrite(elasticIndexer)
+    outputBucket.grantReadWrite(elasticIndexer)
+    existingContentBucket.grantReadWrite(elasticIndexer)
+    elasticIndexer.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["textract:*"],
+        resources: ["*"]
+      })
+    );
+
+
     //--------------
     // PDF Generator
+    /*
     const pdfGenerator = new lambda.Function(this, 'PdfGenerator', {
       runtime: lambda.Runtime.JAVA_8,
       code: lambda.Code.asset('lambda/pdfgenerator'),
@@ -318,5 +368,6 @@ export class TextractPipelineStack extends cdk.Stack {
     existingContentBucket.grantReadWrite(pdfGenerator)
     pdfGenerator.grantInvoke(syncProcessor)
     pdfGenerator.grantInvoke(asyncProcessor)
+    */
   }
 }

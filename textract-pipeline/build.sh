@@ -7,7 +7,7 @@ PIPENV=$(pipenv --venv)/lib/python3.?/site-packages
 mkdir -p lambda/pipenv/python
 
 for module in `ls -1 $PIPENV |grep -v 'dist-info$'` ; do
-    echo $module
+    # echo $module
     cp -a $PIPENV/$module lambda/pipenv/python
 done
 
