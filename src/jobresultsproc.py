@@ -6,6 +6,18 @@ from helper import AwsHelper
 from og import OutputGenerator
 import datastore
 
+def postMessage(client, qUrl, jsonMessage):
+
+    message = json.dumps(jsonMessage)
+
+    client.send_message(
+        QueueUrl=qUrl,
+        MessageBody=message
+    )
+
+    print("Submitted message to queue: {}".format(message))
+
+
 def getJobResults(api, jobId):
 
     pages = []
@@ -54,7 +66,9 @@ def processRequest(request):
     bucketName = request['bucketName']
     objectName = request['objectName']
     outputTable = request["outputTable"]
+    outputBucket = request["outputBucket"]
     documentsTable = request["documentsTable"]
+    qUrl = request["elasticQueueUrl"]
 
     pages = getJobResults(jobAPI, jobId)
 
@@ -69,13 +83,22 @@ def processRequest(request):
         detectForms = True
         detectTables = True
 
-    opg = OutputGenerator(jobId, jobTag, pages, bucketName, objectName, detectForms, detectTables, ddb)
+    opg = OutputGenerator(jobId, jobTag, pages, outputBucket, objectName, detectForms, detectTables, ddb)
     opg.run()
 
     print("DocumentId: {}".format(jobTag))
 
     ds = datastore.DocumentStore(documentsTable, outputTable)
     ds.markDocumentComplete(jobTag, jobId)
+
+    jsonMessage = { 'documentId' : jobTag,
+        'jobId': jobId,
+        'bucketName': outputBucket,
+        'objectName' : objectName }
+
+    client = AwsHelper().getClient('sqs')
+    postMessage(client, qUrl, jsonMessage)
+
 
     output = "Processed -> Document: {}, Object: {}/{} processed.".format(jobTag, bucketName, objectName)
 
@@ -105,7 +128,9 @@ def lambda_handler(event, context):
     request["objectName"] = message['DocumentLocation']['S3ObjectName']
     
     request["outputTable"] = os.environ['OUTPUT_TABLE']
+    request["outputBucket"] = os.environ['OUTPUT_BUCKET']
     request["documentsTable"] = os.environ['DOCUMENTS_TABLE']
+    request["elasticQueueUrl"] = os.environ['ELASTIC_QUEUE_URL']
 
     return processRequest(request)
 

@@ -50,7 +50,7 @@ def processImage(documentId, features, bucketName, objectName, outputTableName, 
 
     print("Generating output for DocumentId: {}".format(documentId))
 
-    opg = OutputGenerator(documentId, response, bucketName, objectName, detectForms, detectTables, ddb)
+    opg = OutputGenerator(None, documentId, response, bucketName, objectName, detectForms, detectTables, ddb)
     opg.run()
 
     print("DocumentId: {}".format(documentId))
@@ -71,7 +71,6 @@ def processRequest(request):
     features = request['features']
     documentId = request['documentId']
     outputTable = request['outputTable']
-    documentsTable = request['documentsTable']
     documentsTable = request["documentsTable"]
     
     if(documentId and bucketName and objectName and features):
