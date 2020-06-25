@@ -31,13 +31,13 @@ class OutputGenerator:
     def _outputText(self, page, p):
         text = page.text
         opath = "{}page-{}-text.txt".format(self.outputPath, p)
-        S3Helper.writeToS3(text, self.bucketName, opath)
-        self.saveItem(self.documentId, "page-{}-Text".format(p), opath)
+        #S3Helper.writeToS3(text, self.bucketName, opath)
+        #self.saveItem(self.documentId, "page-{}-Text".format(p), opath)
 
         textInReadingOrder = page.getTextInReadingOrder()
         opath = "{}page-{}-text-inreadingorder.txt".format(self.outputPath, p)
-        S3Helper.writeToS3(textInReadingOrder, self.bucketName, opath)
-        self.saveItem(self.documentId, "page-{}-TextInReadingOrder".format(p), opath)
+        #S3Helper.writeToS3(textInReadingOrder, self.bucketName, opath)
+        #self.saveItem(self.documentId, "page-{}-TextInReadingOrder".format(p), opath)
 
     def _outputForm(self, page, p):
         csvData = []
@@ -81,9 +81,9 @@ class OutputGenerator:
         if(not self.document.pages):
             return
 
-        opath = "{}response.json".format(self.outputPath)
-        S3Helper.writeToS3(json.dumps(self.response), self.bucketName, opath)
-        self.saveItem(self.documentId, 'Response', opath)
+        #opath = "{}response.json".format(self.outputPath)
+        #S3Helper.writeToS3(json.dumps(self.response), self.bucketName, opath)
+        #self.saveItem(self.documentId, 'Response', opath)
 
         print("Total Pages in Document: {}".format(len(self.document.pages)))
 
@@ -98,9 +98,9 @@ class OutputGenerator:
         p = 1
         for page in self.document.pages:
 
-            opath = "{}page-{}-response.json".format(self.outputPath, p)
-            S3Helper.writeToS3(json.dumps(page.blocks), self.bucketName, opath)
-            self.saveItem(self.documentId, "page-{}-Response".format(p), opath)
+            #opath = "{}page-{}-response.json".format(self.outputPath, p)
+            #S3Helper.writeToS3(json.dumps(page.blocks), self.bucketName, opath)
+            #self.saveItem(self.documentId, "page-{}-Response".format(p), opath)
 
             self._outputText(page, p)
 
