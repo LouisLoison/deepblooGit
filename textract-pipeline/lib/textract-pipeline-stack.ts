@@ -85,8 +85,14 @@ export class TextractPipelineStack extends cdk.Stack {
 
     //ES send queue
     const esIndexQueue = new sqs.Queue(this, 'ElasticIndexDocument', {
-      visibilityTimeout: cdk.Duration.seconds(900), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
+
+    //PDF2Img send queue
+    const pdftoimgQueue = new sqs.Queue(this, 'PdfToImg', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    });
+
 
     //Trigger
     //jobCompletionTopic.subscribeQueue(jobResultsQueue);
@@ -120,6 +126,16 @@ export class TextractPipelineStack extends cdk.Stack {
       description: 'Pipenv-installed pypi modules layer.',
     });
 
+    // Ghostscript imported layer
+    // const ghostscriptLayer = lambda.LayerVersion.fromLayerVersionArn("arn:aws:lambda:eu-west-1:764866452798:layer:ghostscript:8");
+
+    // Node libs helper layer
+    const nodeModulesLayer = new lambda.LayerVersion(this, 'NodeModules', {
+      code: lambda.Code.fromAsset('lambda/nodelayer'),
+      compatibleRuntimes: [lambda.Runtime.NODEJS_12_X],
+      license: 'Apache-2.0, MIT',
+      description: 'Pipenv-installed pypi modules layer.',
+    });
 
 
     //------------------------------------------------------------
@@ -132,6 +148,7 @@ export class TextractPipelineStack extends cdk.Stack {
       environment: {
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
+        PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
         DOCUMENTS_TABLE: documentsTable.tableName,
         OUTPUT_TABLE: outputTable.tableName
       }
@@ -141,12 +158,14 @@ export class TextractPipelineStack extends cdk.Stack {
     //Trigger
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
 
-      events: [ s3.EventType.OBJECT_CREATED ]
+      events: [ s3.EventType.OBJECT_CREATED ],
+      filters: [ { prefix: 'tenders/', suffix: 'pdf' } ]
     }));
     //Permissions
     documentsTable.grantReadWriteData(s3Processor)
     syncJobsQueue.grantSendMessages(s3Processor)
     asyncJobsQueue.grantSendMessages(s3Processor)
+    pdftoimgQueue.grantSendMessages(s3Processor)
 
     //------------------------------------------------------------
 
@@ -180,6 +199,7 @@ export class TextractPipelineStack extends cdk.Stack {
       code: lambda.Code.asset('lambda/documentprocessor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
+        PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl
       }
@@ -195,6 +215,7 @@ export class TextractPipelineStack extends cdk.Stack {
     documentsTable.grantReadWriteData(documentProcessor)
     syncJobsQueue.grantSendMessages(documentProcessor)
     asyncJobsQueue.grantSendMessages(documentProcessor)
+    pdftoimgQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -326,10 +347,12 @@ export class TextractPipelineStack extends cdk.Stack {
       reservedConcurrentExecutions: 20,
       timeout: cdk.Duration.seconds(900),
       environment: {
-        ElasticSearchHost: "undef",
+        ELASTIC_HOST: "a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io",
+        ELASTIC_PORT: "9243",
+        ELASTIC_USER: "elastic",
         OUTPUT_TABLE: outputTable.tableName,
         DOCUMENTS_TABLE: documentsTable.tableName,
-        AWS_DATA_PATH : "models"
+        ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
       }
     });
     //Layer
@@ -346,12 +369,44 @@ export class TextractPipelineStack extends cdk.Stack {
     contentBucket.grantReadWrite(elasticIndexer)
     outputBucket.grantReadWrite(elasticIndexer)
     existingContentBucket.grantReadWrite(elasticIndexer)
-    elasticIndexer.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["textract:*"],
-        resources: ["*"]
-      })
-    );
+
+  // Pdf to Image converter
+    const pdfToImg = new lambda.Function(this, 'Pdf2Img', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.asset('lambda/pdftoimg'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 1500,
+      reservedConcurrentExecutions: 20,
+      timeout: cdk.Duration.seconds(30),
+      environment: {
+        PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
+        DOCUMENTS_TABLE: documentsTable.tableName,
+      }
+    });
+    //Layer
+    // pdfToImg.addLayers(ghostscriptLayer)
+    // pdfToImg.addLayers(textractorLayer)
+    pdfToImg.addLayers(nodeModulesLayer)
+    //Triggers
+    pdfToImg.addEventSource(new SqsEventSource(syncJobsQueue, {
+      batchSize: 1
+    }));
+
+    /*
+    s3Processor.addEventSource(new S3EventSource(contentBucket, {
+      events: [ s3.EventType.OBJECT_CREATED ],
+      filters: [ { prefix: 'tenders/', suffix: 'pdf' } ]
+    }));
+    */
+
+    //Permissions
+    outputTable.grantReadWriteData(pdfToImg)
+    documentsTable.grantReadWriteData(pdfToImg)
+    contentBucket.grantRead(pdfToImg)
+    outputBucket.grantReadWrite(pdfToImg)
+    existingContentBucket.grantRead(pdfToImg)
 
 
     //--------------
