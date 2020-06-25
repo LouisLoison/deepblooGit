@@ -2,5 +2,7 @@
   "name": "lambda-node-layer",
   "version": "0.1.0",
   "dependencies": {
+    "canvas": "^2.6",
+    "pdfjs-dist": "^2.4"
   }
 }

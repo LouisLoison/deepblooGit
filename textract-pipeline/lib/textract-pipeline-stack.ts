@@ -328,9 +328,10 @@ export class TextractPipelineStack extends cdk.Stack {
     //Permissions
     outputTable.grantReadWriteData(jobResultProcessor)
     documentsTable.grantReadWriteData(jobResultProcessor)
-    contentBucket.grantReadWrite(jobResultProcessor)
+    contentBucket.grantRead(jobResultProcessor)
     outputBucket.grantReadWrite(jobResultProcessor)
-    existingContentBucket.grantReadWrite(jobResultProcessor)
+    existingContentBucket.grantRead(jobResultProcessor)
+    esIndexQueue.grantSendMessages(jobResultProcessor)
     jobResultProcessor.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["textract:*"],

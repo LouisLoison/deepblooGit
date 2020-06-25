@@ -4,10 +4,13 @@ from helper import FileHelper, S3Helper
 from elasticsearch import Elasticsearch, RequestsHttpConnection
 
 def addToESIndex(document, objectName):
-    host=os.environ['ElasticSearchHost']
+    host=os.environ['ELASTIC_HOST']
+    port=os.environ['ELASTIC_PORT']
+    user=os.environ['ELASTIC_USER']
+    secret=os.environ['ELASTIC_SECRET']
 
     es = Elasticsearch(
-        hosts = [{'host': host, 'port':443}],
+        hosts = [{'host': host, 'port':port, 'http_auth': (user, secret) }],
         use_ssl = True,
         verify_certs = True,
         connection_class = RequestsHttpConnection
@@ -17,7 +20,7 @@ def addToESIndex(document, objectName):
 
 def getResults(bucketName, outputPath):
     content = {
-        "responseByPage":  json.load(S3Helper.readFromS3(bucketName,"{}response.json".format(outputPath))),
+        "responseByPage":  json.load(S3Helper.readFromS3(bucketName,"{}pages.json".format(outputPath))),
         "fullText": S3Helper.readFromS3(bucketName,"{}text.txt".format(outputPath)),
         "fullTextReadingOrder": S3Helper.readFromS3(bucketName,"{}text-inreadingorder.txt".format(outputPath))
     }
