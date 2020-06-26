@@ -570,27 +570,49 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let users = []
       let userTotal = 1
       let currentPage = 1
-      let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=1&per_page=1`)
-      const pageTotal = Math.ceil(parseInt(usersResponse.headers["x-total"]) / perPage) + 1
       while (users.length < userTotal && currentPage < 200) {
-        usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${pageTotal - currentPage}&per_page=${perPage}&order=-updated_at`)
+        let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${currentPage}&per_page=${perPage}&order=-updated_at`)
         users = users.concat(usersResponse.data.users)
         userTotal = usersResponse.headers["x-total"]
+        if (!usersResponse.data.users.length) {
+          break
+        }
         currentPage++
+        /*
         if (pageNbr && currentPage > pageNbr) {
           break
         }
+        */
       }
+      users = users.sort((a, b) => {
+        let aValue = a.extended_updated_at
+        let bValue = b.extended_updated_at
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+      })
+      users = users.slice(0, (pageNbr * perPage))
 
       let usersBdd = await this.List()
       let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
-      users = users.reverse();
+
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       // Update user bdd list
       for (let user of users) {
-        let userBdd = usersBdd.find(a => a.email === user.email);
+        let userBdd = usersBdd.find(a => a.email === user.email)
+        if (!userBdd) {
+          userBdd = await this.AddUpdate({
+            hivebriteId: user.id,
+            type: 3,
+            email: user.email,
+            username: user.name,
+            creationDate: new Date(),
+            updateDate: new Date(),
+          })
+          usersBdd.push(userBdd)
+        }
         if (userBdd) {
-          await this.SynchroFull(userBdd.userId, user, usersBdd, organizationsBdd);
+          await this.SynchroFull(userBdd.userId, user, usersBdd, organizationsBdd, CpvList, RegionList)
         }
       }
 
@@ -599,7 +621,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
   })
 }
 
-exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
+exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, RegionList) => {
   return new Promise(async (resolve, reject) => {
     try {
       if (!usersBdd) {
@@ -608,8 +630,12 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd) => {
       if (!organizationsBdd) {
         organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
       }
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      const RegionList = require(process.cwd() + '/public/constants/regions.json')
+      if (!CpvList) {
+        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      }
+      if (!RegionList) {
+        RegionList = require(process.cwd() + '/public/constants/regions.json')
+      }
 
       // Update user bdd list
       const config = require(process.cwd() + '/config')

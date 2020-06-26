@@ -52,10 +52,12 @@ app.post('/upload', function(req, res) {
 })
 
 const urlPublics = [
-  '/api/Tender/tenderCount',
-  '/api/PrivateDeal/PrivateDealGet',
-  '/api/Annonce/List',
   '/api/Annonce/Click',
+  '/api/Cpv/CpvList',
+  '/api/Annonce/List',
+  '/api/PrivateDeal/PrivateDealGet',
+  '/api/Tender/tenderCount',
+  '/api/TextParse/textParseList',
 ]
 app.use(function(req, res, next) {
   if (urlPublics.includes(req.path)) {

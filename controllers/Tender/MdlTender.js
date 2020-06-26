@@ -1343,7 +1343,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
   })
 }
 
-exports.TenderGroupMove = (userId, tenderGroupId, tenderId) => {
+exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -1354,6 +1354,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId) => {
       let query = `
         DELETE FROM   tenderGroupLink 
         WHERE         tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+        AND           userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
 
@@ -1369,7 +1370,17 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId) => {
         tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
       }
 
-      resolve(tenderGroup)
+      const groups = tenderGroupId ? [tenderGroupId] : []
+      const tender = {
+        objectID: algoliaId,
+        groups,
+      }
+      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderUpdate(tender)
+
+      resolve({
+        tenderGroup,
+        groups,
+      })
     } catch (err) {
       reject(err)
     }

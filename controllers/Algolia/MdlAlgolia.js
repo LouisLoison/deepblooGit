@@ -343,6 +343,22 @@ exports.TendersAdd = (tenders, index) => {
   })
 }
 
+exports.TenderUpdate = (tender, index) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const algoliasearch = require('algoliasearch')
+
+      if (!index) {
+        const client = algoliasearch(config.algoliaApplicationId, config.algoliaApiKey, { timeout: 4000 })
+        index = client.initIndex(`${config.prefixe}_tenders`)
+      }
+      await index.partialUpdateObjects([tender])
+      resolve()
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.tendersObsoleteRemove = () => {
   return new Promise(async (resolve, reject) => {
     try {
