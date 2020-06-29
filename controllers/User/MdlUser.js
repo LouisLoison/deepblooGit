@@ -872,6 +872,54 @@ exports.SetPremium = (userId) => {
   })
 }
 
+exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+
+      // Send email
+      if (userIds) {
+        for (const userId of userIds) {
+          const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
+          if (!user || !user.email || user.email.trim() === '') {
+            continue;
+          }
+          let to = user.email;
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+          this.userNotifyAddUpdate({
+            userId: config.user.userId,
+            recipientId: userId,
+            recipientEmail: user.email,
+            tenderId: tenderId,
+            creationDate: new Date(),
+            updateDate: new Date()
+          })
+        }
+      }
+      if (emails) {
+        for (const email of emails) {
+          let to = email;
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+          this.userNotifyAddUpdate({
+            userId: config.user.userId,
+            recipientEmail: email,
+            tenderId: tenderId,
+            creationDate: new Date(),
+            updateDate: new Date()
+          })
+        }
+      }
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.Opportunity = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -1024,59 +1072,15 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
   })
 }
 
-exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const config = require(process.cwd() + '/config')
-
-      // Send email
-      if (userIds) {
-        for (const userId of userIds) {
-          const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
-          if (!user || !user.email || user.email.trim() === '') {
-            continue;
-          }
-          let to = user.email;
-          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
-          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
-          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
-          this.userNotifyAddUpdate({
-            userId: config.user.userId,
-            recipientId: userId,
-            recipientEmail: user.email,
-            tenderId: tenderId,
-            creationDate: new Date(),
-            updateDate: new Date()
-          })
-        }
-      }
-      if (emails) {
-        for (const email of emails) {
-          let to = email;
-          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
-          let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
-          await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
-          this.userNotifyAddUpdate({
-            userId: config.user.userId,
-            recipientEmail: email,
-            tenderId: tenderId,
-            creationDate: new Date(),
-            updateDate: new Date()
-          })
-        }
-      }
-      resolve()
-    } catch (err) {
-      reject(err)
-    }
-  })
-}
-
 exports.SendPeriodicDashboard = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       const types = [1, 2, 4, 5]
@@ -1093,36 +1097,79 @@ exports.SendPeriodicDashboard = () => {
           continue
         }
         let to = user.email.trim()
-        /*
-        if (to !== 'rob@rvesol.com') {
-          continue
-        }
-        if (user.userId !== 2) {
-          continue
-        }
-        if (user.hivebriteId !== 446799) {
-          continue
-        }
-        */
-        /*
-        if (dataSynchroFull.doNotContact === 1) {
-          continue
-        }
-        if (dataSynchroFull.notifEmailingComEmail !== 1) {
-          continue
-        }
-        */
-        let userCpvs = await this.UserCpvs(dataSynchroFull.userId)
-        let cpvLabels = userCpvs.map(a => a.cpvName)
+
+        // Get CPVs
+        let cpvs = []
         if (user.notifCpvs && user.notifCpvs.trim() !== '') {
           const notifCpvs = user.notifCpvs.split(',')
-          const cpvs = CpvList.filter(a => notifCpvs.includes(a.code.toString()))
-          cpvLabels = cpvs.map(a => a.label)
+          cpvs = CpvList.filter(a => notifCpvs.includes(a.code.toString()))
+        } else {
+          const userCpvs = await this.UserCpvs(dataSynchroFull.userId)
+          if (userCpvs && userCpvs.length) {
+            const userCpvCodes = userCpvs.map(a => a.cpvCode)
+            cpvs = CpvList.filter(a => userCpvCodes.includes(a.code.toString()))
+          }
         }
+        if (!cpvs || !cpvs.length) {
+          continue
+        }
+
+        // Get countries
         let regions = dataSynchroFull.regions.trim()
         if (user.notifRegions && user.notifRegions.trim() !== '') {
           regions = user.notifRegions
         }
+        const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
+
+        // Get tenders
+        let query = `
+          SELECT    dgmarket.id, 
+                    dgmarket.description, 
+                    dgmarket.publicationDate, 
+                    dgmarket.bidDeadlineDate, 
+                    dgmarket.country, 
+                    tenderCriterionCpv.cpvId, 
+                    COUNT(*) AS Nbr, 
+                    SUM(tenderCriterionCpv.findCount) AS Weight 
+          FROM      dgmarket 
+          LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = dgmarket.id 
+          WHERE     dgmarket.noticeType != 'Contract Award' 
+          AND       dgmarket.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
+          AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId), BddEnvironnement, BddId)}) `
+        if (countrys && countrys.length) {
+          query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) `
+        }
+        query = query + `
+          GROUP BY  dgmarket.id, 
+                    dgmarket.description, 
+                    dgmarket.publicationDate, 
+                    dgmarket.bidDeadlineDate, 
+                    dgmarket.country, 
+                    tenderCriterionCpv.cpvId 
+          ORDER BY  SUM(tenderCriterionCpv.findCount) DESC 
+        `
+        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let tenders = []
+        for (var record of recordset) {
+          tenders.push({
+            tenderId: record.id,
+            description: record.description,
+            publicationDate: record.publicationDate,
+            bidDeadlineDate: record.bidDeadlineDate,
+            country: record.country,
+            cpvId: record.cpvId,
+            Weight: record.Weight
+          })
+        }
+
+        // Group tenderds by CPV
+        let tenderIds = []
+        for (const cpv of cpvs) {
+          cpv.tenders = tenders.filter(a => a.cpvId === cpv.cpvId && !tenderIds.includes(a.tenderId))
+          tenderIds = tenderIds.concat(cpv.tenders.map(a => a.tenderId))
+        }
+
+        /*
         let termDateMin = new Date()
         if (cpvLabels === '' || to === '') {
           continue
@@ -1140,10 +1187,13 @@ exports.SendPeriodicDashboard = () => {
           }
           return a.publicationDate < b.publicationDate ? 1 : -1
         })
+        */
+
         let tenderMax = 4
         let subject = `DeepBloo - Business opportunities`
 
         // Text version
+        let cpvLabels = cpvs.map(a => a.label)
         let text = ``
         text += `Dear ${user.username},\r\n`
         text += `\r\n`
@@ -1174,45 +1224,54 @@ exports.SendPeriodicDashboard = () => {
         }
         html += `<br>`
 
-        html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
-        html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
-        html += `    <td>CPV</td>`
-        html += `    <td>Country</td>`
-        html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
-        html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
-        html += `    <td>Description</td>`
-        html += `    <td>Link to tender</td>`
-        html += `  </tr>`
-        let tenderNum = -1
-        for (const tender of tenders) {
-          tenderNum++
-          if (tenderNum > tenderMax) {
-            continue
+        for (const cpv of cpvs) {
+          html += `CPV : ${cpv.label}<br>`
+          if (cpv.tenders.length) {
+            html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
+            html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
+            html += `    <td>CPV</td>`
+            html += `    <td>Country</td>`
+            html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
+            html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
+            html += `    <td>Description</td>`
+            html += `    <td>Link to tender</td>`
+            html += `  </tr>`
+            let tenderNum = -1
+            for (const tender of cpv.tenders) {
+              tenderNum++
+              if (tenderNum > tenderMax) {
+                continue
+              }
+              const cpv = cpvs.find(a => a.cpvId === tender.cpvId)
+              const description = htmlToText.fromString(tender.description);
+              html += `  <tr style="font-size: 0.9em;">`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 40%;">`
+              html += `      ${cpv.label.substring(0, 150)}...`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
+              html += `      ${tender.country}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
+              html += `      ${description.substring(0, 150)}...`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      <a href="https://dsqgapbuwsfze.cloudfront.net/#/tender?tenderId=${tender.tenderId}" target="_blank">#${tender.tenderId}</a>`
+              html += `    </td>`
+              html += `  </tr>`
+            }
+            html += `</table>`
+            html += `${cpv.tenders.length - tenderMax} other tenders with this CPV<br>`
+          } else {
+            html += `No tenders for this CPV<br>`
           }
-          const description = htmlToText.fromString(tender.description);
-          html += `  <tr style="font-size: 0.9em;">`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 40%;">`
-          html += `      ${tender.cpvDescriptions.substring(0, 150)}...`
-          html += `    </td>`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
-          html += `      ${tender.country}`
-          html += `    </td>`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
-          html += `    </td>`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
-          html += `    </td>`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
-          html += `      ${description.substring(0, 150)}...`
-          html += `    </td>`
-          html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-          html += `      <a href="https://dsqgapbuwsfze.cloudfront.net/#/tender?tenderId=${tender.id}" target="_blank">#${tender.id}</a>`
-          html += `    </td>`
-          html += `  </tr>`
+          html += `<br>`
         }
-        html += `</table>`
-        html += `<br>`
 
         if (user.type === 1 || user.type === 4) {
           html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria. To check them, go to your Business+ interface<br>`
@@ -1268,7 +1327,7 @@ exports.SendPeriodicDashboard = () => {
           email: user.email,
           tendersLength: tenders.length
         })
-        // to = "jeancazaux@hotmail.com"
+        to = "jeancazaux@hotmail.com"
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
       }
 
