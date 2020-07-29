@@ -226,6 +226,28 @@ exports.documentMessageAddUpdate = (documentMessage) => {
   })
 }
 
+exports.documentMessageDelete = (documentMessageId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      if (!documentMessageId) {
+        throw new Error("No available id !")
+      }
+
+      // Remove documentMessage from Deepbloo BDD
+      let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId, BddEnvironnement, BddId)}`
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      resolve()
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.tenderFileImport = (tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -341,10 +363,10 @@ exports.fileDownload = (url) => {
 
       // File get http
       const fileGet = async (fileUrl) => {
-        if (fileUrl.startsWith('http:')) {
-          fileGetHttp(fileUrl)
-        } else if (fileUrl.startsWith('https:')) {
-          fileGetHttps(fileUrl)
+        if (url.startsWith('http:')) {
+          fileGetHttp(url)
+        } else if (url.startsWith('https:')) {
+          fileGetHttps(url)
         } else {
           reject(new Error('URL format not recognize : ' + url))
         }
@@ -386,7 +408,7 @@ exports.fileDownload = (url) => {
 
       // File download
       const fileDownload = async (fileResponse) => {
-        const fs = require('fs')
+        const fs = require('fs-extra')
         const path = require('path')
         let filename = decodeURI(fileResponse.headers["content-disposition"])
         filename = filename.split('filename=')[1]
@@ -397,8 +419,16 @@ exports.fileDownload = (url) => {
         }
         let file = fs.createWriteStream(fileLocation)
         fileResponse.pipe(file)
+
+        fileResponse.on('data', (d) => {
+          process.stdout.write(d)
+        })
+
+        file.on('error', (err) => {
+          reject(err)
+        })
   
-        file.on('finish', function() {
+        file.on('finish', () => {
           file.close()
           const stats = fs.statSync(fileLocation)
           resolve({
@@ -406,10 +436,6 @@ exports.fileDownload = (url) => {
             fileLocation,
             size: stats["size"],
           })
-        })
-      
-        fileResponse.on('data', (d) => {
-          process.stdout.write(d);
         })
       }
 

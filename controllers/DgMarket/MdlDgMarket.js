@@ -226,6 +226,14 @@ exports.FileParse = (fileLocation) => {
       const parseString = util.promisify(parser.parseString)
       let parseData = await parseString(fileData)
 
+      /*
+      for (const notice of parseData.notices.notice) {
+        notice.noticeText = undefined
+      }
+      const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.json')
+      fs.writeFileSync(tenderListLocation, JSON.stringify(parseData, null, 3))
+      */
+
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 

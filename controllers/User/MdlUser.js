@@ -130,6 +130,10 @@ exports.List = (filter) => {
           if (where !== '') { where += 'AND ' }
           where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
         }
+        if (filter.email) {
+          if (where !== '') { where += 'AND ' }
+          where += `email = '${BddTool.ChaineFormater(filter.email, BddEnvironnement, BddId)}' \n`
+        }
         if (filter.hivebriteId) {
           if (where !== '') { where += 'AND ' }
           where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId, BddEnvironnement, BddId)} \n`
@@ -395,6 +399,7 @@ exports.synchroNew = () => {
       // Remove deleted user
       let updateCount = 0
       const deletedUsers = []
+      /*
       for (let user of deepblooUsers) {
         if (!user.hivebriteId) {
           continue
@@ -405,6 +410,7 @@ exports.synchroNew = () => {
           await this.UserDelete(user.userId)
         }
       }
+      */
 
       // Add/Update hivebrite users
       for (let hivebriteUser of hivebriteUsers) {
@@ -1082,12 +1088,19 @@ exports.SendPeriodicDashboard = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const tenderMax = 30
 
       const types = [1, 2, 4, 5]
       let users = await this.List({ types, notifSend: 1 })
 
       let emailSents = []
       for (const user of users) {
+        if (user.email.trim() !== 'serge.remy@studer-innotec.com') {
+          continue
+        }
+        /*
+        */
+
         const dataSynchroFull = await this.SynchroFull(user.userId)
         if (
           !dataSynchroFull
@@ -1165,31 +1178,12 @@ exports.SendPeriodicDashboard = () => {
         // Group tenderds by CPV
         let tenderIds = []
         for (const cpv of cpvs) {
-          cpv.tenders = tenders.filter(a => a.cpvId === cpv.cpvId && !tenderIds.includes(a.tenderId))
+          const tenderCpvs = tenders.filter(a => a.cpvId === cpv.cpvId && !tenderIds.includes(a.tenderId))
+          cpv.tenders = tenderCpvs.slice(0, tenderMax)
+          cpv.tenderLeftCount = tenderCpvs.length - tenderMax
           tenderIds = tenderIds.concat(cpv.tenders.map(a => a.tenderId))
         }
 
-        /*
-        let termDateMin = new Date()
-        if (cpvLabels === '' || to === '') {
-          continue
-        }
-        let limit = 5000
-        let orderBy = 'publicationDate DESC'
-        let tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, termDateMin, null, cpvLabels, regions, limit, null, null, orderBy)
-        tenders = tenders.filter(a => a.noticeType !== 'Contract Award')
-        if (!tenders || !tenders.length) {
-          continue
-        }
-        tenders.sort((a, b) => {
-          if (a.publicationDate === b.publicationDate){
-            return 0
-          }
-          return a.publicationDate < b.publicationDate ? 1 : -1
-        })
-        */
-
-        let tenderMax = 4
         let subject = `DeepBloo - Business opportunities`
 
         // Text version
@@ -1225,57 +1219,51 @@ exports.SendPeriodicDashboard = () => {
         html += `<br>`
 
         for (const cpv of cpvs) {
-          html += `CPV : ${cpv.label}<br>`
-          if (cpv.tenders.length) {
-            html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
-            html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
-            html += `    <td>CPV</td>`
-            html += `    <td>Country</td>`
-            html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
-            html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
-            html += `    <td>Description</td>`
-            html += `    <td>Link to tender</td>`
-            html += `  </tr>`
-            let tenderNum = -1
-            for (const tender of cpv.tenders) {
-              tenderNum++
-              if (tenderNum > tenderMax) {
-                continue
-              }
-              const cpv = cpvs.find(a => a.cpvId === tender.cpvId)
-              const description = htmlToText.fromString(tender.description);
-              html += `  <tr style="font-size: 0.9em;">`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 40%;">`
-              html += `      ${cpv.label.substring(0, 150)}...`
-              html += `    </td>`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
-              html += `      ${tender.country}`
-              html += `    </td>`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-              html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
-              html += `    </td>`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-              html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
-              html += `    </td>`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
-              html += `      ${description.substring(0, 150)}...`
-              html += `    </td>`
-              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-              html += `      <a href="https://dsqgapbuwsfze.cloudfront.net/#/tender?tenderId=${tender.tenderId}" target="_blank">#${tender.tenderId}</a>`
-              html += `    </td>`
-              html += `  </tr>`
-            }
-            html += `</table>`
-            html += `${cpv.tenders.length - tenderMax} other tenders with this CPV<br>`
-          } else {
-            html += `No tenders for this CPV<br>`
+          if (!cpv.tenders.length) {
+            continue
           }
-          html += `<br>`
+          html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">CPV : ${cpv.label}</div><br>`
+          html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
+          html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
+          html += `    <td>Country</td>`
+          html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
+          html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
+          html += `    <td>Description</td>`
+          html += `    <td>Link to tender</td>`
+          html += `  </tr>`
+          for (const tender of cpv.tenders) {
+            const cpv = cpvs.find(a => a.cpvId === tender.cpvId)
+            const description = htmlToText.fromString(tender.description).replace(/<[^>]+>/g, ' ');
+            html += `  <tr style="font-size: 0.9em;">`
+            html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
+            html += `      ${tender.country}`
+            html += `    </td>`
+            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+            html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
+            html += `    </td>`
+            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+            html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
+            html += `    </td>`
+            html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
+            html += `      ${description.substring(0, 150)}...`
+            html += `    </td>`
+            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+            html += `      <a href="https://dsqgapbuwsfze.cloudfront.net/#/tender?tenderId=${tender.tenderId}" target="_blank">#${tender.tenderId}</a>`
+            html += `    </td>`
+            html += `  </tr>`
+          }
+          html += `</table>`
+          if (cpv.tenderLeftCount > 0) {
+            html += `<div style="margin: 20px 0px 10px 10px;">`
+            html += `  <a href="https://platform.deepbloo.com/page/tenders" target="_blank">`
+            html += `    There are ${cpv.tenderLeftCount} other tenders with this CPV`
+            html += `  </a>`
+            html += `</div>`
+          }
+          html += `<br><br>`
         }
 
         if (user.type === 1 || user.type === 4) {
-          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria. To check them, go to your Business+ interface<br>`
-          html += `<br>`
           html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
           html += `<br>`
           html += `You can as well  update your business preferences in order to change your CPV's and Business areas to adjust your pipeline and the opportunities you will receive by email.<br>`
@@ -1286,8 +1274,6 @@ exports.SendPeriodicDashboard = () => {
           html += `<br>`
           html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
         } else if (user.type === 2) {
-          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria.<br>`
-          html += `<br>`
           html += `You can update your business preferences in order to change your CPV’s and Business areas to adjust the type of opportunities you will receive by email.<br>`
           html += `<br>`
           html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
@@ -1296,8 +1282,6 @@ exports.SendPeriodicDashboard = () => {
           html += `<br>`
           html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
         } else if (user.type === 5) {
-          html += `There are <span style="color: #3498DB; font-weight: 600;">${tenders.length - tenderMax}</span> more live opportunities (not yet expired) corresponding to your criteria.  To check them, go to your Business+ interface.<br>`
-          html += `<br>`
           html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
           html += `<br>`
           html += `You can as well update your business preferences in order to change your CPV’s and Business areas to adjust your private pipeline and the opportunities you will receive by email.<br>`
@@ -1327,7 +1311,7 @@ exports.SendPeriodicDashboard = () => {
           email: user.email,
           tendersLength: tenders.length
         })
-        to = "jeancazaux@hotmail.com"
+        // to = "jeancazaux@hotmail.com"
         await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
       }
 

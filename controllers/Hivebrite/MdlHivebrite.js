@@ -398,11 +398,16 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
       let dataUsers = []
       let total = 1
       let page = pageStart
-      while (dataUsers.length < total && page < 200) {
+      while (dataUsers.length < total && page < 500) {
         let response = await this.get(`api/admin/v1/users?page=${page}&per_page=${perPage}&order=-updated_at&full_profile=true`)
 
-        let users = []
+        let tempUsers = []
         for (const user of response.data.users) {
+          /*
+          if (user.email === 'mathieu.bertrane@edf.fr') {
+            let toto = 1
+          }
+          */
           if (user.name && user.name.trim().startsWith('How to invest in Cryptocurrency and receive from')) {
             continue
           }
@@ -415,10 +420,10 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
           if (user.name && user.name.trim().startsWith('Verified earnings on')) {
             continue
           }
-          users.push(user)
+          tempUsers.push(user)
         }
         
-        dataUsers = dataUsers.concat(users)
+        dataUsers = dataUsers.concat(tempUsers)
         total = response.headers["x-total"]
         page++
         if (pageMax && page > pageMax) {
