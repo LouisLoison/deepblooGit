@@ -83,6 +83,7 @@ exports.TendersImport = () => {
       `
       recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
+      const tendersWithCriterions = []
       const tenderIdDeletes = []
       for (const record of recordset) {
         record.tenderCriterions = tenderCriterionAlls.filter(a => a.tenderId === record.id)
@@ -97,6 +98,11 @@ exports.TendersImport = () => {
           tender.objectID = tender.algoliaId;
         }
         tenders.push(tender)
+        const tenderWithCriterions = {
+          ...tender,
+          tenderCriterions: record.tenderCriterions,
+        }
+        tendersWithCriterions.push(tenderWithCriterions)
       }
 
       const tranches = []
@@ -114,8 +120,20 @@ exports.TendersImport = () => {
       let index = client.initIndex(`${config.prefixe}_tenders`)
       for (tranche of tranches) {
         if (tranche.length > 0) {
+          try {
+            await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').indexObject(tranche)
+          } catch (err) {
+            console.log('Elasticsearch indexObject error')
+          }
           await this.TendersAdd(tranche, index)
         }
+      }
+
+      // Dispatch tenders to user group
+      try {
+        await require(process.cwd() + '/controllers/Tender/MdlTender').tenderUserGroupDispatch(tendersWithCriterions)
+      } catch (err) {
+        console.log(err)
       }
 
       for (const tenderId of tenderIdDeletes) {
@@ -273,7 +291,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         categoryLvl0: categoryLvl0,
         categoryLvl1: categoryLvl1,
         words: tender.words,
-        currency: tender.currency,
+        currency: tender.currency ? tender.currency.trim() : '',
         publicationDate: publicationDate,
         publication_timestamp: publication_timestamp,
         cpvsOrigine: tender.cpvsOrigine,
@@ -284,13 +302,14 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
         // creation_timestamp: publication_timestamp,
         sourceUrls: sourceUrls,
-        userId: tender.userId,
+        userId: tender.userId ? tender.userId : 0,
         scopeOfWorks: [],
         segments: [],
         designs: [],
         contractTypes: [],
         brands: [],
-        fileSource: tender.fileSource
+        fileSource: tender.fileSource,
+        groups: [],
       }
 
       if (tender.tenderCriterions) {

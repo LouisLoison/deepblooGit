@@ -18,11 +18,19 @@ exports.BddImport = () => {
       const fileLocation = path.join(fileFolder, files[0])
 
       // Get tenders
-      //const dateDeb = new Date()
-      const fileParseData = await this.FileParse(fileLocation)
-      //const dateFin = new Date()
+      let fileParseData = null
+      try {
+        fileParseData = await this.FileParse(fileLocation)
+      } catch (err) {
+        const fileLocationReject = path.join(config.WorkSpaceFolder, 'Reject/', fileSource)
+        fs.renameSync(fileLocation, fileLocationReject)
+        reject(err)
+        return
+      }
       
       /*
+      const dateDeb = new Date()
+      const dateFin = new Date()
       const moment = require('moment')
       const dateDiff = moment.utc(moment(dateFin).diff(moment(dateDeb))).format("HH:mm:ss")
       console.log(dateDiff)

@@ -301,6 +301,51 @@ exports.textParseSearch = (text, scope) => {
           }
         }
 
+        /*
+        const brands = [
+          { name: 'General Electric', words: [ 'GE', 'General Electric' ], exclusion: [] },
+          { name: 'Siemens', words: [ 'Siemens' ], exclusion: [] },
+          { name: 'Elgi', words: [ 'Elgi' ], exclusion: [] },
+          { name: 'Abb', words: [ 'Abb' ], exclusion: [] },
+          { name: 'Schneider', words: [ 'Schneider Electric', 'Schneider' ], exclusion: [] },
+          { name: 'Rittal', words: [ 'Rittal' ], exclusion: [] },
+          { name: 'Rexroth', words: [ 'Rexroth' ], exclusion: [] },
+          { name: 'Bhel', words: [ 'Bhel' ], exclusion: [] },
+          { name: 'Emco', words: [ 'Emco' ], exclusion: [] },
+          { name: 'Alstom', words: [ 'Alstom', 'Alsthom' ], exclusion: [] },
+          { name: 'EDF', words: [ 'EDF' ], exclusion: [] },
+          { name: 'Dalian', words: [ 'Dalian' ], exclusion: [] },
+          { name: 'Efacec', words: [ 'Efacec' ], exclusion: [] },
+          { name: 'Arteche', words: [ 'Arteche' ], exclusion: [] },
+          { name: 'Ericson', words: [ 'Erikson', 'Ericson' ], exclusion: [] },
+          { name: 'Extron', words: [ 'Extron' ], exclusion: [] },
+          { name: 'Huawai', words: [ 'Huawai' ], exclusion: [] },
+          { name: 'Hitachi', words: [ 'Hitachi' ], exclusion: [] },
+          { name: 'Hyosung', words: [ 'Hyosung' ], exclusion: [] },
+          { name: 'Ingeteam', words: [ 'Ingeteam' ], exclusion: [] },
+          { name: 'Nexans', words: [ 'Nexans' ], exclusion: [] },
+          { name: 'Prysmian', words: [ 'Prysmian' ], exclusion: [] },
+          { name: 'Alcatel', words: [ 'Alcatel' ], exclusion: [] },
+          { name: 'Mitsui', words: [ 'Mitsui' ], exclusion: [] },
+          { name: 'Mitsubishi', words: [ 'Mitsubishi' ], exclusion: [] },
+          { name: 'Pfeiffer', words: [ 'Pfeiffer' ], exclusion: [] },
+          { name: 'Pfiffner', words: [ 'Pfiffner' ], exclusion: [] },
+          { name: 'Phoenix', words: [ 'Phoenix' ], exclusion: [ 'Phoenix, Arizona' ] },
+          { name: 'Qualitrol', words: [ 'Qualitrol' ], exclusion: [] },
+          { name: 'Sergi', words: [ 'Sergi' ], exclusion: [] },
+          { name: 'Schweitzer', words: [ 'Schweitzer' ], exclusion: [] },
+          { name: 'Toshiba', words: [ 'Toshiba' ], exclusion: [] },
+          { name: 'Weidmuller', words: [ 'Weidmuller', 'Weidmüller' ], exclusion: [] },
+          { name: 'AEG', words: [ 'AEG' ], exclusion: [] },
+          { name: 'Eaton', words: [ 'Eaton' ], exclusion: [] },
+          { name: 'Lucy', words: [ 'Lucy' ], exclusion: [] },
+          { name: 'Elsewedy', words: [ 'Elsewedy' ], exclusion: [] },
+          { name: 'Saft', words: [ 'Saft' ], exclusion: [] },
+          { name: 'Rotex', words: [ 'Rotex' ], exclusion: [] },
+          { name: 'Megger', words: [ 'Megger' ], exclusion: [] },
+        ]
+        */
+
         const brands = [
           'abb',
           'AEG',

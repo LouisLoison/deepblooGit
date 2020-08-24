@@ -1370,12 +1370,29 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
         tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
       }
 
+      if (!algoliaId) {
+        const tender = await this.TenderGet(tenderId)
+        if (tender) {
+          algoliaId = tender.algoliaId
+        }
+      }
+
       const groups = tenderGroupId ? [tenderGroupId] : []
       const tender = {
         objectID: algoliaId,
         groups,
       }
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderUpdate(tender)
+      try {
+        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
+          {
+            id: tenderId,
+            groups,
+          }
+        ])
+      } catch (err) {
+        console.log('Elasticsearch indexObject error')
+      }
 
       resolve({
         tenderGroup,
@@ -1586,17 +1603,17 @@ exports.TenderDetailAddUpdate = (tenderDetail) => {
 exports.UserNotify = (userIds, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const htmlToText = require('html-to-text');
-      const tender = await this.TenderGet(tenderId);
+      const htmlToText = require('html-to-text')
+      const tender = await this.TenderGet(tenderId)
 
       // Send email
       for (const userId of userIds) {
-        const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId);
+        const user = await require(process.cwd() + '/controllers/User/MdlUser').User(userId)
         if (!user || !user.email || user.email.trim() === '') {
-          continue;
+          continue
         }
-        const title = htmlToText.fromString(tender.title);
-        const description = htmlToText.fromString(tender.description);
+        const title = htmlToText.fromString(tender.title)
+        const description = htmlToText.fromString(tender.description)
 
         let to = user.email
         let subject = 'Deepbloo - this tender should interest you'
@@ -1737,3 +1754,268 @@ exports.tenderFilterList = (filter) => {
   })
 }
 
+exports.tenderUserGroupDispatch = (tenders) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let userFilters = [
+        {
+          userId: 5717,
+          tenderGroupId: 76, //Biomass Power Plants
+          filter: {
+            title: {
+              regexs: [
+                '(biomass power plant)(.)*(study|analysis|assessment|evaluation)',
+                '(biomass)(.)*(étude|analyse|évaluation)',
+              ],
+              words: [],
+            },
+            regexs: [],
+            cpvs: [],
+            textParses: [
+              {
+                theme: "Scope of Work",
+                textParseIds: [ 9 ], // Consulting/Audit
+              }
+            ],
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 77, // Customer
+          filter: {
+            title: {
+              regexs: [
+                '(electric)(.)*(load|consumption)(.)*(simulat)',
+                '(energy|electric)(.)*(demand|consumption|load|loads)(.)*(client|customer|consumer)',
+                '(client)(.)*(consommat)(.)*(gaz)(.)*(électri)',
+                '(analyse)(.)*(énergie|énergétique)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 78, // Electric Mobility
+          filter: {
+            title: {
+              regexs: [
+                '(electric)(.)*(vehicle|bus|buses|car|cars|transport|charging)(.)*(planning|planification|plan|plans|strategy)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 79, // Energy Efficiency
+          filter: {
+            title: {
+              regexs: [
+                '(electric)(.)*(vehicle|bus|buses|car|cars|transport|charging)(.)*(planning|planification|plan|plans|strategy)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 80, // Energy Systems
+          filter: {
+            title: {
+              regexs: [
+                '(wind)(.)*(resource)(.)*(assess)(.)*(RE|Renewable Energy)(.)*(Deployment)',
+                '(energy|electric)(.)*(forecast|model)(.)*(demand|consumption|load)',
+                '(renewable)(.)*(energy)(.)*(integrat|incorporat)',
+                '(simulat|analysis)(.)*(demand|consumption|load|loads)(.)*(energy|electric)',
+                '(energy|electricity)(.)*(tariff)(.)*(analysis|study|studies|optimiz|optimis)(.)*(distributed)(.)*(renewable energy|generation)(.)*(least-cost)(.)*(planning|generation|electrification)(.)*(electrification)(.)*(strategy|analysis)',
+                '(estimation)(.)*(productible)',
+                '(structure)(.)*(tarifaire)(.)*(électricité|énergie)',
+                '(étude|analyse)(.)*(énergie)(.)*(renouvelable)(.)*(électrification au moindre coût)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 81, // Hydraulic
+          filter: {
+            title: {
+              regexs: [
+                '(hydrological)(.)*(model)',
+                '(étude|analyse)(.)*(model)(.)*(hydrauli|hydrolog)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 82, // Local Multi-Energy Systems
+          filter: {
+            title: {
+              regexs: [
+                '(network)(.)*(cold|cool)',
+                '(heat)(.)*(forecast)',
+                '(Energy)(.)*(Thermal)(.)*(Efficiency)',
+                '(microgrid)(.)*(design)(.)*(minigrid|mini-grid|mini grid)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 83, // Mechanical
+          filter: {
+            title: {
+              regexs: [
+                '(mechanical)(.)*(test)(.)*(resistance|vibration|non destructive|welding)',
+                '(two)(.)*(phase)(.)*(flow)',
+                '(valve)(.)*(qualif)',
+                '(turbine)(.)*(diagnostic)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 83, // Misc.
+          filter: {
+            title: {
+              regexs: [
+                '(bioclimatic)(.)*(technolog)',
+                '(PV|photovoltaic)(.)*(pannel)(.)*(test)',
+                '(battery|batteries)(.)*(test)(.)*(charging)',
+                '(accelerated)(.)*(ageing)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 84, // Risk, Forecasting & Optimisation
+          filter: {
+            title: {
+              regexs: [
+                '(portfolio)(.)*(optimis|optimiz)',
+                '(market)(.)*(risk)(.)*(model|algor|analy|manag)',
+                '(forecast)(.)*(model|algor)(.)*(power market transition)',
+              ],
+              words: [],
+            },
+          },
+        },
+        {
+          userId: 5717,
+          tenderGroupId: 85, // Smart Grid
+          filter: {
+            title: {
+              regexs: [
+                '(power)(.)*(disturbance)',
+                '(reliability)(.)*(power)(.)*(network)',
+                '(modsarus)',
+                '(distributed)(.)*(energy)(.)*(source)',
+                '(non-wires)(.)*(alternative)',
+                '(smart)(.)*(meter)(.)*(qualif|test|G3*PLC|expert)',
+              ],
+              words: [],
+            },
+          },
+        },
+      ]
+
+      const tenderIds = []
+      const tenderGroupLinks = []
+      for (const tender of tenders) {
+        for (const userFilter of userFilters) {
+          let titleFlag = true
+          if (
+            userFilter.filter.title &&
+            userFilter.filter.title.regexs &&
+            userFilter.filter.title.regexs.length
+          ) {
+            titleFlag = false
+            for (const regex of userFilter.filter.title.regexs) {
+              if (tender.title.match(regex)) {
+                titleFlag = true
+              }
+            }
+          }
+          
+          let regexFlag = true
+          let cpvFlag = true
+
+          // Criterion
+          let textParseFlag = true
+          if (userFilter.filter.textParses && userFilter.filter.textParses.length) {
+            for (const textParse of userFilter.filter.textParses) {
+              let themeFlag = false
+              for (const textParseId of textParse.textParseIds) {
+                if (tender.tenderCriterions.find(a => a.textParseId === textParseId)) {
+                  themeFlag = true
+                }
+              }
+              if (!themeFlag) {
+                textParseFlag = false
+              }
+            }
+          }
+
+          if (
+            titleFlag &&
+            regexFlag &&
+            cpvFlag &&
+            textParseFlag
+          ) {
+            tenderGroupLinks.push({
+              userId: userFilter.userId,
+              tenderGroupId: userFilter.tenderGroupId,
+              tenderId: tender.tenderId,
+              algoliaId: tender.algoliaId ? tender.algoliaId : tender.objectID,
+            })
+            if (!tenderIds.includes(tender.tenderId)) {
+              tenderIds.push(tender.tenderId)
+            }
+          }
+        }
+      }
+
+      // Check if tenderGroupLink existe
+      if (tenderGroupLinks.length) {
+        let query = `
+          SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
+                      userId AS "userId",
+                      tenderGroupId AS "tenderGroupId",
+                      tenderId AS "tenderId",
+                      creationDate AS "creationDate",
+                      updateDate AS "updateDate"
+          FROM        tenderGroupLink 
+          WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+        `
+        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        for (const record of recordset) {
+          tenderGroupLinks = tenderGroupLinks.filter(
+            a => a.tenderGroupId !== record.tenderGroupId && a.tenderId !== record.tenderId
+          )
+        }
+
+        for (const tenderGroupLink of tenderGroupLinks) {
+          await this.TenderGroupMove(tenderGroupLink.userId, tenderGroupLink.tenderGroupId, tenderGroupLink.tenderId, tenderGroupLink.algoliaId)
+        }
+      }
+
+      resolve(tenderGroupLinks)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
