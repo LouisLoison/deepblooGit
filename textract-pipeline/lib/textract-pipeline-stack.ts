@@ -340,36 +340,36 @@ export class TextractPipelineStack extends cdk.Stack {
     );
 
     // Elastic search Indexer
-    const elasticIndexer = new lambda.Function(this, 'ElasticIndexer', {
-      runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/elasticindexer'),
-      handler: 'lambda_function.lambda_handler',
+    const appsearchIndexer = new lambda.Function(this, 'AppsearchIndexer', {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.asset('lambda/appsearchindexer'),
+      handler: 'index.handler',
       memorySize: 1500,
       reservedConcurrentExecutions: 20,
-      timeout: cdk.Duration.seconds(900),
+      timeout: cdk.Duration.seconds(50),
       environment: {
+        /*
         ELASTIC_HOST: "a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io",
         ELASTIC_PORT: "9243",
         ELASTIC_USER: "elastic",
         OUTPUT_TABLE: outputTable.tableName,
         DOCUMENTS_TABLE: documentsTable.tableName,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
+        */
       }
     });
     //Layer
-    elasticIndexer.addLayers(helperLayer)
-    // elasticIndexer.addLayers(textractorLayer)
-    elasticIndexer.addLayers(pythonModulesLayer)
+    appsearchIndexer.addLayers(nodeModulesLayer)
     //Triggers
-    elasticIndexer.addEventSource(new SqsEventSource(esIndexQueue, {
+    appsearchIndexer.addEventSource(new SqsEventSource(esIndexQueue, {
       batchSize: 1
     }));
     //Permissions
-    outputTable.grantReadWriteData(elasticIndexer)
-    documentsTable.grantReadWriteData(elasticIndexer)
-    contentBucket.grantReadWrite(elasticIndexer)
-    outputBucket.grantReadWrite(elasticIndexer)
-    existingContentBucket.grantReadWrite(elasticIndexer)
+    //outputTable.grantReadWriteData(appsearchIndexer)
+    //documentsTable.grantReadWriteData(appsearchIndexer)
+    //contentBucket.grantReadWrite(appsearchIndexer)
+    outputBucket.grantRead(appsearchIndexer)
+    //existingContentBucket.grantReadWrite(appsearchIndexer)
 
   // Pdf to Image converter
     const pdfToImg = new lambda.Function(this, 'Pdf2Img', {

@@ -5,7 +5,7 @@
     "textract-pipeline": "bin/textract-pipeline.js"
   },
   "scripts": {
-    "postinstall": "(cd lambda/nodelayer/nodejs && npm install) && (pipenv --version || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare",
+    "postinstall": "(cd lambda/nodelayer/nodejs && npm install) && mkdir -p lambda/nodelayer/nodejs/node_modules/deepblooback/ && cp -a ../../DeepblooBack/controllers lambda/nodelayer/nodejs/node_modules/deepblooback/ && (pipenv --version || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare",
     "build": "(cd ../src && sh build.sh) && sh build.sh && tsc",
     "clean": "rm -fr lambda/*/*.py lambda/*/*/*.py lambda/pipenv lib/textract-pipeline-stack.js cdk.out",
     "watch": "tsc -w",
