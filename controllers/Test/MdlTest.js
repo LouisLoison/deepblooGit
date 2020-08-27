@@ -701,29 +701,6 @@ exports.Test5 = () => {
           }
         }
         const tenderCriterionsDescription = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(tender.description, CpvList)
-
-        /*
-        const textParseResult = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseSearch(tender.title, 'TITLE')
-        let isUpdate = false
-        if (
-          textParseResult.isLongTermFrameAgreement &&
-          !tender.contractType1
-        ) {
-          tender.contractType1 = true
-          isUpdate = true
-        }
-        if (
-          textParseResult.brand
-          && textParseResult.brand.trim() !== ''
-          && tender.brand !== textParseResult.brand
-        ) {
-          tender.brand = textParseResult.brand
-          isUpdate = true
-        }
-        if (isUpdate) {
-          tendersToUpdate.push(tender)
-        }
-        */
       }
 
       for (const tender of tendersToDelete) {

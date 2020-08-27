@@ -242,170 +242,6 @@ exports.textExclusionIfNoCpv = (text, scope) => {
   })
 }
 
-exports.textParseSearch = (text, scope) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (!text) {
-        resolve()
-        return true
-      }
-
-      let isLongTermFrameAgreement = false
-      let brand = null
-      if (scope === 'TITLE') {
-        const wordCouples = [
-          {
-            word1: 'service',
-            word2: 'contract',
-          },
-          {
-            word1: 'biennal',
-            word2: 'contract',
-          },
-          {
-            word1: 'rate',
-            word2: 'contract',
-          },
-          {
-            word1: 'annual',
-            word2: 'contract',
-          },
-          {
-            word1: 'bi-annual',
-            word2: 'contract',
-          },
-          {
-            word1: 'year',
-            word2: 'contract',
-          },
-          {
-            word1: 'yearly',
-            word2: 'contract',
-          },
-          {
-            word1: 'umbrella',
-            word2: 'contract',
-          },
-          {
-            word1: 'umbrella',
-            word2: 'agreement',
-          },
-        ]
-
-        // Protection exception
-        for (const wordCouple of wordCouples) {
-          const regExWordCouple = new RegExp(`\\b${wordCouple.word1}\\b(.)\\b${wordCouple.word2}\\b`, 'gi')
-          if (text.match(regExWordCouple)) {
-            isLongTermFrameAgreement = true
-            break
-          }
-        }
-
-        /*
-        const brands = [
-          { name: 'General Electric', words: [ 'GE', 'General Electric' ], exclusion: [] },
-          { name: 'Siemens', words: [ 'Siemens' ], exclusion: [] },
-          { name: 'Elgi', words: [ 'Elgi' ], exclusion: [] },
-          { name: 'Abb', words: [ 'Abb' ], exclusion: [] },
-          { name: 'Schneider', words: [ 'Schneider Electric', 'Schneider' ], exclusion: [] },
-          { name: 'Rittal', words: [ 'Rittal' ], exclusion: [] },
-          { name: 'Rexroth', words: [ 'Rexroth' ], exclusion: [] },
-          { name: 'Bhel', words: [ 'Bhel' ], exclusion: [] },
-          { name: 'Emco', words: [ 'Emco' ], exclusion: [] },
-          { name: 'Alstom', words: [ 'Alstom', 'Alsthom' ], exclusion: [] },
-          { name: 'EDF', words: [ 'EDF' ], exclusion: [] },
-          { name: 'Dalian', words: [ 'Dalian' ], exclusion: [] },
-          { name: 'Efacec', words: [ 'Efacec' ], exclusion: [] },
-          { name: 'Arteche', words: [ 'Arteche' ], exclusion: [] },
-          { name: 'Ericson', words: [ 'Erikson', 'Ericson' ], exclusion: [] },
-          { name: 'Extron', words: [ 'Extron' ], exclusion: [] },
-          { name: 'Huawai', words: [ 'Huawai' ], exclusion: [] },
-          { name: 'Hitachi', words: [ 'Hitachi' ], exclusion: [] },
-          { name: 'Hyosung', words: [ 'Hyosung' ], exclusion: [] },
-          { name: 'Ingeteam', words: [ 'Ingeteam' ], exclusion: [] },
-          { name: 'Nexans', words: [ 'Nexans' ], exclusion: [] },
-          { name: 'Prysmian', words: [ 'Prysmian' ], exclusion: [] },
-          { name: 'Alcatel', words: [ 'Alcatel' ], exclusion: [] },
-          { name: 'Mitsui', words: [ 'Mitsui' ], exclusion: [] },
-          { name: 'Mitsubishi', words: [ 'Mitsubishi' ], exclusion: [] },
-          { name: 'Pfeiffer', words: [ 'Pfeiffer' ], exclusion: [] },
-          { name: 'Pfiffner', words: [ 'Pfiffner' ], exclusion: [] },
-          { name: 'Phoenix', words: [ 'Phoenix' ], exclusion: [ 'Phoenix, Arizona' ] },
-          { name: 'Qualitrol', words: [ 'Qualitrol' ], exclusion: [] },
-          { name: 'Sergi', words: [ 'Sergi' ], exclusion: [] },
-          { name: 'Schweitzer', words: [ 'Schweitzer' ], exclusion: [] },
-          { name: 'Toshiba', words: [ 'Toshiba' ], exclusion: [] },
-          { name: 'Weidmuller', words: [ 'Weidmuller', 'Weidmüller' ], exclusion: [] },
-          { name: 'AEG', words: [ 'AEG' ], exclusion: [] },
-          { name: 'Eaton', words: [ 'Eaton' ], exclusion: [] },
-          { name: 'Lucy', words: [ 'Lucy' ], exclusion: [] },
-          { name: 'Elsewedy', words: [ 'Elsewedy' ], exclusion: [] },
-          { name: 'Saft', words: [ 'Saft' ], exclusion: [] },
-          { name: 'Rotex', words: [ 'Rotex' ], exclusion: [] },
-          { name: 'Megger', words: [ 'Megger' ], exclusion: [] },
-        ]
-        */
-
-        const brands = [
-          'abb',
-          'AEG',
-          'Alcatel',
-          'Alstom',
-          'Arteche',
-          'Bhel',
-          'Dalian',
-          'Eaton',
-          'elgi',
-          'Elsewedy',
-          'Extron',
-          'Emco',
-          'EDF',
-          'Efacec',
-          'Erikson',
-          'GE',
-          'Huawai',
-          'Hitachi',
-          'Hyosung',
-          'Ingeteam',
-          'Lucy',
-          'Megger',
-          'Mitsui',
-          'Mitsubishi',
-          'Nexans',
-          'Pfeiffer',
-          'Pfiffner',
-          'Phoenix',
-          'Prysmian',
-          'Qualitrol',
-          'Rexroth',
-          'Rittal',
-          'Rotex',
-          'Sergi',
-          'Schweitzer',
-          'phoenix',
-          'Saft',
-          'schneider electric',
-          'Siemens',
-          'Toshiba',
-          'Weidmuller',
-        ]
-        for (const brandSearchs of brands) {
-          const regExWordCouple = new RegExp(`\\b${brandSearchs}\\b(.)\\bmake\\b`, 'gi')
-          if (text.match(regExWordCouple)) {
-            brand = brandSearchs
-            break
-          }
-        }
-      }
-
-      resolve({
-        isLongTermFrameAgreement,
-        brand,
-      })
-    } catch (err) { reject(err) }
-  })
-}
-
 exports.textParseList = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -639,110 +475,47 @@ exports.textParseList = (filter) => {
           type: "WORD_COUPLE",
           scopes: 'TITLE',
         },
-        {
-          textParseId: 32,
-          theme: "Brand",
-          group: "GE",
-          words: "GE|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 33,
-          theme: "Brand",
-          group: "Siemens",
-          words: "Siemens|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 34,
-          theme: "Brand",
-          group: "Weidmuller",
-          words: "weidmuller|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 35,
-          theme: "Brand",
-          group: "elgi",
-          words: "elgi|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 36,
-          theme: "Brand",
-          group: "abb",
-          words: "abb|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 37,
-          theme: "Brand",
-          group: "phoenix",
-          words: "phoenix|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 38,
-          theme: "Brand",
-          group: "schneider electric",
-          words: "schneider electric|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 39,
-          theme: "Brand",
-          group: "rittal",
-          words: "rittal|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 40,
-          theme: "Brand",
-          group: "rexroth",
-          words: "rexroth|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 41,
-          theme: "Brand",
-          group: "bhel",
-          words: "bhel|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 42,
-          theme: "Brand",
-          group: "emco",
-          words: "emco|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 43,
-          theme: "Brand",
-          group: "alstom",
-          words: "alstom|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
-        {
-          textParseId: 44,
-          theme: "Brand",
-          group: "alsthom",
-          words: "alsthom|make",
-          type: "WORD_COUPLE",
-          scopes: 'TITLE',
-        },
+
+        { textParseId: 32, theme: "Brand", group: "GE", words: "GE, General Electric", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 33, theme: "Brand", group: "Siemens", words: "Siemens", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 34, theme: "Brand", group: "Weidmuller", words: "weidmuller", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 35, theme: "Brand", group: "elgi", words: "elgi", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 36, theme: "Brand", group: "abb", words: "abb", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 37, theme: "Brand", group: "phoenix", words: "phoenix", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 38, theme: "Brand", group: "schneider electric", words: "schneider electric", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 39, theme: "Brand", group: "rittal", words: "rittal", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 40, theme: "Brand", group: "rexroth", words: "rexroth", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 41, theme: "Brand", group: "bhel", words: "bhel", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 42, theme: "Brand", group: "emco", words: "emco", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 43, theme: "Brand", group: "alstom", words: "alstom, alsthom", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 46, theme: "Brand", group: "AEG", words: "AEG", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 47, theme: "Brand", group: "Alcatel", words: "Alcatel", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 48, theme: "Brand", group: "Arteche", words: "Arteche", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 49, theme: "Brand", group: "Dalian", words: "Dalian", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 50, theme: "Brand", group: "Eaton", words: "Eaton", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 51, theme: "Brand", group: "Elsewedy", words: "Elsewedy", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 52, theme: "Brand", group: "Extron", words: "Extron", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 53, theme: "Brand", group: "EDF", words: "EDF", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 54, theme: "Brand", group: "Efacec", words: "Efacec", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 55, theme: "Brand", group: "Erikson", words: "Erikson, Ericson", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 57, theme: "Brand", group: "Huawai", words: "Huawai", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 58, theme: "Brand", group: "Hitachi", words: "Hitachi", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 59, theme: "Brand", group: "Hyosung", words: "Hyosung", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 60, theme: "Brand", group: "Ingeteam", words: "Ingeteam", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 61, theme: "Brand", group: "Lucy", words: "Lucy", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 62, theme: "Brand", group: "Megger", words: "Megger", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 63, theme: "Brand", group: "Mitsui", words: "Mitsui", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 64, theme: "Brand", group: "Mitsubishi", words: "Mitsubishi", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 65, theme: "Brand", group: "Nexans", words: "Nexans", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 66, theme: "Brand", group: "Pfeiffer", words: "Pfeiffer", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 67, theme: "Brand", group: "Pfiffner", words: "Pfiffner", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 68, theme: "Brand", group: "Prysmian", words: "Prysmian", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 69, theme: "Brand", group: "Qualitrol", words: "Qualitrol", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 70, theme: "Brand", group: "Rotex", words: "Rotex", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 71, theme: "Brand", group: "Sergi", words: "Sergi", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 72, theme: "Brand", group: "Schweitzer", words: "Schweitzer", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 73, theme: "Brand", group: "Saft", words: "Saft", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 74, theme: "Brand", group: "Toshiba", words: "Toshiba", type: "KEYWORD", scopes: 'TITLE', },
       ]
       resolve(textParses)
     } catch (err) {
