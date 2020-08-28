@@ -1,0 +1,508 @@
+<template>
+  <div
+    class="search-panel content-grid"
+    style="overflow: auto;"
+    :style="
+      getIsMobile
+        ? 'margin-top: -44px;'
+        : `height: calc(100vh - ${
+            isHeaderShow ? '114' : '40'
+          }px); overflow: auto; margin-top: 0px;`
+    "
+  >
+    <perfect-scrollbar
+      class="search-panel__filters pa-0"
+      style="background-color: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px; height: calc(100vh - 155px);"
+      :style="!getIsMobile ? 'height: 100%; overflow: auto;' : ''"
+    >
+      <TendersAction />
+      <v-expansion-panels
+        v-model="panels"
+        focusable
+        accordion
+        multiple
+        class="pb-4"
+      >
+        <v-expansion-panel @click="updateUserScreen()" style="background-color: transparent;">
+          <v-expansion-panel-header>Group</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <TendersGroup ref="TendersGroup" />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel
+          @change="updateUserScreen()"
+          style="background-color: transparent;"
+        >
+          <v-expansion-panel-header>Filters</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <TendersFilter
+              v-if="searchState.wasSearched && thereAreResults"
+              :driver="driver"
+              :searchState="searchState"
+              @filterChange="filterChange($event)"
+              ref="TendersFilter"
+            />
+            <div v-else class="text-center pa-5">
+              <v-progress-circular
+                :size="50"
+                color="blue-grey lighten-4"
+                indeterminate
+              />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel
+          @change="updateUserScreen()"
+          style="background-color: transparent;"
+        >
+          <v-expansion-panel-header>Your colleagues on DeepBloo</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <TendersYourColleague />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel
+          @change="updateUserScreen()"
+          style="background-color: transparent;"
+        >
+          <v-expansion-panel-header>Your profile</v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <TendersYourProfile />
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </perfect-scrollbar>
+    <div
+      class="search-panel__results pt-3 px-3"
+      style="overflow: auto; height: 100%;"
+    >
+      <div class="searchbox-grid mb-1">
+        <SearchHeader
+          v-model="searchInputValue"
+          @submit="handleFormSubmit($event)"
+          @newValue="handleFormSubmit($event)"
+        />
+        <v-btn
+          v-if="!getIsMobile"
+          @click="displayType = 'CARD'"
+          icon
+          large
+          :color="displayType === 'CARD' ? 'blue-grey' : 'grey'"
+          class="mt-2 mb-0 mx-0"
+          title="Card display"
+        >
+          <v-icon style="font-size: 24px;">fa-th</v-icon>
+        </v-btn>
+        <v-btn
+          v-if="!getIsMobile"
+          @click="displayType = 'TABLE'"
+          icon
+          large
+          :color="displayType === 'TABLE' ? 'blue-grey' : 'grey'"
+          class="mt-2 mb-0 mx-0"
+          title="Table display"
+        >
+          <v-icon style="font-size: 24px;">fa-table</v-icon>
+        </v-btn>
+      </div>
+      <div
+        v-if="searchState.wasSearched"
+        class="hit-header-grid pt-2 pb-2"
+      >
+        <div>
+          <SearchResultsPerPage
+            v-show="thereAreResults"
+            v-model.number="resultsPerPage"
+          />
+        </div>
+        <div style="overflow: hidden;">
+          <SearchPagination
+            v-show="thereAreResults"
+            :total-pages="Math.min(searchState.totalPages, 100)"
+            :click-handler="setCurrentPage"
+            :searchState="searchState"
+          />
+        </div>
+        <div>
+          <v-btn
+            :to="{ name: 'TenderInfo' }"
+            small
+            rounded
+            dark
+            class="blue-grey lighten-1 ma-0"
+          >
+            <v-icon class="pr-2" small>fa-question-circle</v-icon>
+            How does it work / FAQ
+          </v-btn>
+        </div>
+        <div>
+          <SearchPagingInfo :search-state="searchState" />
+        </div>
+      </div>
+      <TendersRefinement
+        :filter="filter"
+        @facetItemRemove="facetItemRemove($event.facet, $event.item)"
+      />
+      <div v-if="searchState.wasSearched" class="sui-layout-body">
+        <SearchResults
+          v-show="thereAreResults"
+          :results="searchState.results"
+          @moveTenderToGroup="moveTenderToGroup()"
+        />
+      </div>
+      <div v-else class="text-center pa-5">
+        <div class="blue-grey--text text--lighten-2 pa-5">loading...</div>
+        <div style="width: 250px; display: inline-block;">
+          <v-progress-linear
+            :height="6"
+            color="blue-grey lighten-4"
+            indeterminate
+            rounded
+            striped
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import { SearchDriver } from '@elastic/search-ui'
+import config from '@/searchConfig'
+import CustomURLManager from '@/CustomURLManager'
+import TendersAction from '@/views/tender/components/TendersAction'
+import TendersGroup from '@/views/tender/components/TendersGroup'
+import TendersFilter from '@/views/tender/components/TendersFilter'
+import TendersYourColleague from '@/views/tender/components/TendersYourColleague'
+import TendersYourProfile from '@/views/tender/components/TendersYourProfile'
+import TendersRefinement from '@/views/tender/components/TendersRefinement'
+import SearchResults from '@/views/tender/components/SearchResults'
+import SearchHeader from '@/views/tender/components/SearchHeader'
+import SearchPagingInfo from '@/views/tender/components/SearchPagingInfo'
+import SearchPagination from '@/views/tender/components/SearchPagination'
+import SearchResultsPerPage from '@/views/tender/components/SearchResultsPerPage'
+
+let driver = null
+
+export default {
+  name: 'Tenders',
+
+  components: {
+    TendersAction,
+    TendersGroup,
+    TendersFilter,
+    TendersYourColleague,
+    TendersYourProfile,
+    TendersRefinement,
+    SearchResults,
+    SearchHeader,
+    SearchPagingInfo,
+    SearchPagination,
+    SearchResultsPerPage,
+  },
+
+  data: () => ({
+    driver,
+    loading: true,
+    panels: [ 1 ],
+    filter: {},
+    displayType: 'CARD',
+    bidDeadlineFacet: 'NOT_EXPIRED',
+    searchInputValue: '',
+    searchState: {},
+    resultsPerPage: 40,
+    sortBy: 'relevance',
+  }),
+
+  computed: {
+    ...mapGetters([
+      'getUserId',
+      'isHeaderShow',
+      'getIsMobile',
+      'getScreenTenders',
+    ]),
+
+    thereAreResults() {
+      return this.searchState.totalResults && this.searchState.totalResults > 0;
+    },
+  },
+
+  watch: {
+    resultsPerPage(newResultsPerPage) {
+      if (driver && !this.loading) {
+        driver.setResultsPerPage(newResultsPerPage)
+        this.updateUserScreen()
+      }
+    },
+
+    panels() {
+      this.updateUserScreen()
+    },
+  },
+
+  created() {
+    this.initUserScreen()
+
+    // Init bid deadline
+    let now_timestamp = new Date()
+    // now_timestamp.setDate(now_timestamp.getDate() + 1)
+    now_timestamp.setHours(0)
+    now_timestamp.setMinutes(0)
+    now_timestamp.setSeconds(0)
+    now_timestamp = now_timestamp.getTime()
+
+    let more_1_week_timestamp = new Date()
+    more_1_week_timestamp.setDate(more_1_week_timestamp.getDate() + 7)
+    more_1_week_timestamp.setHours(23)
+    more_1_week_timestamp.setMinutes(59)
+    more_1_week_timestamp.setSeconds(59)
+    more_1_week_timestamp = more_1_week_timestamp.getTime()
+
+    config.searchQuery.facets.bid_deadline_timestamp.ranges = [
+      { from: now_timestamp, name: 'Not expired'},
+      { from: more_1_week_timestamp, name: 'Will expire in more than 1 week' },
+      { from: now_timestamp, to: more_1_week_timestamp, name: 'Will expire in less than 1 week' },
+      { from: 1, to: now_timestamp, name: 'Expired'},
+    ]
+
+    // Init source
+    config.searchQuery.facets.user_id = {
+      type: 'range',
+      ranges: [
+        { from: 1, name: 'Tender created by Deepbloo user' },
+        { from: this.getUserId, to: this.getUserId, name: 'Tender created by you' },
+      ]
+    }
+
+    // Init publication
+    let nowEndDay_timestamp = new Date()
+    nowEndDay_timestamp.setDate(nowEndDay_timestamp.getDate() + 1)
+    nowEndDay_timestamp.setHours(0)
+    nowEndDay_timestamp.setMinutes(0)
+    nowEndDay_timestamp.setSeconds(0)
+    nowEndDay_timestamp = nowEndDay_timestamp.getTime()
+
+    let week_1_ago_timestamp = new Date()
+    week_1_ago_timestamp.setDate(week_1_ago_timestamp.getDate() - 7)
+    week_1_ago_timestamp.setHours(0)
+    week_1_ago_timestamp.setMinutes(0)
+    week_1_ago_timestamp.setSeconds(0)
+    week_1_ago_timestamp = week_1_ago_timestamp.getTime()
+
+    let week_2_ago_timestamp = new Date()
+    week_2_ago_timestamp.setDate(week_2_ago_timestamp.getDate() - 14)
+    week_2_ago_timestamp.setHours(0)
+    week_2_ago_timestamp.setMinutes(0)
+    week_2_ago_timestamp.setSeconds(0)
+    week_2_ago_timestamp = week_2_ago_timestamp.getTime()
+
+    let week_3_ago_timestamp = new Date()
+    week_3_ago_timestamp.setDate(week_3_ago_timestamp.getDate() - 21)
+    week_3_ago_timestamp.setHours(0)
+    week_3_ago_timestamp.setMinutes(0)
+    week_3_ago_timestamp.setSeconds(0)
+    week_3_ago_timestamp = week_3_ago_timestamp.getTime()
+
+    let month_ago_timestamp = new Date()
+    month_ago_timestamp.setDate(month_ago_timestamp.getDate() - 31)
+    month_ago_timestamp.setHours(0)
+    month_ago_timestamp.setMinutes(0)
+    month_ago_timestamp.setSeconds(0)
+    month_ago_timestamp = month_ago_timestamp.getTime()
+
+    let year = new Date().getFullYear()
+    let yearPast = year - 1
+
+    config.searchQuery.facets.publication_timestamp.ranges = [
+      { from: now_timestamp, to: nowEndDay_timestamp, name: 'Today'},
+      { from: week_1_ago_timestamp, name: 'This week' },
+      { from: week_2_ago_timestamp, to: now_timestamp, name: '2 weeks ago' },
+      { from: week_3_ago_timestamp, to: now_timestamp, name: '3 weeks ago' },
+      { from: month_ago_timestamp, to: now_timestamp, name: 'This month'},
+      { from: new Date(year, 0, 1).getTime(), to: now_timestamp, name: year.toString()},
+      { from: new Date(yearPast, 0, 1).getTime(), to: now_timestamp, name: yearPast.toString()},
+    ]
+
+    driver = new SearchDriver(config)
+    driver.URLManager = CustomURLManager
+    driver.setResultsPerPage(this.resultsPerPage)
+    driver.clearFilters()
+    this.driver = driver
+  },
+
+  mounted() {
+    this.loadCpvs()
+
+    const {
+      searchTerm,
+      sortField,
+      resultsPerPage,
+      filters,
+      facets
+    } = driver.getState()
+
+    // restoring UI from url query
+    this.searchInputValue = searchTerm
+    this.sortBy = sortField
+    this.resultsPerPage = resultsPerPage
+    filters.forEach(filter => {
+      if (
+        facets &&
+        facets[filter.field] &&
+        facets[filter.field][0] &&
+        facets[filter.field][0].type === 'range'
+      ) {
+        this[filter.field] = filter.values.map(value => value.name)
+      } else {
+        this[filter.field] = filter.values
+      }
+    })
+
+    driver.subscribeToStateChanges(state => {
+      this.searchState = state
+    })
+
+
+    // Get user memberships
+    if (this.getUserId) {
+      this.loadUserMemberships()
+      this.loadUserNotifys()
+      this.loadOpportunity()
+      this.setUserConnexion("connexionTender")
+      this.loadGroups()
+    }
+
+    this.loading = false
+  },
+
+  methods: {
+    ...mapActions([
+      'loadUserMemberships',
+      'loadUserNotifys',
+      'loadOpportunity',
+      'setUserConnexion',
+      'setScreenTenders',
+      'loadCpvs',
+      'loadGroups',
+    ]),
+
+    initUserScreen() {
+      if (this.getScreenTenders) {
+        if (this.getScreenTenders.displayType) {
+          this.displayType = this.getScreenTenders.displayType
+        }
+        if (
+          this.getScreenTenders.panels !== undefined &&
+          this.getScreenTenders.panels !== null
+        ) {
+          this.panels = this.getScreenTenders.panels
+        }
+        if (
+          this.getScreenTenders.resultsPerPage !== undefined &&
+          this.getScreenTenders.resultsPerPage !== null
+        ) {
+          this.resultsPerPage = this.getScreenTenders.resultsPerPage
+        }
+      }
+    },
+
+    updateUserScreen() {
+      if (this.loading) {
+        return
+      }
+      this.setScreenTenders({
+        displayType: this.displayType,
+        panels: this.panels,
+        resultsPerPage: this.resultsPerPage,
+      })
+    },
+
+    filterChange(filter) {
+      this.filter = {
+        ...this.filter,
+        ...filter,
+      }
+    },
+
+    facetItemRemove(facet, item) {
+      const event = {
+        target: {
+          value: item,
+          checked: false,
+        }
+      }
+      if (this.$refs.TendersFilter) {
+        this.$refs.TendersFilter.handleFacetChange(event, facet.field)
+      }
+    },
+
+    handleFormSubmit(event) {
+      this.searchInputValue = event
+      driver.getActions().setSearchTerm(this.searchInputValue)
+    },
+
+    setCurrentPage(page) {
+      driver.setCurrent(page)
+    },
+
+    moveTenderToGroup() {
+      if (
+        this.$refs &&
+        this.$refs.TendersGroup
+      ) {
+        this.$refs.TendersGroup.loadTenderGroupLink()
+      }
+    },
+  }
+}
+</script>
+
+<style>
+@media screen and (max-width: 640px) {
+  .content-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 0px 0px;
+  }
+  .hit-header-grid {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 0px 0px;
+  }
+}
+@media screen and (min-width: 640px) {
+  .content-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-gap: 0px 0px;
+  }
+  .hit-header-grid {
+    display: grid;
+    grid-template-columns: 190px 1fr 220px 100px;
+    grid-gap: 0px 0px;
+  }
+}
+
+.searchbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 50px 50px;
+  grid-gap: 0px 0px;
+  background-color: #f5f5f5;
+  height: 55px;
+}
+
+.ps__rail-y {
+ z-index: 100;
+}
+
+.search-panel .v-expansion-panel-content__wrap {
+  padding: 0px !important;
+}
+
+.search-panel .v-expansion-panel::before {
+    box-shadow: none;
+}
+</style>
