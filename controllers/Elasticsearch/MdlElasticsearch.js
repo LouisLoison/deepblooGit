@@ -37,9 +37,8 @@ exports.connectToElasticsearch = () => {
   })
 }
 
-const engineName = "deepbloo"
 
-exports.connectToPublicAppSearch = () => {
+exports.connectToPublicAppSearch = (engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
       const ElasticAppSearch = require("@elastic/app-search-javascript");
@@ -67,8 +66,10 @@ exports.connectToPrivateAppSearch = () => {
 }
 
 // Indexes an objects array into appsearch's "deepbloo" engine.
+// This will update any document having the same "id" fields,
+// adding any new field to the document
 
-exports.indexObject = (objects) => {
+exports.indexObject = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -83,15 +84,18 @@ exports.indexObject = (objects) => {
         acc[snakedKey] = object[key]
         return acc
       }, {}));
-      const client = await this.connectToPrivateAppSearch()
       // console.log(snakedObjects)
+      const client = await this.connectToPrivateAppSearch()
       const response = client.indexDocuments(engineName, snakedObjects)
       resolve(response)
     } catch (err) { reject(err) }
   })
 }
 
-exports.updateObject = (objects) => {
+
+// This way of updating (PATCH operation) will NOT add any new field
+
+exports.updateObject = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
