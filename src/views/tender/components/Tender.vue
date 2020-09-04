@@ -1638,7 +1638,7 @@ export default {
         .substring(0, 400)}...\n`;
       body += "\n";
       let footerHtml = `
-        <a href="https://dsqgapbuwsfze.cloudfront.net/#/tender?tenderId=${tenderId}" target="_blank">Open this tender #${tenderId}</a>
+        <a href="https://prod.deepbloo.com/#/tender?tenderId=${tenderId}" target="_blank">Open this tender #${tenderId}</a>
         The Deepbloo team
       `;
       this.$refs.SentEmailDialog.show(
