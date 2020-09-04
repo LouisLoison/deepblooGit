@@ -75,7 +75,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     //Input Queue for async jobs
     const asyncJobsQueue = new sqs.Queue(this, 'AsyncJobs', {
-      visibilityTimeout: cdk.Duration.seconds(30), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
     //Queue
@@ -259,8 +259,8 @@ export class TextractPipelineStack extends cdk.Stack {
       code: lambda.Code.asset('lambda/asyncprocessor'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
-      timeout: cdk.Duration.seconds(60),
-      memorySize: 500,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 128,
       environment: {
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
         SNS_TOPIC_ARN : jobCompletionTopic.topicArn,
@@ -275,14 +275,18 @@ export class TextractPipelineStack extends cdk.Stack {
     //Triggers
     // Run async job processor every 5 minutes
     //Enable code below after test deploy
-     const rule = new events.Rule(this, 'Rule', {
+    /* const rule = new events.Rule(this, 'Rule', {
        schedule: events.Schedule.expression('rate(2 minutes)')
      });
      rule.addTarget(new LambdaFunction(asyncProcessor));
-
+    */
     //Run when a job is successfully complete
     // disabled as it seems unusefull
     // asyncProcessor.addEventSource(new SnsEventSource(jobCompletionTopic))
+    //
+    asyncProcessor.addEventSource(new SqsEventSource(asyncJobsQueue, {
+      batchSize: 1
+    }));
 
     //Permissions
     contentBucket.grantRead(asyncProcessor)

@@ -15,8 +15,7 @@ const getFileContent = async (bucketName, fileKey) => {
   } catch (error) {
     console.error(error);
   }
-  // filestream.setEncoding('utf8')
-  console.log(fileContent);
+  // console.log(fileContent);
   return  fileContent;
 }
 
@@ -54,5 +53,8 @@ exports.handler =  async function(event, ) {
     }],
     "textracted"); 
   */
-  return {}
+  return {
+    statusCode: 200,
+    body: 'Started job {}'.format(jobId)
+  }
 }
