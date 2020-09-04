@@ -1769,8 +1769,8 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(biomass power plant)(.)*(study|analysis|assessment|evaluation)',
-                '(biomass)(.)*(étude|analyse|évaluation)',
+                '(?:.*biomass|power|plant)(?:.*study|analysis|assessment|evaluation)',
+                '(?:.*biomass)(?:.*étude|analyse|évaluation)',
               ],
               words: [],
             },
@@ -1790,10 +1790,10 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(electric)(.)*(load|consumption)(.)*(simulat)',
-                '(energy|electric)(.)*(demand|consumption|load|loads)(.)*(client|customer|consumer)',
-                '(client)(.)*(consommat)(.)*(gaz)(.)*(électri)',
-                '(analyse)(.)*(énergie|énergétique)',
+                '(?:.*electric)(?:.*load|consumption)(?:.*simulat)',
+                '(?:.*energy|electric)(?:.*demand|consumption|load)(?:.*client|customer|consumer)',
+                '(?:.*client)(?:.*consommat)(?:.*gaz)(?:.*électri)',
+                '(?:.*analyse)(?:.*énergie|énergétique)',
               ],
               words: [],
             },
@@ -1805,7 +1805,7 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(electric)(.)*(vehicle|bus|buses|car|cars|transport|charging)(.)*(planning|planification|plan|plans|strategy)',
+                '(?:.*electric)(?:.*vehicle|bus|buses|car|cars|transport|charging)(?:.*planning|planification|plan|strategy)',
               ],
               words: [],
             },
@@ -1817,7 +1817,7 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(electric)(.)*(vehicle|bus|buses|car|cars|transport|charging)(.)*(planning|planification|plan|plans|strategy)',
+                '(?:.*electric)(?:.*vehicle|bus|buses|car|transport|charging)(?:.*planning|planification|plan|strategy)',
               ],
               words: [],
             },
@@ -1829,14 +1829,14 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(wind)(.)*(resource)(.)*(assess)(.)*(RE|Renewable Energy)(.)*(Deployment)',
-                '(energy|electric)(.)*(forecast|model)(.)*(demand|consumption|load)',
-                '(renewable)(.)*(energy)(.)*(integrat|incorporat)',
-                '(simulat|analysis)(.)*(demand|consumption|load|loads)(.)*(energy|electric)',
-                '(energy|electricity)(.)*(tariff)(.)*(analysis|study|studies|optimiz|optimis)(.)*(distributed)(.)*(renewable energy|generation)(.)*(least-cost)(.)*(planning|generation|electrification)(.)*(electrification)(.)*(strategy|analysis)',
-                '(estimation)(.)*(productible)',
-                '(structure)(.)*(tarifaire)(.)*(électricité|énergie)',
-                '(étude|analyse)(.)*(énergie)(.)*(renouvelable)(.)*(électrification au moindre coût)',
+                '(?:.*wind)(?:.*resource)(?:.*assess)(?:.*RE|Renewable Energy)(?:.*Deployment)',
+                '(?:.*energy|electric)(?:.*forecast|model)(?:.*demand|consumption|load)',
+                '(?:.*renewable)(?:.*energy)(?:.*integrat|incorporat)',
+                '(?:.*simulat|analysis)(?:.*demand|consumption|load)(?:.*energy|electric)',
+                '(?:.*energy|electricity)(?:.*tariff)(?:.*analysis|study|studies|optimiz|optimis)(?:.*distributed)(?:.*renewable energy|generation)(?:.*least-cost)(?:.*planning|generation|electrification)(?:.*electrification)(?:.*strategy|analysis)',
+                '(?:.*estimation)(?:.*productible)',
+                '(?:.*structure)(?:.*tarifaire)(?:.*électricité|énergie)',
+                '(?:.*étude|analyse)(?:.*énergie)(?:.*renouvelable)(?:.*électrification au moindre coût)',
               ],
               words: [],
             },
@@ -1848,8 +1848,8 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(hydrological)(.)*(model)',
-                '(étude|analyse)(.)*(model)(.)*(hydrauli|hydrolog)',
+                '(?:.*hydrological)(?:.*model)',
+                '(?:.*étude|analyse)(?:.*model)(?:.*hydrauli|hydrolog)',
               ],
               words: [],
             },
@@ -1861,10 +1861,10 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(network)(.)*(cold|cool)',
-                '(heat)(.)*(forecast)',
-                '(Energy)(.)*(Thermal)(.)*(Efficiency)',
-                '(microgrid)(.)*(design)(.)*(minigrid|mini-grid|mini grid)',
+                '(?:.*network)(?:.*cold|cool)',
+                '(?:.*heat)(?:.*forecast)',
+                '(?:.*Energy)(?:.*Thermal)(?:.*Efficiency)',
+                '(?:.*microgrid)(?:.*design)(?:.*minigrid|mini-grid|mini grid)',
               ],
               words: [],
             },
@@ -1876,10 +1876,10 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(mechanical)(.)*(test)(.)*(resistance|vibration|non destructive|welding)',
-                '(two)(.)*(phase)(.)*(flow)',
-                '(valve)(.)*(qualif)',
-                '(turbine)(.)*(diagnostic)',
+                '(?:.*mechanical)(?:.*test)(?:.*resistance|vibration|non destructive|welding)',
+                '(?:.*two)(?:.*phase)(?:.*flow)',
+                '(?:.*valve)(?:.*qualif)',
+                '(?:.*turbine)(?:.*diagnostic)',
               ],
               words: [],
             },
@@ -1891,10 +1891,10 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(bioclimatic)(.)*(technolog)',
-                '(PV|photovoltaic)(.)*(pannel)(.)*(test)',
-                '(battery|batteries)(.)*(test)(.)*(charging)',
-                '(accelerated)(.)*(ageing)',
+                '(?:.*bioclimatic)(?:.*technolog)',
+                '(?:.*PV|photovoltaic)(?:.*pannel)(?:.*test)',
+                '(?:.*battery|batteries)(?:.*test)(?:.*charging)',
+                '(?:.*accelerated)(?:.*ageing)',
               ],
               words: [],
             },
@@ -1906,9 +1906,9 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(portfolio)(.)*(optimis|optimiz)',
-                '(market)(.)*(risk)(.)*(model|algor|analy|manag)',
-                '(forecast)(.)*(model|algor)(.)*(power market transition)',
+                '(?:.*portfolio)(?:.*optimis|optimiz)',
+                '(?:.*market)(?:.*risk)(?:.*model|algor|analy|manag)',
+                '(?:.*forecast)(?:.*model|algor)(?:.*power market transition)',
               ],
               words: [],
             },
@@ -1920,12 +1920,12 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(power)(.)*(disturbance)',
-                '(reliability)(.)*(power)(.)*(network)',
-                '(modsarus)',
-                '(distributed)(.)*(energy)(.)*(source)',
-                '(non-wires)(.)*(alternative)',
-                '(smart)(.)*(meter)(.)*(qualif|test|G3*PLC|expert)',
+                '(?:.*power)(?:.*disturbance)',
+                '(?:.*reliability)(?:.*power)(?:.*network)',
+                '(?:.*modsarus)',
+                '(?:.*distributed)(?:.*energy)(?:.*source)',
+                '(?:.*non-wires)(?:.*alternative)',
+                '(?:.*smart)(?:.*meter)(?:.*qualif|test|G3*PLC|expert)',
               ],
               words: [],
             },

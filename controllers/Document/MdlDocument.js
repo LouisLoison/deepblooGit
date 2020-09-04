@@ -292,14 +292,17 @@ exports.tenderFileImport = (tenderId) => {
       const documents = await this.documentList({ tenderId })
 
       const sourceUrls = tender.sourceUrl.split(',')
-      for (const sourceUrl of sourceUrls) {
+      for (let sourceUrl of sourceUrls) {
         try {
-          let document = documents.find(a => a.sourceUrl === sourceUrl)
           if (sourceUrl.trim() === '') {
             continue
           }
+          let document = documents.find(a => a.sourceUrl === sourceUrl)
           if (document) {
             continue
+          }
+          if (sourceUrl.includes('www2.dgmarket.com')  && !url.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
+            sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
           }
           const fileInfo = await this.fileDownload(sourceUrl)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
@@ -412,6 +415,7 @@ exports.fileDownload = (url) => {
         const path = require('path')
         let filename = decodeURI(fileResponse.headers["content-disposition"])
         filename = filename.split('filename=')[1]
+        filename = filename.replace(/"/g, '')
         const folderTemp = path.join(config.WorkSpaceFolder, '/Temp/')
         const fileLocation = path.join(folderTemp, filename)
         if (fs.existsSync(fileLocation)) {
