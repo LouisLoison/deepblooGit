@@ -22,7 +22,7 @@ exports.BddImport = () => {
       try {
         fileParseData = await this.FileParse(fileLocation)
       } catch (err) {
-        const fileLocationReject = path.join(config.WorkSpaceFolder, 'Reject/', fileSource)
+        const fileLocationReject = path.join(config.WorkSpaceFolder, 'Reject/', files[0])
         fs.renameSync(fileLocation, fileLocationReject)
         reject(err)
         return
@@ -241,8 +241,7 @@ exports.FileParse = (fileLocation) => {
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.json')
       fs.writeFileSync(tenderListLocation, JSON.stringify(parseData, null, 3))
       */
-
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       for (const cpv of CpvList) {
