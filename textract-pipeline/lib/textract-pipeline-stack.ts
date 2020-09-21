@@ -9,6 +9,8 @@ import dynamodb = require('@aws-cdk/aws-dynamodb');
 import lambda = require('@aws-cdk/aws-lambda');
 import s3 = require('@aws-cdk/aws-s3');
 import {LambdaFunction} from "@aws-cdk/aws-events-targets";
+import * as efs from '@aws-cdk/aws-efs';
+import * as ec2 from '@aws-cdk/aws-ec2';
 
 export class TextractPipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -48,6 +50,29 @@ export class TextractPipelineStack extends cdk.Stack {
 
     const inventoryAndLogsBucket = new s3.Bucket(this, 'InventoryAndLogsBucket', { versioned: false});
     inventoryAndLogsBucket.grantReadWrite(s3BatchOperationsRole)
+
+    /***********   EFS Shared Filesystem ***************/
+    const vpc = new ec2.Vpc(this, 'vpc-f7456f91');
+    const fileSystem = new efs.FileSystem(this, 'LambdaShare', {
+      vpc,
+      encrypted: true,
+      lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
+      performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
+      throughputMode: efs.ThroughputMode.BURSTING
+    });
+
+    const accessPoint = fileSystem.addAccessPoint('LambdaAccessPoint', {
+      path: '/',
+      createAcl: {
+        ownerUid: '1001',
+        ownerGid: '1001',
+	permissions: '750',
+      },
+      posixUser: {
+        uid: '1001',
+        gid: '1001',
+      },
+    });
 
     //**********DynamoDB Table*************************
     //DynamoDB table with links to output in S3
@@ -145,6 +170,8 @@ export class TextractPipelineStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/s3processor'),
       handler: 'lambda_function.lambda_handler',
+      vpc,
+      filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, '/mnt/data'),
       environment: {
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,

@@ -5,32 +5,34 @@
     "textract-pipeline": "bin/textract-pipeline.js"
   },
   "scripts": {
-    "postinstall": "(cd lambda/nodelayer/nodejs && npm install) && mkdir -p lambda/nodelayer/nodejs/node_modules/deepblooback/ && cp -a ../../DeepblooBack/controllers lambda/nodelayer/nodejs/node_modules/deepblooback/ && (pipenv --version || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare",
-    "build": "(cd ../src && sh build.sh) && sh build.sh && tsc",
+    "postinstall": "(cd lambda/nodelayer/nodejs && npm install) && mkdir -p lambda/nodelayer/nodejs/node_modules/deepblooback/ && cp -a ../../deepbloo-back/controllers lambda/nodelayer/nodejs/node_modules/deepblooback/ && (pipenv --version || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare",
+    "build": "(cd ../src && sh build.sh) && sh build.sh",
     "clean": "rm -fr lambda/*/*.py lambda/*/*/*.py lambda/pipenv lib/textract-pipeline-stack.js cdk.out",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "deploy": "([ lib/textract-pipeline-stack.js -nt lib/textract-pipeline-stack.ts ]  || tsc) && cdk deploy"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "1.27.0",
+    "@aws-cdk/assert": "1.63.0",
     "@types/jest": "^24.0",
     "@types/node": "^10.17",
     "jest": "^24.9",
     "ts-jest": "^24.1",
-    "aws-cdk": "^1.27",
+    "aws-cdk": "^1.63",
     "ts-node": "^8.1",
     "typescript": "~3.7.2"
   },
   "dependencies": {
-    "@aws-cdk/aws-dynamodb": "^1.27",
-    "@aws-cdk/aws-events-targets": "^1.27",
-    "@aws-cdk/aws-lambda": "^1.27",
-    "@aws-cdk/aws-lambda-event-sources": "^1.27",
-    "@aws-cdk/aws-sns": "^1.27",
-    "@aws-cdk/aws-sns-subscriptions": "^1.27",
-    "@aws-cdk/aws-sqs": "^1.27",
-    "@aws-cdk/core": "1.27",
+    "@aws-cdk/aws-dynamodb": "^1.63",
+    "@aws-cdk/aws-ec2": "^1.63.0",
+    "@aws-cdk/aws-efs": "^1.63",
+    "@aws-cdk/aws-events-targets": "^1.63",
+    "@aws-cdk/aws-lambda": "^1.63",
+    "@aws-cdk/aws-lambda-event-sources": "^1.63",
+    "@aws-cdk/aws-sns": "^1.63",
+    "@aws-cdk/aws-sns-subscriptions": "^1.63",
+    "@aws-cdk/aws-sqs": "^1.63",
+    "@aws-cdk/core": "1.63",
     "source-map-support": "^0.5"
   }
 }
