@@ -1,18 +1,33 @@
 <template>
-  <div class="sui-results-container search-section__search-results">
+  <div>
     <div
-      v-for="result in results"
-      :key="result.id.raw"
-      class="search-section__search-result"
+      v-if="displayType === 'CARD'"
+      class="sui-results-container search-section__search-results"
     >
-      <SearchResult
-        :result="result"
-        @tenderDialogShow="$refs.TenderDialog.show(result)"
-        @openTenderGroupChoice="openTenderGroupChoice(result)"
-        @openSentEmailDialog="openSentEmailDialog(result)"
-        ref="SearchResult"
-      />
+      <div
+        v-for="result in results"
+        :key="result.id.raw"
+        class="search-section__search-result"
+      >
+        <SearchResult
+          :result="result"
+          @tenderDialogShow="$refs.TenderDialog.show(result)"
+          @openTenderGroupChoice="openTenderGroupChoice(result)"
+          @openSentEmailDialog="openSentEmailDialog(result)"
+          ref="SearchResult"
+        />
+      </div>
     </div>
+    <SearchResultsTable
+      v-else
+      :results="results"
+      :filter="filter"
+      :searchState="searchState"
+      @updateUserScreen="updateUserScreen()"
+      @handleFacetChange="handleFacetChange($event)"
+      @handleFacetCheckAll="handleFacetCheckAll($event)"
+      @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
+    />
 
     <!-- Dialog -->
     <TenderDialog ref="TenderDialog" @updateTender="refreshFunction()" />
@@ -27,6 +42,7 @@
 <script>
 import { mapGetters, mapActions } from "vuex"
 import SearchResult from "./SearchResult"
+import SearchResultsTable from "./SearchResultsTable"
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from "@/views/tender/components/TenderGroupChoice"
 import SentEmailDialog from "@/components/modal/SentEmailDialog"
@@ -36,6 +52,7 @@ export default {
 
   components: {
     SearchResult,
+    SearchResultsTable,
     TenderGroupChoice,
     SentEmailDialog,
     TenderDialog,
@@ -45,7 +62,22 @@ export default {
     results: {
       type: Array,
       required: true
-    }
+    },
+    
+    displayType: {
+      type: String,
+      required: true
+    },
+
+    filter: {
+      type: Object,
+      required: true
+    },
+
+    searchState: {
+      type: Object,
+      required: true
+    },
   },
 
   data: () => ({
@@ -61,6 +93,7 @@ export default {
 
   methods: {
     ...mapActions([
+      'showInsufficientRightDialog',
       'loadUserNotifys',
     ]),
 
@@ -128,6 +161,22 @@ export default {
         footerHtml.trim(),
         result.tenderId
       )
+    },
+
+    updateUserScreen() {
+      this.$emit('updateUserScreen')
+    },
+
+    handleFacetChange(event) {
+      this.$emit('handleFacetChange', event)
+    },
+
+    handleFacetCheckAll(facet) {
+      this.$emit('handleFacetCheckAll', facet)
+    },
+
+    handleFacetUnCheckAll(facet) {
+      this.$emit('handleFacetUnCheckAll', facet)
     },
   },
 };

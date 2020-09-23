@@ -220,8 +220,19 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      @click="
+        getIsPremiumMembership
+          ? showInsufficientRightDialog()
+          : null
+      "
     >
-      <v-card-text>
+      <v-card-text
+        :style="
+          getIsPremiumMembership
+            ? 'pointer-events: none; opacity: 0.5;'
+            : ''
+        "
+      >
         <SearchFacet
           :checked="filter.currency"
           :facet="searchState.facets.currency[0]"
@@ -235,6 +246,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 import SearchFacet from '@/views/tender/components/SearchFacet'
 import SearchFacetRegion from '@/views/tender/components/SearchFacetRegion'
 import SearchSort from '@/views/tender/components/SearchSort'
@@ -243,9 +255,9 @@ export default {
   name: 'TendersFilter',
 
   components: {
-    SearchSort,
     SearchFacet,
     SearchFacetRegion,
+    SearchSort,
   },
 
   props: {
@@ -277,20 +289,26 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
-    }
+    },
   }),
+
+  computed: {
+    ...mapGetters([
+      'getIsPremiumMembership',
+    ]),
+  },
 
   watch: {
     sortBy(newSortBy) {
       this.driver.setSort(newSortBy, 'asc')
     },
-
-    filter() {
-      console.log('-- filter')
-    },
   },
 
   methods: {
+    ...mapActions([
+      'showInsufficientRightDialog',
+    ]),
+
     handleFacetChange(event, facet) {
       if (
         !this.driver ||

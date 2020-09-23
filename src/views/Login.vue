@@ -48,7 +48,7 @@
                 :value="error"
                 color="error"
                 icon="warning"
-                outline
+                outlined
                 transition="scale-transition"
               >
                 The username or password you entered is incorrect.

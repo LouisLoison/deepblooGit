@@ -90,11 +90,11 @@ export default {
         !cpvLabel ||
         cpvLabel === ''
       ) {
-        return 'http://arread.fr/deepbloo/default.png'
+        return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
       }
       const cpv = this.getDataCpvs.data.find(a => a.label === cpvLabel)
       if (!cpv || !cpv.logo || cpv.logo === '') {
-        return 'http://arread.fr/deepbloo/default.png'
+        return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
       }
       return cpv.logo
     },

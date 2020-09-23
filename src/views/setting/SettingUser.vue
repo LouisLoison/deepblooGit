@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="content-grid"
+      class="content-grid pt-4 pr-2"
       :style="
         getIsMobile
           ? 'margin-top: -44px;'
@@ -13,13 +13,19 @@
         class="pa-3"
         :style="!getIsMobile ? 'height: 100%; overflow: auto;' : ''"
       >
-        <div class="text-xs-center mb-3">
-          <v-btn round dark color="success">
+        <div class="text-center mb-3">
+          <v-btn
+            rounded
+            color="success"
+            class="ma-1"
+            dark
+          >
             Add user
           </v-btn>
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
+            class="ma-1"
             @click="userSynchro()"
             title="User synchro"
           >
@@ -27,7 +33,8 @@
             User
           </v-btn>
           <v-btn
-            round
+            rounded
+            class="ma-1"
             color="blue-grey lighten-5"
             @click="membershipSynchro()"
             title="Membership synchro"
@@ -107,18 +114,18 @@
       <div :class="!getIsMobile ? 'pa-0' : 'px-2'" style="overflow: auto;">
         <div
           v-if="!dataUsers.loading || dataUsers.loading === 0"
-          class="pa-5 text-xs-center"
+          class="pa-5 text-center"
         >
           <div class="pa-2 grey--text">Loading...</div>
           <v-progress-circular :size="50" color="grey" indeterminate />
         </div>
-        <div v-else-if="dataUsers.loading === -1" class="pa-5 text-xs-center">
+        <div v-else-if="dataUsers.loading === -1" class="pa-5 text-center">
           <v-icon class="red--text">error</v-icon>
           <div class="pa-2 red--text">Error while loading data</div>
         </div>
         <div
           v-else-if="dataUsers.loading === 1 && dataUsers.data.length === 0"
-          class="pa-5 text-xs-center"
+          class="pa-5 text-center"
         >
           <div class="pa-2 black--text">No user</div>
         </div>
@@ -126,7 +133,7 @@
           <v-card-title>
             <v-chip
               v-if="!getIsMobile"
-              outline
+              outlined
               color="grey"
               title="User count"
               class="pl-2"
@@ -145,34 +152,29 @@
             <v-btn
               v-if="!getIsMobile"
               fab
-              small
+              x-small
               color="blue-grey lighten-5"
               title="refresh user liste"
+              class="ml-2"
               @click="loadUsers()"
             >
-              <v-icon>fa-refresh</v-icon>
+              <v-icon>fa-sync-alt</v-icon>
             </v-btn>
           </v-card-title>
-          <div
-            :style="
-              !getIsMobile ? 'height: calc(100vh - 248px); overflow: auto;' : ''
-            "
-          >
+          <div :style="!getIsMobile ? 'height: calc(100vh - 248px); overflow: auto;' : ''">
             <v-data-table
               :headers="headers"
               :items="getUsers()"
-              hide-actions
-              :pagination.sync="pagination"
               class="elevation-1"
-              sort-icon="fa-caret-down"
+              header-props.sort-icon="fa-caret-down"
             >
-              <template slot="items" slot-scope="props">
-                <tr @click="userOpen(props.item)" style="cursor: pointer;">
+              <template v-slot:item="{ item }">
+                <tr @click="userOpen(item)" style="cursor: pointer;">
                   <td>
                     <v-badge color="trensparente" bottom overlap>
                       <template v-slot:badge>
                         <v-icon
-                          v-if="!props.item.status"
+                          v-if="!item.status"
                           small
                           class="red--text"
                           style="margin-top: -14px; text-shadow: 0px 0px 3px #000000; font-size: 10px;"
@@ -181,58 +183,58 @@
                           fa-dot-circle
                         </v-icon>
                       </template>
-                      <v-avatar v-if="props.item.photo">
-                        <img :src="props.item.photo" alt="-" />
+                      <v-avatar v-if="item.photo">
+                        <img :src="item.photo" alt="-" />
                       </v-avatar>
                     </v-badge>
                   </td>
-                  <td class="text-xs-center pl-0">
-                    <v-chip v-if="props.item.type === 1" outline color="red">
+                  <td class="text-center pl-0">
+                    <v-chip v-if="item.type === 1" outlined color="red">
                       Admin
                     </v-chip>
-                    <v-chip v-else-if="props.item.type === 2" outline color="blue">
+                    <v-chip v-else-if="item.type === 2" outlined color="blue">
                       Premium
                     </v-chip>
-                    <v-chip v-else-if="props.item.type === 3" outline color="grey">
+                    <v-chip v-else-if="item.type === 3" outlined color="grey">
                       Public
                     </v-chip>
-                    <v-chip v-else-if="props.item.type === 4" outline color="green">
+                    <v-chip v-else-if="item.type === 4" outlined color="green">
                       Business
                     </v-chip>
-                    <v-chip v-else-if="props.item.type === 6" outline color="green">
+                    <v-chip v-else-if="item.type === 6" outlined color="green">
                       Bus Dev
                     </v-chip>
-                    <v-chip v-else-if="props.item.type === 5" outline color="grey">
+                    <v-chip v-else-if="item.type === 5" outlined color="grey">
                       Free
                     </v-chip>
                   </td>
                   <td class="blue-grey--text body-2 font-weight-bold">
-                    {{ props.item.username }}
+                    {{ item.username }}
                   </td>
-                  <td>{{ props.item.email }}</td>
-                  <td class="text-xs-center caption red--text">
-                    {{ props.item.userId }}
+                  <td>{{ item.email }}</td>
+                  <td class="text-center caption red--text">
+                    {{ item.userId }}
                   </td>
-                  <td class="text-xs-center caption red--text">
-                    <v-icon v-if="props.item.membershipFree" color="green"
+                  <td class="text-center caption red--text">
+                    <v-icon v-if="item.membershipFree" color="green"
                       >fa-check</v-icon
                     >
                   </td>
                   <td class="text-xs-right text-no-wrap">
                     <v-btn
-                      v-if="props.item.type === 3"
+                      v-if="item.type === 3"
                       small
                       class="blue white--text"
                       title="Set user premium"
-                      @click="userSetPremium(props.item)"
+                      @click="userSetPremium(item)"
                       >Set to premium</v-btn
                     >
                     <v-btn
-                      v-if="props.item.type !== 3"
+                      v-if="item.type !== 3"
                       small
                       class="blue white--text"
                       title="Set user premium"
-                      @click="logAs(props.item)"
+                      @click="logAs(item)"
                     >
                       Log as
                     </v-btn>
@@ -240,16 +242,6 @@
                 </tr>
               </template>
             </v-data-table>
-          </div>
-          <div
-            :class="
-              !getIsMobile ? 'text-xs-center py-1' : 'text-xs-center py-3'
-            "
-          >
-            <v-pagination
-              v-model="pagination.page"
-              :length="pages"
-            ></v-pagination>
           </div>
         </div>
       </div>
@@ -353,7 +345,7 @@
                       <v-chip
                         v-for="(cpv, index) in UserCpvs"
                         :key="index"
-                        outline
+                        outlined
                       >
                         <v-avatar class="pa-1">
                           <img
@@ -383,7 +375,7 @@
                       <v-chip
                         v-for="(region, index) in user.regions.split(',')"
                         :key="index"
-                        outline
+                        outlined
                       >
                         {{ region }}
                       </v-chip>
@@ -686,9 +678,9 @@ export default {
 
   computed: {
     ...mapGetters([
-      "getIsMobile",
-      "getDataCpvs",
-      "getCpvsLogoFromCode",
+      'getIsMobile',
+      'getDataCpvs',
+      'getCpvsLogoFromCode',
     ]),
 
     pages() {
@@ -738,7 +730,7 @@ export default {
         avatar:
           cpv && cpv.logo && cpv.logo != ""
             ? cpv.logo
-            : "http://arread.fr/deepbloo/default.png"
+            : "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
       });
     }
 

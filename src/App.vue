@@ -1,5 +1,7 @@
 <template>
-  <v-app>
+  <v-app
+    style="  color: #3a4570; font-size: 14px;"
+  >
     <AppToolbar v-if="isHeaderShow" class="app--toolbar" />
     <v-app-bar
       v-if="1 === 2"
@@ -23,21 +25,26 @@
       </v-btn>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="pa-0">
       <router-view :key="$route.fullpath"></router-view>
     </v-main>
+
+    <!-- Dialog -->
+    <InsufficientRightDialog />
   </v-app>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import AppToolbar from "@/components/AppToolbar"
+import { mapGetters, mapActions } from 'vuex'
+import AppToolbar from '@/components/AppToolbar'
+import InsufficientRightDialog from '@/components/modal/InsufficientRightDialog'
 
 export default {
   name: 'App',
 
   components: {
     AppToolbar,
+    InsufficientRightDialog,
   },
 
   data: () => ({
@@ -46,29 +53,31 @@ export default {
 
   computed: {
     ...mapGetters([
-      "isHeaderShow",
-      "getIsMobile"
+      'isHeaderShow',
+      'getIsMobile',
     ]),
   },
 
   mounted() {
-    this.hideConfirmModal();
-    window.addEventListener("resize", this.handleWindowResize);
-    this.handleWindowResize();
+    this.hideConfirmModal()
+    this.hideInsufficientRightDialog()
+    window.addEventListener('resize', this.handleWindowResize)
+    this.handleWindowResize()
   },
 
   methods: {
     ...mapActions([
-      "initIsMobile",
-      "hideConfirmModal"
+      'initIsMobile',
+      'hideConfirmModal',
+      'hideInsufficientRightDialog',
     ]),
 
     handleWindowResize() {
       const windowWidth = window.innerWidth;
       if (windowWidth < 500) {
-        this.initIsMobile(true);
+        this.initIsMobile(true)
       } else {
-        this.initIsMobile(false);
+        this.initIsMobile(false)
       }
     }
   },

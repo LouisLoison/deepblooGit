@@ -129,10 +129,11 @@ export default {
       type: Object,
       required: true
     },
+
     checked: {
       type: Array,
       required: true
-    }
+    },
   },
 
   data: () => ({

@@ -56,7 +56,7 @@ export class GlobalService {
       !cpvs ||
       !cpvs.length
     ) {
-      return 'http://arread.fr/deepbloo/default.png'
+      return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
     }
     let cpv = null
     for (const cpvLabel of cpvs) {
@@ -73,7 +73,7 @@ export class GlobalService {
       }
     }
     if (!cpv) {
-      return 'http://arread.fr/deepbloo/default.png'
+      return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
     }
     return cpv.logo
   }
@@ -84,7 +84,7 @@ export class GlobalService {
       !cpvs ||
       !cpvs.length
     ) {
-      return "http://arread.fr/deepbloo/FondBleu.jpg";
+      return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg";
     }
     let cpv = null
     for (const cpvLabel of cpvs) {
@@ -101,7 +101,7 @@ export class GlobalService {
       }
     }
     if (!cpv) {
-      return "http://arread.fr/deepbloo/FondBleu.jpg";
+      return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg";
     }
     return cpv.picture
   }

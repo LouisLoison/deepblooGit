@@ -36,11 +36,8 @@ export default {
 
   methods: {
     ...mapActions([
-      "logoutUser",
+      'logoutUser',
     ]),
   },
 }
 </script>
-
-<style>
-</style>

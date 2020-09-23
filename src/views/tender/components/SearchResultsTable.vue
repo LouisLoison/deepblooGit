@@ -1,0 +1,767 @@
+<template>
+  <div
+    @click="
+      getIsPremiumMembership
+        ? showInsufficientRightDialog()
+        : null
+    "
+  >
+    <div
+      style="overflow: auto; width: 100%; max-width: 100%; display: grid;"
+      :style="
+        getIsPremiumMembership
+          ? 'pointer-events: none; opacity: 0.5;'
+          : ''
+      "
+    >
+      <div
+        class="font-weight-bold display-table-row px-0"
+        style="border-bottom: 1px solid #78909c; margin-bottom: 14px; color: #3d4872; background-color: #fafafa; padding-top: 6px;"
+      >
+        <div class="display-table-head display-table-cell-avatar" />
+        <div class="display-table-head display-table-cell-title">
+          Title
+        </div>
+        <div
+          v-for="(column, index) in columns.filter(a => a.show)"
+          :key="`column${index}`"
+          class="display-table-head display-table-cell-standard"
+        >
+          <div
+            v-if="
+              [
+                'cpv',
+                'region',
+                'country',
+                'notice_type',
+                'buyer',
+                'bid_deadline',
+                'publication_date',
+                'scope_of_work',
+                'segment',
+                'brand',
+                'contract_type',
+                'procurement_method',
+                'currency',
+              ].includes(column.property)
+            "
+          >
+            <v-menu
+              v-model="column.menu"
+              :close-on-content-click="false"
+              :nudge-width="200"
+              offset-y
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" text small color="indigo darken-4">
+                  <v-icon
+                    text
+                    class="pr-1"
+                    :class="1 === 1 ? 'grey--text' : ''"
+                    size="10"
+                  >
+                    fa fa-filter
+                  </v-icon>
+                  {{ column.title }}
+                </v-btn>
+              </template>
+
+              <v-card class="pa-3">
+                <SearchFacet
+                  v-if="column.property === 'bid_deadline'"
+                  :checked="filter.bid_deadline_timestamp"
+                  :facet="searchState.facets.bid_deadline_timestamp[0]"
+                  @change="handleFacetChange($event, 'bid_deadline_timestamp')"
+                  @checkAll="handleFacetCheckAll('bid_deadline_timestamp')"
+                  @unCheckAll="handleFacetUnCheckAll('bid_deadline_timestamp')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'country'"
+                  :checked="filter.country"
+                  :facet="searchState.facets.country[0]"
+                  @change="handleFacetChange($event, 'country')"
+                  @checkAll="handleFacetCheckAll('country')"
+                  @unCheckAll="handleFacetUnCheckAll('country')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'cpv'"
+                  :checked="filter.cpvs"
+                  :facet="searchState.facets.cpvs[0]"
+                  @change="handleFacetChange($event, 'cpvs')"
+                  @checkAll="handleFacetCheckAll('cpvs')"
+                  @unCheckAll="handleFacetUnCheckAll('cpvs')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'notice_type'"
+                  :checked="filter.notice_type"
+                  :facet="searchState.facets.notice_type[0]"
+                  @change="handleFacetChange($event, 'notice_type')"
+                  @checkAll="handleFacetCheckAll('notice_type')"
+                  @unCheckAll="handleFacetChange('notice_type')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'publication_date'"
+                  :checked="filter.publication_timestamp"
+                  :facet="searchState.facets.publication_timestamp[0]"
+                  @change="handleFacetChange($event, 'publication_timestamp')"
+                  @checkAll="handleFacetCheckAll('publication_timestamp')"
+                  @unCheckAll="handleFacetUnCheckAll('publication_timestamp')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'procurement_method'"
+                  :checked="filter.procurement_method"
+                  :facet="searchState.facets.procurement_method[0]"
+                  @change="handleFacetChange($event, 'procurement_method')"
+                  @checkAll="handleFacetCheckAll('procurement_method')"
+                  @unCheckAll="handleFacetUnCheckAll('procurement_method')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'lang'"
+                  :checked="filter.lang"
+                  :facet="searchState.facets.lang[0]"
+                  @change="handleFacetChange($event, 'lang')"
+                  @checkAll="handleFacetCheckAll('lang')"
+                  @unCheckAll="handleFacetUnCheckAll('lang')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'scope_of_work'"
+                  :checked="filter.scope_of_works"
+                  :facet="searchState.facets.scope_of_works[0]"
+                  @change="handleFacetChange($event, 'scope_of_works')"
+                  @checkAll="handleFacetCheckAll('scope_of_works')"
+                  @unCheckAll="handleFacetUnCheckAll('scope_of_works')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'segment'"
+                  :checked="filter.segments"
+                  :facet="searchState.facets.segments[0]"
+                  @change="handleFacetChange($event, 'segments')"
+                  @checkAll="handleFacetCheckAll('segments')"
+                  @unCheckAll="handleFacetUnCheckAll('segments')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'designs'"
+                  :checked="filter.designs"
+                  :facet="searchState.facets.designs[0]"
+                  @change="handleFacetChange($event, 'designs')"
+                  @checkAll="handleFacetCheckAll('designs')"
+                  @unCheckAll="handleFacetUnCheckAll('designs')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'contract_type'"
+                  :checked="filter.contract_types"
+                  :facet="searchState.facets.contract_types[0]"
+                  @change="handleFacetChange($event, 'contract_types')"
+                  @checkAll="handleFacetCheckAll('contract_types')"
+                  @unCheckAll="handleFacetUnCheckAll('contract_types')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'brand'"
+                  :checked="filter.brands"
+                  :facet="searchState.facets.brands[0]"
+                  @change="handleFacetChange($event, 'brands')"
+                  @checkAll="handleFacetCheckAll('brands')"
+                  @unCheckAll="handleFacetUnCheckAll('brands')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'currency'"
+                  :checked="filter.currency"
+                  :facet="searchState.facets.currency[0]"
+                  @change="handleFacetChange($event, 'currency')"
+                  @checkAll="handleFacetCheckAll('currency')"
+                  @unCheckAll="handleFacetUnCheckAll('currency')"
+                />
+              </v-card>
+            </v-menu>
+          </div>
+          <div v-else>
+            {{ column.title }}
+          </div>
+        </div>
+        <div class="display-table-head display-table-cell-option">
+          <v-menu transition="slide-y-transition" offset-y left>
+            <template v-slot:activator="{ on }">
+              <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
+                <v-icon size="16">fa-bars</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list class="list-icon">
+              <v-list-item
+                v-for="(column, index) in columns"
+                :key="`column${index}`"
+              >
+                <v-list-item-action
+                  @click.stop="updateUserScreen()"
+                  class="mt-3"
+                >
+                  <v-checkbox v-model="column.show" class="ma-0" />
+                </v-list-item-action>
+                <v-list-item-title
+                  @click.stop="
+                    column.show = !column.show;
+                    updateUserScreen();
+                  "
+                >
+                  {{ column.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </div>
+      <div
+        v-if="results && results.length > 0"
+      >
+        <div
+          v-for="result in results"
+          :key="result.id.raw"
+          style="display: flex;"
+        >
+          <div
+            class="cursor-pointer display-table-row pt-2 pb-1 px-0"
+            style="border-bottom: 1px solid #d7d7d7;"
+            @click.stop="openDialog(result)"
+          >
+            <div
+              class="display-table-cell display-table-cell-avatar"
+              style="position: relative;"
+            >
+              <img
+                :src="getCpvsLogoFromLabel(result.cpvs.raws)"
+                alt="avatar"
+                style="height: 32px;"
+              />
+              <div
+                v-if="getDataGroups && getDataGroups.loading === 1"
+                style="display: inline-block; position: absolute; left: 12px; bottom: 0px;"
+              >
+                <div v-if="!tenderGroups(result)">
+                  <v-btn
+                    @click.stop="openTenderGroupChoice(result)"
+                    text
+                    icon
+                    small
+                    class="blue-grey--text text--lighten-4"
+                    style="height: 16px; width: 16px; margin: 0px; background-color: #ffffff !important;"
+                    title="Add tender to a group"
+                  >
+                    <v-icon size="14">fa-circle</v-icon>
+                  </v-btn>
+                </div>
+                <div v-else>
+                  <v-btn
+                    v-for="(tenderGroup, indexSelect) in tenderGroups(result)"
+                    :key="`tenderGroup${indexSelect}`"
+                    @click.stop="openTenderGroupChoice(result)"
+                    text
+                    icon
+                    small
+                    style="height: 16px; width: 16px; margin: 0px; background-color: #ffffff !important;"
+                    :title="tenderGroup.label"
+                  >
+                    <v-icon
+                      :style="
+                        `font-size: 16px; color:${
+                          tenderGroup.color
+                        };`
+                      "
+                    >
+                      fa-circle
+                    </v-icon>
+                  </v-btn>
+                </div>
+              </div>
+              <img
+                v-if="
+                  result.creation_timestamp &&
+                  result.creation_timestamp.raw &&
+                  now_timestamp &&
+                  result.creation_timestamp.raw > now_timestamp
+                "
+                title="Tender add this day"
+                src="/static/image/badgeNew.png"
+                style="height: 24px; position: absolute; bottom: 2px; right: 2px;"
+              />
+            </div>
+            <div
+              class="display-table-cell display-table-cell-title font-weight-bold"
+              style="text-overflow: ellipsis; overflow: hidden;"
+            >
+              {{ result.title.raw }}
+            </div>
+            <div
+              v-for="(column, index) in columns.filter(a => a.show)"
+              :key="`column${index}`"
+              class="display-table-cell display-table-cell-standard caption"
+            >
+              <div v-if="column.property === 'buyer'">
+                <div
+                  style="text-overflow: ellipsis; overflow: hidden;"
+                  :style="
+                    getIsPremiumMembership ||
+                    getIsBusinessMembership ||
+                    getIsFreeMembership
+                      ? 'height: 42px;'
+                      : 'height: 21px;'
+                  "
+                >
+                  {{
+                    getIsPremiumMembership ||
+                    getIsBusinessMembership ||
+                    getIsFreeMembership
+                      ? result.buyer.raw.name
+                      : `${result.buyer.raw.name.substring(0, 5)}...`
+                  }}
+                </div>
+              </div>
+              <div v-else-if="column.property === 'cpv'">
+                <div v-if="result.cpvs && result.cpvs.raw">
+                  <div
+                    v-for="(cpv, cpvIndex) of result.cpvs.raw"
+                    :key="`cpvIndex${cpvIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    <v-avatar class="ml-2" size="18">
+                      <img :src="getCpvsLogoFromLabel(cpv)" alt="" />
+                    </v-avatar>
+                    {{ cpv }}
+                  </div>
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'bid_deadline'"
+                class="text-center"
+              >
+                <div v-if="result.bid_deadline_timestamp && result.bid_deadline_timestamp.raw">
+                  {{ moment(result.bid_deadline_timestamp.raw).format("MM/DD/YYYY") }}
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'publication_date'"
+                class="text-center"
+              >
+                <div v-if="result.publication_date && result.publication_date.raw">
+                  {{ moment(result.publication_date.raw).format("MM/DD/YYYY") }}
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'region'"
+                class="text-center"
+              >
+                <div v-if="result.regionLvl0 && result.regionLvl0.raw">
+                  {{
+                    result.regionLvl0.raw && result.regionLvl0.raw.length
+                      ? result.regionLvl0.raw[0]
+                      : ''
+                  }}
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'scope_of_work'"
+                style="position: relative;"
+                :title="
+                  result && result.scope_of_works.raw
+                    ? result.scope_of_works.raw.join(', ')
+                    : ''
+                "
+              >
+                <div v-if="result.scope_of_works && result.scope_of_works.raw">
+                  <div
+                    v-for="(scopeOfWork, scopeOfWorkIndex) of result.scope_of_works.raw"
+                    :key="`scopeOfWorkIndex${scopeOfWorkIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ scopeOfWork }}
+                  </div>
+                  <div
+                    v-if="
+                      result.scope_of_works.raw &&
+                      result.scope_of_works.raw.length > 2
+                    "
+                    class="blue-grey--text"
+                    style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                  >
+                    +{{ result.scope_of_works.raw.length - 2 }} more
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="column.property === 'segment'">
+                <div v-if="result.segments && result.segments.raw">
+                  <div
+                    v-for="(segment, segmentIndex) of result.segments.raw"
+                    :key="`segmentIndex${segmentIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ segment }}
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="column.property === 'brand'">
+                <div v-if="result.brands && result.brands.raw">
+                  <div
+                    v-for="(brand, brandIndex) of result.brands.raw"
+                    :key="`brandIndex${brandIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ brand }}
+                  </div>
+                </div>                
+              </div>
+              <div v-else-if="column.property === 'contractType'">
+                <div
+                  v-for="(contractType, contractTypeIndex) of result.contractTypes.raw"
+                  :key="`contractTypeIndex${contractTypeIndex}`"
+                  style="overflow: hidden; white-space: nowrap;"
+                >
+                  {{ contractType }}
+                </div>
+              </div>
+              <div v-else>
+                <div v-if="result[column.property] && result[column.property].raw">
+                  {{ result[column.property].raw }}
+                </div>
+              </div>
+            </div>
+            <div
+              class="display-table-cell display-table-cell-option"
+            >
+              <v-menu transition="slide-y-transition" offset-y left>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    class="ma-0 pa-0"
+                    @click.stop
+                  >
+                    <v-icon size="16">fa-ellipsis-v</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-list class="list-icon">
+                  <v-list-item
+                    @click="openTenderGroupChoice(result)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa fa-circle</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Assign to group
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item
+                    @click="openSentEmailDialog(result)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa-bell</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Notify
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item
+                    :to="{
+                      name: 'TenderAdd',
+                      params: { tender: result }
+                    }"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa-copy</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Duplicate
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="text-center grey--text">
+        <div><v-icon>block</v-icon></div>
+        <div>There are no tenders found.</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
+import SearchFacet from '@/views/tender/components/SearchFacet'
+
+export default {
+  name: 'SearchResultsTable',
+
+  components: {
+    SearchFacet,
+  },
+
+  props: {
+    results: {
+      type: Array,
+      required: true
+    },
+    
+    filter: {
+      type: Object,
+      required: true
+    },
+
+    searchState: {
+      type: Object,
+      required: true
+    },
+  },
+
+  data: () => ({
+    moment,
+    now_timestamp: null,
+    columns: [
+      {
+        show: false,
+        title: "CPV",
+        property: "cpv",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Region",
+        property: "region",
+        menu: null
+      },
+      {
+        show: true,
+        title: "Country",
+        property: "country",
+        menu: null
+      },
+      {
+        show: true,
+        title: "Buyer",
+        property: "buyer",
+        menu: null
+      },
+      {
+        show: true,
+        title: "Bid Deadline",
+        property: "bid_deadline",
+        menu: null
+      },
+      {
+        show: true,
+        title: "Publication",
+        property: "publication_date",
+        menu: null
+      },
+      {
+        show: true,
+        title: "Notice type",
+        property: "notice_type",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Currency",
+        property: "currency",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Biding type",
+        property: "biding_type",
+        menu: null
+      },
+      {
+        show: false,
+        title: "SOW",
+        property: "scope_of_work",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Segment",
+        property: "segment",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Brand",
+        property: "brand",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Contract Type",
+        property: "contract_type",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Method",
+        property: "procurement_method",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Currency",
+        property: "currency",
+        menu: null
+      },
+      {
+        show: false,
+        title: "ID",
+        property: "id",
+        menu: null
+      }
+    ],
+  }),
+
+  computed: {
+    ...mapGetters([
+      'getIsFreeMembership',
+      'getIsPremiumMembership',
+      'getIsBusinessMembership',
+      'getScreenTenders',
+      'getCpvsLogoFromLabel',
+      'getDataGroups',
+    ]),
+
+    tenderGroups() {
+      return result => {
+        if (
+          !result.groups ||
+          !result.groups.raw ||
+          !this.getDataGroups ||
+          this.getDataGroups.loading !== 1 ||
+          !this.getDataGroups.data
+        ) {
+          return null;
+        }
+        const tenderGroups = this.getDataGroups.data.filter(a =>
+          result.groups.raw.includes(a.tenderGroupId)
+        );
+        if (!tenderGroups || !tenderGroups.length) {
+          return null;
+        }
+        return tenderGroups;
+      };
+    },
+  },
+
+  created() {
+    this.initUserScreen();
+    this.now_timestamp = new Date();
+    this.now_timestamp.setHours(0);
+    this.now_timestamp.setMinutes(0);
+    this.now_timestamp.setSeconds(0);
+    this.now_timestamp = this.now_timestamp.getTime();
+  },
+
+  watch: {
+    columns() {
+      this.updateUserScreen();
+    },
+  },
+
+  methods: {
+    ...mapActions([
+      'showInsufficientRightDialog',
+      'setScreenTenders',
+    ]),
+
+    initUserScreen() {
+      if (this.getScreenTenders.columns) {
+        for (const column of this.getScreenTenders.columns) {
+          const columnFind = this.columns.find(
+            a => a.property === column.property
+          );
+          if (columnFind) {
+            columnFind.show = column.show;
+          }
+        }
+      }
+    },
+
+    updateUserScreen() {
+      this.setScreenTenders({
+        columns: this.columns
+      });
+    },
+
+    handleFacetChange(event, facet) {
+      this.$emit('handleFacetChange', {
+        event,
+        facet,
+      })
+    },
+
+    handleFacetCheckAll(facet) {
+      this.$emit('handleFacetCheckAll', facet)
+    },
+
+    handleFacetUnCheckAll(facet) {
+      this.$emit('handleFacetUnCheckAll', facet)
+    },
+  },
+};
+</script>
+
+<style>
+.display-table-row {
+  display: flex;
+  align-content: stretch;
+}
+.display-table-row:hover {
+  background-color: #f5f5f5;
+}
+
+.display-table-head {
+  overflow: hidden;
+  max-height: 50px;
+  align-self: center;
+}
+
+.display-table-cell {
+  overflow: hidden;
+  max-height: 40px;
+}
+
+.display-table-cell-standard {
+  width: 150px;
+  min-width: 150px;
+}
+
+.display-table-cell-avatar {
+  width: 60px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.display-table-cell-title {
+  min-width: 300px;
+  max-width: 300px;
+  flex: 2;
+}
+
+.display-table-cell-option {
+  width: 36px;
+  min-width: 36px;
+  text-align: center;
+}
+</style>

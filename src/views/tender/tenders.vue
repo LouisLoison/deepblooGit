@@ -149,7 +149,14 @@
         <SearchResults
           v-show="thereAreResults"
           :results="searchState.results"
+          :displayType="displayType"
+          :filter="filter"
+          :searchState="searchState"
+          @updateUserScreen="updateUserScreen()"
           @moveTenderToGroup="moveTenderToGroup()"
+          @handleFacetChange="$refs.TendersFilter.handleFacetChange($event.event, $event.facet)"
+          @handleFacetCheckAll="$refs.TendersFilter.handleFacetCheckAll($event)"
+          @handleFacetUnCheckAll="$refs.TendersFilter.handleFacetUnCheckAll($event)"
         />
       </div>
       <div v-else class="text-center pa-5">
@@ -208,7 +215,22 @@ export default {
     driver,
     loading: true,
     panels: [ 1 ],
-    filter: {},
+    filter: {
+      country: [],
+      notice_type: [],
+      currency: [],
+      cpvs: [],
+      user_id: [],
+      bid_deadline_timestamp: [],
+      publication_timestamp: [],
+      procurement_method: [],
+      lang: [],
+      scope_of_works: [],
+      segments: [],
+      designs: [],
+      contract_types: [],
+      brands: [],
+    },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',
     searchInputValue: '',
@@ -236,6 +258,10 @@ export default {
         driver.setResultsPerPage(newResultsPerPage)
         this.updateUserScreen()
       }
+    },
+
+    displayType() {
+      this.updateUserScreen();
     },
 
     panels() {
@@ -420,6 +446,25 @@ export default {
       })
     },
 
+    handleFormSubmit(event) {
+      this.searchInputValue = event
+      driver.getActions().setSearchTerm(this.searchInputValue)
+    },
+
+    setCurrentPage(page) {
+      driver.setCurrent(page)
+    },
+
+    moveTenderToGroup() {
+      if (
+        this.$refs &&
+        this.$refs.TendersGroup
+      ) {
+        this.$refs.TendersGroup.loadTenderGroupLink()
+      }
+    },
+
+    // filtre
     filterChange(filter) {
       this.filter = {
         ...this.filter,
@@ -436,24 +481,6 @@ export default {
       }
       if (this.$refs.TendersFilter) {
         this.$refs.TendersFilter.handleFacetChange(event, facet.field)
-      }
-    },
-
-    handleFormSubmit(event) {
-      this.searchInputValue = event
-      driver.getActions().setSearchTerm(this.searchInputValue)
-    },
-
-    setCurrentPage(page) {
-      driver.setCurrent(page)
-    },
-
-    moveTenderToGroup() {
-      if (
-        this.$refs &&
-        this.$refs.TendersGroup
-      ) {
-        this.$refs.TendersGroup.loadTenderGroupLink()
       }
     },
   }
