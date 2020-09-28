@@ -266,7 +266,29 @@ const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record
 
   const { rows } = await pgPool.query(preparedQuery)
 
-  return rows
+  return pgMapResult(rows, BddId, TableName)
+}
+
+const pgMapResult = (rows, BddId, TableName) => {
+
+  let Schema = BddSchema.getSchema()
+  const higherCols = Object.keys(Schema[BddId][TableName]).reduce((acc, val) => {
+    acc[val.toLower] = val;
+    return acc;
+  }, {})
+
+
+  return rows.map(row => {
+    const mapedRow = {};
+    Object.keys(row).forEach(col => {
+      if (col in Object.keys(higherCols)) {
+        mapedRow[higherCols[col]] = row[col]
+      } else {
+	mapedRow[col] = row[col]
+      }
+    })
+    return mapedRow
+  })
 }
 
 const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
@@ -447,6 +469,7 @@ const bulkInsertPostgreSql = async (BddId, Environnement, TableName, records) =>
           })
   })
 }
+
 const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
   return new Promise((resolve, reject) => {
     try
@@ -498,7 +521,6 @@ const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
     }
   })
 }
-
 
 exports.bulkInsert = async (BddId, Environnement, TableName, records) => {
   if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
