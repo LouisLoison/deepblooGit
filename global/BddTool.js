@@ -206,7 +206,6 @@ exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
 // Also allow to set NULLs (null) and default values (undefined) 
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
 const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record, ColumnKey) => {
-  const BddSchema = require(process.cwd() + '/global/BddSchema')
 
   let ColumnList = []
   let Schema = BddSchema.getSchema()
@@ -274,7 +273,6 @@ const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
   return new Promise((resolve, reject) => {
     try
     {
-      const BddSchema = require(process.cwd() + '/global/BddSchema')
 
       let ColumnKey = ''
       let ColumnList = []
@@ -455,7 +453,6 @@ const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
     {
       const mysql = require('mysql')
       const configBdd = Config.bdd[BddId][Environnement].config
-      const BddSchema = require(process.cwd() + '/global/BddSchema')
 
       let Schema = BddSchema.getSchema()
       let Table = Schema[BddId][TableName]
@@ -513,8 +510,6 @@ exports.bulkInsert = async (BddId, Environnement, TableName, records) => {
 
 exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
     return new Promise((resolve, reject) => {
-        var BddSchema = require(process.cwd() + '/global/BddSchema')
-
         var Record = {}
         var ColumnKey = ''
         var ColumnListTexte = ''
@@ -548,8 +543,6 @@ exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
 
 exports.RecordDelete = (BddId, Environnement, TableName, RecordId) => {
     return new Promise((resolve, reject) => {
-        var BddSchema = require(process.cwd() + '/global/BddSchema')
-
         var ColumnKey = ''
         var Schema = BddSchema.getSchema()
         var Table = Schema[BddId][TableName]
