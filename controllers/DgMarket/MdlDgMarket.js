@@ -81,7 +81,7 @@ exports.BddImport = () => {
           await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         }
 
-        const dgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', dgmarket)
+        const dgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', dgmarket, 'dgmarketId')
 
         // Bulk insert into tenderCriterion table
         if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {
