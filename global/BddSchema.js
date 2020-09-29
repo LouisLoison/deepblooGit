@@ -389,6 +389,8 @@ exports.getTableConfig = function(Bdd, Environnement, TableName) {
         Query = `Exec SP_Columns ${TableName}`
       } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
         Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = '${Config.bdd[Bdd][Environnement].config.database}' `
+      } else if (Config.bdd[Bdd][Environnement].config.type === 'PostgreSql') {
+        Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = 'public' `
       } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
         Query = `SELECT * FROM SYS.USER_TAB_COLUMNS WHERE TABLE_NAME= '${TableName.toUpperCase()}'`
       }
@@ -405,6 +407,9 @@ exports.getTableConfig = function(Bdd, Environnement, TableName) {
           } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
             TableConfig.ColumnList.push(Column.COLUMN_NAME)
             TableConfig.Column.push({ name: Column.COLUMN_NAME, type: Column.DATA_TYPE })
+          } else if (Config.bdd[Bdd][Environnement].config.type === 'PostgreSql') {
+            TableConfig.ColumnList.push(Column.column_name)
+            TableConfig.Column.push({ name: Column.column_name, type: Column.data_type })
           } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
             TableConfig.ColumnList.push(Column.COLUMN_NAME)
             TableConfig.Column.push({ name: Column.COLUMN_NAME, type: Column.DATA_TYPE })

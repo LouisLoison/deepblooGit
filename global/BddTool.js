@@ -1,4 +1,10 @@
 var Config = require(process.cwd() + '/config')
+var crypto = require('crypto')
+const BddSchema = require(process.cwd() + '/global/BddSchema')
+
+var getSHA1ofJSON = function(input){
+  return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
+}
 
 var QueryExecMsSql = async function(onError, onSuccess, Query, BddId, Environnement) {
     var sql = require('mssql')
@@ -128,6 +134,55 @@ var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environne
     .catch((err) => { onError(err) })
 }
 
+
+let pgPool = false;
+
+const pgInitPool = (BddId, Environnement, onError) => {
+  try {
+    if(!pgPool) {
+      const { Pool } = require('pg')
+      const configBdd = Config.bdd[BddId][Environnement].config
+
+      const pgArgs = {
+        host: configBdd.server,
+        user: configBdd.user,
+        password: configBdd.password,
+        database: configBdd.database
+      }
+      console.log(pgArgs)
+      pgPool = new Pool(pgArgs)
+    }
+    return pgPool;
+  } catch (err) {
+    onError(err)
+  }
+}
+
+var QueryExecPostgreSql = (onError, onSuccess, Query, BddId, Environnement, rowsCount) => {
+  try {
+    const pgPool = pgInitPool (BddId, Environnement, onError);
+    pgPool.query(Query, (err, results) => {
+      if (err) {
+        err.Query = Query
+        onError(err)
+        return false
+      }
+      if (rowsCount) {
+        onSuccess({
+          results: results.rows,
+          total: results.rowCount,
+        })
+      } else {
+        onSuccess(results.rows);
+      }
+    })
+  } catch (err) {
+    err.Query = Query
+    onError(err)
+  }
+}
+
+
 var QueryExecBdd = (BddId, Environnement, Query, onError, onSuccess, rowsCount) => {
   if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
     QueryExecMsSql(onError, onSuccess, Query, BddId, Environnement)
@@ -135,6 +190,8 @@ var QueryExecBdd = (BddId, Environnement, Query, onError, onSuccess, rowsCount) 
     QueryExecMySql(onError, onSuccess, Query, BddId, Environnement, rowsCount)
   } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
     QueryExecOracle(onError, onSuccess, Query, BddId, Environnement)
+  } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+    QueryExecPostgreSql(onError, onSuccess, Query, BddId, Environnement, rowsCount)
   }
 }
 exports.QueryExecBdd = QueryExecBdd
@@ -145,11 +202,99 @@ exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
   })
 }
 
-exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
+// Now using prepared statement for SQL injection prevention
+// Also allow to set NULLs (null) and default values (undefined) 
+// Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
+const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record, ColumnKey) => {
+
+  let ColumnList = []
+  let Schema = BddSchema.getSchema()
+  let Table = Schema[BddId][TableName]
+  for(let ColumnName in Table) {
+    let Column = Table[ColumnName]
+    if (Column.key && !ColumnKey) {
+    // if (Column.key) {
+      ColumnKey = ColumnName
+    } else {
+      if (ColumnName in Record) {
+        ColumnList.push(ColumnName)
+      }
+    }
+  }
+  let Query = ''
+//  if (Record[ColumnKey] && Record[ColumnKey] !== 0 && Record[ColumnKey] !== '') {
+  let UpdateColumnsList = []
+  let insertColumnList = []
+  let insertValuesList = []
+  let actualValues = []
+  let index = 0
+  for(let ColumnName of ColumnList) {
+    insertColumnList.push(ColumnName)
+    if (ColumnName === 'creationDate') {
+       insertValuesList.push('now()')
+    } else if (ColumnName === 'updateDate') {
+       insertValuesList.push('now()')
+       UpdateColumnsList.push('updateDate = now()')
+    } else {
+       index++;
+       insertValuesList.push(`$${index}`)
+       UpdateColumnsList.push(`${ColumnName} = $${index}`)
+       if (ColumnName === 'owner') {
+         actualValues.push(Config.user.Identifiant)
+       } else {
+         if (Table[ColumnName].type === 'DateTime') {
+           actualValues.push(this.DateFormater(Record[ColumnName], Environnement, BddId))
+         } else {
+           actualValues.push(Record[ColumnName])
+         }
+       }
+    }
+  }
+
+  Query = `
+        INSERT INTO ${TableName} (${insertColumnList.join(', ')})
+        VALUES (${insertValuesList.join(', ')})
+        ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
+        RETURNING *
+  `
+  const preparedQuery = {
+      name: getSHA1ofJSON(Query),
+      text: Query,
+      values: actualValues,
+      rowMode: 'array',
+  }
+
+  const { rows } = await pgPool.query(preparedQuery)
+
+  return pgMapResult(rows, BddId, TableName)
+}
+
+const pgMapResult = (rows, BddId, TableName) => {
+
+  let Schema = BddSchema.getSchema()
+  const higherCols = Object.keys(Schema[BddId][TableName]).reduce((acc, val) => {
+    acc[val.toLower] = val;
+    return acc;
+  }, {})
+
+
+  return rows.map(row => {
+    const mapedRow = {};
+    Object.keys(row).forEach(col => {
+      if (col in Object.keys(higherCols)) {
+        mapedRow[higherCols[col]] = row[col]
+      } else {
+	mapedRow[col] = row[col]
+      }
+    })
+    return mapedRow
+  })
+}
+
+const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
   return new Promise((resolve, reject) => {
     try
     {
-      const BddSchema = require(process.cwd() + '/global/BddSchema')
 
       let ColumnKey = ''
       let ColumnList = []
@@ -276,13 +421,61 @@ exports.RecordAddUpdate = (BddId, Environnement, TableName, Record) => {
   })
 }
 
-exports.bulkInsert = (BddId, Environnement, TableName, records) => {
+exports.RecordAddUpdate = async (BddId, Environnement, TableName, Record, ColumnKey) => {
+  if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+    return await RecordAddUpdatePostgreSql(BddId, Environnement, TableName, Record, ColumnKey)
+  } else {
+    return await RecordAddUpdateGeneric(BddId, Environnement, TableName,   Record)
+  }
+}
+
+const bulkInsertPostgreSql = async (BddId, Environnement, TableName, records) => {
+  let Schema = BddSchema.getSchema()
+  let Table = Schema[BddId][TableName]
+
+  const columns = []
+  for (const column in records[0]) {
+    if (Table[column] === undefined) {
+      continue
+    }
+    columns.push(column)
+  }
+
+  const values = []
+  for (const record of records) {
+    const value = []
+    for (const column of columns) {
+      value.push(record[column])
+    }
+    values.push(value)
+  }
+
+  const pgPool = pgInitPool (BddId, Environnement);
+
+  const Query = {
+    name: getSHA1ofJSON(TableName + '-' + columns.join('-')),
+    text: `INSERT INTO ${TableName} (${columns.join(', ')}) VALUES (${
+      columns.map((val, index) => "$" + (index + 1)).join(', ')
+    })`,
+    rowMode: 'array',
+  }
+
+  await values.forEach(async value => {
+    Query.values = value
+    await pgPool.query(Query)
+      .catch(err => {
+            err.Query = Query
+            err.Values = values
+          })
+  })
+}
+
+const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
   return new Promise((resolve, reject) => {
     try
     {
       const mysql = require('mysql')
       const configBdd = Config.bdd[BddId][Environnement].config
-      const BddSchema = require(process.cwd() + '/global/BddSchema')
 
       let Schema = BddSchema.getSchema()
       let Table = Schema[BddId][TableName]
@@ -329,10 +522,16 @@ exports.bulkInsert = (BddId, Environnement, TableName, records) => {
   })
 }
 
+exports.bulkInsert = async (BddId, Environnement, TableName, records) => {
+  if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+    return await bulkInsertPostgreSql(BddId, Environnement, TableName, records)
+  } else {
+    return await bulkInsertGeneric(BddId, Environnement, TableName, records)
+  }
+}
+
 exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
     return new Promise((resolve, reject) => {
-        var BddSchema = require(process.cwd() + '/global/BddSchema')
-
         var Record = {}
         var ColumnKey = ''
         var ColumnListTexte = ''
@@ -366,8 +565,6 @@ exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
 
 exports.RecordDelete = (BddId, Environnement, TableName, RecordId) => {
     return new Promise((resolve, reject) => {
-        var BddSchema = require(process.cwd() + '/global/BddSchema')
-
         var ColumnKey = ''
         var Schema = BddSchema.getSchema()
         var Table = Schema[BddId][TableName]
@@ -419,6 +616,20 @@ var BddColumnType = (Type, Environnement, BddId) => {
         } else if (Type === 'Time') {
             TypeTexte = `time`
         }
+    } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+        if (Type === 'String') {
+            TypeTexte = `varchar(255)`
+        } else if (Type === 'Text') {
+            TypeTexte = `text`
+        } else if (Type === 'Int') {
+            TypeTexte = `int`
+        } else if (Type === 'BigInt') {
+            TypeTexte = `int8`
+        } else if (Type === 'DateTime') {
+            TypeTexte = `timestamptz`
+        } else if (Type === 'Time') {
+            TypeTexte = `time`
+        }
     } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
         if (Type === 'String') {
             TypeTexte = `NVARCHAR2(255)`
@@ -458,6 +669,8 @@ var ChaineFormater = (Texte, Environnement, BddId) => {
         Texte = Texte
     } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
         Texte = Texte.replace(/\\/gi, '\\\\')
+    } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+        Texte = Texte.replace(/\\/gi, '\\\\')
     } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
         Texte = Texte
     }
@@ -494,8 +707,9 @@ var NumericFormater = (Texte, Environnement, BddId) => {
       value = Number(Texte)
   }
   catch(err) {
+      throw new Error(`${Texte} is not a Number`)
   }
-  if (isNaN(value)) { value = 0 }
+  if (!isFinite(value)) { value = 0 }
   return value
 }
 exports.NumericFormater = NumericFormater
@@ -524,6 +738,8 @@ exports.DateFormater = (Texte, Environnement, BddId) => {
     if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
         Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DDTHH:mm:ss')
     } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+        Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
+    } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
         Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
     } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
         Texte = `to_date(${Texte},'yyyymmdd hh24:mi:ss')`

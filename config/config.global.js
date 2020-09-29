@@ -60,6 +60,15 @@ config.bdd = {
         server: '127.0.0.1', 
         database: 'DeepBlooDev'
       }
+    },
+    test: {
+      config: {
+        type: 'PostgreSql',
+        user: 'deepbloo',
+        password: 'secret',
+        server: '127.0.0.1', 
+        database: 'deepbloo'
+      }
     }
   }
 }
