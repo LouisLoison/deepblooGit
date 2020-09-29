@@ -388,10 +388,11 @@ exports.tendersObsoleteRemove = () => {
 
       let termDate = new Date()
       termDate.setDate(termDate.getDate() - 180)
+      const noticeTypeExclusion = 'Contract Award'
       const status = 20
       const orderBy = 'termDate ASC'
       const limit = 250
-      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, null, termDate, null, null, limit, null, null, orderBy, true, status)
+      const tenders = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderList(null, null, null, null, null, termDate, null, null, limit, null, null, orderBy, true, status, noticeTypeExclusion)
 
       const tenderIds = tenders.map(a => a.id)
       const query = `

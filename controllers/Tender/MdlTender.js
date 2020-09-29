@@ -537,7 +537,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
   })
 }
 
-exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy, hasAlgoliaId, status) => {
+exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateMin, termDateMax, cpvLabels, regions, limit, noticeType, country, orderBy, hasAlgoliaId, status, noticeTypeExclusion) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -651,6 +651,10 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       if (noticeType && noticeType !== '') {
         if (where !== '') { where += 'AND ' }
         where += `noticeType = '${BddTool.ChaineFormater(noticeType, BddEnvironnement, BddId)}' \n`
+      }
+      if (noticeTypeExclusion && noticeTypeExclusion !== '') {
+        if (where !== '') { where += 'AND ' }
+        where += `noticeType != '${BddTool.ChaineFormater(noticeTypeExclusion, BddEnvironnement, BddId)}' \n`
       }
       if (status && status !== '' && status > 0) {
         if (where !== '') { where += 'AND ' }
@@ -1654,6 +1658,61 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
   })
 }
 
+exports.tenderCriterions = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
+                    tenderCriterion.tenderId AS "tenderId", 
+                    tenderCriterion.documentId AS "documentId", 
+                    tenderCriterion.textParseId AS "textParseId", 
+                    tenderCriterion.value AS "value", 
+                    tenderCriterion.word AS "word", 
+                    tenderCriterion.findCount AS "findCount", 
+                    tenderCriterion.scope AS "scope", 
+                    tenderCriterion.status AS "status", 
+                    tenderCriterion.creationDate AS "creationDate", 
+                    tenderCriterion.updateDate AS "updateDate" 
+        FROM        tenderCriterion 
+      `
+      let where = ``
+      if (filter) {
+        if (filter.tenderId) {
+          if (where !== '') { where += 'AND ' }
+          where += `tenderCriterion.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+        }
+      }
+      if (where !== '') { query += '\nWHERE ' + where }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const tenderCriterions = []
+      for (let record of recordset) {
+        tenderCriterions.push({
+          tenderCriterionId: record.tenderCriterionId,
+          tenderId: record.tenderId,
+          documentId: record.documentId,
+          textParseId: record.textParseId,
+          value: record.value,
+          word: record.word,
+          findCount: record.findCount,
+          scope: record.scope,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate,
+        })
+      }
+
+      resolve(tenderCriterions)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.tenderFilterAddUpdate = (tenderFilter) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -1817,7 +1876,10 @@ exports.tenderUserGroupDispatch = (tenders) => {
           filter: {
             title: {
               regexs: [
-                '(?:.*electric)(?:.*vehicle|bus|buses|car|transport|charging)(?:.*planning|planification|plan|strategy)',
+                '(?:.*waste heat)(?:.*recover|optimi)(?:.*design|study|plan)(?:.*Assessment of Energy Efficiency)',
+                '(?:.*energy efficiency)(?:.*train|consulting|analys|analyz|building|residential)',
+                '(?:.*étude efficacité énergétique)',
+                '(?:.*étude|analyse|modélis)(?:.*économie)(?:.*d\'énergie)',
               ],
               words: [],
             },

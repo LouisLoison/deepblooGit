@@ -1095,10 +1095,10 @@ exports.SendPeriodicDashboard = () => {
 
       let emailSents = []
       for (const user of users) {
+        /*
         if (user.email.trim() !== 'serge.remy@studer-innotec.com') {
           continue
         }
-        /*
         */
 
         const dataSynchroFull = await this.SynchroFull(user.userId)

@@ -58,6 +58,9 @@ const urlPublics = [
   '/api/PrivateDeal/PrivateDealGet',
   '/api/Tender/tenderCount',
   '/api/TextParse/textParseList',
+  '/api/Tender/TenderGet',
+  '/api/Tender/tenderCriterions',
+  '/api/tender/tenderCriterions',
 ]
 app.use(function(req, res, next) {
   if (urlPublics.includes(req.path)) {

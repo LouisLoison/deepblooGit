@@ -274,11 +274,12 @@ exports.textParseList = (filter) => {
           words: "£",
           type: "METRIC",
         },
+        // Scope of Work
         {
           textParseId: 5,
           theme: "Scope of Work",
           group: "Maintenance/repair",
-          words: "Maintenance, repair, repairs, repairing, support, rectify, rectifying, assistance, spares",
+          words: "Maintenance, repair, repairs, repairing, rectify, rectifying, assistance, spares",
           type: "KEYWORD",
         },
         {
@@ -372,7 +373,14 @@ exports.textParseList = (filter) => {
           words: "manufacture, manufacturing, producing, production, fabrication",
           type: "KEYWORD",
         },
-        //Project Development
+        // Segment 85
+        {
+          textParseId: 85,
+          theme: "Segment",
+          group: "Agriculture",
+          words: "irrigation, agricultural, fishing, agriculture, fertilzer",
+          type: "KEYWORD",
+        },
         {
           textParseId: 14,
           theme: "Segment",
@@ -384,21 +392,21 @@ exports.textParseList = (filter) => {
           textParseId: 15,
           theme: "Segment",
           group: "Industry",
-          words: "Industry, industrial, industriel, Industrie, agro, factory, plant, usine",
+          words: "Industry, industrial, factory, plant, manufactory, warehouse",
           type: "KEYWORD",
         },
         {
           textParseId: 16,
           theme: "Segment",
-          group: "Rural electrification",
-          words: "rural, ruraux, remote area, eleclricity access, access to electricity, energy access, commune rurale, village, localité, locality, localities",
+          group: "Rural",
+          words: "rural, agrarian, remote area, electricity access, access to electricity, energy access, locality, localities, village, undeserved",
           type: "KEYWORD",
         },
         {
           textParseId: 17,
           theme: "Segment",
           group: "Public Lighting",
-          words: "Public lighting, éclairage de rue, éclairage urbain, lampadaire, lampadaires, street light, street lighting, street lightings, street lights, streetlight, streetlighting, streetlightings, streetlights",
+          words: "Public lighting,  street light, street lighting, street lightings, street lights, streetlight, streetlighting, streetlightings, streetlights",
           type: "KEYWORD",
         },
         {
@@ -411,38 +419,39 @@ exports.textParseList = (filter) => {
         {
           textParseId: 19,
           theme: "Segment",
-          group: "C&I",
-          words: "commercial, building, mall, business center, hospital, hopital, health center, small business, small businesses",
+          group: "Buisness",
+          words: "commercial, building, mall, business center, small business, small businesses, business, commerce, office",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 86,
+          theme: "Segment",
+          group: "O&G",
+          words: "Refinery, gas pipeline, gaz pipeline",
           type: "KEYWORD",
         },
         {
           textParseId: 20,
           theme: "Segment",
           group: "Residential",
-          words: "residential, residentiel, homes, house, household, Residences",
+          words: "residential, residentiel, homes, house, household, urban, housing",
           type: "KEYWORD",
         },
         {
           textParseId: 21,
           theme: "Segment",
           group: "Railway",
-          words: "Railway, railroad, voie ferrée, ferroviaire, chemin de fer, métro",
+          words: "Railway, railroad, rail line, train line, subway, metro, monorail",
           type: "KEYWORD",
         },
         {
           textParseId: 22,
           theme: "Segment",
-          group: "Substation",
-          words: "switchyard, switchgear, substation",
+          group: "services (school, hospital....)",
+          words: "sport, training, school, classroom, hospital, hopital, health center, university, medical center, gaming, airport,  ski, tourism, aquatic, stadium, leisure, amusement, restaurant, crematorium, cutlure house , culure center, cultural center, recreation , food center, care center, senior center, cinema, memory house, memorial, arts, libray, swimming pool, shopping, children parks, national parks",
           type: "KEYWORD",
         },
-        {
-          textParseId: 23,
-          theme: "Segment",
-          group: "Transmission Line",
-          words: "aerial line, aerial lines, distribution line, distribution lines, high voltage line, high voltage lines, hv line, hv lines, ligne de distribution, ligne de transmission, ligne haute tension, ligne ht, lignes de distribution, lignes de transmission, lignes haute tension, lignes ht, overhead lines, overheadline, power line, powerline, transmission line",
-          type: "KEYWORD",
-        },
+        // Financing
         /*
         {
           textParseId: 24,
@@ -452,6 +461,7 @@ exports.textParseList = (filter) => {
           type: "KEYWORD",
         },
         */
+        // Métriques
         {
           textParseId: 25,
           theme: "Métriques",
