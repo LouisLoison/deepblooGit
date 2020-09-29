@@ -1,295 +1,293 @@
 <template>
   <v-app id="setting" class="grey lighten-5 pa-4">
-    <v-card class="mb-5">
-      <v-toolbar dense>
-        <div class="title">
-          Users last connexion
-        </div>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn flat icon title="Refresh" @click="loadUsers()">
-            <v-icon>fa-refresh</v-icon>
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card-text>
-        <highcharts
-          v-if="dataUsers.loading === 1"
-          :options="chartStatistique"
-        />
-      </v-card-text>
-    </v-card>
-
-    <v-card class="mb-5">
-      <v-toolbar dense>
-        <div class="title">
-          Process
-        </div>
-      </v-toolbar>
-      <v-card-text>
-        <v-btn
-          round
-          color="blue-grey lighten-5"
-          @click="runFtpGet()"
-          title="Execute check"
-        >
-          FtpGet
-        </v-btn>
-        <v-btn
-          round
-          color="blue-grey lighten-5"
-          @click="runBddImport()"
-          title="Execute check"
-        >
-          BddImport
-        </v-btn>
-        <v-btn
-          round
-          color="blue-grey lighten-5"
-          @click="runTendersImport()"
-          title="Execute check"
-        >
-          TendersImport
-        </v-btn>
-        <v-btn
-          round
-          color="blue-grey lighten-5"
-          @click="runTendersPurge()"
-          title="Execute check"
-        >
-          TendersPurge
-        </v-btn>
-      </v-card-text>
-    </v-card>
-
-    <v-card class="mb-5">
-      <v-toolbar dense>
-        <div class="title">
-          Schema
-        </div>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-          <v-btn small flat @click="getSchemaCheck()" title="Execute BDD check">
-            <v-icon class="pr-2">fa-refresh</v-icon>
-            Check
-          </v-btn>
-        </v-toolbar-items>
-      </v-toolbar>
-      <v-card-text>
-        <div>
-          <div v-if="dataSchemaCheck.loading === 0" class="pa-5 text-center">
-            <div class="pa-2 grey--text">Loading...</div>
-            <v-progress-circular :size="50" color="grey" indeterminate />
+    <v-expansion-panels
+      class="my-5"
+      focusable
+      multiple
+      hover
+    >
+      <v-expansion-panel>
+        <v-expansion-panel-header>Users last connexion</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div class="text-right pt-3">
+            <v-btn
+              @click="loadUsers()"
+              title="Refresh"
+              small
+            >
+              <v-icon size="14" class="pr-2">fa-refresh</v-icon>
+              Check
+            </v-btn>            
           </div>
-          <div
-            v-else-if="dataSchemaCheck.loading === -1"
-            class="pa-5 text-center"
+          <highcharts
+            v-if="dataUsers.loading === 1"
+            :options="chartStatistique"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>Process</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-btn
+            round
+            color="blue-grey lighten-5"
+            @click="runFtpGet()"
+            title="Execute check"
           >
-            <v-icon class="red--text">error</v-icon>
-            <div class="pa-2 red--text">Error while loading data</div>
-            <div class="pa-2 red--text">{{ dataSchemaCheck.errorMessage }}</div>
-          </div>
-          <div
-            v-else-if="!dataSchemaCheck.CheckResult"
-            class="pa-5 text-center"
+            FtpGet
+          </v-btn>
+          <v-btn
+            round
+            color="blue-grey lighten-5"
+            @click="runBddImport()"
+            title="Execute check"
           >
-            <div class="pa-2 grey--text">Aucune vérification effectuée</div>
+            BddImport
+          </v-btn>
+          <v-btn
+            round
+            color="blue-grey lighten-5"
+            @click="runTendersImport()"
+            title="Execute check"
+          >
+            TendersImport
+          </v-btn>
+          <v-btn
+            round
+            color="blue-grey lighten-5"
+            @click="runTendersPurge()"
+            title="Execute check"
+          >
+            TendersPurge
+          </v-btn>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>Schema</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div class="text-right pt-3">
+            <v-btn
+              @click="getSchemaCheck()"
+              title="Execute check"
+              small
+            >
+              <v-icon size="14" class="pr-2">fa-refresh</v-icon>
+              Check
+            </v-btn>            
           </div>
-          <div v-else>
-            <v-expansion-panel v-model="expansionPanel" expand class="mt-3">
-              <v-expansion-panel-content
-                v-for="(Bdd, index1) of dataSchemaCheck.CheckResult.BddList"
-                :key="Bdd.Name"
+          <div>
+            <div v-if="dataSchemaCheck.loading === 0" class="pa-5 text-center">
+              <div class="pa-2 grey--text">Loading...</div>
+              <v-progress-circular :size="50" color="grey" indeterminate />
+            </div>
+            <div
+              v-else-if="dataSchemaCheck.loading === -1"
+              class="pa-5 text-center"
+            >
+              <v-icon class="red--text">error</v-icon>
+              <div class="pa-2 red--text">Error while loading data</div>
+              <div class="pa-2 red--text">{{ dataSchemaCheck.errorMessage }}</div>
+            </div>
+            <div
+              v-else-if="!dataSchemaCheck.CheckResult"
+              class="pa-5 text-center"
+            >
+              <div class="pa-2 grey--text">Aucune vérification effectuée</div>
+            </div>
+            <div v-else>
+              <v-expansion-panels
+                v-model="expansionPanel"
+                multiple
+                class="mt-3"
               >
-                <template slot="header">
-                  <div :id="`GroupeBddHead${index1}`">
-                    <i
-                      v-if="Bdd.ErrorFlg"
-                      class="fa fa-times-circle"
-                      aria-hidden="true"
-                      style="color: #FF0000;"
-                    ></i>
-                    <i
+                <v-expansion-panel
+                  v-for="(Bdd, index1) of dataSchemaCheck.CheckResult.BddList"
+                  :key="`Bdd${index1}`"
+                >
+                  <v-expansion-panel-header>
+                    <div>
+                      <v-icon
+                        v-if="Bdd.ErrorFlg"
+                        color="red"
+                        class="pr-2"
+                      >fa-times-circle</v-icon>
+                      <v-icon
+                        v-else
+                        color="green"
+                        class="pr-2"
+                      >fa-check-circle</v-icon>
+                      <v-icon>fa-database</v-icon>
+                      {{ Bdd.Name }}
+                    </div>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <div
+                      v-if="Bdd.Error"
+                      class="pa-5 text-center"
+                    >
+                      <v-icon class="red--text">error</v-icon>
+                      <div class="pa-2 red--text">Error while loading data</div>
+                      <div class="pa-2 red--text">{{ Bdd.Error }}</div>
+                    </div>
+                    <v-expansion-panels
                       v-else
-                      class="fa fa-check-circle"
-                      aria-hidden="true"
-                      style="color: #46be8a;"
-                    ></i>
-                    <i class="fa fa-database" />
-                    {{ Bdd.Name }}
-                  </div>
-                </template>
-                <v-card>
-                  <v-card-text class="grey lighten-3">
-                    <v-expansion-panel expand>
-                      <v-expansion-panel-content
+                      v-model="Bdd.panels"
+                      multiple
+                      class="mt-3"
+                    >
+                      <v-expansion-panel
                         v-for="(Table, index2) of Bdd.TableList"
                         :key="`Table${index2}`"
                       >
-                        <template slot="header">
+                        <v-expansion-panel-header>
                           <div>
-                            <i
+                            <v-icon
                               v-if="Table.Error && Table.Error !== ''"
-                              class="fa fa-ban"
-                              aria-hidden="true"
-                              style="color: #FF0000;"
-                            ></i>
-                            <i
-                              v-else-if="
-                                Table.ColumnList && Table.ColumnList.length > 0
-                              "
-                              class="fa fa-times-circle"
-                              aria-hidden="true"
-                              style="color: #FF0000;"
-                            ></i>
-                            <i
+                              color="red"
+                              class="pr-2"
+                            >fa-ban</v-icon>
+                            <v-icon
+                              v-else-if="Table.ColumnList && Table.ColumnList.length"
+                              color="red"
+                              class="pr-2"
+                            >fa-times-circle</v-icon>
+                            <v-icon
                               v-else
-                              class="fa fa-check-circle"
-                              aria-hidden="true"
-                              style="color: #46be8a;"
-                            ></i>
-                            <i class="fa fa-table" />
+                              color="green"
+                              class="pr-2"
+                            >fa-check-circle</v-icon>
+                            <v-icon>fa-table</v-icon>
                             {{ Table.TableName }}
                             <v-chip
-                              v-if="
-                                Table.ColumnList && Table.ColumnList.length > 0
-                              "
+                              v-if="Table.ColumnList && Table.ColumnList.length"
                               small
-                              outlined
-                              class="red red--text"
+                              dark
+                              color="red"
+                              class="ml-2"
                             >
                               {{ Table.ColumnList.length }}
                             </v-chip>
                           </div>
-                        </template>
-                        <v-card>
-                          <v-card-text class="grey lighten-3">
-                            <div
-                              v-if="Table.Error && Table.Error !== ''"
-                              style="color: #FF0000;"
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div
+                            v-if="Table.Error && Table.Error !== ''"
+                            style="color: #FF0000;"
+                          >
+                            <table
+                              class="table table-sm table-hover table-striped is-indent"
+                              data-plugin="animateList"
+                              data-animate="fade"
+                              data-child="tr"
+                              data-selectable="selectable"
                             >
-                              <table
-                                class="table table-sm table-hover table-striped is-indent"
-                                data-plugin="animateList"
-                                data-animate="fade"
-                                data-child="tr"
-                                data-selectable="selectable"
-                              >
-                                <tbody style="background-color: #FFFFFF;">
-                                  <tr style="cursor: pointer;">
-                                    <td style="width: 100%; color: #FF0000;">
-                                      {{ Table.Error }}
-                                    </td>
-                                    <td style="width: 50px;">
-                                      <v-btn
-                                        round
-                                        color="blue-grey lighten-5"
-                                        @click="TableScriptSql(Bdd.Name, Table)"
-                                        title="Script SQL"
+                              <tbody style="background-color: #FFFFFF;">
+                                <tr style="cursor: pointer;">
+                                  <td style="width: 100%; color: #FF0000;">
+                                    {{ Table.Error }}
+                                  </td>
+                                  <td style="width: 50px;">
+                                    <v-btn
+                                      @click="TableScriptSql(Bdd.Name, Table)"
+                                      title="Script SQL"
+                                      small
+                                      class="ma-1"
+                                    >
+                                      <v-icon
+                                        size="14"
+                                        class="pr-2"
+                                      >fa-file-code-o</v-icon>
+                                      SQL
+                                    </v-btn>
+                                  </td>
+                                  <td style="width: 50px;">
+                                    <v-btn
+                                      @click="TableAdd(Bdd.Name, Table)"
+                                      title="Ajouter la table en BDD"
+                                      small
+                                      class="ma-1"
+                                    >
+                                      <v-icon
+                                        size="14"
+                                        class="pr-2"
+                                      >fa-plus</v-icon
                                       >
-                                        <v-icon size="14" class="pr-2"
-                                          >fa-file-code-o</v-icon
-                                        >
-                                        SQL
-                                      </v-btn>
-                                    </td>
-                                    <td style="width: 50px;">
-                                      <v-btn
-                                        round
-                                        color="blue-grey lighten-5"
-                                        @click="TableAdd(Bdd.Name, Table)"
-                                        title="Ajouter la table en BDD"
-                                      >
-                                        <v-icon size="14" class="pr-2"
-                                          >fa-plus</v-icon
-                                        >
-                                        Ajouter
-                                      </v-btn>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                            <div
-                              v-else-if="
-                                !Table.ColumnList || Table.ColumnList.length === 0
-                              "
-                              style="color: #46be8a;"
+                                      Ajouter
+                                    </v-btn>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div
+                            v-else-if="
+                              !Table.ColumnList || Table.ColumnList.length === 0
+                            "
+                            style="color: #46be8a;"
+                          >
+                            Schema valide
+                          </div>
+                          <div v-else>
+                            <table
+                              class="table table-sm table-hover table-striped is-indent"
+                              data-plugin="animateList"
+                              data-animate="fade"
+                              data-child="tr"
+                              data-selectable="selectable"
                             >
-                              Schema valide
-                            </div>
-                            <div v-else>
-                              <table
-                                class="table table-sm table-hover table-striped is-indent"
-                                data-plugin="animateList"
-                                data-animate="fade"
-                                data-child="tr"
-                                data-selectable="selectable"
-                              >
-                                <tbody style="background-color: #FFFFFF;">
-                                  <tr
-                                    v-for="Column in Table.ColumnList"
-                                    :key="Column.ColumnName"
-                                    style="cursor: pointer;"
-                                  >
-                                    <td>{{ Column.ColumnName }}</td>
-                                    <td style="width: 100%; color: #FF0000;">
-                                      {{ Column.Error }}
-                                    </td>
-                                    <td style="width: 50px;">
-                                      <v-btn
-                                        round
-                                        color="blue-grey lighten-5"
-                                        @click="
-                                          ColumnScriptSql(
-                                            Bdd.Name,
-                                            Table.TableName,
-                                            Column
-                                          )
-                                        "
-                                        title="Script SQL"
-                                      >
-                                        <v-icon size="14" class="pr-2"
-                                          >fa-file-code-o</v-icon
-                                        >
-                                        SQL
-                                      </v-btn>
-                                    </td>
-                                    <td style="width: 50px;">
-                                      <v-btn
-                                        round
-                                        color="blue-grey lighten-5"
-                                        @click="
-                                          ColumnAdd(
-                                            Bdd.Name,
-                                            Table.TableName,
-                                            Column
-                                          )
-                                        "
-                                        title="Ajouter la colonne en BDD"
-                                      >
-                                        <v-icon size="14" class="pr-2"
-                                          >fa-plus</v-icon
-                                        >
-                                        Ajouter
-                                      </v-btn>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </v-card-text>
-                        </v-card>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
+                              <tbody style="background-color: #FFFFFF;">
+                                <tr
+                                  v-for="Column in Table.ColumnList"
+                                  :key="Column.ColumnName"
+                                  style="cursor: pointer;"
+                                >
+                                  <td>{{ Column.ColumnName }}</td>
+                                  <td style="width: 100%; color: #FF0000;">
+                                    {{ Column.Error }}
+                                  </td>
+                                  <td style="width: 50px;">
+                                    <v-btn
+                                      @click="ColumnScriptSql(Bdd.Name, Table.TableName, Column)"
+                                      title="Script SQL"
+                                      small
+                                      class="ma-1"
+                                    >
+                                      <v-icon
+                                        size="14"
+                                        class="pr-2"
+                                      >fa-file-code-o</v-icon>
+                                      SQL
+                                    </v-btn>
+                                  </td>
+                                  <td style="width: 50px;">
+                                    <v-btn
+                                      @click="ColumnAdd(Bdd.Name, Table.TableName, Column)"
+                                      title="Ajouter la colonne en BDD"
+                                      small
+                                      class="ma-1"
+                                    >
+                                      <v-icon
+                                        size="14"
+                                        class="pr-2"
+                                      >fa-plus</v-icon>
+                                      Ajouter
+                                    </v-btn>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
           </div>
-        </div>
-      </v-card-text>
-    </v-card>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
     <!-- Dialog -->
     <UserListDialog ref="UserListDialog" />

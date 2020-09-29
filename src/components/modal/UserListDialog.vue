@@ -6,7 +6,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items>
           <v-btn icon dark @click="isShowDialog = false">
-            <v-icon>close</v-icon>
+            <v-icon>fa-times</v-icon>
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -23,24 +23,24 @@
         <div v-else-if="users && users.length">
           <v-list two-line>
             <template v-for="(user, index) of users">
-              <v-list-tile
+              <v-list-item
                 :key="`users${index}`"
                 avatar
                 :href="`https://platform.deepbloo.com/users/${user.hivebriteId}`"
                 target="_blank"
                 @click.stop
               >
-                <v-list-tile-avatar>
+                <v-list-item-avatar>
                   <img :src="user.photo" />
-                </v-list-tile-avatar>
+                </v-list-item-avatar>
 
-                <v-list-tile-content>
-                  <v-list-tile-title v-html="user.username" />
-                  <v-list-tile-sub-title>
+                <v-list-item-content>
+                  <v-list-item-title v-html="user.username" />
+                  <v-list-item-sub-title>
                     {{ moment(user.creationDate).format("LL - LTS") }}
-                  </v-list-tile-sub-title>
-                </v-list-tile-content>
-              </v-list-tile>
+                  </v-list-item-sub-title>
+                </v-list-item-content>
+              </v-list-item>
             </template>
           </v-list>
         </div>
