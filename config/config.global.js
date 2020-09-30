@@ -85,3 +85,10 @@ config.zohoUrl = 'https://www.zohoapis.com/',
 config.awsAccessKeyId = 'AKIAI3MOVDQQCFHNPKLQ',
 config.awsSecretAccessKey = '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',
 config.awsBucket = 'tender-document-bucket-v2'
+config.elasticEndpoint = "https://a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io:9243/"
+config.elasticUser = 'elastic'
+config.elasticPassword = 'qIEa2t1kjelVtxLDm0wlnirN'
+config.appsearchEndpoint = "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/"
+config.appsearchSearchKey = "search-pg8ft3mtkfkup3occekertmt"
+config.appsearchPrivateKey = "private-ychdiximphcy4avd3kdtrc51"
+

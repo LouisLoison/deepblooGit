@@ -1,12 +1,14 @@
+const config = require(process.cwd() + '/config')
+
 exports.connectToElasticsearch = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const { Client } = require('@elastic/elasticsearch')
 
-      const node = 'https://a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io:9243/'
+      const node = config.elasticEndpoint
       const auth = {
-        username: 'elastic',
-        password: 'qIEa2t1kjelVtxLDm0wlnirN'
+        username: config.elasticUser,
+        password: config.elasticPassword,
       }
 
       // Elasticsearch connexion
@@ -43,8 +45,8 @@ exports.connectToPublicAppSearch = (engineName = "deepbloo") => {
     try {
       const ElasticAppSearch = require("@elastic/app-search-javascript");
       const client = ElasticAppSearch.createClient({
-        searchKey: "search-pg8ft3mtkfkup3occekertmt",
-        endpointBase: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
+        searchKey: config.appsearchSearchKey,
+        endpointBase: config.appsearchEndpoint,
         engineName,
       });
       resolve(client)
@@ -56,8 +58,8 @@ exports.connectToPrivateAppSearch = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const AppSearchClient = require('@elastic/app-search-node')
-      const privateKey = 'private-ychdiximphcy4avd3kdtrc51'
-      const baseUrlFn = () => 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/api/as/v1/'
+      const privateKey = config.appsearchPrivateKey
+      const baseUrlFn = () => config.appsearchEndpoint + 'api/as/v1/'
       const client = new AppSearchClient(undefined, privateKey, baseUrlFn)
 
       resolve(client)
@@ -208,12 +210,14 @@ exports.tendersImport = () => {
       for (const record of recordset) {
         record.tenderCriterions = tenderCriterionAlls.filter(a => a.tenderId === record.id)
         let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList, textParses)
-        if (!tender) {
+        /*
+	if (!tender) {
           if (record.id) {
             tenderIdDeletes.push(record.id)
           }
           continue
         }
+	*/
         tender.id = record.id
         tenders.push(tender)
       }
@@ -225,7 +229,7 @@ exports.tendersImport = () => {
         tranches.push(tenders.slice(borneMin, (borneMin + occurence)))
         borneMin += occurence
       } while (borneMin < tenders.length && tranches.length < 100)
-      for (tranche of tranches) {
+      for (const tranche of tranches) {
         await this.indexObject(tranche)
       }
       
