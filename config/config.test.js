@@ -9,7 +9,7 @@ config.ftpPath = '~/deepbloo/workspace/Ftp'
 config.elasticEndpoint = "http://localhost:9200/"
 config.elasticUser = 'elastic'
 config.elasticPassword = 'changeme'
-// app search unavailale locally (licensed inary)
+// app search unavailale locally (licensed binary)
 config.appsearchEndpoint = "http://localhost:3002/"
 config.appsearchSearchKey = "search-xxxxxxxxxxxxxxxxxxxxxxxx"
 config.appsearchPrivateKey = "private-xxxxxxxxxxxxxxxxxxxxxxxx"
@@ -21,3 +21,4 @@ config.algoliaApiKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 config.zohoRefreshToken = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 config.zohoClientSecret = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 config.awsSecretAccessKey = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+config.hivebrite.clientSecret = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...'
