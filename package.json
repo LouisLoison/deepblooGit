@@ -11,8 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "@elastic/app-search-javascript": "^7.8",
-    "@elastic/app-search-node": "^7.8",
-    "@elastic/elasticsearch": "^7.8",
+    "@elastic/app-search-node": "^7.9",
+    "@elastic/elasticsearch": "^7.9",
     "adm-zip": "^0.4.14",
     "algoliasearch": "^3.35.1",
     "async": "^2.6.3",
