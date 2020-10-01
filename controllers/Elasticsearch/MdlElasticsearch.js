@@ -1,41 +1,38 @@
-const config = require(process.cwd() + '/config')
+const config = require(process.cwd() + '/config/')
 
-exports.connectToElasticsearch = () => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const { Client } = require('@elastic/elasticsearch')
+let elasticSearchClient = false
 
-      const node = config.elasticEndpoint
-      const auth = {
-        username: config.elasticUser,
-        password: config.elasticPassword,
-      }
+exports.connectToElasticsearch = async () => {
+  if(!elasticSearchClient) {
+    const { Client } = require('@elastic/elasticsearch')
 
-      // Elasticsearch connexion
-      const client = new Client({
-        node,
-        auth,
-        maxRetries: 5,
-        requestTimeout: 60000,
-        sniffOnStart: true
-      })
-     /* 
-      client.create({
-        id: string,
-        index: string,
-        type: string,
-        wait_for_active_shards: string,
-        refresh: 'true' | 'false' | 'wait_for',
-        routing: string,
-        timeout: string,
-        version: number,
-        version_type: 'internal' | 'external' | 'external_gte',
-        pipeline: string,
-        body: object
-      })
-     */
-      resolve(client)
-    } catch (err) { reject(err) }
+    const node = config.elasticEndpoint
+    const auth = {
+      username: config.elasticUser,
+      password: config.elasticPassword,
+    }
+
+    // Elasticsearch connexion
+    elasticSearchClient = new Client({
+      node,
+      auth,
+      maxRetries: 5,
+      requestTimeout: 60000,
+      sniffOnStart: true
+    })
+  }
+  return elasticSearchClient
+}
+
+exports.indexToElasticsearch = async (objects, index) => {
+  const client = await this.connectToElasticsearch()
+  await objects.forEach(async body => {
+    console.log(body.id)
+    await client.index({
+      id: body.id,
+      index,
+      body,
+    }).catch(err => console.log(err))
   })
 }
 
@@ -71,7 +68,7 @@ exports.connectToPrivateAppSearch = () => {
 // This will update any document having the same "id" fields,
 // adding any new field to the document
 
-exports.indexObject = (objects, engineName = "deepbloo") => {
+exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -123,8 +120,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
 exports.tendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       const BddTool = require(process.cwd() + '/global/BddTool')
@@ -201,27 +197,27 @@ exports.tendersImport = () => {
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
         FROM        dgmarket 
-        WHERE       dgmarket.status = 20 
+        WHERE       dgmarket.status = 20
         ORDER BY    creationDate DESC 
-        LIMIT 100 
+        LIMIT 100
       `
       recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
+      const tenderIdDeletes = []
       for (const record of recordset) {
         record.tenderCriterions = tenderCriterionAlls.filter(a => a.tenderId === record.id)
         let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList, textParses)
-        /*
-	if (!tender) {
+	if (!tender) { // eg. tender matches no CPV
           if (record.id) {
             tenderIdDeletes.push(record.id)
+//            tenders.push(record)
           }
           continue
         }
-	*/
         tender.id = record.id
         tenders.push(tender)
       }
-
+      console.log(tenders.length)
       const tranches = []
       let borneMin = 0
       let occurence = 20
@@ -230,7 +226,8 @@ exports.tendersImport = () => {
         borneMin += occurence
       } while (borneMin < tenders.length && tranches.length < 100)
       for (const tranche of tranches) {
-        await this.indexObject(tranche)
+        await this.indexObjectToAppsearch(tranche)
+        await this.indexToElasticsearch(tranche, 'tenders')
       }
       
       resolve(tenders.length)
