@@ -177,7 +177,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         let cpvDescriptionsTextTemp = cpvDescriptionsText.split(',')
         for (let i = 0; i < cpvsTextTemp.length; i++) {
           let code = parseInt(cpvsTextTemp[i], 10)
-          let cpv = CpvList.find(a => a.code === code)
+          let cpv = CpvList.find(a => Number(a.code) === Number(code))
           if (cpv) {
             if (cpv.active) {
               cpvOkCount++
