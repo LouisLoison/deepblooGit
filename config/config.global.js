@@ -61,6 +61,16 @@ config.bdd = {
         database: 'DeepBlooDev'
       }
     },
+    devAws: {
+      config: {
+        type: 'PostgreSql',
+        user: 'deepbloo',
+        password: 'quieraKeey0eig',
+        server: 'database-deepbloo-dev.cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
+        database: 'deepbloo'
+      }
+    },
+
     test: {
       config: {
         type: 'PostgreSql',
@@ -91,4 +101,3 @@ config.elasticPassword = 'qIEa2t1kjelVtxLDm0wlnirN'
 config.appsearchEndpoint = "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/"
 config.appsearchSearchKey = "search-pg8ft3mtkfkup3occekertmt"
 config.appsearchPrivateKey = "private-ychdiximphcy4avd3kdtrc51"
-
