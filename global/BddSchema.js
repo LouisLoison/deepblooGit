@@ -192,6 +192,7 @@ var Schema = {
 			project_name: { type: "String" },
 			cpv: { type: "String" },
 			authorize: { type: "String" },
+      tenderId: { type: "Int" },
       fileSource: { type: "String" },
       exclusion: { type: "String" },
       exclusionWord: { type: "String" },
