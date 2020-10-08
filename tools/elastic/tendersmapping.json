@@ -1,18 +1,13 @@
 {
   "mappings": {
-    "_doc": {
+
       "properties": {
         "bidDeadlineDate": {
           "type": "date",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "ignore_malformed": true
         },
         "bidDeadline_timestamp": {
-          "type": "long"
+          "type": "date"
         },
         "buyer": {
           "properties": {
@@ -140,7 +135,7 @@
           }
         },
         "creation_timestamp": {
-          "type": "long"
+          "type": "date"
         },
         "currency": {
           "type": "text",
@@ -154,38 +149,23 @@
         "description": {
           "type": "text",
           "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
+            "english": {
+              "type": "text",
+              "analyzer": "english"
             }
           }
         },
         "dgmarketId": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "type": "long",
+          "index": false
         },
         "fileSource": {
           "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "index": false
         },
         "id": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "type": "long",
+          "index": false
         },
         "lang": {
           "type": "text",
@@ -215,13 +195,7 @@
           }
         },
         "procurementId": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "type": "keyword"
         },
         "procurementMethod": {
           "type": "text",
@@ -236,7 +210,7 @@
           "type": "date"
         },
         "publication_timestamp": {
-          "type": "long"
+          "type": "date"
         },
         "regionLvl0": {
           "type": "text",
@@ -267,15 +241,10 @@
         },
         "sourceUrls": {
           "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
+          "index": "false"
         },
         "tenderId": {
-          "type": "text",
+          "type": "long",
           "fields": {
             "keyword": {
               "type": "keyword",
@@ -286,14 +255,16 @@
         "title": {
           "type": "text",
           "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
+            "english": {
+              "type": "text",
+              "analyzer": "english"
             }
           }
         },
         "userId": {
-          "type": "long"
+          "type": "long",
+          "index": "false"
+
         },
         "words": {
           "type": "text",
@@ -306,5 +277,4 @@
         }
       }
     }
-  }
 }
