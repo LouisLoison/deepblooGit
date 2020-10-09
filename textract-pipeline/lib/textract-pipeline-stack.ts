@@ -52,7 +52,7 @@ export class TextractPipelineStack extends cdk.Stack {
     inventoryAndLogsBucket.grantReadWrite(s3BatchOperationsRole)
 
     /***********   EFS Shared Filesystem ***************/
-    const vpc = new ec2.Vpc(this, 'vpc-f7456f91');
+    const vpc = ec2.Vpc.fromLookup(this, 'VPC', { vpcName: 'Default VPC' });
     const fileSystem = new efs.FileSystem(this, 'LambdaShare', {
       vpc,
       encrypted: true,

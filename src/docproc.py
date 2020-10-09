@@ -32,6 +32,8 @@ def processRequest(request):
         qUrl = request['syncQueueUrl']
     elif (ext in ["pdf"]):
         qUrl = request['asyncQueueUrl']
+    elif (ext in ["htm", "html"]):
+        qUrl = request['asyncQueueUrl']
 
     if(qUrl):
         features = ["Text"] # , "Forms", "Tables"]

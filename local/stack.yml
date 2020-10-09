@@ -33,14 +33,16 @@ services:
     ports:
       - "9200:9200"
 
-  appsearch:
-    image: docker.elastic.co/enterprise-search/enterprise-search:7.9.2
-    environment:
-      - "elasticsearch.host=http://elasticsearch:9200"
-      - "allow_es_settings_modification=true"
-      - "JAVA_OPTS=-Xmx2048m"
-    ports:
-      - 3002:3002
+        #  appsearch complains aout a license and starts in "read-only mode" 
+        #  appsearch:
+        #    image: docker.elastic.co/enterprise-search/enterprise-search:7.9.2
+        #    environment:
+        #      - "elasticsearch.host=http://elasticsearch:9200"
+        #      - "allow_es_settings_modification=true"
+        #      - "JAVA_OPTS=-Xmx2048m"
+        #      - "secret_management.encryption_keys=[f0034cd8ff64b7ce4c799cb2f5c717572218e699dddc5dbb984d35aaf6dd3583]"
+        #    ports:
+        #      - 3002:3002
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.2

@@ -7,4 +7,4 @@ CAST type datetime to timestamp;
 
 -- create unique index dgmarket_dgmarketid_unique on dgmarket(dgmarketid) where dgmarketid >0;
 -- alter table dgmarket alter COLUMN dgmarketid drop not null;
-SET search_path TO public;
+-- SET search_path TO public;
