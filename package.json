@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
+    "updateindex": "node tools/elastic/updateindex.js",
+    "createindex": "./tools/elastic/createindex.sh"
   },
   "author": "Jean Cazaux",
   "license": "MIT",

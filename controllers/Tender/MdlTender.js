@@ -69,7 +69,7 @@ exports.tenderAddUpdate = (tender) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
+      let tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'dgmarketid')
       resolve(tenderNew)
     } catch (err) { reject(err) }
   })

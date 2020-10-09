@@ -27,10 +27,10 @@ exports.connectToElasticsearch = async () => {
 exports.indexToElasticsearch = async (objects, index) => {
   const client = await this.connectToElasticsearch()
   await objects.forEach(async body => {
-    console.log(body.id)
+    //console.log(body.id)
     await client.index({
       id: body.id,
-      index,
+      index: `${index}-${config.env}`,
       body,
     }).catch(err => console.log(err))
   })
@@ -117,7 +117,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
 }
 
 // Import tender into elastic search
-exports.tendersImport = () => {
+exports.tendersImport = (tendersNumberMax = 100) => {
   return new Promise(async (resolve, reject) => {
     try {
       const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
@@ -199,7 +199,7 @@ exports.tendersImport = () => {
         FROM        dgmarket 
         WHERE       dgmarket.status = 20
         ORDER BY    creationDate DESC 
-        LIMIT 100
+        LIMIT ${tendersNumberMax}
       `
       recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
@@ -224,7 +224,7 @@ exports.tendersImport = () => {
       do {
         tranches.push(tenders.slice(borneMin, (borneMin + occurence)))
         borneMin += occurence
-      } while (borneMin < tenders.length && tranches.length < 100)
+      } while (borneMin < tenders.length)
       for (const tranche of tranches) {
         await this.indexObjectToAppsearch(tranche)
         await this.indexToElasticsearch(tranche, 'tenders')
