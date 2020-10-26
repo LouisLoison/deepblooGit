@@ -206,7 +206,6 @@ exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
 // Also allow to set NULLs (null) and default values (undefined) 
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
 const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record, ColumnKey) => {
-
   let ColumnList = []
   let Schema = BddSchema.getSchema()
   let Table = Schema[BddId][TableName]
@@ -231,31 +230,31 @@ const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record
   for(let ColumnName of ColumnList) {
     insertColumnList.push(ColumnName)
     if (ColumnName === 'creationDate') {
-       insertValuesList.push('now()')
+      insertValuesList.push('now()')
     } else if (ColumnName === 'updateDate') {
-       insertValuesList.push('now()')
-       UpdateColumnsList.push('updateDate = now()')
+      insertValuesList.push('now()')
+      UpdateColumnsList.push('updateDate = now()')
     } else {
-       index++;
-       insertValuesList.push(`$${index}`)
-       UpdateColumnsList.push(`${ColumnName} = $${index}`)
-       if (ColumnName === 'owner') {
-         actualValues.push(Config.user.Identifiant)
-       } else {
-         if (Table[ColumnName].type === 'DateTime') {
-           actualValues.push(this.DateFormater(Record[ColumnName], Environnement, BddId))
-         } else {
-           actualValues.push(Record[ColumnName])
-         }
-       }
+      index++;
+      insertValuesList.push(`$${index}`)
+      UpdateColumnsList.push(`${ColumnName} = $${index}`)
+      if (ColumnName === 'owner') {
+        actualValues.push(Config.user.Identifiant)
+      } else {
+        if (Table[ColumnName].type === 'DateTime') {
+          actualValues.push(this.DateFormater(Record[ColumnName], Environnement, BddId))
+        } else {
+          actualValues.push(Record[ColumnName])
+        }
+      }
     }
   }
 
   Query = `
-        INSERT INTO ${TableName} (${insertColumnList.join(', ')})
-        VALUES (${insertValuesList.join(', ')})
-        ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
-        RETURNING *
+    INSERT INTO ${TableName} (${insertColumnList.join(', ')})
+    VALUES (${insertValuesList.join(', ')})
+    ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
+    RETURNING *
   `
   const preparedQuery = {
       name: getSHA1ofJSON(Query),
@@ -293,9 +292,7 @@ const pgMapResult = (rows, BddId, TableName) => {
 
 const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
   return new Promise((resolve, reject) => {
-    try
-    {
-
+    try {
       let ColumnKey = ''
       let ColumnList = []
       let Schema = BddSchema.getSchema()

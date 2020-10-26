@@ -75,6 +75,7 @@ exports.TendersImport = () => {
                     userId AS "userId",
                     fileSource AS "fileSource", 
                     algoliaId AS "algoliaId", 
+                    origine AS "origine", 
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
@@ -121,7 +122,7 @@ exports.TendersImport = () => {
       for (tranche of tranches) {
         if (tranche.length > 0) {
           try {
-            await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').indexObject(tranche)
+            await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').indexObjectToAppsearch(tranche)
           } catch (err) {
             console.log('Elasticsearch indexObject error')
           }
@@ -310,6 +311,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         brands: [],
         fileSource: tender.fileSource,
         groups: [],
+        origine: tender.origine,
       }
 
       if (tender.tenderCriterions) {
@@ -398,7 +400,7 @@ exports.tendersObsoleteRemove = () => {
       const query = `
         UPDATE      dgmarket 
         SET         status = -1 
-        WHERE       id  IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+        WHERE       id IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       await this.TendersPurge()

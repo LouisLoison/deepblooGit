@@ -458,7 +458,7 @@ exports.importDgmarket = () => {
       const path = require('path')
 
       // Get file
-      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/treat/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/treat/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()

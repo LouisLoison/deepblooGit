@@ -67,7 +67,6 @@ exports.connectToPrivateAppSearch = () => {
 // Indexes an objects array into appsearch's "deepbloo" engine.
 // This will update any document having the same "id" fields,
 // adding any new field to the document
-
 exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -193,6 +192,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
                     userId AS "userId",
                     fileSource AS "fileSource", 
                     algoliaId AS "algoliaId", 
+                    origine AS "origine",
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
@@ -207,10 +207,10 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       for (const record of recordset) {
         record.tenderCriterions = tenderCriterionAlls.filter(a => a.tenderId === record.id)
         let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList, textParses)
-	if (!tender) { // eg. tender matches no CPV
+	      if (!tender) { // eg. tender matches no CPV
           if (record.id) {
             tenderIdDeletes.push(record.id)
-//            tenders.push(record)
+            // tenders.push(record)
           }
           continue
         }
@@ -234,4 +234,3 @@ exports.tendersImport = (tendersNumberMax = 100) => {
     } catch (err) { reject(err) }
   })
 }
-

@@ -28,6 +28,7 @@ exports.synchro = () => {
 
       // Find user to delete
       const userDeletes = []
+      /*
       for (const contact of contacts) {
         const user = users.find(a => a.hivebriteId === contact.DB_ID)
         if (!user) {
@@ -39,11 +40,20 @@ exports.synchro = () => {
           userDeletes.push(contact)
         }
       }
+      */
 
       // Find users to add or update
       const userAdds = []
       const userUpdates = []
       for (const user of users) {
+        /*
+        if (user.email === 'sales@tironi.com') {
+          let toto = 1
+        } else {
+          continue
+        }
+        */
+
         if (!user.hivebriteId) {
           continue
         }

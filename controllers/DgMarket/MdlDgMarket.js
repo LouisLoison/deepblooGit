@@ -7,7 +7,7 @@ exports.BddImport = () => {
       const path = require('path')
       
       // Get file
-      const fileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Ftp/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -22,7 +22,7 @@ exports.BddImport = () => {
       try {
         fileParseData = await this.FileParse(fileLocation)
       } catch (err) {
-        const fileLocationReject = path.join(config.WorkSpaceFolder, 'Reject/', files[0])
+        const fileLocationReject = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Reject/', files[0])
         fs.renameSync(fileLocation, fileLocationReject)
         reject(err)
         return
@@ -49,11 +49,33 @@ exports.BddImport = () => {
         'importDgmarket',
         fileParseData.importDgmarkets
       )
+      
+      // Search tender by dgmarketId
+      query = `
+        UPDATE      importDgmarket 
+        INNER JOIN  dgmarket ON 
+                    importDgmarket.dgmarketId = dgmarket.dgmarketId 
+                    AND importDgmarket.dgmarketId != ''
+        SET         importDgmarket.tenderId = dgmarket.id, 
+                    importDgmarket.mergeMethod = "DGMARKET_ID", 
+                    importDgmarket.status = 5
+        WHERE 		  importDgmarket.status = 1
+        AND         importDgmarket.tenderId IS NULL
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
 
+      // Move file to archive folder
+      const fileSource = path.parse(fileLocation).base
+      const fileLocationArchive = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/', fileSource)
+      fs.renameSync(fileLocation, fileLocationArchive)
+
+      // TODO : move this part of traitement
+      /*
       // Insert/Update tenders that are ok
       for (const tender of fileParseData.tenders) {
         tendersCurrent = tender
         let dgmarket = tender
+        dgmarket.origine = 'DgMarket'
         dgmarket.status = 0
         dgmarket.updateDate = new Date()
 
@@ -67,10 +89,6 @@ exports.BddImport = () => {
         for (const record of recordset) {
           dgmarket.id = record.id
           dgmarket.creationDate = undefined
-        }
-
-        if (dgmarket.id === 553838) {
-          const toto = 1
         }
 
         // Remove tenderCriterion
@@ -112,11 +130,7 @@ exports.BddImport = () => {
           )  
         }
       }
-
-      // Move file to archive folder
-      const fileSource = path.parse(fileLocation).base
-      const fileLocationArchive = path.join(config.WorkSpaceFolder, 'Archive/', fileSource)
-      fs.renameSync(fileLocation, fileLocationArchive)
+      */
 
       resolve({
         tenderCount: fileParseData.tenderCount,
@@ -142,9 +156,9 @@ exports.FtpGet = () => {
       const xmlFiles = files.filter(a => a.name.toLowerCase().startsWith('feed-') && a.name.toLowerCase().endsWith('.xml'))
 
       // Get file list on workspace folder
-      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
+      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Ftp/')
       const ftpFiles = fs.readdirSync(ftpFileFolder)
-      const archiveFileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
+      const archiveFileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
       const archiveFiles = fs.readdirSync(archiveFileFolder)
       const workspaceFiles = ftpFiles.concat(archiveFiles)
 
@@ -170,7 +184,7 @@ exports.FtpGetFile = (fileName) => {
       const path = require('path')
       const ftp = new PromiseFtp()
 
-      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'Ftp/')
+      const ftpFileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Ftp/')
       ftp.connect(config.ftp)
         .then((serverMessage) => {
           return ftp.get(`/feed/${fileName}`)
@@ -202,16 +216,16 @@ exports.FtpList = () => {
 
       let files = []
       ftp.connect(config.ftp)
-      .then((serverMessage) => {
-        return ftp.list('/feed/')
-      }).then((list) => {
-        list.forEach(file => {
-          files.push(file)
+        .then((serverMessage) => {
+          return ftp.list('/feed/')
+        }).then((list) => {
+          list.forEach(file => {
+            files.push(file)
+          })
+          return ftp.end()
+        }).then(() => {
+          resolve(files)
         })
-        return ftp.end()
-      }).then(() => {
-        resolve(files)
-      })
     } catch (err) { reject(err) }
   })
 }
@@ -241,6 +255,8 @@ exports.FileParse = (fileLocation) => {
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.json')
       fs.writeFileSync(tenderListLocation, JSON.stringify(parseData, null, 3))
       */
+     
+      /*
       const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
@@ -267,6 +283,7 @@ exports.FileParse = (fileLocation) => {
         }
         cpv.cpvWords = cpvWords
       }
+      */
 
       let tenderCount = 0
       let tenderOkCount = 0
@@ -345,13 +362,13 @@ exports.FileParse = (fileLocation) => {
 
         // check biddeadline
         let termDate = null
-        let dateText = tool.getXmlJsonData(notice.bidDeadlineDate)
+        let dateText = importDgmarket.bidDeadlineDate
         if (dateText && dateText.trim() !== '') {
           let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
           termDate = new Date(bidDeadlineDateText)
         }
         if (!termDate || isNaN(termDate)) {
-          dateText = tool.getXmlJsonData(notice.publicationDate)
+          dateText = importDgmarket.publicationDate
           if (dateText && dateText.trim() !== '') {
             let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
             termDate = new Date(bidDeadlineDateText)
@@ -370,8 +387,8 @@ exports.FileParse = (fileLocation) => {
           continue
         }
 
+        /*
         // Test exclusion
-        let textToParse = `${title} ${description}`
         let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(title, 'TITLE')
         if (!isOk.status) {
           importDgmarket.exclusion = 'TITLE'
@@ -386,16 +403,17 @@ exports.FileParse = (fileLocation) => {
           importDgmarket.status = -10
           continue
         }
+        */
 
+        /*
         // HTML format
         const descriptionLowerCase = description.toLowerCase()
         if (!descriptionLowerCase.includes("<br") || !descriptionLowerCase.includes("<table") || !descriptionLowerCase.includes("<div")) {
           description = description.replace(/\r/gm, '<br>')
         }
+        */
 
-        if (importDgmarket.dgmarketId === 34493052) {
-          const toto = 1
-        }
+        /*
 
         // Search CPV by key words
         let cpvsOrigine = tool.getXmlJsonData(notice.cpvs)
@@ -523,40 +541,42 @@ exports.FileParse = (fileLocation) => {
         }
 
         tenders.push({
-          dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
-          procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
-          title: title.substring(0, 450),
-          lang: lang,
-          description: description.substring(0, 5000),
-          contactFirstName: tool.getXmlJsonData(notice.contactAddress[0].firstName).substring(0, 90),
-          contactLastName: tool.getXmlJsonData(notice.contactAddress[0].lastName).substring(0, 90),
-          contactAddress: tool.getXmlJsonData(notice.contactAddress[0].address).substring(0, 490),
-          contactCity: tool.getXmlJsonData(notice.contactAddress[0].city).substring(0, 90),
-          contactState: tool.getXmlJsonData(notice.contactAddress[0].state).substring(0, 90),
-          contactCountry: tool.getXmlJsonData(notice.contactAddress[0].country).substring(0, 90),
-          contactEmail: tool.getXmlJsonData(notice.contactAddress[0].email).substring(0, 190),
-          contactPhone: tool.getXmlJsonData(notice.contactAddress[0].phone).substring(0, 90),
-          buyerName: tool.getXmlJsonData(notice.buyerName),
-          buyerCountry: tool.getXmlJsonData(notice.buyerCountry),
-          procurementMethod: tool.getXmlJsonData(notice.procurementMethod),
-          noticeType: tool.getXmlJsonData(notice.noticeType),
-          country: tool.getXmlJsonData(notice.country),
-          estimatedCost: tool.getXmlJsonData(notice.estimatedCost),
-          currency: tool.getXmlJsonData(notice.currency),
-          publicationDate: tool.getXmlJsonData(notice.publicationDate),
-          cpvsOrigine: cpvsOrigine.split(',').slice(0, 25).join(),
-          cpvs: cpvCodes.slice(0, 25).join(),
-          cpvDescriptions: cpvDescriptions.slice(0, 25).join(),
-          words: words,
-          bidDeadlineDate: tool.getXmlJsonData(notice.bidDeadlineDate),
-          sourceUrl: tool.getXmlJsonData(notice.sourceUrl).substring(0, 1900),
-          termDate: termDate,
-          fileSource: fileSource,
+          dgmarketId: importDgmarket.dgmarketId,
+          procurementId: importDgmarket.procurementId,
+          title: importDgmarket.title,
+          lang: importDgmarket.lang,
+          description: importDgmarket.description,
+          contactFirstName: importDgmarket.contactFirstName,
+          contactLastName: importDgmarket.contactLastName,
+          contactAddress: importDgmarket.contactAddress,
+          contactCity: importDgmarket.contactCity,
+          contactState: importDgmarket.contactState,
+          contactCountry: importDgmarket.contactCountry,
+          contactEmail: importDgmarket.contactEmail,
+          contactPhone: importDgmarket.contactPhone,
+          buyerName: importDgmarket.buyerName,
+          buyerCountry: importDgmarket.buyerCountry,
+          procurementMethod: importDgmarket.procurementMethod,
+          noticeType: importDgmarket.noticeType,
+          country: importDgmarket.country,
+          estimatedCost: importDgmarket.estimatedCost,
+          currency: importDgmarket.currency,
+          publicationDate: importDgmarket.publicationDate,
+          cpvsOrigine: importDgmarket.cpvsOrigine,
+          cpvs: importDgmarket.cpvs,
+          cpvDescriptions: importDgmarket.cpvDescriptions,
+          words: importDgmarket.words,
+          bidDeadlineDate: importDgmarket.bidDeadlineDate,
+          sourceUrl: importDgmarket.sourceUrl,
+          termDate: importDgmarket.termDate,
+          fileSource: importDgmarket.fileSource,
+          origine: 'DgMarket',
           creationDate: new Date(),
           updateDate: new Date(),
           tenderCriterionCpvs,
           tenderCriterions,
         })
+        */
       }
 
       resolve({
@@ -566,6 +586,81 @@ exports.FileParse = (fileLocation) => {
         importDgmarkets,
         tenders,
       })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.mergeTender = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
+      const dataImportDgmarkets = await this.importDgmarkets({ statuss: [1, 5] }, null, null, 1, 10000)
+      let tenderKoCount = 0
+      for (const importDgmarket of dataImportDgmarkets.entries) {
+        const tender = await this.convertToTender(importDgmarket, CpvList, textParses)
+        if (tender) {
+          let dataImportTender = await require(process.cwd() + '/controllers/TenderImport/MdlTenderImport').importTender(tender, CpvList, textParses)
+          if (dataImportTender.tender) {
+            importDgmarket.status = 20
+            await this.importDgmarketAddUpdate(importDgmarket)
+          } else if (dataImportTender.importOrigine) {
+            importDgmarket.exclusion = dataImportTender.importOrigine.exclusion
+            importDgmarket.exclusionWord = dataImportTender.importOrigine.exclusionWord
+            importDgmarket.status = dataImportTender.importOrigine.status
+            await this.importDgmarketAddUpdate(importDgmarket)
+            tenderKoCount++
+          }
+        }
+      }
+
+      resolve({
+        tenderCount: dataImportDgmarkets.entries.length,
+        tenderKoCount,
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.convertToTender = (importDgmarket) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let tender = {
+        id: importDgmarket.tenderId,
+        dgmarketId: importDgmarket.dgmarketId,
+        procurementId: importDgmarket.procurementId,
+        title: importDgmarket.title,
+        lang: importDgmarket.lang,
+        description: importDgmarket.description,
+        contactFirstName: importDgmarket.contactFirstName,
+        contactLastName: importDgmarket.contactLastName,
+        contactAddress: importDgmarket.contactAddress,
+        contactCity: importDgmarket.contactCity,
+        contactState: importDgmarket.contactState,
+        contactCountry: importDgmarket.contactCountry,
+        contactEmail: importDgmarket.contactEmail,
+        contactPhone: importDgmarket.contactPhone,
+        buyerName: importDgmarket.buyerName,
+        buyerCountry: importDgmarket.buyerCountry,
+        procurementMethod: importDgmarket.procurementMethod,
+        noticeType: importDgmarket.noticeType,
+        country: importDgmarket.country,
+        estimatedCost: importDgmarket.estimatedCost,
+        currency: importDgmarket.currency,
+        publicationDate: importDgmarket.publicationDate,
+        cpvsOrigine: importDgmarket.cpvsOrigine,
+        cpvs: importDgmarket.cpvs,
+        cpvDescriptions: importDgmarket.cpvDescriptions,
+        words: importDgmarket.words,
+        bidDeadlineDate: importDgmarket.bidDeadlineDate,
+        sourceUrl: importDgmarket.sourceUrl,
+        termDate: importDgmarket.termDate,
+        fileSource: importDgmarket.fileSource,
+        origine: 'DgMarket',
+        creationDate: new Date(),
+        updateDate: new Date(),
+      }
+      resolve(tender)
     } catch (err) { reject(err) }
   })
 }
@@ -651,7 +746,7 @@ exports.CpvList = () => {
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       // Get file
-      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -851,7 +946,7 @@ exports.CpvListOld = () => {
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
 
       // Get file
-      const fileFolder = path.join(config.WorkSpaceFolder, 'Archive/')
+      const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
       const files = fs.readdirSync(fileFolder)
 
       files.sort()
@@ -1020,5 +1115,156 @@ exports.ExportUrlFromFile = () => {
 
       resolve(domaines)
     } catch (err) { reject(err) }
+  })
+}
+
+exports.importDgmarketAddUpdate = (importDgmarket) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let importDgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importDgmarket', importDgmarket)
+      resolve(importDgmarketNew)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      SQL_CALC_FOUND_ROWS 
+                    importDgmarketId AS "importDgmarketId",
+                    dgmarketId AS "dgmarketId",
+                    procurementId AS "procurementId",
+                    title AS "title",
+                    description AS "description",
+                    lang AS "lang",
+                    contactFirstName AS "contactFirstName",
+                    contactLastName AS "contactLastName",
+                    contactAddress AS "contactAddress",
+                    contactCity AS "contactCity",
+                    contactState AS "contactState",
+                    contactCountry AS "contactCountry",
+                    contactEmail AS "contactEmail",
+                    contactPhone AS "contactPhone",
+                    buyerName AS "buyerName",
+                    buyerCountry AS "buyerCountry",
+                    procurementMethod AS "procurementMethod",
+                    noticeType AS "noticeType",
+                    country AS "country",
+                    estimatedCost AS "estimatedCost",
+                    currency AS "currency",
+                    publicationDate AS "publicationDate",
+                    cpvs AS "cpvs",
+                    bidDeadlineDate AS "bidDeadlineDate",
+                    sourceUrl AS "sourceUrl",
+                    tenderId AS "tenderId",
+                    mergeMethod AS "mergeMethod",
+                    fileSource AS "fileSource",
+                    exclusion AS "exclusion",
+                    exclusionWord AS "exclusionWord",
+                    status AS "status",
+                    creationDate AS "creationDate",
+                    updateDate AS "updateDate" 
+        FROM        importDgmarket `
+      let where = ''
+      if (filter) {
+        if (filter.fileSources && filter.fileSources.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `importDgmarket.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources, BddEnvironnement, BddId)}) \n`
+        }
+        if (filter.mergeMethods && filter.mergeMethods.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `importDgmarket.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods, BddEnvironnement, BddId)}) \n`
+        }
+        if (filter.tenderId !== null && filter.tenderId !== undefined) {
+          if (where !== '') { where += 'AND ' }
+          if (filter.tenderId === 0) {
+            where += `(importDgmarket.tenderId = 0 OR importDgmarket.tenderId IS NULL) \n`
+          } else {
+            where += `importDgmarket.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          }
+        }
+        if (filter.status !== null && filter.status !== undefined) {
+          if (where !== '') { where += 'AND ' }
+          where += `importDgmarket.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.statuss && filter.statuss.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+        }
+      }
+      if (where !== '') { query += '\nWHERE ' + where }
+      if (orderBy) {
+        query += `\nORDER BY ${orderBy} `
+      }
+      if (!page) {
+        page = 1
+      }
+      if (!pageLimit) {
+        pageLimit = 1000
+      }
+      query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
+
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let importDgmarkets = []
+      for (const record of recordset.results) {
+        importDgmarkets.push({
+          importDgmarketId: record.importDgmarketId,
+          dgmarketId: record.dgmarketId,
+          procurementId: record.procurementId,
+          title: record.title,
+          description: record.description,
+          lang: record.lang,
+          contactFirstName: record.contactFirstName,
+          contactLastName: record.contactLastName,
+          contactAddress: record.contactAddress,
+          contactCity: record.contactCity,
+          contactState: record.contactState,
+          contactCountry: record.contactCountry,
+          contactEmail: record.contactEmail,
+          contactPhone: record.contactPhone,
+          buyerName: record.buyerName,
+          buyerCountry: record.buyerCountry,
+          procurementMethod: record.procurementMethod,
+          noticeType: record.noticeType,
+          country: record.country,
+          estimatedCost: record.estimatedCost,
+          currency: record.currency,
+          publicationDate: record.publicationDate,
+          cpvs: record.cpvs,
+          bidDeadlineDate: record.bidDeadlineDate,
+          sourceUrl: record.sourceUrl,
+          tenderId: record.tenderId,
+          mergeMethod: record.mergeMethod,
+          fileSource: record.fileSource,
+          exclusion: record.exclusion,
+          exclusionWord: record.exclusionWord,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate
+        })
+      }
+
+      resolve({
+        entries: importDgmarkets,
+        limit,
+        page,
+        pageLimit,
+        totalCount: recordset.total,
+      })
+    } catch (err) {
+      reject(err)
+    }
   })
 }

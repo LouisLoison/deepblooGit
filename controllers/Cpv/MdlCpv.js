@@ -45,7 +45,7 @@ exports.cpvDelete = (cpvId) => {
   })
 }
 
-exports.CpvList = (filter) => {
+exports.CpvList = (filter, removeDiacritics) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -138,13 +138,40 @@ exports.CpvList = (filter) => {
         }
       }
       cpvs.sort((a, b) => {
-        let na = a.priority;
-        let nb = b.priority;
-        return na < nb ? 1 : na > nb ? -1 : 0;
-      });
-      resolve(cpvs);
+        let na = a.priority
+        let nb = b.priority
+        return na < nb ? 1 : na > nb ? -1 : 0
+      })
+
+      if (removeDiacritics) {
+        for (const cpv of cpvs) {
+          const cpvWords = []
+          for (const cpvWord of cpv.cpvWords) {
+            cpvWord.word = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(cpvWord.word).toUpperCase()
+            let isOk = true
+            if (
+              cpvWords.find(a => a.word === cpvWord.word)
+            ) {
+              isOk = false
+            }
+            if (cpvWord.word.endsWith('S') || cpvWord.word.endsWith('X')) {
+              if (
+                cpvWords.find(a => a.word === cpvWord.word.slice(0, -1))
+              ) {
+                isOk = false
+              }
+            }
+            if (isOk) {
+              cpvWords.push(cpvWord)
+            }
+          }
+          cpv.cpvWords = cpvWords
+        }
+      }
+      
+      resolve(cpvs)
     } catch (err) {
-      reject(err);
+      reject(err)
     }
   })
 }

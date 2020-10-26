@@ -1,9 +1,18 @@
 exports.ImportTenderInfo = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
+
       // Get files
+      // TODO
+      // await require(process.cwd() + '/controllers/Tool/MdlTool').awsFileList(config.awsBucket)
+
       // Import into BDD
       await this.BddImport()
+
+      // Archive file
+      // TODO
+
       resolve()
     } catch (err) {
       reject(err)
@@ -58,6 +67,36 @@ exports.BddImport = () => {
       const fileLocationArchive = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Archive/', fileSource)
       fs.renameSync(fileLocation, fileLocationArchive)
 
+      // Search tender by procurementId
+      query = `
+        UPDATE      importTenderInfo 
+        INNER JOIN  dgmarket ON 
+                    importTenderInfo.tender_notice_no = dgmarket.procurementId 
+                    AND importTenderInfo.tender_notice_no != ''
+        SET         importTenderInfo.tenderId = dgmarket.id, 
+                    importTenderInfo.mergeMethod = "PROCUREMENT_ID", 
+                    importTenderInfo.status = 5
+        WHERE 		  importDgmarket.status = 1
+        AND         importTenderInfo.tenderId IS NULL
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      // Search tender by title, buyer name and bidDeadline date
+      query = `
+        UPDATE      importTenderInfo 
+        INNER JOIN  dgmarket ON 
+                    importTenderInfo.maj_org = dgmarket.buyerName 
+                    AND importTenderInfo.short_desc = dgmarket.title 
+                    AND importTenderInfo.short_desc != '' 
+                    AND REPLACE(importTenderInfo.doc_last, '-', '') = dgmarket.bidDeadlineDate 
+        SET         importTenderInfo.tenderId = dgmarket.id, 
+                    importTenderInfo.mergeMethod = "TITLE_BUYER_BIDDEADLINE", 
+                    importTenderInfo.status = 5
+        WHERE 		  importDgmarket.status = 1
+        AND         importTenderInfo.tenderId IS NULL
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
       resolve({
         tenderCount: fileParseData.tenderCount,
       })
@@ -90,12 +129,6 @@ exports.FileParse = (fileLocation) => {
       const importTenderInfos = []
       for (const row of parseData.import.row) {
         tenderCount++
-
-        /*
-        if (tool.getXmlJsonData(row.posting_id) === "454383835") {
-          let toto = 123
-        }
-        */
 
         let related_documents = ''
         if (
@@ -167,43 +200,71 @@ exports.FileParse = (fileLocation) => {
 exports.mergeTender = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const cpvs = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
-      const dataImportTenderInfos = await this.importTenderInfos({ status: 0 }, null, null, 1, 10000)
-      const tenders = []
+      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
+      const dataImportTenderInfos = await this.importTenderInfos({ tenderId: 0, statuss: [1, 5] }, null, null, 1, 1000)
+      let tenderKoCount = 0
       for (const importTenderInfo of dataImportTenderInfos.entries) {
-        const tender = await this.convertToTender(importTenderInfo, cpvs)
-        tenders.push(tender)
+        const tender = await this.convertToTender(importTenderInfo, CpvList, textParses)
+        if (tender) {
+          let dataImportTender = await require(process.cwd() + '/controllers/TenderImport/MdlTenderImport').importTender(tender, CpvList, textParses)
+          if (dataImportTender.tender) {
+            importTenderInfo.status = 20
+            await this.importTenderInfoAddUpdate(importTenderInfo)
+          } else if (dataImportTender.importOrigine) {
+            importTenderInfo.exclusion = dataImportTender.importOrigine.exclusion
+            importTenderInfo.exclusionWord = dataImportTender.importOrigine.exclusionWord
+            importTenderInfo.status = dataImportTender.importOrigine.status
+            await this.importTenderInfoAddUpdate(importTenderInfo)
+            tenderKoCount++
+          }
+        }
       }
-      resolve(tenders)
+
+      resolve({
+        tenderCount: dataImportTenderInfos.entries.length,
+        tenderKoCount,
+      })
     } catch (err) { reject(err) }
   })
 }
 
-exports.convertToTender = (importTenderInfo, cpvs) => {
+exports.convertToTender = (importTenderInfo, CpvList, textParses) => {
   return new Promise(async (resolve, reject) => {
     try {
       var moment = require('moment')
+      let title = importTenderInfo.short_desc
+      let description = importTenderInfo.tenders_details
       let termDate = moment(importTenderInfo.doc_last, "YYYY-MM-DD").toDate()
-      
-      // cpvs
-      const cpvsOrigine = []
-      const cpvCodes = []
-      const cpvDescriptions = []
-      for (const cpvCode of importTenderInfo.cpv.split(',')) {
-        const tenderCpv = cpvs.find(a => a.Code === Number(cpvCode))
-        if (tenderCpv) {
-          cpvsOrigine.push(tenderCpv.text)
-          cpvCodes.push(tenderCpv.text)
-          cpvDescriptions.push(tenderCpv.text)
-        }
-      }
 
-      const tender = {
+      /*
+      // Test exclusion
+      let isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(title, 'TITLE')
+      if (!isOk.status) {
+        importTenderInfo.exclusion = 'TITLE'
+        importTenderInfo.exclusionWord = isOk.origine
+        importTenderInfo.status = -10
+        await this.importTenderInfoAddUpdate(importTenderInfo)
+        resolve(null)
+        return
+      }
+      isOk = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textExclusion(description, 'DESCRIPTION')
+      if (!isOk.status) {
+        importTenderInfo.exclusion = 'DESCRIPTION'
+        importTenderInfo.exclusionWord = isOk.origine
+        importTenderInfo.status = -10
+        await this.importTenderInfoAddUpdate(importTenderInfo)
+        resolve(null)
+        return
+      }
+      */
+
+      let tender = {
         dgmarketId: 0,
         procurementId: importTenderInfo.procurementId,
-        title: importTenderInfo.short_desc,
+        title,
         lang: '',
-        description: importTenderInfo.tender_details,
+        description,
         contactFirstName: '',
         contactLastName: '',
         contactAddress: importTenderInfo.add1,
@@ -220,19 +281,49 @@ exports.convertToTender = (importTenderInfo, cpvs) => {
         estimatedCost: importTenderInfo.est_cost,
         currency: importTenderInfo.currency,
         publicationDate: importTenderInfo.date_c.replace(/-/g, ''),
-        cpvsOrigine: cpvsOrigine.slice(0, 25).join(),
-        cpvs: cpvCodes.slice(0, 25).join(),
-        cpvDescriptions: cpvDescriptions.slice(0, 25).join(),
+        cpvsOrigine: null,
+        cpvs: importTenderInfo.cpv,
+        cpvDescriptions: null,
         words: '',
         bidDeadlineDate: importTenderInfo.doc_last.replace(/-/g, ''),
         sourceUrl: importTenderInfo.related_documents,
         termDate: termDate,
         fileSource: importTenderInfo.fileSource,
+        origine: 'TenderInfo',
         creationDate: new Date(),
         updateDate: new Date(),
       }
+
+      /*
+      // Search CPVs and criterions
+      const dataSearchCpvCriterions = await require(process.cwd() + '/controllers/TenderImport/MdlTenderImport').searchCpvCriterions(tender, CpvList, textParses)
+      if (dataSearchCpvCriterions.importExclusion) {
+        importTenderInfo.exclusion = dataSearchCpvCriterions.importExclusion.exclusion
+        importTenderInfo.exclusionWord = dataSearchCpvCriterions.importExclusion.exclusionWord
+        importTenderInfo.status = -10
+        await this.importTenderInfoAddUpdate(importTenderInfo)
+        resolve(null)
+      }
+      tender = dataSearchCpvCriterions.tender
+      */
+
       resolve(tender)
     } catch (err) { reject(err) }
+  })
+}
+
+exports.importTenderInfoAddUpdate = (importTenderInfo) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let importTenderInfoNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importTenderInfo', importTenderInfo)
+      resolve(importTenderInfoNew)
+    } catch (err) {
+      reject(err)
+    }
   })
 }
 
@@ -283,6 +374,8 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
                     project_name AS "project_name",
                     cpv AS "cpv",
                     authorize AS "authorize",
+                    tenderId AS "tenderId",
+                    mergeMethod AS "mergeMethod",
                     fileSource AS "fileSource",
                     exclusion AS "exclusion",
                     exclusionWord AS "exclusionWord",
@@ -290,16 +383,42 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
                     creationDate AS "creationDate",
                     updateDate AS "updateDate" 
         FROM        importTenderInfo `
-      let where = ``
+      let where = ''
       if (filter) {
-        if (filter.status) {
+        if (filter.fileSources && filter.fileSources.length) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderGroupLink.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `importTenderInfo.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources, BddEnvironnement, BddId)}) \n`
+        }
+        if (filter.mergeMethods && filter.mergeMethods.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `importTenderInfo.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods, BddEnvironnement, BddId)}) \n`
+        }
+        if (filter.tenderId !== null && filter.tenderId !== undefined) {
+          if (where !== '') { where += 'AND ' }
+          if (filter.tenderId === 0) {
+            where += `(importTenderInfo.tenderId = 0 OR importTenderInfo.tenderId IS NULL) \n`
+          } else {
+            where += `importTenderInfo.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          }
+        }
+        if (filter.status !== null && filter.status !== undefined) {
+          if (where !== '') { where += 'AND ' }
+          where += `importTenderInfo.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+        }
+        if (filter.statuss && filter.statuss.length) {
+          if (where !== '') { where += 'AND ' }
+          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
       if (orderBy) {
         query += `\nORDER BY ${orderBy} `
+      }
+      if (!page) {
+        page = 1
+      }
+      if (!pageLimit) {
+        pageLimit = 1000
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
@@ -344,6 +463,8 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
           project_name: record.project_name,
           cpv: record.cpv,
           authorize: record.authorize,
+          tenderId: record.tenderId,
+          mergeMethod: record.mergeMethod,
           fileSource: record.fileSource,
           exclusion: record.exclusion,
           exclusionWord: record.exclusionWord,
@@ -359,6 +480,72 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
         page,
         pageLimit,
         totalCount: recordset.total,
+      })
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+exports.importTenderInfoFacets = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      fileSource AS "fileSource", 
+                    COUNT(*) AS "count"
+        FROM        importTenderInfo 
+        GROUP BY    fileSource 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let fileSources = []
+      for (const record of recordset.results) {
+        fileSources.push({
+          fileSource: record.fileSource,
+          count: record.count,
+        })
+      }
+
+      query = `
+        SELECT      mergeMethod AS "mergeMethod", 
+                    COUNT(*) AS "count"
+        FROM        importTenderInfo 
+        WHERE       mergeMethod IS NOT NULL 
+        GROUP BY    mergeMethod 
+      `
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let mergeMethods = []
+      for (const record of recordset.results) {
+        mergeMethods.push({
+          mergeMethod: record.mergeMethod,
+          count: record.count,
+        })
+      }
+
+      query = `
+        SELECT      status AS "status", 
+                    COUNT(*) AS "count"
+        FROM        importTenderInfo 
+        WHERE       status IS NOT NULL 
+        GROUP BY    status 
+      `
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let statuss = []
+      for (const record of recordset.results) {
+        statuss.push({
+          status: record.status,
+          count: record.count,
+        })
+      }
+
+      resolve({
+        fileSources: fileSources,
+        mergeMethods: mergeMethods,
+        statuss: statuss,
       })
     } catch (err) {
       reject(err)

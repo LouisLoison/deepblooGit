@@ -95,6 +95,7 @@ config.zohoUrl = 'https://www.zohoapis.com/',
 config.awsAccessKeyId = 'AKIAI3MOVDQQCFHNPKLQ',
 config.awsSecretAccessKey = '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',
 config.awsBucket = 'tender-document-bucket-v2'
+config.awsBucketFtp = 'sftp.deepbloo.com'
 config.elasticEndpoint = "https://a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io:9243/"
 config.elasticUser = 'elastic'
 config.elasticPassword = 'qIEa2t1kjelVtxLDm0wlnirN'

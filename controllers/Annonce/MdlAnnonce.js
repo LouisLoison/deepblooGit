@@ -6,7 +6,7 @@ exports.AddUpdate = (annonce) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let annonceNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'annonce', annonce)
-      resolve(annonceNew);
+      resolve(annonceNew)
     } catch (err) { reject(err) }
   })
 }

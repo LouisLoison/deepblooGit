@@ -594,6 +594,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                     fileSource AS "fileSource",
                     userId AS "userId",
                     algoliaId AS "algoliaId",
+                    origine AS "origine",
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
@@ -780,6 +781,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
           fileSource: record.fileSource,
           userId: record.userId,
           algoliaId: record.algoliaId,
+          origine: record.origine,
           status: record.status,
           creationDate: record.creationDate,
           updateDate: record.updateDate

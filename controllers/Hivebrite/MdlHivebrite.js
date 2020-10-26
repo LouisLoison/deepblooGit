@@ -5,7 +5,7 @@ exports.TokenGet = () => {
       grant_type: 'password',
       scope: 'admin',
       admin_email: 'stanislas@deepbloo.com',
-      password: 'appli1806',
+      password: '@Appli1806',
       client_id: 'b97245387eab5b1b57ac3135e8ba7fbac2399775844ba8a2fa70426fb0d26e55',
       client_secret: '24487443aee0962b24b678e9e6f90fec40b25fa645007d418681164423486166',
       redirect_uri: 'urn:ietf:wg:oauth:2.0:oob',
@@ -432,6 +432,7 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
       }
 
       // Remove deleted user
+      /*
       allUsers = []
       total = 1
       page = pageStart
@@ -444,6 +445,7 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
       let userDeletedCount = users.length
       users = users.filter(a => allUsers.find(b => b.id === a.id))
       userDeletedCount = userDeletedCount - users.length
+      */
 
       // Get user details
       let updatedAtMin = '9999-99-99T99:99:99Z'
@@ -526,7 +528,7 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
 
       resolve({
         userCount: users.length,
-        userDeletedCount: userDeletedCount,
+        // userDeletedCount: userDeletedCount,
         updatedAtMin,
       })
     } catch (err) { reject(err) }
