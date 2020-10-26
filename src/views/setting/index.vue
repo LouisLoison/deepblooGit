@@ -56,9 +56,9 @@
         </v-list>
       </v-menu>
     </div>
-    <v-content fluid class="pt-0">
+    <v-main fluid class="pt-0">
       <router-view style="margin-top: 0px;" />
-    </v-content>
+    </v-main>
   </div>
 </template>
 
@@ -96,6 +96,11 @@ export default {
         ico: 'fa-envelope',
         label: 'Notify',
         link: { name: 'SettingNotify' }
+      },
+      {
+        ico: 'fa-file-import',
+        label: 'Import',
+        link: { name: 'SettingImportStatistique' }
       },
       {
         ico: 'fa-sliders-h',

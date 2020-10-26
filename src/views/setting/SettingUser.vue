@@ -267,7 +267,7 @@
           <v-toolbar-items>
             <v-btn icon light @click="dialogUser = false">
               <v-icon color="grey darken-2" style="font-size: 30px;">
-                close
+                fa-times
               </v-icon>
             </v-btn>
           </v-toolbar-items>

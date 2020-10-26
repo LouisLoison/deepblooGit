@@ -122,6 +122,22 @@ export default [
         component: () => import(`@/views/setting/SettingNotify.vue`)
       },
       {
+        path: "/setting/import/tender/statistique",
+        meta: {
+          public: true
+        },
+        name: "SettingImportStatistique",
+        component: () => import(`@/views/setting/ImportTender/Statistique.vue`)
+      },
+      {
+        path: "/setting/import/tender/tenderinfos",
+        meta: {
+          public: true
+        },
+        name: "SettingImportTenderInfos",
+        component: () => import(`@/views/setting/ImportTender/TenderInfos.vue`)
+      },
+      {
         path: "/setting/other",
         meta: {
           public: true

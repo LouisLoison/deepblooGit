@@ -129,6 +129,12 @@
       >
         <v-icon style="font-size: 16px;">fa-envelope</v-icon>
       </v-btn>
+      <div
+        v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
+        style="display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
+      >
+        TI
+      </div>
     </div>
   </div>
 </template>
@@ -155,6 +161,7 @@ export default {
 
   computed: {
     ...mapGetters([
+      'getUserType',
       'getDataCpvs',
       'getDataGroups',
       'getDataUserNotifys',
