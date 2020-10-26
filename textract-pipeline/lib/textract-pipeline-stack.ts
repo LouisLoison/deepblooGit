@@ -53,8 +53,10 @@ export class TextractPipelineStack extends cdk.Stack {
 
     /***********   EFS Shared Filesystem ***************/
     const vpc = ec2.Vpc.fromLookup(this, 'VPC', { vpcName: 'Default VPC' });
+    // const vpcSubnets = vpc.selectSubnets();
     const fileSystem = new efs.FileSystem(this, 'LambdaShare', {
       vpc,
+      //  vpcSubnets,
       encrypted: true,
       lifecyclePolicy: efs.LifecyclePolicy.AFTER_14_DAYS,
       performanceMode: efs.PerformanceMode.GENERAL_PURPOSE,
@@ -171,6 +173,7 @@ export class TextractPipelineStack extends cdk.Stack {
       code: lambda.Code.asset('lambda/s3processor'),
       handler: 'lambda_function.lambda_handler',
       vpc,
+      allowPublicSubnet: true,
       filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, '/mnt/data'),
       environment: {
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
