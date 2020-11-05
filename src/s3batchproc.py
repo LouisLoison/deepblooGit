@@ -26,7 +26,7 @@ def processRequest(request):
     ext = FileHelper.getFileExtenstion(objectName.lower())
     print("Extension: {}".format(ext))
 
-    if(ext and ext in ["jpg", "jpeg", "png", "pdf"]):
+    if(ext and ext in ["jpg", "jpeg", "png", "pdf", "html", "htm"]):
         documentId = str(uuid.uuid1())
         ds = datastore.DocumentStore(documentsTable, outputTable)
         ds.createDocument(documentId, bucketName, objectName)
