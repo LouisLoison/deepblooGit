@@ -195,9 +195,8 @@ export class TextractPipelineStack extends cdk.Stack {
     s3Processor.addLayers(helperLayer)
     //Trigger
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
-
       events: [ s3.EventType.OBJECT_CREATED ],
-      filters: [ { prefix: 'tenders/', suffix: 'pdf' } ]
+      filters: [{ prefix: 'tenders/'}]
     }));
     //Permissions
     documentsTable.grantReadWriteData(s3Processor)
