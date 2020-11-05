@@ -10,9 +10,6 @@ import {
   Schema
 } from '@aws-cdk/aws-appsync';
 
-import { Secret } from '@aws-cdk/aws-secretsmanager';
-
-// import { AttributeType, BillingMode, Table } from '@aws-cdk/aws-dynamodb';
 import * as iam from '@aws-cdk/aws-iam';
 import { join } from "path";
 import { readFileSync } from "fs";
@@ -20,6 +17,12 @@ import { readFileSync } from "fs";
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
+    new cdk.CfnOutput(this, 'db-arn', {
+      exportName: 'db-arn',
+      value: dbArn
+    })
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -94,12 +97,6 @@ messageTableServiceRole.addToPolicy(
   })
 );
  */
-    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:database-deepbloo-dev`
-
-    new cdk.CfnOutput(this, 'db-arn', {
-      exportName: 'db-arn',
-      value: dbArn
-    })
 
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
       name: "deepbloo-dev",
@@ -122,7 +119,7 @@ messageTableServiceRole.addToPolicy(
       value: api.graphqlUrl
     });
 
-    const dbCreds = Secret.fromSecretName(this, 'SecretFromName', 'aurora-creds')
+    //   const dbCreds = Secret.fromSecretName(this, 'SecretFromName', 'aurora-creds')
     const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
     const appsyncServiceRole = new iam.Role(this, `appsync-service-role`, {
@@ -166,50 +163,10 @@ messageTableServiceRole.addToPolicy(
       apiId: api.apiId,
       fieldName: "getTender",
       typeName: "Query",
-      requestMappingTemplate: `{
-                "version": "2018-05-29",
-                "statements": [
-                    $util.toJson("select id AS "id",
-                      dgmarketId AS "dgmarketId",
-                      procurementId AS "procurementId",
-                      title AS "title",
-                      description AS "description",
-                      lang AS "lang",
-                      contactFirstName AS "contactFirstName",
-                      contactLastName AS "contactLastName",
-                      contactAddress AS "contactAddress",
-                      contactCity AS "contactCity",
-                      contactState AS "contactState",
-                      contactCountry AS "contactCountry",
-                      contactEmail AS "contactEmail",
-                      contactPhone AS "contactPhone",
-                      buyerName AS "buyerName",
-                      buyerCountry AS "buyerCountry",
-                      procurementMethod AS "procurementMethod",
-                      noticeType AS "noticeType",
-                      country AS "country",
-                      estimatedCost AS "estimatedCost",
-                      currency AS "currency",
-                      publicationDate AS "publicationDate",
-                      cpvs AS "cpvs",
-                      cpvDescriptions AS "cpvDescriptions",
-                      words AS "words",
-                      bidDeadlineDate AS "bidDeadlineDate",
-                      sourceUrl AS "sourceUrl",
-                      termDate AS "termDate",
-                      fileSource AS "fileSource",
-                      userId AS "userId",
-                      algoliaId AS "algoliaId",
-                      contractType1 AS "contractType1",
-                      brand AS "brand",
-                      status AS "status",
-                      creationDate AS "creationDate",
-                      updateDate AS "updateDate"
-          FROM        dgmarket 
-          WHERE id = $ctx.args.id
-        ")
-                ]
-            }`,
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/tenderRequestMapping.vtl`,
+        { encoding: "utf8" }
+      ),
       responseMappingTemplate: `
             #if($ctx.error)
                 $utils.error($ctx.error.message, $ctx.error.type)
