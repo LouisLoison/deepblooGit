@@ -123,7 +123,7 @@ export class TextractPipelineStack extends cdk.Stack {
     });
     
     //HTML2BoundingBox send queue
-    const htmltoboundingboxQueue = new sqs.Queue(this, 'HtmlToBoundingBox', {
+    const htmltoboundingboxQueue = new sqs.Queue(this, 'HtmlToBoundingBoxQueue', {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
