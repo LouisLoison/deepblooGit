@@ -52,6 +52,7 @@ export class TextractPipelineStack extends cdk.Stack {
     inventoryAndLogsBucket.grantReadWrite(s3BatchOperationsRole)
 
     /***********   EFS Shared Filesystem ***************/
+    /*
     const vpc = ec2.Vpc.fromLookup(this, 'VPC', { vpcName: 'Default VPC' });
     // const vpcSubnets = vpc.selectSubnets();
     const fileSystem = new efs.FileSystem(this, 'LambdaShare', {
@@ -75,6 +76,7 @@ export class TextractPipelineStack extends cdk.Stack {
         gid: '1001',
       },
     });
+    */
 
     //**********DynamoDB Table*************************
     //DynamoDB table with links to output in S3
@@ -172,9 +174,9 @@ export class TextractPipelineStack extends cdk.Stack {
       runtime: lambda.Runtime.PYTHON_3_8,
       code: lambda.Code.asset('lambda/s3processor'),
       handler: 'lambda_function.lambda_handler',
-      vpc,
-      allowPublicSubnet: true,
-      filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, '/mnt/data'),
+      // vpc,
+      // allowPublicSubnet: true,
+      // filesystem: lambda.FileSystem.fromEfsAccessPoint(accessPoint, '/mnt/data'),
       environment: {
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
