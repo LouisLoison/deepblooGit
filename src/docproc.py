@@ -33,7 +33,7 @@ def processRequest(request):
     elif (ext in ["pdf"]):
         qUrl = request['asyncQueueUrl']
     elif (ext in ["htm", "html"]):
-        qUrl = request['asyncQueueUrl']
+        qUrl = os.environ['HTMLTOBOUNDINGBOX_QUEUE_URL']
 
     if(qUrl):
         features = ["Text"] # , "Forms", "Tables"]

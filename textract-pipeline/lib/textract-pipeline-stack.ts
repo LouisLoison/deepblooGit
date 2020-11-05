@@ -121,6 +121,12 @@ export class TextractPipelineStack extends cdk.Stack {
     const pdftoimgQueue = new sqs.Queue(this, 'PdfToImg', {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
+    
+    //HTML2BoundingBox send queue
+    const htmltoboundingboxQueue = new sqs.Queue(this, 'HtmlToBoundingBox', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    });
+
 
 
     //Trigger
@@ -233,7 +239,8 @@ export class TextractPipelineStack extends cdk.Stack {
       environment: {
         PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
-        ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl
+        ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
+        HTMLTOBOUNDINGBOX_QUEUE_URL: htmltoboundingboxQueue.queueUrl
       }
     });
     //Layer
@@ -248,6 +255,7 @@ export class TextractPipelineStack extends cdk.Stack {
     syncJobsQueue.grantSendMessages(documentProcessor)
     asyncJobsQueue.grantSendMessages(documentProcessor)
     pdftoimgQueue.grantSendMessages(documentProcessor)
+    htmltoboundingboxQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -446,6 +454,28 @@ export class TextractPipelineStack extends cdk.Stack {
     existingContentBucket.grantRead(pdfToImg)
 
 
+    // Async Job Processor (Start jobs using Async APIs)
+    const htmlToBoundingBox = new lambda.Function(this, 'HtmlToBoundingBox', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('lambda/htmltoboundingbox'),
+      handler: 'lambda_function.lambda_handler',
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 128,
+      environment: {
+      }
+    });
+
+    //Layer
+    htmlToBoundingBox.addLayers(helperLayer)
+    htmlToBoundingBox.addEventSource(new SqsEventSource(asyncJobsQueue, {
+      batchSize: 1
+    }));
+
+    //Permissions
+    contentBucket.grantRead(htmlToBoundingBox)
+    existingContentBucket.grantReadWrite(htmlToBoundingBox)
+    htmltoboundingboxQueue.grantConsumeMessages(htmlToBoundingBox)
     //--------------
     // PDF Generator
     /*
