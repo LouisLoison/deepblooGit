@@ -407,7 +407,7 @@ export class TextractPipelineStack extends cdk.Stack {
     outputBucket.grantRead(appsearchIndexer)
     //existingContentBucket.grantReadWrite(appsearchIndexer)
 
-  // Pdf to Image converter
+    // Pdf to Image converter
     const pdfToImg = new lambda.Function(this, 'Pdf2Img', {
       runtime: lambda.Runtime.NODEJS_12_X,
       code: lambda.Code.asset('lambda/pdftoimg'),
