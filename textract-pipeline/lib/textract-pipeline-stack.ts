@@ -462,6 +462,8 @@ export class TextractPipelineStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(50),
       memorySize: 128,
       environment: {
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
       }
     });
 
