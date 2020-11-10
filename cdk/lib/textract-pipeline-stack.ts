@@ -8,9 +8,9 @@ import sqs = require('@aws-cdk/aws-sqs');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import lambda = require('@aws-cdk/aws-lambda');
 import s3 = require('@aws-cdk/aws-s3');
-import {LambdaFunction} from "@aws-cdk/aws-events-targets";
-import * as efs from '@aws-cdk/aws-efs';
-import * as ec2 from '@aws-cdk/aws-ec2';
+// import {LambdaFunction} from "@aws-cdk/aws-events-targets";
+// import * as efs from '@aws-cdk/aws-efs';
+// import * as ec2 from '@aws-cdk/aws-ec2';
 
 export class TextractPipelineStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -139,7 +139,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Helper Layer with helper functions
     const helperLayer = new lambda.LayerVersion(this, 'HelperLayer', {
-      code: lambda.Code.fromAsset('lambda/helper'),
+      code: lambda.Code.fromAsset('../lambda/layer/helper'),
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Helper layer.',
@@ -147,7 +147,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Textractor helper layer
     const textractorLayer = new lambda.LayerVersion(this, 'Textractor', {
-      code: lambda.Code.fromAsset('lambda/textractor'),
+      code: lambda.Code.fromAsset('../lambda/layer/textractor'),
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Textractor layer.',
@@ -155,7 +155,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Python libs helper layer
     const pythonModulesLayer = new lambda.LayerVersion(this, 'PythonModules', {
-      code: lambda.Code.fromAsset('lambda/pipenv'),
+      code: lambda.Code.fromAsset('../lambda/layer/pipenv'),
       compatibleRuntimes: [lambda.Runtime.PYTHON_3_8],
       license: 'Apache-2.0, MIT',
       description: 'Pipenv-installed pypi modules layer.',
@@ -166,10 +166,10 @@ export class TextractPipelineStack extends cdk.Stack {
 
     // Node libs helper layer
     const nodeModulesLayer = new lambda.LayerVersion(this, 'NodeModules', {
-      code: lambda.Code.fromAsset('lambda/nodelayer'),
+      code: lambda.Code.fromAsset('../lambda/layer/npm'),
       compatibleRuntimes: [lambda.Runtime.NODEJS_12_X],
       license: 'Apache-2.0, MIT',
-      description: 'Pipenv-installed pypi modules layer.',
+      description: 'Old backend and dependencies layer.',
     });
 
 
@@ -178,7 +178,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // S3 Event processor
     const s3Processor = new lambda.Function(this, 'S3Processor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/s3processor'),
+      code: lambda.Code.asset('../lambda/function/s3processor'),
       handler: 'lambda_function.lambda_handler',
       // vpc,
       // allowPublicSubnet: true,
@@ -209,7 +209,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // S3 Batch Operations Event processor 
     const s3BatchProcessor = new lambda.Function(this, 'S3BatchProcessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/s3batchprocessor'),
+      code: lambda.Code.asset('../lambda/function/s3batchprocessor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
         DOCUMENTS_TABLE: documentsTable.tableName,
@@ -233,7 +233,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Document processor (Router to Sync/Async Pipeline)
     const documentProcessor = new lambda.Function(this, 'TaskProcessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/documentprocessor'),
+      code: lambda.Code.asset('../lambda/function/documentprocessor'),
       handler: 'lambda_function.lambda_handler',
       environment: {
         PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
@@ -261,7 +261,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Sync Jobs Processor (Process jobs using sync APIs)
     const syncProcessor = new lambda.Function(this, 'SyncProcessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/syncprocessor'),
+      code: lambda.Code.asset('../lambda/function/syncprocessor'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(25),
@@ -295,7 +295,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Job Processor (Start jobs using Async APIs)
     const asyncProcessor = new lambda.Function(this, 'ASyncProcessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/asyncprocessor'),
+      code: lambda.Code.asset('../lambda/function/asyncprocessor'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),
@@ -348,7 +348,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Jobs Results Processor
     const jobResultProcessor = new lambda.Function(this, 'JobResultProcessor', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/jobresultprocessor'),
+      code: lambda.Code.asset('../lambda/function/jobresultprocessor'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 1500,
       reservedConcurrentExecutions: 20,
@@ -385,7 +385,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Elastic search Indexer
     const appsearchIndexer = new lambda.Function(this, 'AppsearchIndexer', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.asset('lambda/appsearchindexer'),
+      code: lambda.Code.asset('../lambda/function/appsearchindexer'),
       handler: 'index.handler',
       memorySize: 1500,
       reservedConcurrentExecutions: 20,
@@ -417,7 +417,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Pdf to Image converter
     const pdfToImg = new lambda.Function(this, 'Pdf2Img', {
       runtime: lambda.Runtime.NODEJS_12_X,
-      code: lambda.Code.asset('lambda/pdftoimg'),
+      code: lambda.Code.asset('../lambda/function/pdftoimg'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 1500,
       reservedConcurrentExecutions: 20,
@@ -456,7 +456,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Job Processor (Start jobs using Async APIs)
     const htmlToBoundingBox = new lambda.Function(this, 'HtmlToBoundingBox', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('lambda/htmltoboundingbox'),
+      code: lambda.Code.asset('../lambda/function/htmltoboundingbox'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),
@@ -467,6 +467,7 @@ export class TextractPipelineStack extends cdk.Stack {
 
     //Layer
     htmlToBoundingBox.addLayers(helperLayer)
+    htmlToBoundingBox.addLayers(pythonModulesLayer)
     htmlToBoundingBox.addEventSource(new SqsEventSource(htmltoboundingboxQueue, {
       batchSize: 1
     }));
@@ -480,7 +481,7 @@ export class TextractPipelineStack extends cdk.Stack {
     /*
     const pdfGenerator = new lambda.Function(this, 'PdfGenerator', {
       runtime: lambda.Runtime.JAVA_8,
-      code: lambda.Code.asset('lambda/pdfgenerator'),
+      code: lambda.Code.asset('../lambda/function/pdfgenerator'),
       handler: 'DemoLambdaV2::handleRequest',
       memorySize: 3000,
       timeout: cdk.Duration.seconds(900),

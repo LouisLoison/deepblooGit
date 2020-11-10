@@ -9,4 +9,4 @@ verify_ssl = true
 elasticsearch = "<7.99,>=7.8"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"

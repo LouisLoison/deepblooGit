@@ -103,7 +103,7 @@ messageTableServiceRole.addToPolicy(
       logConfig: {
         fieldLogLevel: FieldLogLevel.ALL,
       },
-      schema: Schema.fromAsset(join(__dirname, 'schema.graphql')),
+      schema: Schema.fromAsset(join(__dirname, '../../appsync/schema.graphql')),
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: AuthorizationType.USER_POOL,
@@ -164,7 +164,7 @@ messageTableServiceRole.addToPolicy(
       fieldName: "getTender",
       typeName: "Query",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/tenderRequestMapping.vtl`,
+      `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: `

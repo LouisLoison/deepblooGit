@@ -1,9 +1,0 @@
-#!/usr/bin/env node
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("source-map-support/register");
-const cdk = require("@aws-cdk/core");
-const textract_pipeline_stack_1 = require("../lib/textract-pipeline-stack");
-const app = new cdk.App();
-new textract_pipeline_stack_1.TextractPipelineStack(app, 'TextractPipelineStack', { env: { account: "669031476932", region: "eu-west-1" } });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGV4dHJhY3QtcGlwZWxpbmUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJ0ZXh0cmFjdC1waXBlbGluZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFDQSx1Q0FBcUM7QUFDckMscUNBQXFDO0FBQ3JDLDRFQUF1RTtBQUV2RSxNQUFNLEdBQUcsR0FBRyxJQUFJLEdBQUcsQ0FBQyxHQUFHLEVBQUUsQ0FBQztBQUMxQixJQUFJLCtDQUFxQixDQUFDLEdBQUcsRUFBRSx1QkFBdUIsRUFBRSxFQUFFLEdBQUcsRUFBRSxFQUFFLE9BQU8sRUFBRSxjQUFjLEVBQUUsTUFBTSxFQUFFLFdBQVcsRUFBRSxFQUFDLENBQUMsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbIiMhL3Vzci9iaW4vZW52IG5vZGVcbmltcG9ydCAnc291cmNlLW1hcC1zdXBwb3J0L3JlZ2lzdGVyJztcbmltcG9ydCAqIGFzIGNkayBmcm9tICdAYXdzLWNkay9jb3JlJztcbmltcG9ydCB7IFRleHRyYWN0UGlwZWxpbmVTdGFjayB9IGZyb20gJy4uL2xpYi90ZXh0cmFjdC1waXBlbGluZS1zdGFjayc7XG5cbmNvbnN0IGFwcCA9IG5ldyBjZGsuQXBwKCk7XG5uZXcgVGV4dHJhY3RQaXBlbGluZVN0YWNrKGFwcCwgJ1RleHRyYWN0UGlwZWxpbmVTdGFjaycsIHsgZW52OiB7IGFjY291bnQ6IFwiNjY5MDMxNDc2OTMyXCIsIHJlZ2lvbjogXCJldS13ZXN0LTFcIiB9fSk7XG4iXX0=
