@@ -1,4 +1,4 @@
-exports.Login = (username, password) => {
+exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -24,6 +24,13 @@ exports.Login = (username, password) => {
       let hivebriteId = meResponse.data.admin.id
       */
 
+      let hivebriteId = null
+      if (userToken) {
+        let userData = jwt.decode(userToken, {complete: true})
+        username = userData.payload.primary_email
+        hivebriteId = userData.payload.id
+      }
+
       // Check user in deepbloo bdd
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -35,10 +42,17 @@ exports.Login = (username, password) => {
                   username AS "username", 
                   password AS "password" 
         FROM      user 
-        WHERE     email = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
-        AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
       `
-      // WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId, BddEnvironnement, BddId)} 
+      if (hivebriteId) {
+        query += `
+          WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId, BddEnvironnement, BddId)} 
+        `
+      } else {
+        query += `
+          WHERE     email = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
+          AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
+        `
+      }
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       let user = {}
       for (let record of recordset) {
@@ -577,7 +591,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let userTotal = 1
       let currentPage = 1
       while (users.length < userTotal && currentPage < 200) {
-        let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${currentPage}&per_page=${perPage}&order=-updated_at`)
+        let usersResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users?page=${currentPage}&per_page=${perPage}&order=updated_at`)
         users = users.concat(usersResponse.data.users)
         userTotal = usersResponse.headers["x-total"]
         if (!usersResponse.data.users.length) {

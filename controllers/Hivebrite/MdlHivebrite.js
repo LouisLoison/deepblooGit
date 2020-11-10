@@ -399,7 +399,7 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
       let total = 1
       let page = pageStart
       while (dataUsers.length < total && page < 500) {
-        let response = await this.get(`api/admin/v1/users?page=${page}&per_page=${perPage}&order=-updated_at&full_profile=true`)
+        let response = await this.get(`api/admin/v1/users?page=${page}&per_page=${perPage}&order=updated_at&full_profile=true`)
 
         let tempUsers = []
         for (const user of response.data.users) {

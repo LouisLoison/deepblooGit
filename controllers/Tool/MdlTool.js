@@ -44,7 +44,35 @@ exports.awsFileAdd = (awsBucket, fileLocation, fileDestination) => {
   })
 }
 
-exports.awsFileMove = (awsBucket, fileLocation, fileDestination) => {
+exports.awsFileList = (awsBucket, location) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const AWS = require('aws-sdk')
+      
+      AWS.config.update({
+        accessKeyId: config.awsAccessKeyId,
+        secretAccessKey: config.awsSecretAccessKey
+      })
+      const s3 = new AWS.S3()
+
+      const params = {
+        Bucket: awsBucket,
+        Delimiter: '/',
+        Prefix: location,
+      }
+    
+      s3.listObjects(params, (err, data) => {
+        if(err) {
+          throw err
+        }
+        resolve(data.Contents)
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.awsFileGet = (awsBucket, fileKey, fileLocation) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -52,50 +80,51 @@ exports.awsFileMove = (awsBucket, fileLocation, fileDestination) => {
       const fs = require('fs')
       
       AWS.config.update({
-        accessKeyId: awsBucket,
+        accessKeyId: config.awsAccessKeyId,
         secretAccessKey: config.awsSecretAccessKey
       })
       const s3 = new AWS.S3()
-    
+
       const params = {
-        Bucket: config.awsBucket,
-        Body : fs.createReadStream(fileLocation),
-        Key : fileDestination
+        Bucket: awsBucket,
+        Key: fileKey,
       }
-    
+
+      let readStream = s3.getObject(params).createReadStream()
+      let writeStream = fs.createWriteStream(fileLocation)
+      readStream.pipe(writeStream)
+      resolve()
     } catch (err) { reject(err) }
   })
 }
 
-exports.awsFileList = (awsBucket, fileLocation, fileDestination) => {
+exports.awsFileMove = (awsBucket, fileKey, fileDestination) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
       const AWS = require('aws-sdk')
       
       AWS.config.update({
-        accessKeyId: awsBucket,
+        accessKeyId: config.awsAccessKeyId,
         secretAccessKey: config.awsSecretAccessKey
       })
       const s3 = new AWS.S3()
     
-      const params = {
-        Bucket: config.awsBucket,
-        Delimiter: '/',
-        Prefix: 's/5469b2f5b4292d22522e84e0/ms.files/',
-      }
+      await s3.copyObject({
+        Bucket: awsBucket,
+        CopySource: `/${awsBucket}/${fileKey}`,
+        Key: fileDestination,
+      }).promise()
+  
+      await s3.deleteObject({
+        Bucket: awsBucket,
+        Key: fileKey,
+      }).promise()
     
-      s3.listObjects(params, (err, data) => {
-        if(err) {
-          throw err
-        }
-        console.log(data)
-        resolve(data)
-      })
+      resolve()
     } catch (err) { reject(err) }
   })
 }
-
 exports.FtpList = () => {
   return new Promise((resolve, reject) => {
     try {

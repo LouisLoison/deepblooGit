@@ -1,5 +1,5 @@
 exports.Login = (req, res) => {
-    require(process.cwd() + '/controllers/User/MdlUser').Login(req.body.username, req.body.password).then((data) => {
+    require(process.cwd() + '/controllers/User/MdlUser').Login(req.body.username, req.body.password, req.body.userToken).then((data) => {
         res.end(JSON.stringify({ success: true, user: data.user, token: data.token }, null, 3))
     }).catch((err) => {
         require(process.cwd() + '/controllers/CtrlTool').onError(err, res)

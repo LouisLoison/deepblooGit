@@ -21,3 +21,9 @@ exports.RecordGet = (req, res) => {
     res.end(JSON.stringify({ success: true, Record: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
+
+exports.awsFileList = (req, res) => {
+  require(process.cwd() + '/controllers/Tool/MdlTool').awsFileList().then((data) => {
+    res.end(JSON.stringify({ success: true, data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}

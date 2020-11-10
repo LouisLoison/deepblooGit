@@ -2,16 +2,23 @@ exports.ImportTenderInfo = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
+      var path = require('path')
 
-      // Get files
-      // TODO
-      // await require(process.cwd() + '/controllers/Tool/MdlTool').awsFileList(config.awsBucket)
+      // Get files from S3
+      const folderIncomming = 'incoming/tenderinfo/'
+      const contents = await require(process.cwd() + '/controllers/Tool/MdlTool').awsFileList(config.awsBucketFtp, folderIncomming)
+      for (const content of contents) {
+        let filename = content.Key.split('/').pop()
+        if (!filename.toUpperCase().endsWith('.XML')) {
+          continue
+        }
+        const fileLocation = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Ftp/', filename)
+        await require(process.cwd() + '/controllers/Tool/MdlTool').awsFileGet(config.awsBucketFtp, content.Key, fileLocation)
+        await require(process.cwd() + '/controllers/Tool/MdlTool').awsFileMove(config.awsBucketFtp, content.Key, content.Key.replace(filename, `archive/${filename}`))
+      }
 
-      // Import into BDD
+      // Import file content into BDD
       await this.BddImport()
-
-      // Archive file
-      // TODO
 
       resolve()
     } catch (err) {
@@ -62,11 +69,6 @@ exports.BddImport = () => {
         fileParseData.importTenderInfos
       )
 
-      // Move file to archive folder
-      const fileSource = path.parse(fileLocation).base
-      const fileLocationArchive = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Archive/', fileSource)
-      fs.renameSync(fileLocation, fileLocationArchive)
-
       // Search tender by procurementId
       query = `
         UPDATE      importTenderInfo 
@@ -76,7 +78,7 @@ exports.BddImport = () => {
         SET         importTenderInfo.tenderId = dgmarket.id, 
                     importTenderInfo.mergeMethod = "PROCUREMENT_ID", 
                     importTenderInfo.status = 5
-        WHERE 		  importDgmarket.status = 1
+        WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
@@ -92,10 +94,15 @@ exports.BddImport = () => {
         SET         importTenderInfo.tenderId = dgmarket.id, 
                     importTenderInfo.mergeMethod = "TITLE_BUYER_BIDDEADLINE", 
                     importTenderInfo.status = 5
-        WHERE 		  importDgmarket.status = 1
+        WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+
+      // Move file to archive folder
+      const fileSource = path.parse(fileLocation).base
+      const fileLocationArchive = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Archive/', fileSource)
+      fs.renameSync(fileLocation, fileLocationArchive)
 
       resolve({
         tenderCount: fileParseData.tenderCount,
