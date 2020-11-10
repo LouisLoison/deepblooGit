@@ -1,8 +1,0 @@
-query MyQuery {
-  getTender(id: "728848") {
-    id,
-    procurementId,
-    title,
-    description
-  }
-}
