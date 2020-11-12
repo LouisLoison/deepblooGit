@@ -6,7 +6,7 @@
     "build-deps": "./tools/build-deps.sh",
     "clean": "rm -fr lambda/layer/pipenv/python cdk/cdk.out",
     "test": "./tools/test-lambda-imports.sh",
-    "deploy": "cd cdk && cdk deploy --all"
+    "deploy": "cd cdk && npm run deploy"
   },
   "devDependencies": {},
   "dependencies": {}

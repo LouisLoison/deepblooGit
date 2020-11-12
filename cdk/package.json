@@ -8,7 +8,7 @@
     "clean": "rm cdk.out",
     "watch": "tsc -w",
     "test": "jest",
-    "deploy": "([ lib/textract-pipeline-stack.js -nt lib/textract-pipeline-stack.ts ]  || tsc) && cdk deploy"
+    "deploy": "cdk deploy --all"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.73.0",
