@@ -1,0 +1,14 @@
+{
+  "name": "deepbloo-infra",
+  "version": "0.1.0",
+  "scripts": {
+    "postinstall": "npm run build-deps ; (cd cdk && npm install )",
+    "build-deps": "./tools/build-deps.sh",
+    "clean": "rm -fr lambda/layer/pipenv/python cdk/cdk.out",
+    "test": "./tools/test-lambda-imports.sh",
+    "deploy": "cd cdk && cdk deploy --all"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {}
+}
