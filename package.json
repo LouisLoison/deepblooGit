@@ -8,7 +8,6 @@
     "test": "./tools/test-lambda-imports.sh",
     "deploy": "cd cdk && cdk deploy --all"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {}
 }

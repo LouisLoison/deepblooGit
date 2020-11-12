@@ -5,6 +5,7 @@ sudo docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 bash tool
 
 sudo docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash tools/build-deps-node.sh
 
+rm -fr lambda/layer/combined/{python,nodejs}
 mkdir -p lambda/layer/combined/
 cp -au lambda/layer/*/python lambda/layer/combined/
 cp -au lambda/layer/*/nodejs lambda/layer/combined/
