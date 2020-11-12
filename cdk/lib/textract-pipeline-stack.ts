@@ -470,7 +470,7 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     htmlToBoundingBox.addLayers(pythonModulesLayer)
     htmlToBoundingBox.addLayers(helperLayer)
-    htmlToBoundingBox.addLayers(pythonModulesLayer)
+
     htmlToBoundingBox.addEventSource(new SqsEventSource(htmltoboundingboxQueue, {
       batchSize: 1
     }));
