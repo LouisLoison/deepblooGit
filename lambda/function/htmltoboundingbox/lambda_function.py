@@ -1,34 +1,41 @@
 import os
 import pdfplumber
 import json
+import chardet
+from io import BytesIO
 from xhtml2pdf import pisa
-from helper import FileHelper, S3Helper
+from helper import FileHelper, S3Helper, AwsHelper
 
 
-def is_valid_path(file_to_check: str) -> bool:
-    return not os.path.isfile(file_to_check)
+def convert_html_to_pdf(html_str, aws_env) -> None:
+    aws_region = aws_env['awsRegion']
+    output_bucket = aws_env['outputBucket']
+    output_file = aws_env['outputName']
+    output_content = BytesIO()
+
+    print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
+    s3 = AwsHelper().getResource('s3', aws_region)
+    s3_obj = s3.Object(output_bucket, output_file)
+    pisa.CreatePDF(html_str, dest=output_content)
+    content = output_content.getvalue().decode("utf-8", errors="ignore")
+    s3_obj.put(Body=content)
 
 
-def convert_html_to_pdf(html_content, output_pdf: str) -> int:
-    html_str = html_content.read()
-    with open(output_pdf, 'w+b') as pdf_file:
-        pisa_status = pisa.CreatePDF(html_str, dest=pdf_file)
-        pdf_file.close()
-        html_content.close()
-        return pisa_status.err
-    return 1
-
-
-def open_html_file(aws_env: dict) -> int:
-    html_file = aws_env['bucketName']
-    output_pdf = aws_env['outputName']
+def read_from_s3(aws_env):
+    bucket_name = aws_env['bucketName']
+    s3_file_name = aws_env['objectName']
+    aws_region = aws_env['awsRegion']
+    s3 = AwsHelper().getResource('s3', aws_region)
+    obj = s3.Object(bucket_name, s3_file_name)
+    content = obj.get()['Body'].read()
     try:
-        with open(html_file, "r") as html_content:
-            return convert_html_to_pdf(html_content, output_pdf)
+        encoding = chardet.detect(content)['encoding']
+        print("Trying to decode with {}".format(encoding))
+        content.decode(encoding)
     except UnicodeDecodeError:
-        with open(html_file, "rb") as html_content:
-            return convert_html_to_pdf(html_content, output_pdf)
-    return 1
+        print("Failing to decode, return content in bytes")
+        return content
+    return content
 
 
 def extract_pdf(pdf_output: str) -> None:
@@ -41,27 +48,28 @@ def extract_pdf(pdf_output: str) -> None:
                 print("==> Word object: {}", word)
 
 
-def get_pdf_filename(path_to_html: str) -> str:
-    path_file_name, file_extension = os.path.splitext([path_to_html])
-    return "".join([path_file_name, ".pdf"])
+def get_pdf_filename(path_to_html: str, document_id: str) -> str:
+    folder_output = "/".join(path_to_html.split('/')[:-1])  # get path without file
+    path_without_ext, _ = os.path.splitext(path_to_html.split('/')[-1])
+    pdf_output = path_without_ext + '.pdf'
+    output_file = "{}-analysis/{}/{}".format(folder_output, document_id, pdf_output)
+    return output_file
 
 
 def lambda_handler(event, context):
-    print("event: {}".format(event))
-
     body = json.loads(event['Records'][0]['body'])
-    message = json.loads(body['Message'])
+    aws_region = event['Records'][0]['awsRegion']
     aws_env = {
-        "bucketName": message['bucketName'],
-        "objectName": message['objectName'],
-        #"outputTable": os.environ['OUTPUT_TABLE']
-        #"outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputName": get_pdf_filename(message['bucketName'])
+        "bucketName": body['bucketName'],
+        "objectName": body['objectName'],
+        "documentId": body['documentId'],
+        "awsRegion": aws_region,
+        "outputBucket": os.environ['OUTPUT_BUCKET'],
+        "outputName": get_pdf_filename(body['objectName'], body['documentId'])
     }
 
-    # Error return value if open_html_file return 1 ?
-    open_html_file(aws_env)
-    extract_pdf(aws_env['outputName'])
+    html_content = read_from_s3(aws_env)
+    convert_html_to_pdf(html_content, aws_env)
 
     return {
         'statusCode': 200,

@@ -460,7 +460,7 @@ export class TextractPipelineStack extends cdk.Stack {
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),
-      memorySize: 128,
+      memorySize: 1280,
       environment: {
         OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
@@ -478,6 +478,7 @@ export class TextractPipelineStack extends cdk.Stack {
     //Permissions
     contentBucket.grantRead(htmlToBoundingBox)
     existingContentBucket.grantReadWrite(htmlToBoundingBox)
+    outputBucket.grantReadWrite(htmlToBoundingBox)
     htmltoboundingboxQueue.grantConsumeMessages(htmlToBoundingBox)
     //--------------
     // PDF Generator
