@@ -227,6 +227,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       } while (borneMin < tenders.length)
       for (const tranche of tranches) {
         await this.indexObjectToAppsearch(tranche)
+        await this.indexObjectToAppsearch(tranche, 'deepbloo-en')
         await this.indexToElasticsearch(tranche, 'tenders')
       }
       
