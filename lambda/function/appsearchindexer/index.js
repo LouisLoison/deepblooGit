@@ -1,4 +1,4 @@
-const { indexObject, updateObject } = require('deepblooback/controllers/Elasticsearch/MdlElasticsearch');
+const { indexObject } = require('deepblooback/controllers/Elasticsearch/MdlElasticsearch');
 
 const getFileContent = async (bucketName, fileKey) => {
   var AWS = require('aws-sdk');
@@ -40,7 +40,7 @@ exports.handler =  async function(event, ) {
     fullTextMachineOrder,
     objectName,
     bucketName,
-    }]); 
+    }], 'deepbloo-en'); 
 
   /*
   await indexObject([{

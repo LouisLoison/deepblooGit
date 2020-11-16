@@ -4,6 +4,8 @@
   "dependencies": {
     "@elastic/app-search-node": "^7.8",
     "canvas": "^2.6",
-    "pdfjs-dist": "^2.4"
+    "deepbloo": "file:../../../libjs",
+    "pdfjs-dist": "^2.4",
+    "xml2js": "^0.4.23"
   }
 }
