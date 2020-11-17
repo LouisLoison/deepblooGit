@@ -3,7 +3,7 @@ import {
   putFile,
   getXmlJsonData,
   log,
-} from './helpers';
+} from './helpers.js';
 
 export {
   getFileContent,

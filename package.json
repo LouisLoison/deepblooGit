@@ -13,5 +13,7 @@
     "deploy": "cd cdk && npm run deploy"
   },
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "aws-sdk": "^2.793.0"
+  }
 }
