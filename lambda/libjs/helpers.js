@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+import * as AWS from 'aws-sdk';
 
 const getFileContent = async (bucketName, fileKey) => {
   const s3 = new AWS.S3({apiVersion: '2006-03-01'});
@@ -44,7 +44,7 @@ const log = (message, data, level='INFO') => {
   console.log(`${level} ${JSON.stringify(message, null, 2)} 
     ${JSON.stringify(data, null, 2)}`)
 }
-  
+
 export {
   getFileContent,
   putFile,
