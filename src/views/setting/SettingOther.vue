@@ -29,7 +29,7 @@
         <v-expansion-panel-header>Process</v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
             @click="runFtpGet()"
             title="Execute check"
@@ -37,7 +37,7 @@
             FtpGet
           </v-btn>
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
             @click="runBddImport()"
             title="Execute check"
@@ -45,7 +45,7 @@
             BddImport
           </v-btn>
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
             @click="runTendersImport()"
             title="Execute check"
@@ -53,7 +53,7 @@
             TendersImport
           </v-btn>
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
             @click="runTendersPurge()"
             title="Execute check"

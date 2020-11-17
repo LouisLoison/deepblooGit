@@ -99,10 +99,9 @@
       </div>
       <div
         v-if="result.title"
-        class="search-result-title"
-      >
-        {{ result.title.raw }}
-      </div>
+        class="search-result-title snippet-zone"
+        v-html="result.title.snippet || result.title.raw"
+      />
       <div
         v-if="result.country"
         class="search-result-country"

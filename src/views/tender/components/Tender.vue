@@ -178,7 +178,7 @@
                   >
                     Info available with premium memberships<br />
                     <v-btn
-                      round
+                      rounded
                       dark
                       color="success"
                       href="https://platform.deepbloo.com/memberships"
@@ -359,7 +359,7 @@
                     <v-btn
                       v-if="hasDocumentToImport"
                       :loading="documentImport"
-                      round
+                      rounded
                       dark
                       outlined
                       color="blue-grey lighten-1"

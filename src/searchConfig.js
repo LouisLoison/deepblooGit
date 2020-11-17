@@ -1,13 +1,13 @@
-import "regenerator-runtime/runtime";
-import AppSearchAPIConnector from "@elastic/search-ui-app-search-connector";
+import 'regenerator-runtime/runtime'
+import AppSearchAPIConnector from '@elastic/search-ui-app-search-connector'
 
 const connector = new AppSearchAPIConnector({
-  searchKey: "search-pg8ft3mtkfkup3occekertmt", // "search-cmx2y22ucp9ry64mneez4ddj",
-  engineName: "deepbloo-en", // "hearthstone-cards",
-  // hostIdentifier: "host-98wz59",
-  endpointBase: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
+  searchKey: 'search-pg8ft3mtkfkup3occekertmt', // "search-cmx2y22ucp9ry64mneez4ddj",
+  engineName: 'deepbloo',
+  // hostIdentifier: 'host-98wz59',
+  endpointBase: 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/',
   cacheResponses: false
-});
+})
 
 const config = {
   debug: false,
@@ -68,6 +68,6 @@ const config = {
       },
     }
   }
-};
+}
 
-export default config;
+export default config

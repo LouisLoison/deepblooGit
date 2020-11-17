@@ -15,7 +15,7 @@
       >
         <div class="text-center">
           <v-btn
-            round
+            rounded
             color="blue-grey lighten-5"
             @click="organizationSynchro()"
             title="Organization synchro"

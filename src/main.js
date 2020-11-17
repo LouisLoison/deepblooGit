@@ -5,6 +5,7 @@ import store from './store'
 import Api from "./plugins/Api"
 import global from '@/services/global'
 import vuetify from './plugins/vuetify'
+import VueDragDrop from 'vue-drag-drop'
 import PerfectScrollbar from 'vue2-perfect-scrollbar'
 import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css"
 import "./assets/css/site.css";
@@ -28,6 +29,7 @@ xrange(Highcharts)
 Vue.config.productionTip = false
 Vue.use(Api)
 Vue.use(global)
+Vue.use(VueDragDrop)
 Vue.use(PerfectScrollbar)
 Vue.use(VueHighcharts, { Highcharts })
 

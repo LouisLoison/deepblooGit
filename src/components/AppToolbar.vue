@@ -100,8 +100,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import moment from "moment";
+import { mapGetters } from "vuex"
+import moment from "moment"
 
 export default {
   name: "AppToolbar",
@@ -128,17 +128,17 @@ export default {
 
   computed: {
     ...mapGetters([
-      "getIsMobile",
-      "getUserId",
-      "getUserPhoto",
-      "getUsername",
-      "getUserEmail",
-      "getUserType"
+      'getIsMobile',
+      'getUserId',
+      'getUserPhoto',
+      'getUsername',
+      'getUserEmail',
+      'getUserType',
     ])
   },
 
   mounted() {}
-};
+}
 </script>
 
 <style>

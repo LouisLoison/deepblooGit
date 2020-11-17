@@ -11,7 +11,7 @@
       >
         <SearchResult
           :result="result"
-          @tenderDialogShow="$refs.TenderDialog.show(result)"
+          @tenderDialogShow="tenderOpen(result)"
           @openTenderGroupChoice="openTenderGroupChoice(result)"
           @openSentEmailDialog="openSentEmailDialog(result)"
           ref="SearchResult"
@@ -23,6 +23,7 @@
       :results="results"
       :filter="filter"
       :searchState="searchState"
+      @tenderDialogShow="tenderOpen($event)"
       @updateUserScreen="updateUserScreen()"
       @handleFacetChange="handleFacetChange($event)"
       @handleFacetCheckAll="handleFacetCheckAll($event)"
@@ -85,9 +86,11 @@ export default {
 
   computed: {
     ...mapGetters([
+      'getUserId',
       'getIsFreeMembership',
       'getIsPremiumMembership',
       'getIsBusinessMembership',
+      'getAppSearchUrl',
     ]),
   },
 
@@ -178,6 +181,23 @@ export default {
     handleFacetUnCheckAll(facet) {
       this.$emit('handleFacetUnCheckAll', facet)
     },
+
+    tenderOpen(result) {
+      this.$refs.TenderDialog.show(result)
+
+      console.log('-- process')
+      console.log(this.getAppSearchUrl)
+      // Sent click to AppSearch
+      // POST /api/as/v1/engines/{ENGINE_NAME}/click
+      /*
+      query (required) : The query that the user searched with.
+      document_id (required) : The id of the document that was clicked on.
+      request_id (optional) : The request id returned in the meta tag of a search API response.
+      tags (optional) : Array of strings representing additional information you wish to track with the clickthrough. You may submit up to 16 tags, and each may be up to 64 characters in length.
+
+      https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io//api/as/v1/engines/deepbloo/search.json
+      */
+    }
   },
 };
 </script>

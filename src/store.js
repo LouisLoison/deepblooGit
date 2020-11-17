@@ -66,10 +66,15 @@ export default new Vuex.Store({
       displayType: null,
       panels: null
     },
+    AppSearchUrl: 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/',
   },
   getters: {
     getApiUrl(state) {
       return state.ApiUrl
+    },
+
+    getAppSearchUrl(state) {
+      return state.AppSearchUrl
     },
 
     getUserId(state) {
@@ -267,6 +272,29 @@ export default new Vuex.Store({
   actions: {
     initIsMobile({ commit }, value) {
       commit("UPDATE_IsMobile", value)
+    },
+    
+    async userLogin({ commit }, value) {
+      try {
+        this.loading = true
+        this.error = false
+        const res = await Vue.api.post("/User/Login", value)
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        commit("UPDATE_USER", {
+          userId: res.user.userId,
+          hivebriteId: res.user.hivebriteId,
+          type: res.user.type,
+          email: res.user.email,
+          username: res.user.username,
+          password: this.password,
+          photo: res.user.photo,
+          token: res.token
+        })
+      } catch (err) {
+        Vue.api.error(err, this)
+      }
     },
 
     showConfirmModal({ commit }, confirmModal) {

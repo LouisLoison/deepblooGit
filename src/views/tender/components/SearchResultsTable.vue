@@ -233,7 +233,7 @@
           <div
             class="cursor-pointer display-table-row pt-2 pb-1 px-0"
             style="border-bottom: 1px solid #d7d7d7;"
-            @click.stop="openDialog(result)"
+            @click.stop="$emit('tenderDialogShow', result)"
           >
             <div
               class="display-table-cell display-table-cell-avatar"
@@ -295,13 +295,18 @@
                 src="/static/image/badgeNew.png"
                 style="height: 24px; position: absolute; bottom: 2px; right: 2px;"
               />
+              <div
+                v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
+                style="position: absolute; top: 2px; right: 8px; display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
+              >
+                TI
+              </div>
             </div>
             <div
-              class="display-table-cell display-table-cell-title font-weight-bold"
+              class="display-table-cell display-table-cell-title font-weight-bold snippet-zone"
               style="text-overflow: ellipsis; overflow: hidden;"
-            >
-              {{ result.title.raw }}
-            </div>
+              v-html="result.title.snippet || result.title.raw"
+            />
             <div
               v-for="(column, index) in columns.filter(a => a.show)"
               :key="`column${index}`"
@@ -634,6 +639,7 @@ export default {
 
   computed: {
     ...mapGetters([
+      'getUserType',
       'getIsFreeMembership',
       'getIsPremiumMembership',
       'getIsBusinessMembership',

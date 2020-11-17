@@ -19,6 +19,7 @@
     "moment": "^2.27.0",
     "nprogress": "^0.2.0",
     "vue": "^2.6.11",
+    "vue-drag-drop": "^1.1.4",
     "vue-highcharts": "^0.1.0",
     "vue-perfect-scrollbar": "^0.2.1",
     "vue-router": "^3.4.1",

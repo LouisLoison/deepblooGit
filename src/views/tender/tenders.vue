@@ -362,6 +362,17 @@ export default {
   mounted() {
     this.loadCpvs()
 
+    // Hide header
+    if (this.$route.query.header === 'hide') {
+      this.setHeaderShow(false)
+    }
+
+    if (this.$route.query.userToken) {
+      this.userLogin({
+        userToken: this.$route.query.userToken,
+      })
+    }
+
     const {
       searchTerm,
       sortField,
@@ -391,7 +402,6 @@ export default {
       this.searchState = state
     })
 
-
     // Get user memberships
     if (this.getUserId) {
       this.loadUserMemberships()
@@ -406,6 +416,8 @@ export default {
 
   methods: {
     ...mapActions([
+      'userLogin',
+      'setHeaderShow',
       'loadUserMemberships',
       'loadUserNotifys',
       'loadOpportunity',

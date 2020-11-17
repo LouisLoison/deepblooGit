@@ -357,7 +357,7 @@ export default {
     },
 
     handleFacetUnCheckAll(facet) {
-      for (const item of this[facet]) {
+      for (const item of this.filter[facet]) {
         this.driver.removeFilter(facet, item, 'any')
       }
       this.filter[facet] = []

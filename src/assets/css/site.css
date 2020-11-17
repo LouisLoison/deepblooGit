@@ -25,3 +25,7 @@
 .organization-name-1 {
   color: #FFB74D !important;
 }
+
+.snippet-zone em {
+  background-color: #ffc168;
+}
