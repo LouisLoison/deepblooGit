@@ -164,7 +164,7 @@ messageTableServiceRole.addToPolicy(
       fieldName: "getTender",
       typeName: "Query",
       requestMappingTemplate: readFileSync(
-      `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
+        `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: `

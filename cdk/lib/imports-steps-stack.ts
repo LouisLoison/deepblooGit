@@ -1,17 +1,18 @@
 import { Chain, Choice, Condition, Fail, StateMachine, Task } from '@aws-cdk/aws-stepfunctions';
 import { InvokeFunction } from '@aws-cdk/aws-stepfunctions-tasks';
-import { AssetCode, Function, Runtime, LayerVersion, S3EventSource, } from '@aws-cdk/aws-lambda';
+import { AssetCode, Function, Runtime, LayerVersion, } from '@aws-cdk/aws-lambda';
+import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
 import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import s3 = require('@aws-cdk/aws-s3');
 import iam = require('@aws-cdk/aws-iam');
 
 
-interface ImportStepStackProps extends StackProps {
+interface ImportsStepsStackProps extends StackProps {
   nodeLayerArn: string;
 }
 
-export class ImportStepStack extends Stack {
-  constructor(scope: Construct, id: string, props: ImportStepStackProps) {
+export class ImportsStepsStack extends Stack {
+  constructor(scope: Construct, id: string, props: ImportsStepsStackProps) {
     super(scope, id, props);
 
     const environment = {
@@ -32,6 +33,7 @@ export class ImportStepStack extends Stack {
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
+        TENDER_STATE_MACHINE_ARN: '',
       }
     });
 
@@ -55,7 +57,7 @@ export class ImportStepStack extends Stack {
       }
     });
 
-    const downloadDocument = new Function(this, 'downloadDocument', {
+    const downloadAttachments = new Function(this, 'downloadDocument', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/downloadDocument'),
       handler: 'index.handler',
@@ -69,7 +71,7 @@ export class ImportStepStack extends Stack {
 
     xmlImport.addLayers(nodeLayer)
     appsearchIndex.addLayers(nodeLayer)
-    downloadDocument.addLayers(nodeLayer)
+    downloadAttachments.addLayers(nodeLayer)
 
     const importTask = new Task(this, 'Import Task', {
       task: new InvokeFunction(xmlImport),
