@@ -13,3 +13,5 @@ textract-pipeline/lambda/pipenv/
 
 # IDEA folder
 .idea/
+
+.*.swp

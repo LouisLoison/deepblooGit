@@ -1,9 +1,7 @@
-
 const { getFileContent, getXmlJsonData, log } = require('deepbloo');
-
 const { StepFunctions } = require('aws-sdk')
-
 const xml2js = require('xml2js')
+const util = require('util')
 
 const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
@@ -28,7 +26,8 @@ exports.handler =  async function(event, ) {
   const dataSource = objectName.split('/')[1]
 
   const parser = new xml2js.Parser()
-  const parseData = parser.parseString(fileData)
+  const parseString = util.promisify(parser.parseString)
+  const parseData = await parseString(fileData)
   const iterableData = (dataSource === 'tenderinfo') ? parseData.import.row : parseData.notices.notice
   let tenderCount = 0
   for (const row of iterableData) {
@@ -36,7 +35,7 @@ exports.handler =  async function(event, ) {
     const relatedDocuments = row.related_documents ?
       row.related_documents
         .map(d => d.document_url)
-        .filter() : []
+        .filter(d => d) : []
     log('Raw row',row,'DEBUG')
     let importData = {}
     if (dataSource === 'tenderinfo') {

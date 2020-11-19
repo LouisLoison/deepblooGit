@@ -23,28 +23,6 @@ export class ImportsStepsStack extends Stack {
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
     const nodeLayer = props.nodeLayerArn
-
-    const xmlImport = new Function(this, 'XmlImport', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/xmlimport'),
-      handler: 'index.handler',
-      memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
-      environment: {
-        ...environment,
-        TENDER_STATE_MACHINE_ARN: '',
-      }
-    });
-
-    
-    //Trigger
-    xmlImport.addEventSource(new S3EventSource(sftpBucket, {
-      events: [ s3.EventType.OBJECT_CREATED ],
-      filters: [{ prefix: 'incoming/', suffix: '.xml'}]
-    }))
-    sftpBucket.grantReadWrite(xmlImport)
-
     const appsearchIndex = new Function(this, 'AppsearchIndex', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/appsearchIndex'),
@@ -69,7 +47,6 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
-    xmlImport.addLayers(nodeLayer)
     appsearchIndex.addLayers(nodeLayer)
     downloadAttachments.addLayers(nodeLayer)
 
@@ -90,8 +67,30 @@ export class ImportsStepsStack extends Stack {
       .when(Condition.numberEquals('$.Status', 0), escalateCase.next(jobFailed)),
   );
        */
-    new StateMachine(this, 'StateMachine', {
+    const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: chain,
     });
+
+
+    const xmlImport = new Function(this, 'XmlImport', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/xmlimport'),
+      handler: 'index.handler',
+      memorySize: 500,
+      //      reservedConcurrentExecutions: 20,
+      timeout: Duration.seconds(50),
+      environment: {
+        ...environment,
+        TENDER_STATE_MACHINE_ARN: stateMachine.stateMachineArn,
+      }
+    });
+
+    xmlImport.addLayers(nodeLayer)
+    //Trigger
+    xmlImport.addEventSource(new S3EventSource(sftpBucket, {
+      events: [ s3.EventType.OBJECT_CREATED ],
+      filters: [{ prefix: 'incoming/', suffix: '.xml'}]
+    }))
+    sftpBucket.grantReadWrite(xmlImport)
   }
 }

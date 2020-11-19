@@ -12,3 +12,4 @@ parserOptions:
   sourceType: module
 rules:
   indent: ["error", 2]
+  no-trailing-spaces: "error"
