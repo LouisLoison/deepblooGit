@@ -11,7 +11,7 @@ const apiStack = new ApiStack(app, 'ApiStack', { env: { account: "669031476932",
 
 const textractPipelineStack = new TextractPipelineStack(app, 'TextractPipelineStack', { env: { account: "669031476932", region: "eu-west-1" }});
 
-new ImportsStepsStack(app, 'ImportsStepsStrack', {
+new ImportsStepsStack(app, 'ImportsStepsStack', {
   env: { account: "669031476932", region:   "eu-west-1" },
   nodeLayerArn: textractPipelineStack.nodeLayerArn,
 });

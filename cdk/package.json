@@ -8,7 +8,7 @@
     "clean": "rm cdk.out",
     "watch": "tsc -w",
     "test": "jest",
-    "deploy": "cdk deploy --all"
+    "deploy": "cdk deploy"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.73.0",
