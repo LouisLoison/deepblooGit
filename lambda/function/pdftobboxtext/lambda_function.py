@@ -17,7 +17,7 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
     """
     Execute the pdfplumber binary with pdf_tmp_path to extract bounding boxes.
 
-    :param pdf_tmp_path: the tmp path of the pdf to pass it to pdfplumber
+    :param pdf_tmp_path: the tmp path of the pdf to pass to pdfplumber
     :param output_format: the output format of the bounding boxes. Can be "json" or "csv"
     :param output_type: object types to extract. "char", "rect", "line", "curve", "image", "annot"
     :return: None
@@ -26,7 +26,7 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
     available_types = ["char", "rect", "line", "curve", "image", "annot"]
     if output_format not in available_format:
         print("[pdfplumber execution] => Wrong format parameter given {0}".format(output_format))
-        return
+        return 0
     if output_type not in available_types:
         print("[pdfplumber execution] => Wrong type parameter given {0}".format(output_type))
     pdfplumber_cmd = ["pdfplumber", "--format", output_format, output_type]
