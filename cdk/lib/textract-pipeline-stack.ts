@@ -129,6 +129,11 @@ export class TextractPipelineStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
+    //PDFtoBBOX send queue
+    const pdfToBoundingBoxAndTextQueue = new sqs.Queue(this, 'PdfToBoundingBoxAndTextQueue', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    });
+
 
 
     //Trigger
@@ -245,7 +250,8 @@ export class TextractPipelineStack extends cdk.Stack {
         PDFTOIMG_QUEUE_URL: pdftoimgQueue.queueUrl,
         SYNC_QUEUE_URL: syncJobsQueue.queueUrl,
         ASYNC_QUEUE_URL: asyncJobsQueue.queueUrl,
-        HTMLTOBOUNDINGBOX_QUEUE_URL: htmltoboundingboxQueue.queueUrl
+        HTMLTOBOUNDINGBOX_QUEUE_URL: htmltoboundingboxQueue.queueUrl,
+        PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL: pdfToBoundingBoxAndTextQueue.queueUrl
       }
     });
     //Layer
@@ -261,6 +267,7 @@ export class TextractPipelineStack extends cdk.Stack {
     asyncJobsQueue.grantSendMessages(documentProcessor)
     pdftoimgQueue.grantSendMessages(documentProcessor)
     htmltoboundingboxQueue.grantSendMessages(documentProcessor)
+    pdfToBoundingBoxAndTextQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -501,5 +508,33 @@ export class TextractPipelineStack extends cdk.Stack {
     pdfGenerator.grantInvoke(syncProcessor)
     pdfGenerator.grantInvoke(asyncProcessor)
     */
+
+    // Async Job Processor (Start jobs using Async APIs)
+    const pdfToBoundingBox = new lambda.Function(this, 'PdfToBboxAndText', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('../lambda/function/pdftobboxtext'),
+      handler: 'lambda_function.lambda_handler',
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 1280,
+      environment: {
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
+      }
+    });
+
+     //Layer
+    pdfToBoundingBox.addLayers(pythonModulesLayer)
+    pdfToBoundingBox.addLayers(helperLayer)
+
+    pdfToBoundingBox.addEventSource(new SqsEventSource(pdfToBoundingBoxAndTextQueue, {
+      batchSize: 1
+    }));
+
+    //Permissions
+    contentBucket.grantRead(pdfToBoundingBox)
+    existingContentBucket.grantReadWrite(pdfToBoundingBox)
+    outputBucket.grantReadWrite(pdfToBoundingBox)
+    pdfToBoundingBoxAndTextQueue.grantConsumeMessages(pdfToBoundingBox)
   }
 }
