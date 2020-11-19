@@ -1,5 +1,4 @@
 import os
-import pdfplumber
 import json
 import chardet
 from io import BytesIO
@@ -36,16 +35,6 @@ def read_from_s3(aws_env):
         print("Failing to decode, return content in bytes")
         return content
     return content
-
-
-def extract_pdf(pdf_output: str) -> None:
-    with pdfplumber.open(pdf_output) as pdf:
-        for page in pdf.pages:
-            words_extracted = page.extract_words(x_tolerance=3, y_tolerance=3, keep_blank_chars=True,
-                                                 use_text_flow=False, horizontal_ltr=True, vertical_ttb=True,
-                                                 extra_attrs=[])
-            for word in words_extracted:
-                print("==> Word object: {}", word)
 
 
 def get_pdf_filename(path_to_html: str, document_id: str) -> str:

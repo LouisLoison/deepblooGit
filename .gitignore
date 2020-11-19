@@ -14,4 +14,10 @@ textract-pipeline/lambda/pipenv/
 # IDEA folder
 .idea/
 
+# Packages folder
+lambda/layer/combined/
+lambda/layer/pipenv/
+lambda/libjs/
+package-lock.json
+
 .*.swp
