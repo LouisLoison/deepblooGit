@@ -78,7 +78,7 @@ exports.handler =  async function(event, ) {
       }
     } else if (dataSource === 'dgmarket') {
       importData = row
-    } 
+    }
 
     const importTenderInfo = {
       ...importData,

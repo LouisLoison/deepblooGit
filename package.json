@@ -5,6 +5,7 @@
     "postinstall": "npm run build-deps ; (cd cdk && npm install )",
     "build-deps": "./tools/build-deps.sh",
     "clean": "rm -fr lambda/layer/pipenv/python cdk/cdk.out",
+    "lint": "eslint lambda cdk",
     "test": "./tools/test-lambda-imports.sh",
     "local-start": "sudo -b nohup docker-compose -f local/stack.yml up -d  && sudo tail --retry -f nohup.out",
     "local-init-db": "sudo docker run --rm -v $PWD/local:/opt:ro,delegated --network host --name pgloader dimitri/pgloader:latest pgloader /opt/pgloader-local.cmd",
