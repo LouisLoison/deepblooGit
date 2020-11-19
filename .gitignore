@@ -16,6 +16,7 @@ textract-pipeline/lambda/pipenv/
 
 # Packages folder
 lambda/layer/combined/
-lambda/layer/pipenv/
+lambda/layer/pipenv/bin
+lambda/layer/pipenv/python
 
 .*.swp
