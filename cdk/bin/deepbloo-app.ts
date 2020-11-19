@@ -13,6 +13,6 @@ const textractPipelineStack = new TextractPipelineStack(app, 'TextractPipelineSt
 
 new ImportsStepsStack(app, 'ImportsStepsStack', {
   env: { account: "669031476932", region:   "eu-west-1" },
-  nodeLayerArn: textractPipelineStack.nodeLayerArn,
+  //  nodeLayerArn: textractPipelineStack.nodeLayerArn,
 });
 

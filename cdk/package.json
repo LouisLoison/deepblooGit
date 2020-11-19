@@ -8,6 +8,7 @@
     "clean": "rm cdk.out",
     "watch": "tsc -w",
     "test": "jest",
+    "deploy-all": "cdk deploy --all",
     "deploy": "cdk deploy"
   },
   "devDependencies": {

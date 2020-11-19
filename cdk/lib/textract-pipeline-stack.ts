@@ -13,7 +13,7 @@ import s3 = require('@aws-cdk/aws-s3');
 // import * as ec2 from '@aws-cdk/aws-ec2';
 
 export class TextractPipelineStack extends cdk.Stack {
-  readonly nodeLayerArn: lambda.ILayerVersion;
+//  readonly nodeLayerArn: lambda.ILayerVersion;
 
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -174,7 +174,7 @@ export class TextractPipelineStack extends cdk.Stack {
       description: 'Old backend and dependencies layer.',
     });
 
-    this.nodeLayerArn = nodeModulesLayer;
+    // this.nodeLayerArn = nodeModulesLayer;
 
     // new cdk.CfnOutput(this, 'NODE_LAYER_ARN', { value: nodeModulesLayer.layerVersionArn });
 

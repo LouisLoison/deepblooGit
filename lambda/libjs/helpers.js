@@ -55,7 +55,6 @@ ${JSON.stringify(data, null, 2)}`)
   }
 }
 
-log('test',{a:1})
 export {
   getFileContent,
   putFile,

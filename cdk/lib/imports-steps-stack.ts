@@ -6,13 +6,14 @@ import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import s3 = require('@aws-cdk/aws-s3');
 import iam = require('@aws-cdk/aws-iam');
 
-
+/*
 interface ImportsStepsStackProps extends StackProps {
   nodeLayerArn: ILayerVersion;
 }
+ */
 
 export class ImportsStepsStack extends Stack {
-  constructor(scope: Construct, id: string, props: ImportsStepsStackProps) {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     const environment = {
@@ -22,7 +23,15 @@ export class ImportsStepsStack extends Stack {
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
-    const nodeLayer = props.nodeLayerArn
+    const nodeLayer = new LayerVersion(this, 'NodeLib', {
+      code: new AssetCode('../lambda/layer/npm'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Apache-2.0, MIT',
+      description: 'Old backend and dependencies layer.',
+    });
+
+
+
     const appsearchIndex = new Function(this, 'AppsearchIndex', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/appsearchIndex'),
@@ -70,7 +79,6 @@ export class ImportsStepsStack extends Stack {
     const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: chain,
     });
-
 
     const xmlImport = new Function(this, 'XmlImport', {
       runtime: Runtime.NODEJS_12_X,
