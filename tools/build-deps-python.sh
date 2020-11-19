@@ -5,6 +5,8 @@ cd lambda/layer/pipenv
 
 PIPENV=$(pipenv --venv)/lib/python3.8/site-packages
 
+cp -a $(pipenv --venv)/bin bin
+
 for module in `ls -1 $PIPENV |grep -v 'dist-info$'` ; do
     # echo $module
     cp -a $PIPENV/$module python
