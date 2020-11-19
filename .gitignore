@@ -18,5 +18,6 @@ textract-pipeline/lambda/pipenv/
 lambda/layer/combined/
 lambda/layer/pipenv/bin
 lambda/layer/pipenv/python
+lambda/libjs/*.tgz
 
 .*.swp
