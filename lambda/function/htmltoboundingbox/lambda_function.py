@@ -34,7 +34,7 @@ def send_to_pdf_to_bbox_lambda(aws_env: dict) -> None:
         "awsRegion": aws_env["awsRegion"]
     }
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
-    qUrl = aws_env['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL']
+    qUrl = aws_env['pdfToBboxQueueUrl']
     send_message(client, qUrl, json_message)
 
 
