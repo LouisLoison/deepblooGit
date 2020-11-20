@@ -477,6 +477,7 @@ export class TextractPipelineStack extends cdk.Stack {
       environment: {
         OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
+        PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL: pdfToBoundingBoxAndTextQueue.queueUrl
       }
     });
 

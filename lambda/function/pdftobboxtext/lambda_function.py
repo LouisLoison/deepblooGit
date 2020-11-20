@@ -69,7 +69,7 @@ def lambda_handler(event, context):
         "objectName": body['objectName'],
         "documentId": body['documentId'],
         "awsRegion": aws_region,
-        #"outputBucket": os.environ['OUTPUT_BUCKET'],
+        "outputBucket": os.environ['OUTPUT_BUCKET'],
         "outputName": get_bbox_filename(body['objectName'], body['documentId'])
     }
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)

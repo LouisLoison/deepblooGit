@@ -20,6 +20,24 @@ def convert_html_to_pdf(html_str, aws_env) -> None:
     s3_obj.put(Body=content)
 
 
+def send_message(client, qUrl, json_message) -> None:
+    message = json.dumps(json_message)
+    client.send_message(QueueUrl=qUrl, Messagebody=json_message)
+    print("Submitted message to queue: {}".format(message))
+
+
+def send_to_pdf_to_bbox_lambda(aws_env: dict) -> None:
+    json_message = {
+        "bucketName": aws_env["outputBucket"],
+        "objectName": aws_env["outputName"],
+        "documentId": aws_env["documentId"],
+        "awsRegion": aws_env["awsRegion"]
+    }
+    client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
+    qUrl = aws_env['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL']
+    send_message(client, qUrl, json_message)
+
+
 def read_from_s3(aws_env):
     bucket_name = aws_env['bucketName']
     s3_file_name = aws_env['objectName']
@@ -54,11 +72,13 @@ def lambda_handler(event, context):
         "documentId": body['documentId'],
         "awsRegion": aws_region,
         "outputBucket": os.environ['OUTPUT_BUCKET'],
+        "pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
         "outputName": get_pdf_filename(body['objectName'], body['documentId'])
     }
 
     html_content = read_from_s3(aws_env)
     convert_html_to_pdf(html_content, aws_env)
+    send_to_pdf_to_bbox_lambda(aws_env)
 
     return {
         'statusCode': 200,
