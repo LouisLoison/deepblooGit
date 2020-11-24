@@ -18,6 +18,37 @@
         class="font-weight-bold display-table-row px-0"
         style="border-bottom: 1px solid #78909c; margin-bottom: 14px; color: #3d4872; background-color: #fafafa; padding-top: 6px;"
       >
+        <div class="display-table-head display-table-cell-option">
+          <v-menu transition="slide-y-transition" offset-y left>
+            <template v-slot:activator="{ on }">
+              <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
+                <v-icon size="16">fa-bars</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list class="list-icon">
+              <v-list-item
+                v-for="(column, index) in columns"
+                :key="`column${index}`"
+              >
+                <v-list-item-action
+                  @click.stop="updateUserScreen()"
+                  class="mt-3"
+                >
+                  <v-checkbox v-model="column.show" class="ma-0" />
+                </v-list-item-action>
+                <v-list-item-title
+                  @click.stop="
+                    column.show = !column.show;
+                    updateUserScreen();
+                  "
+                >
+                  {{ column.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
         <div class="display-table-head display-table-cell-avatar" />
         <div class="display-table-head display-table-cell-title">
           Title
@@ -100,7 +131,7 @@
                   :facet="searchState.facets.notice_type[0]"
                   @change="handleFacetChange($event, 'notice_type')"
                   @checkAll="handleFacetCheckAll('notice_type')"
-                  @unCheckAll="handleFacetChange('notice_type')"
+                  @unCheckAll="handleFacetUnCheckAll('notice_type')"
                 />
 
                 <SearchFacet
@@ -190,37 +221,6 @@
             {{ column.title }}
           </div>
         </div>
-        <div class="display-table-head display-table-cell-option">
-          <v-menu transition="slide-y-transition" offset-y left>
-            <template v-slot:activator="{ on }">
-              <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
-                <v-icon size="16">fa-bars</v-icon>
-              </v-btn>
-            </template>
-
-            <v-list class="list-icon">
-              <v-list-item
-                v-for="(column, index) in columns"
-                :key="`column${index}`"
-              >
-                <v-list-item-action
-                  @click.stop="updateUserScreen()"
-                  class="mt-3"
-                >
-                  <v-checkbox v-model="column.show" class="ma-0" />
-                </v-list-item-action>
-                <v-list-item-title
-                  @click.stop="
-                    column.show = !column.show;
-                    updateUserScreen();
-                  "
-                >
-                  {{ column.title }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
       </div>
       <div
         v-if="results && results.length > 0"
@@ -235,6 +235,60 @@
             style="border-bottom: 1px solid #d7d7d7;"
             @click.stop="$emit('tenderDialogShow', result)"
           >
+            <div
+              class="display-table-cell display-table-cell-option"
+            >
+              <v-menu transition="slide-y-transition" offset-y left>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    class="ma-0 pa-0"
+                    @click.stop
+                  >
+                    <v-icon size="16">fa-ellipsis-v</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-list class="list-icon">
+                  <v-list-item
+                    @click="openTenderGroupChoice(result)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa fa-circle</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Assign to group
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item
+                    @click="openSentEmailDialog(result)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa-bell</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Notify
+                    </v-list-item-title>
+                  </v-list-item>
+
+                  <v-list-item
+                    :to="{
+                      name: 'TenderAdd',
+                      params: { tender: result }
+                    }"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon text>fa-copy</v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Duplicate
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
             <div
               class="display-table-cell display-table-cell-avatar"
               style="position: relative;"
@@ -332,7 +386,11 @@
                   }}
                 </div>
               </div>
-              <div v-else-if="column.property === 'cpv'">
+              <div
+                v-else-if="column.property === 'cpv'"
+                style="position: relative;"
+                :title="result.cpvs.raw.join(', ')"
+              >
                 <div v-if="result.cpvs && result.cpvs.raw">
                   <div
                     v-for="(cpv, cpvIndex) of result.cpvs.raw"
@@ -344,6 +402,16 @@
                     </v-avatar>
                     {{ cpv }}
                   </div>
+                </div>
+                <div
+                  v-if="
+                    result.cpvs.raw &&
+                    result.cpvs.raw.length > 2
+                  "
+                  class="blue-grey--text"
+                  style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                >
+                  +{{ result.cpvs.raw.length - 2 }} more
                 </div>
               </div>
               <div
@@ -439,60 +507,6 @@
                   {{ result[column.property].raw }}
                 </div>
               </div>
-            </div>
-            <div
-              class="display-table-cell display-table-cell-option"
-            >
-              <v-menu transition="slide-y-transition" offset-y left>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    v-on="on"
-                    class="ma-0 pa-0"
-                    @click.stop
-                  >
-                    <v-icon size="16">fa-ellipsis-v</v-icon>
-                  </v-btn>
-                </template>
-
-                <v-list class="list-icon">
-                  <v-list-item
-                    @click="openTenderGroupChoice(result)"
-                  >
-                    <v-list-item-avatar>
-                      <v-icon text>fa fa-circle</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-title>
-                      Assign to group
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <v-list-item
-                    @click="openSentEmailDialog(result)"
-                  >
-                    <v-list-item-avatar>
-                      <v-icon text>fa-bell</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-title>
-                      Notify
-                    </v-list-item-title>
-                  </v-list-item>
-
-                  <v-list-item
-                    :to="{
-                      name: 'TenderAdd',
-                      params: { tender: result }
-                    }"
-                  >
-                    <v-list-item-avatar>
-                      <v-icon text>fa-copy</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-title>
-                      Duplicate
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
             </div>
           </div>
         </div>
@@ -657,15 +671,15 @@ export default {
           this.getDataGroups.loading !== 1 ||
           !this.getDataGroups.data
         ) {
-          return null;
+          return null
         }
         const tenderGroups = this.getDataGroups.data.filter(a =>
-          result.groups.raw.includes(a.tenderGroupId)
-        );
+          result.groups.raw.includes(a.tenderGroupId.toString())
+        )
         if (!tenderGroups || !tenderGroups.length) {
-          return null;
+          return null
         }
-        return tenderGroups;
+        return tenderGroups
       };
     },
   },
@@ -723,6 +737,10 @@ export default {
 
     handleFacetUnCheckAll(facet) {
       this.$emit('handleFacetUnCheckAll', facet)
+    },
+
+    openTenderGroupChoice(result) {
+      this.$emit('openTenderGroupChoice', result)
     },
   },
 };

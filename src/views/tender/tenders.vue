@@ -157,6 +157,7 @@
           @handleFacetChange="$refs.TendersFilter.handleFacetChange($event.event, $event.facet)"
           @handleFacetCheckAll="$refs.TendersFilter.handleFacetCheckAll($event)"
           @handleFacetUnCheckAll="$refs.TendersFilter.handleFacetUnCheckAll($event)"
+          @tenderOpen="tenderOpen($event)"
         />
       </div>
       <div v-else class="text-center pa-5">
@@ -216,6 +217,8 @@ export default {
     loading: true,
     panels: [ 1 ],
     filter: {
+      region_lvl0: [],
+      region_lvl1: [],
       country: [],
       notice_type: [],
       currency: [],
@@ -230,6 +233,7 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
+      origine: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',
@@ -461,6 +465,16 @@ export default {
     handleFormSubmit(event) {
       this.searchInputValue = event
       driver.getActions().setSearchTerm(this.searchInputValue)
+      for (let facet in this.filter) {
+        for (let value of this.filter[facet]) {
+          const facetFromDriver = this.driver.getState().facets[facet][0]
+          const valueforApi =
+            facetFromDriver.type === 'range'
+              ? facetFromDriver.data.find(item => item.value.name === value).value
+              : value
+          this.driver.addFilter(facet, valueforApi, 'any')
+        }
+      }
     },
 
     setCurrentPage(page) {
@@ -493,6 +507,14 @@ export default {
       }
       if (this.$refs.TendersFilter) {
         this.$refs.TendersFilter.handleFacetChange(event, facet.field)
+      }
+    },
+
+    async tenderOpen(result) {
+      try {
+        this.driver.trackClickThrough(result.id.raw, [])
+      } catch (err) {
+        console.log(err)
       }
     },
   }

@@ -10,16 +10,17 @@
         class="search-section__search-result"
       >
         <SearchResult
+          ref="SearchResult"
           :result="result"
           @tenderDialogShow="tenderOpen(result)"
           @openTenderGroupChoice="openTenderGroupChoice(result)"
           @openSentEmailDialog="openSentEmailDialog(result)"
-          ref="SearchResult"
         />
       </div>
     </div>
     <SearchResultsTable
       v-else
+      ref="SearchResultsTable"
       :results="results"
       :filter="filter"
       :searchState="searchState"
@@ -28,15 +29,23 @@
       @handleFacetChange="handleFacetChange($event)"
       @handleFacetCheckAll="handleFacetCheckAll($event)"
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
+      @openTenderGroupChoice="openTenderGroupChoice($event)"
     />
 
     <!-- Dialog -->
-    <TenderDialog ref="TenderDialog" @updateTender="refreshFunction()" />
+    <TenderDialog
+      ref="TenderDialog"
+      @updateTender="refreshFunction()"
+      @openTenderGroupChoice="openTenderGroupChoice($event)"
+    />
     <TenderGroupChoice
       ref="TenderGroupChoice"
       @choice="moveTenderToGroup($event.tender, $event.group)"
     />
-    <SentEmailDialog ref="SentEmailDialog" @notifySent="loadUserNotifys()" />
+    <SentEmailDialog
+      ref="SentEmailDialog"
+      @notifySent="loadUserNotifys()"
+    />
   </div>
 </template>
 
@@ -81,9 +90,6 @@ export default {
     },
   },
 
-  data: () => ({
-  }),
-
   computed: {
     ...mapGetters([
       'getUserId',
@@ -105,33 +111,51 @@ export default {
     },
 
     async moveTenderToGroup(result, tenderGroup) {
-      let SearchResultHtml = null
-      if (result) {
-        SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id === result.id)
+      try {
+        let SearchResultHtml = null
+        if (result) {
+          if (this.displayType === 'CARD') {
+            SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
+            if (SearchResultHtml) {
+              SearchResultHtml.groupLoadingStatus(true)
+            }
+            result = SearchResultHtml.result
+          } else {
+            result = this.$refs.SearchResultsTable.results.find(a => a.id.raw === result.id.raw)
+          }
+        }
+        const res = await this.$api.post("/Tender/TenderGroupMove", {
+          userId: this.getUserId,
+          tenderGroupId: tenderGroup ? tenderGroup.tenderGroupId : null,
+          tenderId: result.tender_id.raw,
+          algoliaId: result.object_id && result.object_id.raw ? result.object_id.raw : 0
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        if (res.data) {
+          let groups = res.data.groups.map(String)
+          if (!result.groups) {
+            result.groups = {}
+          }
+          result.groups.raw = groups
+
+          // MAJ tender dialog
+          if (
+            this.$refs.TenderDialog
+            && this.$refs.TenderDialog.tender
+            && this.$refs.TenderDialog.tender.id.raw === result.id.raw
+          ) {
+            this.$refs.TenderDialog.updateTenderGroup(res.data.groups)
+          }
+        }
         if (SearchResultHtml) {
-          SearchResultHtml.groupLoadingStatus(true)
+          SearchResultHtml.groupLoadingStatus(false)
         }
+        this.$emit('moveTenderToGroup')
+      } catch (err) {
+        console.log(err)
       }
-      const res = await this.$api.post("/Tender/TenderGroupMove", {
-        userId: this.getUserId,
-        tenderGroupId: tenderGroup ? tenderGroup.tenderGroupId : null,
-        tenderId: result.tender_id.raw,
-        algoliaId: result.object_id && result.object_id.raw ? result.object_id.raw : 0
-      })
-      if (!res.success) {
-        throw new Error(res.Error)
-      }
-      if (res.data) {
-        res.data.groups = res.data.groups.map(String)
-        if (!result.groups) {
-          result.groups = {}
-        }
-        result.groups.raw = res.data.groups
-      }
-      if (SearchResultHtml) {
-        SearchResultHtml.groupLoadingStatus(false)
-      }
-      this.$emit('moveTenderToGroup')
     },
 
     openSentEmailDialog(result) {
@@ -184,19 +208,7 @@ export default {
 
     tenderOpen(result) {
       this.$refs.TenderDialog.show(result)
-
-      console.log('-- process')
-      console.log(this.getAppSearchUrl)
-      // Sent click to AppSearch
-      // POST /api/as/v1/engines/{ENGINE_NAME}/click
-      /*
-      query (required) : The query that the user searched with.
-      document_id (required) : The id of the document that was clicked on.
-      request_id (optional) : The request id returned in the meta tag of a search API response.
-      tags (optional) : Array of strings representing additional information you wish to track with the clickthrough. You may submit up to 16 tags, and each may be up to 64 characters in length.
-
-      https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io//api/as/v1/engines/deepbloo/search.json
-      */
+      this.$emit('tenderOpen', result)
     }
   },
 };

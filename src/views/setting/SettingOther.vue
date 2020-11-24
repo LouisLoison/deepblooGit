@@ -495,8 +495,6 @@ export default {
           Environnement: this.Environnement
         })
         .then(res => {
-          // console.log('/Setting/SchemaCheck')
-          // console.log(res)
           if (!res.success) {
             throw new Error(res.Error);
           }

@@ -31,6 +31,7 @@
     >
       <v-card-text class="pa-0">
         <SearchFacetRegion
+          ref="SearchFacetRegion"
           :driver="driver"
           @filterChange="facetRegionChange($event)"
         />
@@ -92,7 +93,7 @@
           :facet="searchState.facets.notice_type[0]"
           @change="handleFacetChange($event, 'notice_type')"
           @checkAll="handleFacetCheckAll('notice_type')"
-          @unCheckAll="handleFacetChange('notice_type')"
+          @unCheckAll="handleFacetUnCheckAll('notice_type')"
         />
       </v-card-text>
     </v-card>
@@ -242,6 +243,21 @@
         />
       </v-card-text>
     </v-card>
+
+    <v-card
+      class="mx-auto mb-3"
+      outlined
+    >
+      <v-card-text>
+        <SearchFacet
+          :checked="filter.origine"
+          :facet="searchState.facets.origine[0]"
+          @change="handleFacetChange($event, 'origine')"
+          @checkAll="handleFacetCheckAll('origine')"
+          @unCheckAll="handleFacetUnCheckAll('origine')"
+        />
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -275,6 +291,8 @@ export default {
   data: () => ({
     sortBy: 'relevance',
     filter: {
+      region_lvl0: [],
+      region_lvl1: [],
       country: [],
       notice_type: [],
       currency: [],
@@ -289,6 +307,7 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
+      origine: [],
     },
   }),
 
@@ -335,6 +354,9 @@ export default {
           this.filter[facet].splice(index, 1)
         }
         this.driver.removeFilter(facet, valueforApi, 'any')
+        if (facet === 'region_lvl1') {
+          this.$refs.SearchFacetRegion.filterChange(this.filter)
+        }
       }
       this.$emit('filterChange', this.filter)
     },
@@ -365,6 +387,10 @@ export default {
     },
 
     facetRegionChange(filter) {
+      this.filter = {
+        ...this.filter,
+        ...filter,
+      }
       this.$emit('filterChange', filter)
     }
   },

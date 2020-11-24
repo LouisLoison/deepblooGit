@@ -345,7 +345,6 @@ export default {
       periods.sort()
       periods = periods.reverse().slice(0, this.dayCount)
       periods.reverse()
-      console.log(periodData)
 
       for (const period of periods) {
         const datas = periodData[period]

@@ -66,6 +66,9 @@ const config = {
       brands: {
         type: "value"
       },
+      origine: {
+        type: "value"
+      },
     }
   }
 }

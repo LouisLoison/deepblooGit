@@ -41,6 +41,14 @@ export default [
     component: () => import(`@/views/Login.vue`)
   },
   {
+    path: "/tender/",
+    meta: {
+      public: true
+    },
+    name: "tender",
+    component: () => import(`@/views/tender/tender.vue`)
+  },
+  {
     path: "/tenders/",
     meta: {
       public: true

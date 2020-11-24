@@ -10,10 +10,54 @@
     <div v-else>
       <div>
         <div
+          v-if="hasReadRight && getDataGroups && getDataGroups.loading === 1"
+          style="position: absolute; z-index: 10; right: 166px;"
+        >
+          <div v-if="!tenderGroups">
+            <v-btn
+              @click.stop="openTenderGroupChoice()"
+              :loading="groupLoading"
+              icon
+              light
+              fixed
+              right
+              top
+              class="display-1"
+              style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
+              title="Add tender to a group"
+            >
+              <v-icon style="font-size: 18px; color: #ffffff !important;">
+                fa-circle
+              </v-icon>
+            </v-btn>
+          </div>
+          <div v-else>
+            <v-btn
+              v-for="(tenderGroup, indexSelect) in tenderGroups"
+              :key="`tenderGroup${indexSelect}`"
+              @click.stop="openTenderGroupChoice()"
+              :loading="groupLoading"
+              icon
+              light
+              fixed
+              right
+              top
+              class="display-1"
+              style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
+              :title="tenderGroup.label"
+            >
+              <v-icon :style="`font-size: 18px; color:${tenderGroup.color};`">
+                fa-circle
+              </v-icon>
+            </v-btn>
+          </div>
+        </div>
+        <div
           v-if="hasReadRight"
           style="position: absolute; z-index: 10; right: 110px;"
         >
           <v-btn
+            @click.stop="openSentEmailDialog(tender)"
             icon
             light
             fixed
@@ -22,7 +66,6 @@
             class="display-1"
             style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
             title="Share this opportuntiy with a colleague"
-            @click.stop="openSentEmailDialog(tender)"
           >
             <v-icon color="black darken-2" style="font-size: 20px;">
               fa fa-envelope
@@ -967,8 +1010,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
-import moment from "moment"
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'Tender',
@@ -988,6 +1031,7 @@ export default {
     },
     user: null,
     users: null,
+    groupLoading: true,
     groups: null,
     tenderGroupLinks: null,
     tenderDetail: null,
@@ -1152,6 +1196,7 @@ export default {
       'getUsername',
       'getUserType',
       'getDataCpvs',
+      'getDataGroups',
     ]),
 
     isFree() {
@@ -1198,19 +1243,38 @@ export default {
         !this.tender ||
         !this.tender.sourceUrl
       ) {
-        return false;
+        return false
       }
 
-      let display = false;
-      const sourceUrls = this.getItemUrl(this.tender);
+      let display = false
+      const sourceUrls = this.getItemUrl(this.tender)
       for (const sourceUrl of sourceUrls) {
-        const document = this.documents.find(a => a.sourceUrl === sourceUrl);
+        const document = this.documents.find(a => a.sourceUrl === sourceUrl)
         if (!document) {
-          display = true;
+          display = true
         }
       }
 
-      return display;
+      return display
+    },
+
+    tenderGroups() {
+      if (
+        !this.tenderGroupLinks ||
+        !this.tenderGroupLinks.length ||
+        !this.getDataGroups ||
+        this.getDataGroups.loading !== 1 ||
+        !this.getDataGroups.data
+      ) {
+        return null
+      }
+      const tenderGroups = this.getDataGroups.data.filter(a =>
+        this.tenderGroupLinks.map(a => a.tenderGroupId).includes(a.tenderGroupId)
+      )
+      if (!tenderGroups || !tenderGroups.length) {
+        return null
+      }
+      return tenderGroups
     },
   },
 
@@ -1218,6 +1282,7 @@ export default {
     async loadTender(tenderId) {
       try {
         this.tender = null
+        this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
           id: tenderId
         })
@@ -1485,23 +1550,25 @@ export default {
     async loadTenderGroupList() {
       try {
         if (!this.getUserId) {
-          return;
+          return
         }
+        this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGroupList", {
           userId: this.getUserId
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.groups = [];
+        this.groups = []
         for (const group of res.data) {
           this.groups.push({
             ...group,
             isCheck: false
-          });
+          })
         }
+        this.groupLoading = false
       } catch (err) {
-        this.$api.error(err, this);
+        this.$api.error(err, this)
       }
     },
 
@@ -1722,6 +1789,28 @@ export default {
       } catch (err) {
         this.$api.error(err, this);
       }
+    },
+
+    openTenderGroupChoice() {
+      let result = {
+        id: {
+          raw: this.tender.id.toString()
+        },
+        object_id: {
+          raw: this.tender.algoliaId.toString()
+        },
+        tender_id: {
+          raw: this.tender.id.toString()
+        },
+        groups: {
+          raw: this.tenderGroupLinks.map(a => a.tenderGroupId.toString())
+        },
+      }
+      this.$emit('openTenderGroupChoice', result)
+    },
+
+    updateTenderGroup() {
+      this.loadTenderGroupLinkList()
     },
   },
 }

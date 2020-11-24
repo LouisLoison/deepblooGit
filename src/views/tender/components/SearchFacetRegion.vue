@@ -98,8 +98,7 @@ export default {
         region_lvl0: [],
         region_lvl1: [],
       }
-      const items = this.getItems
-      for (const item of items) {
+      for (const item of this.getItems) {
         this.driver.removeFilter('region_lvl0', item.name, "any")
         if (this.active.includes(item.id)) {
           filter.region_lvl0.push(item.name)
@@ -108,7 +107,7 @@ export default {
         for (const itemSub of item.children) {
           this.driver.removeFilter('region_lvl1', `${item.name} > ${itemSub.name}`, "any")
           if (this.active.includes(itemSub.id)) {
-            filter.region_lvl1.push(item.name)
+            filter.region_lvl1.push(`${item.name} > ${itemSub.name}`)
             this.driver.addFilter('region_lvl1', `${item.name} > ${itemSub.name}`, "any")
           }
         }
@@ -116,6 +115,24 @@ export default {
       this.$emit('filterChange', filter)
     },
   },
+
+  methods: {
+    filterChange(filter) {
+      let activeNew = this.active
+      for (const item of this.getItems) {
+        if (!filter.region_lvl0.includes(item.name)) {
+          activeNew = activeNew.filter(a => a !== item.id)
+        }
+        for (const itemSub of item.children) {
+          if (!filter.region_lvl1.includes(`${item.name} > ${itemSub.name}`)) {
+            activeNew = activeNew.filter(a => a !== itemSub.id)
+          }
+        }
+      }
+      this.active = activeNew
+    },
+  }
+
 }
 </script>
 
