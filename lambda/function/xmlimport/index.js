@@ -2,20 +2,40 @@ const { getFileContent, getXmlJsonData, log } = require('deepbloo');
 const { StepFunctions } = require('aws-sdk')
 const xml2js = require('xml2js')
 const util = require('util')
+const { v4: uuidv4 } = require('uuid');
 
 const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
-const startImportSteps = async (data) => {
-  const normedObject = data.fileSource.split('').filter(char => /[a-zA-Z0-9-_]/.test(char))
-  const name = `${normedObject}-${data.fileSourceIndex}`
-  const params = {
-    stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
-    input: JSON.stringify(data, null, 2),
-    name,
+const startImportSteps = (data) => {
+  return new Promise(async (callback, reject) => {
+    const normedObject = data.fileSource.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
+    const name = `${normedObject}-${data.fileSourceIndex}`
+    log(name, process.env.TENDER_STATE_MACHINE_ARN)
+    const params = {
+      stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
+      input: JSON.stringify(data, null, 2),
+      name,
     // traceHeader: 'STRING_VALUE'
-  };
-  const result = stepfunctions.startExecution(params);
-  log(result, 'Started stepfunctions');
+    };
+    const request = await stepfunctions.startExecution(params);
+    // listen for success
+    request.on("extractData", res => {
+      log(`startExecution Succeeded:\n`, res);
+      callback({
+        statusCode: 200
+      });
+    });
+    // listen for error
+    request.on("error", (err, response) => {
+      log(
+        `Error --  ${err.message} ${err.code}, ${err.statusCode}`
+      );
+      reject(err);
+    });
+    // send request
+    request.send();
+    log(request, 'Started stepfunctions');
+  });
 }
 
 exports.handler =  async function(event, ) {
@@ -95,6 +115,6 @@ exports.handler =  async function(event, ) {
     await startImportSteps(importTenderInfo)
     if (tenderCount > 1) { break }
   }
-  console.log(`Started ${tenderCount} jobs`)
+  log(`Started ${tenderCount} jobs`)
 }
 

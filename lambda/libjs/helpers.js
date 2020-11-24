@@ -42,11 +42,11 @@ const getXmlJsonData = (data) => {
 
 const log = (message, data, level='INFO') => {
   try {
-    console.log(`${level} ${JSON.stringify(message, null, 2)}
+    console.log(`${JSON.stringify(message, null, 2)}
 ${JSON.stringify(data, null, 2)}`)
   } catch (e) {
     if (e instanceof TypeError) {
-      console.log(`${level} ${message}`)
+      console.log(message)
       console.log(data);
     }
     else {

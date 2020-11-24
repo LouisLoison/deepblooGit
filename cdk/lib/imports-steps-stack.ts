@@ -1,10 +1,11 @@
-import { Chain, Choice, Condition, Fail, StateMachine, Task } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, Task, LogLevel } from '@aws-cdk/aws-stepfunctions';
 import { InvokeFunction } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion, ILayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
 import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import s3 = require('@aws-cdk/aws-s3');
 import iam = require('@aws-cdk/aws-iam');
+import logs = require('@aws-cdk/aws-logs');
 
 /*
 interface ImportsStepsStackProps extends StackProps {
@@ -76,8 +77,15 @@ export class ImportsStepsStack extends Stack {
       .when(Condition.numberEquals('$.Status', 0), escalateCase.next(jobFailed)),
   );
        */
+
+    const logGroup = new logs.LogGroup(this, 'MyLogGroup');
+
     const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: chain,
+      logs: {
+        destination: logGroup,
+        level: LogLevel.ALL,
+      }
     });
 
     const xmlImport = new Function(this, 'XmlImport', {
@@ -100,5 +108,8 @@ export class ImportsStepsStack extends Stack {
       filters: [{ prefix: 'incoming/', suffix: '.xml'}]
     }))
     sftpBucket.grantReadWrite(xmlImport)
+    stateMachine.grantStartExecution(xmlImport)
+    // stateMachine.grantRead(xmlImport)
+    // stateMachine.grantTaskResponse(xmlImport)
   }
 }
