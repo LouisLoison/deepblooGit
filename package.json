@@ -8,9 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@elastic/react-search-ui-views": "^1.4.1",
-    "@elastic/search-ui": "^1.4.1",
-    "@elastic/search-ui-app-search-connector": "^1.4.1",
+    "@elastic/react-search-ui-views": "^1.5.x",
+    "@elastic/search-ui": "^1.5.x",
+    "@elastic/search-ui-app-search-connector": "^1.5.x",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
