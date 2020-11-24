@@ -22,7 +22,7 @@ def convert_html_to_pdf(html_str, aws_env) -> None:
 
 def send_message(client, qUrl, json_message) -> None:
     message = json.dumps(json_message)
-    client.send_message(QueueUrl=qUrl, Messagebody=json_message)
+    client.send_message(QueueUrl=qUrl, MessageBody=message)
     print("Submitted message to queue: {}".format(message))
 
 

@@ -2,7 +2,7 @@ import json
 import os
 import pdfplumber
 import subprocess
-from helper import AwsHelper
+from helper import AwsHelper, S3Helper
 
 
 def get_bbox_filename(path_to_pdf: str, document_id: str) -> str:
@@ -32,11 +32,20 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
     pdfplumber_cmd = ["pdfplumber", "--format", output_format, output_type]
     commands = [*pdfplumber_cmd, "< {}".format(pdf_tmp_path), "> {0}".format(bbox_output)]
     try:
+        print("Executing PDF to Bounding box")
         subprocess.call(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as error:
         print("[EXIT CODE] : {0}\n[DESCRIPTION]  => {1}".format(error.returncode, error.stdout))
         return error.returncode
     return 0
+
+
+def is_pdf_with_images(pdf_path) -> bool:
+    with pdfplumber.open(pdf_path) as pdf_content:
+        images = pdf_content.images
+        if len(images) == 0:
+            return False
+    return True
 
 
 def write_bbox_to_s3(aws_env: dict) -> None:
@@ -46,7 +55,7 @@ def write_bbox_to_s3(aws_env: dict) -> None:
 
 
 def copy_pdf_to_tmp(aws_env: dict) -> str:
-    pdf_content = AwsHelper.readFroms3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
+    pdf_content = S3Helper.readFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
     tmp_folder = "/tmp"
     pdf_tmp = "tmp_0.pdf"
     index = 0
@@ -56,8 +65,9 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
         pdf_tmp = "tmp_{0}.pdf".format(index)
         index += 1
     pdf_tmp = os.path.join(tmp_folder, pdf_tmp)
-    with open(pdf_tmp) as tmp_file:
+    with open(pdf_tmp, "w") as tmp_file:
         tmp_file.write(pdf_content)
+    print("Copy {0} to {1}".format(aws_env["objectName"], pdf_tmp))
     return pdf_tmp
 
 
@@ -73,8 +83,13 @@ def lambda_handler(event, context):
         "outputName": get_bbox_filename(body['objectName'], body['documentId'])
     }
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
-    execute_pdf_to_bbox(pdf_tmp_path, aws_env["outputName"])
-    write_bbox_to_s3(aws_env)
+    if is_pdf_with_images(pdf_tmp_path) is False:
+        print("Extracting bounding box without textract")
+        execute_pdf_to_bbox(pdf_tmp_path, aws_env["outputName"])
+        #write_bbox_to_s3(aws_env)
+    else:
+        print("Extracting bounding box with textract")
+        # send to textract
     return {
         'statusCode': 200,
         'body': 'All right'

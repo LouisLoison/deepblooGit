@@ -494,6 +494,8 @@ export class TextractPipelineStack extends cdk.Stack {
     existingContentBucket.grantReadWrite(htmlToBoundingBox)
     outputBucket.grantReadWrite(htmlToBoundingBox)
     htmltoboundingboxQueue.grantConsumeMessages(htmlToBoundingBox)
+    // Allow to write to the pdf queue
+    pdfToBoundingBoxAndTextQueue.grantSendMessages(htmlToBoundingBox)
     //--------------
     // PDF Generator
     /*
@@ -532,7 +534,7 @@ export class TextractPipelineStack extends cdk.Stack {
       batchSize: 1
     }));
 
-    //Permissions
+    // Permissions
     contentBucket.grantRead(pdfToBoundingBox)
     existingContentBucket.grantReadWrite(pdfToBoundingBox)
     outputBucket.grantReadWrite(pdfToBoundingBox)
