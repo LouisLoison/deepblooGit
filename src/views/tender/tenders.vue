@@ -26,7 +26,17 @@
         <v-expansion-panel @click="updateUserScreen()" style="background-color: transparent;">
           <v-expansion-panel-header>Group</v-expansion-panel-header>
           <v-expansion-panel-content>
-            <TendersGroup ref="TendersGroup" />
+            <TendersGroup
+              ref="TendersGroup"
+              @change="
+                tenderGroupChange(
+                  $event.tenderGroupId,
+                  $event.isWithoutGroup,
+                  $event.isMyPipeline,
+                  $event.isAllTenders
+                )
+              "
+            />
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -234,6 +244,7 @@ export default {
       contract_types: [],
       brands: [],
       origine: [],
+      groups: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',
@@ -241,6 +252,10 @@ export default {
     searchState: {},
     resultsPerPage: 40,
     sortBy: 'relevance',
+    isAllTenders: true,
+    isMyPipeline: false,
+    isWithoutGroup: false,
+    tenderGroupId: null,
   }),
 
   computed: {
@@ -516,6 +531,26 @@ export default {
       } catch (err) {
         console.log(err)
       }
+    },
+
+    tenderGroupChange(
+      tenderGroupId,
+      isWithoutGroup,
+      isMyPipeline,
+      isAllTenders
+    ) {
+      let facet = 'groups'
+      let value = tenderGroupId.toString()
+      this.isAllTenders = isAllTenders
+      this.isMyPipeline = isMyPipeline
+      this.isWithoutGroup = isWithoutGroup
+      this.tenderGroupId = tenderGroupId
+      for (const valueforApi of this.filter[facet]) {
+        this.driver.removeFilter(facet, valueforApi, 'any')
+      }
+      this.driver.addFilter(facet, value, 'any')
+      this.filter[facet] = []
+      this.filter[facet].push(value)
     },
   }
 }

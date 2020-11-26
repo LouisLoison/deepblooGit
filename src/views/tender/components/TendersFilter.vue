@@ -308,6 +308,7 @@ export default {
       contract_types: [],
       brands: [],
       origine: [],
+      groups: [],
     },
   }),
 

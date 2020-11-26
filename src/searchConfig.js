@@ -13,7 +13,12 @@ const config = {
   debug: false,
   apiConnector: connector,
   searchQuery: {
-    disjunctiveFacets: ["country", "notice_type", "currency", "cpvs"],
+    disjunctiveFacets: [
+      "country",
+      "notice_type",
+      "currency",
+      "cpvs"
+    ],
     facets: {
       region_lvl0: {
         type: "value"
@@ -35,7 +40,8 @@ const config = {
         type: "value"
       },
       cpvs: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       user_id: {
         type: "range",
@@ -67,6 +73,9 @@ const config = {
         type: "value"
       },
       origine: {
+        type: "value"
+      },
+      groups: {
         type: "value"
       },
     }

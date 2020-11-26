@@ -195,7 +195,7 @@ export default {
           )
         }
       }
-      return items
+      return items.slice(0, 10)
     },
   },
 
