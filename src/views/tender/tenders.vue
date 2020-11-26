@@ -157,7 +157,6 @@
       />
       <div v-if="searchState.wasSearched" class="sui-layout-body">
         <SearchResults
-          v-show="thereAreResults"
           :results="searchState.results"
           :displayType="displayType"
           :filter="filter"
@@ -264,6 +263,7 @@ export default {
       'isHeaderShow',
       'getIsMobile',
       'getScreenTenders',
+      'getDataOpportunity',
     ]),
 
     thereAreResults() {
@@ -477,21 +477,6 @@ export default {
       })
     },
 
-    handleFormSubmit(event) {
-      this.searchInputValue = event
-      driver.getActions().setSearchTerm(this.searchInputValue)
-      for (let facet in this.filter) {
-        for (let value of this.filter[facet]) {
-          const facetFromDriver = this.driver.getState().facets[facet][0]
-          const valueforApi =
-            facetFromDriver.type === 'range'
-              ? facetFromDriver.data.find(item => item.value.name === value).value
-              : value
-          this.driver.addFilter(facet, valueforApi, 'any')
-        }
-      }
-    },
-
     setCurrentPage(page) {
       driver.setCurrent(page)
     },
@@ -539,18 +524,73 @@ export default {
       isMyPipeline,
       isAllTenders
     ) {
-      let facet = 'groups'
-      let value = tenderGroupId.toString()
       this.isAllTenders = isAllTenders
-      this.isMyPipeline = isMyPipeline
       this.isWithoutGroup = isWithoutGroup
       this.tenderGroupId = tenderGroupId
-      for (const valueforApi of this.filter[facet]) {
-        this.driver.removeFilter(facet, valueforApi, 'any')
+      this.filter.groups = []
+      if (this.tenderGroupId) {
+        const value = tenderGroupId.toString()
+        this.filter.groups.push(value)
       }
-      this.driver.addFilter(facet, value, 'any')
-      this.filter[facet] = []
-      this.filter[facet].push(value)
+      if (this.isMyPipeline !== isMyPipeline) {
+        this.isMyPipeline = isMyPipeline
+        this.filter.cpvs = []
+        this.filter.region_lvl0 = []
+        this.filter.region_lvl1 = []
+      }
+      this.isMyPipeline = isMyPipeline
+      if (isMyPipeline && this.getDataOpportunity.loading) {
+        if (
+          this.getDataOpportunity.data.cpvs &&
+          this.getDataOpportunity.data.cpvs.length
+        ) {
+          for (let cpv of this.getDataOpportunity.data.cpvs) {
+            if (!this.filter.cpvs.includes(cpv.name)) {
+              this.filter.cpvs.push(cpv.name)
+            }
+          }
+        }
+
+        this.filter.region_lvl0 = []
+        this.filter.region_lvl1 = []
+        let regions = this.getDataOpportunity.data.user.regions.split(',')
+        if (regions.length && !regions.includes('Worldwide')) {
+          for (let region of regions) {
+            let regionMain = region.split('-')[0].trim()
+            let regionSub = region.split('-')[1].trim()
+            if (!this.filter.region_lvl0.includes(regionMain)) {
+              this.filter.region_lvl0.push(regionMain)
+            }
+            if (regionSub && regionSub !== '' && regionSub !== 'All') {
+              let regionSubFilter = `${regionMain} > ${regionSub}`
+              if (!this.filter.region_lvl1.includes(regionSubFilter)) {
+                this.filter.region_lvl1.push(regionSubFilter)
+              }
+            }
+          }
+        }
+      }
+      this.setSearchFilter()
+    },
+
+    handleFormSubmit(event) {
+      this.searchInputValue = event
+      this.setSearchFilter()
+    },
+
+    setSearchFilter() {
+      driver.clearFilters()
+      driver.getActions().setSearchTerm(this.searchInputValue)
+      for (let facet in this.filter) {
+        for (let value of this.filter[facet]) {
+          const facetFromDriver = this.driver.getState().facets[facet][0]
+          const valueforApi =
+            facetFromDriver.type === 'range'
+              ? facetFromDriver.data.find(item => item.value.name === value).value
+              : value
+          this.driver.addFilter(facet, valueforApi, 'any')
+        }
+      }
     },
   }
 }

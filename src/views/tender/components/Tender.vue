@@ -389,9 +389,10 @@
                         <a :href="url" target="_blank">
                           <i class="fa fa-external-link" />
                           {{
-                            !url.includes("www.dgmarket.com")
-                              ? url
-                              : "Link to tender documents"
+                            url.includes("www.dgmarket.com") ||
+                            url.includes("www2.dgmarket.com")
+                              ? "Link to tender documents"
+                              : url
                           }}
                         </a>
                       </span>
@@ -1400,15 +1401,15 @@ export default {
     },
 
     async loadCustomData() {
-      await this.loadUser();
-      this.loadOrganizations();
+      await this.loadUser()
+      await this.loadTenderGroupList()
+      this.loadTenderGroupLinkList()
+      this.loadOrganizations()
       if (!this.user || !this.user.organizationId) {
-        return;
+        return
       }
-      await this.loadUserList();
-      await this.loadTenderGroupList();
-      await this.loadTenderGroupLinkList();
-      await this.loadTenderDetail();
+      await this.loadUserList()
+      await this.loadTenderDetail()
     },
 
     async loadUser() {
@@ -1597,26 +1598,26 @@ export default {
 
     getItemUrl(tender) {
       if (!tender || !tender.sourceUrl || tender.sourceUrl.trim() === "") {
-        return [];
+        return []
       }
-      const sourceUrls = [];
+      const sourceUrls = []
       if (tender.sourceUrl) {
         for (const sourceUrl of tender.sourceUrl.split(",")) {
           if (sourceUrl.trim() === "") {
-            continue;
+            continue
           }
           if (this.documents) {
             const document = this.documents.find(
               a => a.sourceUrl === sourceUrl
-            );
+            )
             if (document) {
-              continue;
+              continue
             }
           }
-          sourceUrls.push(sourceUrl.trim());
+          sourceUrls.push(sourceUrl.trim())
         }
       }
-      return sourceUrls;
+      return sourceUrls
     },
 
     async loadTenderDetail() {

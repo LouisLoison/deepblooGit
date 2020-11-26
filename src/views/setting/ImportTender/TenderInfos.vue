@@ -224,7 +224,6 @@ export default {
       { id: 5, name: "Free" },
       { id: 2, name: "Premium" },
       { id: 4, name: "Business" },
-      { id: 6, name: "Bus Dev" },
       { id: 1, name: "Admin" }
     ],
     isActive: false,

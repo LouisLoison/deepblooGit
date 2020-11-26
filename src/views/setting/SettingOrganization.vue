@@ -274,7 +274,7 @@
                           @click.stop
                         />
                         <v-spacer></v-spacer>
-                        <v-btn flat @click="menu = false">Cancel</v-btn>
+                        <v-btn text @click="menu = false">Cancel</v-btn>
                       </v-card-actions>
                       <v-list>
                         <v-list-tile
@@ -359,7 +359,7 @@
                 <div>
                   <v-btn
                     v-if="organizationCpv.isSynchro"
-                    flat
+                    text
                     icon
                     color="red"
                     title="Exclude CPV"
@@ -368,7 +368,7 @@
                       >fa-ban</v-icon
                     >
                   </v-btn>
-                  <v-btn v-else flat icon color="red" title="Delete CPV">
+                  <v-btn v-else text icon color="red" title="Delete CPV">
                     <v-icon @click="organizationCpvDelete(organizationCpv)"
                       >delete</v-icon
                     >
@@ -403,12 +403,12 @@
                   {{ organizationCpv.name }}
                 </div>
                 <div>
-                  <v-btn flat icon color="green" title="Restore CPV">
+                  <v-btn text icon color="green" title="Restore CPV">
                     <v-icon @click="organizationCpvRestore(organizationCpv)"
                       >fa-check</v-icon
                     >
                   </v-btn>
-                  <v-btn flat icon color="red" title="Delete CPV">
+                  <v-btn text icon color="red" title="Delete CPV">
                     <v-icon @click="organizationCpvDelete(organizationCpv)"
                       >delete</v-icon
                     >
@@ -423,7 +423,7 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="green darken-1" flat @click="organizationAddUpdate()">
+          <v-btn color="green darken-1" text @click="organizationAddUpdate()">
             Save
           </v-btn>
         </v-card-actions>

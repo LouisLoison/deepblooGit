@@ -195,17 +195,14 @@
                     <v-chip v-else-if="item.type === 2" outlined color="blue">
                       Premium
                     </v-chip>
-                    <v-chip v-else-if="item.type === 3" outlined color="grey">
-                      Public
-                    </v-chip>
                     <v-chip v-else-if="item.type === 4" outlined color="green">
-                      Business
-                    </v-chip>
-                    <v-chip v-else-if="item.type === 6" outlined color="green">
-                      Bus Dev
+                      Business +
                     </v-chip>
                     <v-chip v-else-if="item.type === 5" outlined color="grey">
                       Free
+                    </v-chip>
+                    <v-chip v-else-if="item.type === 3" outlined color="grey">
+                      Public
                     </v-chip>
                   </td>
                   <td class="blue-grey--text body-2 font-weight-bold">
@@ -294,7 +291,7 @@
               v-model="user.password"
               type="text"
               required
-              :append-icon="'settings'"
+              :append-icon="'fa-cog'"
               @click:append="passwordGet()"
             />
 
@@ -594,7 +591,7 @@
         <v-card-actions>
           <v-btn
             color="blue darken-1"
-            flat="flat"
+            text
             :href="`https://platform.deepbloo.com/users/${user.hivebriteId}`"
             target="_blank"
           >
@@ -604,14 +601,18 @@
           <v-btn
             v-if="!getIsMobile"
             color="blue darken-1"
-            flat="flat"
+            text
             :loading="loadingUserSynchroFull"
             :disabled="loadingUserSynchroFull"
             @click="userSynchroFull()"
           >
             Synchro
           </v-btn>
-          <v-btn color="green darken-1" flat @click="userAddUpdate()">
+          <v-btn
+            @click="userAddUpdate()"
+            color="green darken-1"
+            text
+          >
             Save
           </v-btn>
         </v-card-actions>
@@ -658,8 +659,7 @@ export default {
       { id: 3, name: "Public" },
       { id: 5, name: "Free" },
       { id: 2, name: "Premium" },
-      { id: 4, name: "Business" },
-      { id: 6, name: "Bus Dev" },
+      { id: 4, name: "Business +" },
       { id: 1, name: "Admin" }
     ],
     isActive: false,

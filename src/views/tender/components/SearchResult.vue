@@ -17,7 +17,7 @@
       />
       <div
         v-if="getDataGroups && getDataGroups.loading === 1"
-        style="display: inline-block; height: 24px; width: 24px; margin: 0px 0px 0px 4px; background-color: #ffffff !important; position: absolute;"
+        style="display: inline-block; height: 24px; width: 24px; margin: 0px 0px 0px 4px; position: absolute;"
       >
         <div v-if="!tenderGroups">
           <v-btn
@@ -27,7 +27,7 @@
             icon
             small
             class="blue-grey--text text--lighten-4"
-            style="height: 20px; width: 20px; margin: 0px 4px 0px 0px; background-color: #ffffff !important;"
+            style="height: 20px; width: 20px; margin: 0px 4px 0px 0px;"
             title="Add tender to a group"
           >
             <v-icon style="font-size: 12px;">fa-circle</v-icon>

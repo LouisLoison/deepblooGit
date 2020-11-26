@@ -7,7 +7,7 @@
       permanent
       style="z-index: 10;"
     >
-      <v-toolbar flat>
+      <v-toolbar text>
         <v-list>
           <v-list-item>
             <v-list-item-title class="title">
@@ -39,7 +39,7 @@
     <div v-else style="position: fixed; top: 58px; right: 0px; z-index: 100;">
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn flat v-on="on">
+          <v-btn text v-on="on">
             Settings
             <v-icon class="pl-2">fa-caret-down</v-icon>
           </v-btn>

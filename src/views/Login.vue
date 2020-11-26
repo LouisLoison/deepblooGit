@@ -6,7 +6,7 @@
           <v-flex xs12 sm8 md4 lg4>
             <div class="text-center">
               <img
-                src="/static/deepbloo-original.png"
+                src="/static/image/deepbloo-original.png"
                 alt="DeepBloo"
                 width="300"
               />
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions } from 'vuex'
 
 export default {
   name: "Login",
@@ -88,9 +88,9 @@ export default {
 
   mounted() {
     if (this.$route.params) {
-      this.username = this.$route.params.email;
-      this.password = this.$route.params.password;
-      this.redirect = this.$route.params.redirect;
+      this.username = this.$route.params.email
+      this.password = this.$route.params.password
+      this.redirect = this.$route.params.redirect
     }
   },
 
@@ -98,8 +98,8 @@ export default {
     ...mapActions(["loadUser"]),
 
     login() {
-      this.loading = true;
-      this.error = false;
+      this.loading = true
+      this.error = false
       this.$api
         .post("/User/Login", {
           username: this.username,
@@ -107,7 +107,7 @@ export default {
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
           this.loadUser({
             userId: res.user.userId,
@@ -118,23 +118,24 @@ export default {
             password: this.password,
             photo: res.user.photo,
             token: res.token
-          });
+          })
           this.$api.init();
           if (this.redirect) {
-            this.$router.push({ name: this.redirect });
+            this.$router.push({ name: this.redirect })
           } else {
-            this.$router.push({ name: "Tenders" });
+            this.$router.push({ name: "Tenders" })
           }
         })
         .catch(err => {
-          this.loading = false;
-          this.error = true;
-          console.log(err);
-        });
+          this.loading = false
+          this.error = true
+          console.log(err)
+        })
     }
   }
 };
 </script>
+
 <style scoped lang="css">
 #login {
   height: 50%;

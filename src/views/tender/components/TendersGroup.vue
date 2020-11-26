@@ -1,6 +1,6 @@
 <template>
   <div class="pa-3">
-    <div v-if="!dataTenderGroups.loading" class="text-xs-center pa-5">
+    <div v-if="!dataTenderGroups.loading" class="text-center pa-5">
       <v-progress-circular :size="50" color="grey" indeterminate />
     </div>
     <div v-else>
@@ -49,7 +49,7 @@
             : `background-color: #c1c9ce !important; border-color: #c1c9ce !important;`
         "
       >
-        <div class="text-xs-center pa-1" style="pointer-events: none;">
+        <div class="text-center pa-1" style="pointer-events: none;">
           <v-avatar
             v-if="!isWithoutGroup"
             size="40"
@@ -99,7 +99,7 @@
               : ''
           "
         >
-          <div class="text-xs-center pa-1" style="pointer-events: none;">
+          <div class="text-center pa-1" style="pointer-events: none;">
             <v-avatar
               v-if="!group.select"
               size="40"
@@ -140,7 +140,7 @@
               <v-list class="list-icon">
                 <v-list-item avatar @click="openGroupDialog(group)">
                   <v-list-item-avatar>
-                    <v-icon flat>fa-edit</v-icon>
+                    <v-icon text>fa-edit</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-title>
                     Edit
@@ -149,7 +149,7 @@
 
                 <v-list-item avatar @click="deleteTenderGroupDialog(group)">
                   <v-list-item-avatar>
-                    <v-icon flat color="red">fa-trash</v-icon>
+                    <v-icon text color="red">fa-trash</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-title class="red--text">
                     Delete
@@ -167,9 +167,9 @@
         class="group-list-grid"
         @click="openGroupDialog()"
       >
-        <div class="text-xs-center pa-1">
+        <div class="text-center pa-1">
           <v-avatar size="40" class="ml-2">
-            <v-icon block flat class="mr-3">fa-plus</v-icon>
+            <v-icon block text class="mr-3">fa-plus</v-icon>
           </v-avatar>
         </div>
         <div style="display: flex; align-items: center;">
@@ -181,7 +181,7 @@
 
     <!-- Dialog -->
     <v-dialog v-model="isGroupDialog" max-width="500">
-      <v-card class="text-xs-center">
+      <v-card class="text-center">
         <v-card-title class="headline">
           Tender group
         </v-card-title>
@@ -229,7 +229,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn small color="primary" @click="updateGroup()">Save</v-btn>
-          <v-btn flat small color="primary" @click="isGroupDialog = false"
+          <v-btn text small color="primary" @click="isGroupDialog = false"
             >Cancel</v-btn
           >
         </v-card-actions>

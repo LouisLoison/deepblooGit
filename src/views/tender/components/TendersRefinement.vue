@@ -38,6 +38,9 @@ export default {
     getFacets() {
       let facets = []
       for (const facetLabel in this.filter) {
+        if (facetLabel === 'groups') {
+          continue
+        }
         if (this.filter[facetLabel] && this.filter[facetLabel].length) {
           let facet = {
             field: facetLabel,

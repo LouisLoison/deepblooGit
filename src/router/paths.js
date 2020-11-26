@@ -9,30 +9,6 @@ export default [
     }
   },
   {
-    path: "/404",
-    meta: {
-      public: true
-    },
-    name: "NotFound",
-    component: () => import(`@/views/NotFound.vue`)
-  },
-  {
-    path: "/403",
-    meta: {
-      public: true
-    },
-    name: "AccessDenied",
-    component: () => import(`@/views/Deny.vue`)
-  },
-  {
-    path: "/500",
-    meta: {
-      public: true
-    },
-    name: "ServerError",
-    component: () => import(`@/views/Error.vue`)
-  },
-  {
     path: "/login",
     meta: {
       public: true
@@ -154,5 +130,29 @@ export default [
         component: () => import(`@/views/setting/SettingOther.vue`)
       }
     ]
+  },
+  {
+    path: "/404",
+    meta: {
+      public: true
+    },
+    name: "NotFound",
+    component: () => import(`@/views/NotFound.vue`)
+  },
+  {
+    path: "/403",
+    meta: {
+      public: true
+    },
+    name: "AccessDenied",
+    component: () => import(`@/views/Deny.vue`)
+  },
+  {
+    path: "/500",
+    meta: {
+      public: true
+    },
+    name: "ServerError",
+    component: () => import(`@/views/Error.vue`)
   },
 ];

@@ -1,7 +1,13 @@
 <template>
   <div>
     <div
-      v-if="displayType === 'CARD'"
+      v-if="!results || !results.length"
+      class="text-center grey--text pa-5"
+    >
+      No tender found !
+    </div>
+    <div
+      v-else-if="displayType === 'CARD'"
       class="sui-results-container search-section__search-results"
     >
       <div
@@ -215,13 +221,27 @@ export default {
 </script>
 
 <style>
+@media screen and (min-width: 900px) {
+  .search-section__search-result {
+    width: 25%;
+  }
+}
+@media (min-width: 700px) and (max-width: 900px) {
+  .search-section__search-result {
+    width: 50%;
+  }
+}
+@media screen and (max-width: 700px) {
+  .search-section__search-result {
+    width: 1000%;
+  }
+}
 .search-section__search-results {
   display: flex;
   flex-wrap: wrap;
 }
 
 .search-section__search-result {
-  width: 25%;
   margin: 0px;
   padding: 6px;
   background: white;
