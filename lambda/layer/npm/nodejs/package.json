@@ -2,11 +2,13 @@
   "name": "lambda-node-layer",
   "version": "0.1.0",
   "dependencies": {
-    "@elastic/app-search-node": "^7.8",
+    "@elastic/app-search-node": "^7.9",
     "canvas": "^2.6",
-    "esm": "^3.2.25",
+    "esm": "^3.2",
+    "moment": "^2.29",
     "pdfjs-dist": "^2.4",
-    "xml2js": "^0.4.23"
+    "pg": "^8.5",
+    "xml2js": "^0.4"
   },
   "devDependencies": {
     "aws-sdk": "^2.793.0"

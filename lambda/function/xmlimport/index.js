@@ -1,4 +1,4 @@
-const { getFileContent, getXmlJsonData, log } = require('deepbloo');
+const { getFileContent, log } = require('deepbloo');
 const { StepFunctions } = require('aws-sdk')
 const xml2js = require('xml2js')
 const util = require('util')
@@ -9,7 +9,7 @@ const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 const startImportSteps = (data) => {
   return new Promise(async (callback, reject) => {
     const normedObject = data.fileSource.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
-    const name = `${normedObject}-${data.fileSourceIndex}`
+    const name = `${normedObject}-${data.fileSourceIndex}-a`
     log(name, process.env.TENDER_STATE_MACHINE_ARN)
     const params = {
       stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
@@ -34,7 +34,7 @@ const startImportSteps = (data) => {
     });
     // send request
     request.send();
-    log(request, 'Started stepfunctions');
+    log('Started stepfunctions', request);
   });
 }
 
@@ -52,60 +52,14 @@ exports.handler =  async function(event, ) {
   let tenderCount = 0
   for (const row of iterableData) {
     tenderCount++
-    const relatedDocuments = row.related_documents ?
-      row.related_documents
-        .map(d => d.document_url)
-        .filter(d => d) : []
-    log('Raw row',row,'DEBUG')
-    let importData = {}
-    if (dataSource === 'tenderinfo') {
-      importData = {
-        posting_id: getXmlJsonData(row.posting_id),
-        date_c: getXmlJsonData(row.date_c),
-        email_id: getXmlJsonData(row.email_id),
-        region: getXmlJsonData(row.region),
-        region_code: getXmlJsonData(row.region_code),
-        add1: getXmlJsonData(row.add1),
-        adid2: getXmlJsonData(row.add2),
-        city: getXmlJsonData(row.city),
-        state: getXmlJsonData(row.state),
-        pincode: getXmlJsonData(row.pincode),
-        country: getXmlJsonData(row.country),
-        country_code: getXmlJsonData(row.country_code),
-        url: getXmlJsonData(row.url),
-        tel: getXmlJsonData(row.tel),
-        fax: getXmlJsonData(row.fax),
-        contact_person: getXmlJsonData(row.contact_person),
-        maj_org: getXmlJsonData(row.maj_org),
-        tender_notice_no: getXmlJsonData(row.tender_notice_no),
-        notice_type: getXmlJsonData(row.notice_type),
-        notice_type_code: getXmlJsonData(row.notice_type_code),
-        bidding_type: getXmlJsonData(row.bidding_type),
-        global: getXmlJsonData(row.global),
-        mfa: getXmlJsonData(row.mfa),
-        tenders_details: getXmlJsonData(row.tenders_details),
-        short_desc: getXmlJsonData(row.short_desc),
-        currency: getXmlJsonData(row.currency),
-        est_cost: getXmlJsonData(row.est_cost),
-        doc_last: getXmlJsonData(row.doc_last),
-        financier: getXmlJsonData(row.financier),
-        sector: getXmlJsonData(row.sector),
-        sector_code: getXmlJsonData(row.sector_code),
-        corregendum_details: getXmlJsonData(row.corregendum_details),
-        project_name: getXmlJsonData(row.project_name),
-        cpv: getXmlJsonData(row.cpv),
-        authorize: getXmlJsonData(row.authorize),
-      }
-    } else if (dataSource === 'dgmarket') {
-      importData = row
-    }
+
+    row["dataSource"] = dataSource;
 
     const importTenderInfo = {
-      ...importData,
-      related_documents: relatedDocuments,
+      tenderData: row,
       fileSource: objectName,
       fileSourceIndex: tenderCount,
-      tenderFormat: 'tenderinfo',
+      dataSource,
       exclusion: '',
       exclusionWord: '',
       status: 1,
@@ -113,7 +67,7 @@ exports.handler =  async function(event, ) {
       updateDate: new Date()
     }
     await startImportSteps(importTenderInfo)
-    if (tenderCount > 1) { break }
+    if (tenderCount >= 1) { break }
   }
   log(`Started ${tenderCount} jobs`)
 }

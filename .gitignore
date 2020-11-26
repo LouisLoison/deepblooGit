@@ -19,5 +19,7 @@ lambda/layer/combined/
 lambda/layer/pipenv/bin
 lambda/layer/pipenv/python
 lambda/libjs/*.tgz
+lambda/function/*/config
+lambda/function/*/global
 
 .*.swp

@@ -11,10 +11,12 @@
     "local-init-db": "sudo docker run --rm -v $PWD/local:/opt:ro,delegated --network host --name pgloader dimitri/pgloader:latest pgloader /opt/pgloader-local.cmd",
     "local-stop": "sudo docker-compose -f local/stack.yml down",
     "local-clean": "sudo docker-compose -f local/stack.yml rm -f",
-    "deploy": "cd cdk && npm run deploy --all"
+    "deploy-all": "cd cdk && npm run deploy --all",
+    "deploy": "cd cdk && npm run deploy"
   },
   "devDependencies": {},
   "dependencies": {
-    "aws-sdk": "^2.793.0"
+    "aws-sdk": "^2.793.0",
+    "moment": "^2.29.1"
   }
 }

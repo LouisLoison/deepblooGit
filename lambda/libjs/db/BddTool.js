@@ -1,22 +1,52 @@
-var Config = require(process.cwd() + '/config')
 var crypto = require('crypto')
-const BddSchema = require(process.cwd() + '/global/BddSchema')
+const BddSchema = require('./BddSchema')
+
+let BddId
+let Environnement
+let configBdd
+let Schema
+
+exports.bddInit = (localBddId, localEnvironnement) => {
+  var Config = require(process.cwd() + '/config')
+  BddId=localBddId
+  Environnement=localEnvironnement
+  configBdd = Config.bdd[BddId][Environnement].config
+  Schema = BddSchema.getSchema().deepbloo
+
+  if (configBdd.type === 'PostgreSql') {
+    pgInitPool()
+  }
+}
+
+let pgPool = false;
+
+const pgInitPool = (onError) => {
+  try {
+    if(!pgPool) {
+      const pgArgs = {
+        host: configBdd.server,
+        user: configBdd.user,
+        password: configBdd.password,
+        database: configBdd.database
+      }
+      console.log(pgArgs)
+      const { Pool } = require('pg')
+      pgPool = new Pool(pgArgs)
+    }
+    return pgPool;
+  } catch (err) {
+    onError(err)
+  }
+}
+
 
 var getSHA1ofJSON = function(input){
   return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
 }
 
-var QueryExecMsSql = async function(onError, onSuccess, Query, BddId, Environnement) {
+var QueryExecMsSql = async function(onError, onSuccess, Query) {
   var sql = require('mssql')
 
-  var configBdd = null
-  if (BddId === 'Interface') {
-    configBdd = Config.bdd['EtlToolVar'][Environnement].config
-  } else if (BddId === 'EtlTool' || BddId === 'EtlToolVar' || BddId === 'TalendLog') {
-    configBdd = Config.bdd[BddId][Environnement].config
-  } else {
-    configBdd = Config.AppBdd.config
-  }
   const pool = new sql.ConnectionPool(configBdd)
   pool.on('error', err => {
     onError(err)
@@ -33,9 +63,9 @@ var QueryExecMsSql = async function(onError, onSuccess, Query, BddId, Environnem
   }
 }
 
-var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement, rowsCount) => {
+var QueryExecMySql = (onError, onSuccess, Query, rowsCount) => {
   const mysql = require('mysql')
-  const configBdd = Config.bdd[BddId][Environnement].config
+  const configBdd = configBdd
 
   try {
     let connection = null
@@ -113,9 +143,9 @@ var QueryExecMySql = (onError, onSuccess, Query, BddId, Environnement, rowsCount
   }
 }
 
-var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environnement) {
+var QueryExecOracle = async function(onError, onSuccess, Query) {
   var oracledb = require('oracledb')
-  var configBdd = Config.bdd[BddId][Environnement].config
+  var configBdd = configBdd
 
   oracledb.getConnection( {
     user: configBdd.user,
@@ -135,32 +165,8 @@ var QueryExecOracle = async function(onError, onSuccess, Query, BddId, Environne
 }
 
 
-let pgPool = false;
-
-const pgInitPool = (BddId, Environnement, onError) => {
+var QueryExecPostgreSql = (onError, onSuccess, Query, rowsCount) => {
   try {
-    if(!pgPool) {
-      const { Pool } = require('pg')
-      const configBdd = Config.bdd[BddId][Environnement].config
-
-      const pgArgs = {
-        host: configBdd.server,
-        user: configBdd.user,
-        password: configBdd.password,
-        database: configBdd.database
-      }
-      console.log(pgArgs)
-      pgPool = new Pool(pgArgs)
-    }
-    return pgPool;
-  } catch (err) {
-    onError(err)
-  }
-}
-
-var QueryExecPostgreSql = (onError, onSuccess, Query, BddId, Environnement, rowsCount) => {
-  try {
-    const pgPool = pgInitPool (BddId, Environnement, onError);
     pgPool.query(Query, (err, results) => {
       if (err) {
         err.Query = Query
@@ -183,32 +189,32 @@ var QueryExecPostgreSql = (onError, onSuccess, Query, BddId, Environnement, rows
 }
 
 
-var QueryExecBdd = (BddId, Environnement, Query, onError, onSuccess, rowsCount) => {
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
-    QueryExecMsSql(onError, onSuccess, Query, BddId, Environnement)
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
-    QueryExecMySql(onError, onSuccess, Query, BddId, Environnement, rowsCount)
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
-    QueryExecOracle(onError, onSuccess, Query, BddId, Environnement)
-  } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
-    QueryExecPostgreSql(onError, onSuccess, Query, BddId, Environnement, rowsCount)
+var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
+  if (configBdd.type === 'MsSql') {
+    QueryExecMsSql(onError, onSuccess, Query)
+  } else if (configBdd.type === 'MySql') {
+    QueryExecMySql(onError, onSuccess, Query, rowsCount)
+  } else if (configBdd.type === 'Oracle') {
+    QueryExecOracle(onError, onSuccess, Query)
+  } else if (configBdd.type === 'PostgreSql') {
+    QueryExecPostgreSql(onError, onSuccess, Query, rowsCount)
   }
 }
 exports.QueryExecBdd = QueryExecBdd
 
-exports.QueryExecBdd2 = (BddId, Environnement, Query, rowsCount) => {
+exports.QueryExecBdd2 = (Query, rowsCount) => {
   return new Promise((resolve, reject) => {
-    this.QueryExecBdd(BddId, Environnement, Query, reject, resolve, rowsCount)
+    this.QueryExecBdd(Query, reject, resolve, rowsCount)
   })
 }
 
 // Now using prepared statement for SQL injection prevention
 // Also allow to set NULLs (null) and default values (undefined)
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
-const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record, ColumnKey) => {
+const RecordAddUpdatePostgreSql = async(TableName, Record, ColumnKey) => {
   let ColumnList = []
-  let Schema = BddSchema.getSchema()
-  let Table = Schema[BddId][TableName]
+  let Table = Schema[TableName]
+  console.log(TableName, Record)
   for(let ColumnName in Table) {
     let Column = Table[ColumnName]
     if (Column.key && !ColumnKey) {
@@ -242,7 +248,9 @@ const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record
         actualValues.push(Config.user.Identifiant)
       } else {
         if (Table[ColumnName].type === 'DateTime') {
-          actualValues.push(this.DateFormater(Record[ColumnName], Environnement, BddId))
+          actualValues.push(this.DateFormater(Record[ColumnName]))
+        } else if (Table[ColumnName].type === 'Json') {
+          actualValues.push(JSON.stringify(Record[ColumnName]))
         } else {
           actualValues.push(Record[ColumnName])
         }
@@ -256,6 +264,8 @@ const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record
     ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
     RETURNING *
   `
+  console.log(Query)
+
   const preparedQuery = {
     name: getSHA1ofJSON(Query),
     text: Query,
@@ -265,13 +275,12 @@ const RecordAddUpdatePostgreSql = async (BddId, Environnement, TableName, Record
 
   const { rows } = await pgPool.query(preparedQuery)
 
-  return pgMapResult(rows, BddId, TableName)
+  return pgMapResult(rows, TableName)
 }
 
-const pgMapResult = (rows, BddId, TableName) => {
+const pgMapResult = (rows, TableName) => {
 
-  let Schema = BddSchema.getSchema()
-  const higherCols = Object.keys(Schema[BddId][TableName]).reduce((acc, val) => {
+  const higherCols = Object.keys(Schema[TableName]).reduce((acc, val) => {
     acc[val.toLower] = val;
     return acc;
   }, {})
@@ -290,13 +299,12 @@ const pgMapResult = (rows, BddId, TableName) => {
   })
 }
 
-const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
+const RecordAddUpdateGeneric = (TableName, Record) => {
   return new Promise((resolve, reject) => {
     try {
       let ColumnKey = ''
       let ColumnList = []
-      let Schema = BddSchema.getSchema()
-      let Table = Schema[BddId][TableName]
+      let Table = Schema[TableName]
       for(let ColumnName in Table) {
         if (ColumnName === 'creationDate') { continue }
         if (ColumnName === 'updateDate') { continue }
@@ -318,28 +326,28 @@ const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
           if (UpdateListText !== '') { UpdateListText += `, ` }
           UpdateListText += `${ColumnName} = `
           if (Table[ColumnName].type === 'String') {
-            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            UpdateListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Text') {
-            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            UpdateListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Time') {
-            UpdateListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            UpdateListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Int') {
-            UpdateListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
+            UpdateListText += `${NumericFormater(Record[ColumnName])} `
           } else if (Table[ColumnName].type === 'DateTime') {
-            UpdateListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
+            UpdateListText += `${this.DateFormater(Record[ColumnName])} `
           } else {
             UpdateListText += `${Record[ColumnName]} `
           }
         }
         if (Table['updateDate'] !== undefined) { UpdateListText += `, updateDate = ${DateNow(Environnement, BddId)}` }
-        if (Table['owner'] !== undefined && Config.user.Identifiant) { UpdateListText += `, owner = '${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}'` }
+        if (Table['owner'] !== undefined && Config.user.Identifiant) { UpdateListText += `, owner = '${ChaineFormater(Config.user.Identifiant)}'` }
 
         Query = `
           UPDATE ${TableName} 
           SET ${UpdateListText} 
           WHERE ${ColumnKey} = ${Record[ColumnKey]} 
         `
-        QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
+        QueryExecBdd(Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
           resolve(Record)
         })
       } else {
@@ -350,15 +358,15 @@ const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
           ColumnListText += `"${ColumnName}"`
           if (ValueListText !== '') { ValueListText += `, ` }
           if (Table[ColumnName].type === 'String') {
-            ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            ValueListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Text') {
-            ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            ValueListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Time') {
-            ValueListText += `'${ChaineFormater(Record[ColumnName], Environnement, BddId)}' `
+            ValueListText += `'${ChaineFormater(Record[ColumnName])}' `
           } else if (Table[ColumnName].type === 'Int') {
-            ValueListText += `${NumericFormater(Record[ColumnName], Environnement, BddId)} `
+            ValueListText += `${NumericFormater(Record[ColumnName])} `
           } else if (Table[ColumnName].type === 'DateTime') {
-            ValueListText += `${this.DateFormater(Record[ColumnName], Environnement, BddId)} `
+            ValueListText += `${this.DateFormater(Record[ColumnName])} `
           } else {
             ValueListText += `'${Record[ColumnName]}'`
           }
@@ -379,34 +387,34 @@ const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
           if (ColumnListText !== '') { ColumnListText += `, ` }
           ColumnListText += `"owner"`
           if (ValueListText !== '') { ValueListText += `, ` }
-          ValueListText += `'${ChaineFormater(Config.user.Identifiant, Environnement, BddId)}' `
+          ValueListText += `'${ChaineFormater(Config.user.Identifiant)}' `
         }
 
-        if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+        if (configBdd.type === 'MySql') {
           ColumnListText = ColumnListText.replace(/"/g, '')
         }
         Query = `
           INSERT INTO ${TableName} (${ColumnListText}) 
           VALUES (${ValueListText}) `
         if (ColumnKey != '') {
-          if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+          if (configBdd.type === 'MsSql') {
             Query += `; 
               SELECT @@IDENTITY AS \'identity\';`
-          } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+          } else if (configBdd.type === 'MySql') {
             Query += ``
-          } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+          } else if (configBdd.type === 'Oracle') {
             Query += ''
           }
         }
-        QueryExecBdd(BddId, Environnement, Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
+        QueryExecBdd(Query, (err) => { err.Query = Query; reject(err); }, (recordset) => {
           if (ColumnKey != '' && recordset) {
-            if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+            if (configBdd.type === 'MsSql') {
               if (recordset.length > 0) {
                 Record[ColumnKey] = recordset[0].identity
               }
-            } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+            } else if (configBdd.type === 'MySql') {
               Record[ColumnKey] = recordset.insertId
-            } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+            } else if (configBdd.type === 'Oracle') {
             }
           }
           resolve(Record)
@@ -418,17 +426,16 @@ const RecordAddUpdateGeneric = (BddId, Environnement, TableName, Record) => {
   })
 }
 
-exports.RecordAddUpdate = async (BddId, Environnement, TableName, Record, ColumnKey) => {
-  if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
-    return await RecordAddUpdatePostgreSql(BddId, Environnement, TableName, Record, ColumnKey)
+exports.RecordAddUpdate = async (TableName, Record, ColumnKey) => {
+  if (configBdd.type === 'PostgreSql') {
+    return await RecordAddUpdatePostgreSql(TableName, Record, ColumnKey)
   } else {
-    return await RecordAddUpdateGeneric(BddId, Environnement, TableName,   Record)
+    return await RecordAddUpdateGeneric(TableName,   Record)
   }
 }
 
-const bulkInsertPostgreSql = async (BddId, Environnement, TableName, records) => {
-  let Schema = BddSchema.getSchema()
-  let Table = Schema[BddId][TableName]
+const bulkInsertPostgreSql = async (TableName, records) => {
+  let Table = Schema[TableName]
 
   const columns = []
   for (const column in records[0]) {
@@ -467,15 +474,14 @@ const bulkInsertPostgreSql = async (BddId, Environnement, TableName, records) =>
   })
 }
 
-const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
+const bulkInsertGeneric = (TableName, records) => {
   return new Promise((resolve, reject) => {
     try
     {
       const mysql = require('mysql')
-      const configBdd = Config.bdd[BddId][Environnement].config
+      const configBdd = configBdd
 
-      let Schema = BddSchema.getSchema()
-      let Table = Schema[BddId][TableName]
+      let Table = Schema[TableName]
 
       const columns = []
       for (const column in records[0]) {
@@ -519,21 +525,20 @@ const bulkInsertGeneric = (BddId, Environnement, TableName, records) => {
   })
 }
 
-exports.bulkInsert = async (BddId, Environnement, TableName, records) => {
-  if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
-    return await bulkInsertPostgreSql(BddId, Environnement, TableName, records)
+exports.bulkInsert = async (TableName, records) => {
+  if (configBdd.type === 'PostgreSql') {
+    return await bulkInsertPostgreSql(TableName, records)
   } else {
-    return await bulkInsertGeneric(BddId, Environnement, TableName, records)
+    return await bulkInsertGeneric(TableName, records)
   }
 }
 
-exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
+exports.RecordGet = (TableName, RecordId) => {
   return new Promise((resolve, reject) => {
     var Record = {}
     var ColumnKey = ''
     var ColumnListTexte = ''
-    var Schema = BddSchema.getSchema()
-    var Table = Schema[BddId][TableName]
+    var Table = Schema[TableName]
     for(var ColumnName in Table) {
       var Column = Table[ColumnName]
       if (Column.key) {
@@ -549,7 +554,7 @@ exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
             FROM ${TableName} 
             WHERE ${ColumnKey} = ${RecordId} 
         `
-    QueryExecBdd(BddId, Environnement, Query, reject, (recordset) => {
+    QueryExecBdd(Query, reject, (recordset) => {
       for (var recordItem of recordset) {
         for(var ColumnName in Table) {
           Record[ColumnName] = recordItem[ColumnName]
@@ -560,11 +565,10 @@ exports.RecordGet = (BddId, Environnement, TableName, RecordId) => {
   })
 }
 
-exports.RecordDelete = (BddId, Environnement, TableName, RecordId) => {
+exports.RecordDelete = (TableName, RecordId) => {
   return new Promise((resolve, reject) => {
     var ColumnKey = ''
-    var Schema = BddSchema.getSchema()
-    var Table = Schema[BddId][TableName]
+    var Table = Schema[TableName]
     for(var ColumnName in Table) {
       var Column = Table[ColumnName]
       if (Column.key) {
@@ -577,15 +581,15 @@ exports.RecordDelete = (BddId, Environnement, TableName, RecordId) => {
             DELETE FROM ${TableName} 
             WHERE ${ColumnKey} = ${RecordId} 
         `
-    QueryExecBdd(BddId, Environnement, Query, reject, () => {
+    QueryExecBdd(Query, reject, () => {
       resolve()
     })
   })
 }
 
-var BddColumnType = (Type, Environnement, BddId) => {
+var BddColumnType = (Type) => {
   var TypeTexte = '';
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+  if (configBdd.type === 'MsSql') {
     if (Type === 'String') {
       TypeTexte = `varchar(255)`
     } else if (Type === 'Text') {
@@ -599,7 +603,7 @@ var BddColumnType = (Type, Environnement, BddId) => {
     } else if (Type === 'Time') {
       TypeTexte = `time`
     }
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+  } else if (configBdd.type === 'MySql') {
     if (Type === 'String') {
       TypeTexte = `varchar(255)`
     } else if (Type === 'Text') {
@@ -613,7 +617,7 @@ var BddColumnType = (Type, Environnement, BddId) => {
     } else if (Type === 'Time') {
       TypeTexte = `time`
     }
-  } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+  } else if (configBdd.type === 'PostgreSql') {
     if (Type === 'String') {
       TypeTexte = `varchar(255)`
     } else if (Type === 'Text') {
@@ -627,7 +631,7 @@ var BddColumnType = (Type, Environnement, BddId) => {
     } else if (Type === 'Time') {
       TypeTexte = `time`
     }
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+  } else if (configBdd.type === 'Oracle') {
     if (Type === 'String') {
       TypeTexte = `NVARCHAR2(255)`
     } else if (Type === 'Text') {
@@ -648,27 +652,27 @@ exports.BddColumnType = BddColumnType
 
 var DateNow = (Environnement, BddId) => {
   var DateTexte = ''
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+  if (configBdd.type === 'MsSql') {
     DateTexte = 'GETDATE()'
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+  } else if (configBdd.type === 'MySql') {
     DateTexte = 'NOW()'
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+  } else if (configBdd.type === 'Oracle') {
     DateTexte = 'SYSTIMESTAMP'
   }
   return DateTexte
 }
 exports.DateNow = DateNow
 
-var ChaineFormater = (Texte, Environnement, BddId) => {
+var ChaineFormater = (Texte) => {
   if (!Texte) { return '' }
   Texte += ''
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+  if (configBdd.type === 'MsSql') {
     Texte = Texte
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+  } else if (configBdd.type === 'MySql') {
     Texte = Texte.replace(/\\/gi, '\\\\')
-  } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+  } else if (configBdd.type === 'PostgreSql') {
     Texte = Texte.replace(/\\/gi, '\\\\')
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+  } else if (configBdd.type === 'Oracle') {
     Texte = Texte
   }
   //Texte = Texte.replace(new RegExp(`'`), '\\\'')
@@ -677,28 +681,28 @@ var ChaineFormater = (Texte, Environnement, BddId) => {
 }
 exports.ChaineFormater = ChaineFormater
 
-var ChaineListeFormater = (Texte, Separateur, Environnement, BddId) => {
+var ChaineListeFormater = (Texte, Separateur) => {
   if (Texte.trim() !== '')
   {
     var ItemList = Texte.split(Separateur)
-    var Texte = this.ArrayStringFormat(ItemList, Environnement, BddId)
+    var Texte = this.ArrayStringFormat(ItemList)
   }
   return Texte
 }
 exports.ChaineListeFormater = ChaineListeFormater
 
-exports.ArrayStringFormat = (ItemList, Environnement, BddId) => {
+exports.ArrayStringFormat = (ItemList) => {
   var Texte = ''
   for (var Item of ItemList)
   {
     if (Texte !== '') { Texte += `','` }
-    Texte += ChaineFormater(Item.trim(), Environnement, BddId)
+    Texte += ChaineFormater(Item.trim())
   }
   Texte = `'${Texte}'`
   return Texte
 }
 
-var NumericFormater = (Texte, Environnement, BddId) => {
+var NumericFormater = (Texte) => {
   var value = 0
   try {
     value = Number(Texte)
@@ -711,18 +715,18 @@ var NumericFormater = (Texte, Environnement, BddId) => {
 }
 exports.NumericFormater = NumericFormater
 
-exports.ArrayNumericFormater = (ItemList, Environnement, BddId) => {
+exports.ArrayNumericFormater = (ItemList) => {
   var Texte = ''
   for (var Item of ItemList)
   {
     if (Texte !== '') { Texte += `,` }
-    Texte += NumericFormater(Item, Environnement, BddId)
+    Texte += NumericFormater(Item)
   }
   Texte = `${Texte}`
   return Texte
 }
 
-exports.DateFormater = (Texte, Environnement, BddId) => {
+exports.DateFormater = (Texte) => {
   var moment = require('moment')
   if (Texte instanceof Date) {
     let DateTemp = moment(Texte).utcOffset(Texte.getUTCDate())
@@ -732,38 +736,38 @@ exports.DateFormater = (Texte, Environnement, BddId) => {
   }
   Texte = Texte.replace(/-/g, '')
   Texte = Texte.replace(/T/g, ' ')
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+  if (configBdd.type === 'MsSql') {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DDTHH:mm:ss')
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+  } else if (configBdd.type === 'MySql') {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
-  } else if (Config.bdd[BddId][Environnement].config.type === 'PostgreSql') {
+  } else if (configBdd.type === 'PostgreSql') {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+  } else if (configBdd.type === 'Oracle') {
     Texte = `to_date(${Texte},'yyyymmdd hh24:mi:ss')`
   }
   return `'${Texte}'`
 }
 
-exports.DatePartHour = (Field, Environnement, BddId) => {
+exports.DatePartHour = (Field) => {
   let Texte = ''
-  if (Config.bdd[BddId][Environnement].config.type === 'MsSql') {
+  if (configBdd.type === 'MsSql') {
     Texte = `DATEPART(HOUR, ${Field})`
-  } else if (Config.bdd[BddId][Environnement].config.type === 'MySql') {
+  } else if (configBdd.type === 'MySql') {
     Texte = `DATE_FORMAT(${Field}, "%H")`
-  } else if (Config.bdd[BddId][Environnement].config.type === 'Oracle') {
+  } else if (configBdd.type === 'Oracle') {
     Texte = `DATE_FORMAT(${Field}, "%H")`
   }
   return Texte
 }
 
-var ListeFormater = (TexteList, Environnement, BddId) => {
+var ListeFormater = (TexteList) => {
   var Texte = ''
   if (TexteList.length > 0)
   {
     for (var Item of TexteList)
     {
       if (Texte !== '') { Texte += `','` }
-      Texte += ChaineFormater(Item.trim(), Environnement, BddId)
+      Texte += ChaineFormater(Item.trim())
     }
     Texte = `'${Texte}'`
   }
