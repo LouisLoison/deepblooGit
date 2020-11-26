@@ -102,6 +102,7 @@ exports.synchro = () => {
           Mailing_Zip: hivebriteUser.postal_work && hivebriteUser.postal_work.postal_code && hivebriteUser.postal_work.postal_code.trim() !== '' ? hivebriteUser.postal_work.postal_code.trim() : null,
           Mailing_Street: hivebriteUser.postal_work && hivebriteUser.postal_work.address_1 && hivebriteUser.postal_work.address_1.trim() !== '' ? hivebriteUser.postal_work.address_1.trim() : null,
           DB_Creation_Date: hivebriteUser.created_at ? hivebriteUser.created_at.replace('Z', '+01:00') : null,
+          DB_Confirmed_At : hivebriteUser.confirmed_at ? hivebriteUser.confirmed_at.replace('Z', '+01:00') : null,
           Tender_last_connexion_date: user.connexionTender ? moment(user.connexionTender).format() : null,
         }
 

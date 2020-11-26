@@ -1383,7 +1383,8 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
         }
       }
 
-      const groups = tenderGroupId ? [tenderGroupId] : []
+      const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
+      const groups = tenderGroupLinks.map(a => a.tenderGroupId)
       const tender = {
         objectID: algoliaId,
         groups,

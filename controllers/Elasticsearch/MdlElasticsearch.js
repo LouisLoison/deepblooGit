@@ -36,16 +36,16 @@ exports.indexToElasticsearch = async (objects, index) => {
   })
 }
 
-
 exports.connectToPublicAppSearch = (engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
       const ElasticAppSearch = require("@elastic/app-search-javascript");
       const client = ElasticAppSearch.createClient({
+        hostIdentifier: "host-c5s2mj",
         searchKey: config.appsearchSearchKey,
         endpointBase: config.appsearchEndpoint,
         engineName,
-      });
+      })
       resolve(client)
     } catch (err) { reject(err) }
   })
@@ -92,7 +92,6 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
 
 
 // This way of updating (PATCH operation) will NOT add any new field
-
 exports.updateObject = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
     try {
