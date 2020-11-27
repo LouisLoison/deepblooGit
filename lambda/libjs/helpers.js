@@ -43,11 +43,11 @@ const getXmlJsonData = (data) => {
 const log = (message, data, level='INFO') => {
   try {
     console.log(`${JSON.stringify(message, null, 2)}
-${JSON.stringify(data, null, 2)}`)
+${data === undefined ? '' : JSON.stringify(data, null, 2)}`)
   } catch (e) {
     if (e instanceof TypeError) {
       console.log(message)
-      console.log(data);
+      if (data !== undefined) { console.log(data) };
     }
     else {
       throw e

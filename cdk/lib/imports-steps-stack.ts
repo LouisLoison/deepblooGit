@@ -86,6 +86,7 @@ export class ImportsStepsStack extends Stack {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/stepTenderMerge'),
       handler: 'index.handler',
+      vpc,
       memorySize: 500,
       //      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(50),
@@ -140,10 +141,12 @@ export class ImportsStepsStack extends Stack {
 
     const storeTenderTask = new Task(this, 'Tender Store Task', {
       task: new InvokeFunction(stepTenderStore),
+      resultPath: '$.storedData',
     });
 
     const mergeTenderTask = new Task(this, 'Tender Merge Task', {
       task: new InvokeFunction(stepTenderMerge),
+      inputPath: '$.storedData',
     });
 
     const stepTenderIndexTask = new Task(this, 'Appsearch Index Task', {

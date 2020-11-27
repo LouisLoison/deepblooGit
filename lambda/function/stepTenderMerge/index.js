@@ -1,187 +1,58 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 
-const { getXmlJsonData, log } = require('deepbloo');
-const moment = require('moment')
-
-
+const { BddTool } = require('deepbloo');
 
 exports.handler =  async function(event, ) {
-  let tender = {}
-  if (event.dataSource === 'dgmarket') {
-    let title = getXmlJsonData(event.noticeTitle)
+  console.log(event)
 
-    // Format description
-    let lang = ''
-    let description = ''
-    if (event.noticeText) {
-      let descriptions = []
-      event.noticeText.forEach(noticeText => {
-        let description = descriptions.find(a => a.lang === noticeText.$.lang)
-        if (description) {
-          description.text += noticeText._ + '<br><br>'
-        } else {
-          descriptions.push({
-            lang: noticeText.$.lang,
-            text: noticeText._ + '<br><br>'
-          })
-        }
-      })
-      if (descriptions && descriptions.length > 0) { // TODO support other languages
-        lang = descriptions[0].lang
-        description = descriptions[0].text
-      }
-    }
+  const client = BddTool.bddInit('deepbloo','devAws')
+  await BddTool.QueryExecPrepared(client, 'BEGIN;');
 
-    // importDgmarket
-    tender = {
-      dgmarketId: parseInt(getXmlJsonData(event.id), 10),
-      procurementId: getXmlJsonData(event.procurementId).substring(0, 90),
-      title: title.substring(0, 450),
-      lang: lang,
-      description: description.substring(0, 5000),
-      contactFirstName: getXmlJsonData(event.contactAddress[0].firstName).substring(0, 90),
-      contactLastName: getXmlJsonData(event.contactAddress[0].lastName).substring(0, 90),
-      contactAddress: getXmlJsonData(event.contactAddress[0].address).substring(0, 490),
-      contactCity: getXmlJsonData(event.contactAddress[0].city).substring(0, 90),
-      contactState: getXmlJsonData(event.contactAddress[0].state).substring(0, 90),
-      contactCountry: getXmlJsonData(event.contactAddress[0].country).substring(0, 90),
-      contactEmail: getXmlJsonData(event.contactAddress[0].email).substring(0, 190),
-      contactPhone: getXmlJsonData(event.contactAddress[0].phone).substring(0, 90),
-      buyerName: getXmlJsonData(event.buyerName),
-      buyerCountry: getXmlJsonData(event.buyerCountry),
-      procurementMethod: getXmlJsonData(event.procurementMethod),
-      noticeType: getXmlJsonData(event.noticeType),
-      country: getXmlJsonData(event.country),
-      estimatedCost: getXmlJsonData(event.estimatedCost),
-      currency: getXmlJsonData(event.currency),
-      publicationDate: getXmlJsonData(event.publicationDate),
-      cpvs: getXmlJsonData(event.cpvs),
-      bidDeadlineDate: getXmlJsonData(event.bidDeadlineDate),
-      sourceUrl: getXmlJsonData(event.sourceUrl).substring(0, 1900),
-    }
+  const query = `UPDATE tenderimport
+  SET  tenderUuid = tenders.uuid,
+       tenderId = tenders.id, 
+       mergeMethod = 'PROCUREMENT_ID'
+	  FROM tenders
+          WHERE tenderimport.procurementId = tenders.procurementId
+	  AND tenderimport.procurementId != ''
+	  AND tenderimport.uuid = $1
+    AND tenderimport.tenderUuid IS NULL`
 
-    // check biddeadline
-    /*
-    let termDate = null
-    let dateText = importDgmarket.bidDeadlineDate
-    if (dateText && dateText.trim() !== '') {
-      let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-      termDate = new Date(bidDeadlineDateText)
-    }
-    if (!termDate || isNaN(termDate)) {
-      dateText = importDgmarket.publicationDate
-      if (dateText && dateText.trim() !== '') {
-        let bidDeadlineDateText = `${dateText.substring(0, 4)}-${dateText.substring(4, 6)}-${dateText.substring(6, 8)}`
-        termDate = new Date(bidDeadlineDateText)
-      }
-    }
-    if (!termDate || isNaN(termDate)) {
-      termDate = new Date()
-    }
+  console.log(query)
+  const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ event.uuid ])
 
-    // Check limit date
-    let dateLimit = new Date()
-    dateLimit.setDate(dateLimit.getDate() - 15)
-    if (termDate < dateLimit) {
-      importDgmarket.exclusion = 'LIMIT DATE'
-      importDgmarket.status = -10
-      continue
-    }
-	*/
-  } else if (event.dataSource === 'tenderinfo') {
-    /*
-    if (dataSource === 'tenderinfo') {
-      importData = {
-        posting_id: getXmlJsonData(row.posting_id),
-        date_c: getXmlJsonData(row.date_c),
-        email_id: getXmlJsonData(row.email_id),
-        region: getXmlJsonData(row.region),
-        region_code: getXmlJsonData(row.region_code),
-        add1: getXmlJsonData(row.add1),
-        adid2: getXmlJsonData(row.add2),
-        city: getXmlJsonData(row.city),
-        state: getXmlJsonData(row.state),
-        pincode: getXmlJsonData(row.pincode),
-        country: getXmlJsonData(row.country),
-        country_code: getXmlJsonData(row.country_code),
-        url: getXmlJsonData(row.url),
-        tel: getXmlJsonData(row.tel),
-        fax: getXmlJsonData(row.fax),
-        contact_person: getXmlJsonData(row.contact_person),
-        maj_org: getXmlJsonData(row.maj_org),
-        tender_notice_no: getXmlJsonData(row.tender_notice_no),
-        notice_type: getXmlJsonData(row.notice_type),
-        notice_type_code: getXmlJsonData(row.notice_type_code),
-        bidding_type: getXmlJsonData(row.bidding_type),
-        global: getXmlJsonData(row.global),
-        mfa: getXmlJsonData(row.mfa),
-        tenders_details: getXmlJsonData(row.tenders_details),
-        short_desc: getXmlJsonData(row.short_desc),
-        currency: getXmlJsonData(row.currency),
-        est_cost: getXmlJsonData(row.est_cost),
-        doc_last: getXmlJsonData(row.doc_last),
-        financier: getXmlJsonData(row.financier),
-        sector: getXmlJsonData(row.sector),
-        sector_code: getXmlJsonData(row.sector_code),
-        corregendum_details: getXmlJsonData(row.corregendum_details),
-        project_name: getXmlJsonData(row.project_name),
-        cpv: getXmlJsonData(row.cpv),
-        authorize: getXmlJsonData(row.authorize),
-      }
-    } else if (dataSource === 'dgmarket') {
-      importData = row
-    }
-    */
+  const query2 = `UPDATE      tenderimport 
+	  FROM tenders
+    SET   tenderUuid = tenders.uuid,
+          tenderId = tenders.id, 
+          mergeMethod = 'TITLE_BUYER_BIDDEADLINE'
+    WHERE tenderimport.buyerName = tenders.buyerName 
+      AND tenderimport.title = tenders.title 
+      AND tenderimport.title != '' 
+      AND tenderimport.bidDeadlineDate = tenders.bidDeadlineDate 
+	    AND tenderimport.uuid = $1
+      AND tenderimport.tenderUuid IS NULL`
 
-    const tenderData = Object.keys(event)
-      .filter(k => !(k in ['related_documents']))
-      .reduce((acc, k) => ({...acc, [k]: getXmlJsonData(event[k])}), {})
+  console.log(query2)
+  const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ event.uuid ]);
 
-    tenderData.related_documents = event.related_documents ?
-      event.related_documents
-        .map(d => d.document_url)
-        .filter(d => d) : []
+  const fields = 'biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
+  const query3 = `insert into tenders (${fields})
 
-    const title = tenderData.short_desc
-    const description = tenderData.tenders_details
-    const termDate = moment(tenderData.doc_last, "YYYY-MM-DD").toDate()
-    tender = {
-      dgmarketId: 0,
-      procurementId: tenderData.procurementId,
-      title,
-      lang: '',
-      description,
-      contactFirstName: '',
-      contactLastName: '',
-      contactAddress: tenderData.add1,
-      contactCity: tenderData.city,
-      contactState: tenderData.state,
-      contactCountry: tenderData.country,
-      contactEmail: tenderData.city,
-      contactPhone: tenderData.email_id,
-      buyerName: tenderData.maj_org,
-      buyerCountry: '',
-      procurementMethod: tenderData.bidding_type,
-      noticeType: tenderData.notice_type,
-      country: tenderData.country,
-      estimatedCost: tenderData.est_cost,
-      currency: tenderData.currency,
-      publicationDate: tenderData.date_c.replace(/-/g, ''),
-      cpvsOrigine: null,
-      cpvs: tenderData.cpv,
-      cpvDescriptions: null,
-      words: '',
-      bidDeadlineDate: tenderData.doc_last.replace(/-/g, ''),
-      sourceUrl: tenderData.related_documents,
-      termDate: termDate,
-      fileSource: tenderData.fileSource,
-      origine: 'TenderInfo',
-      creationDate: new Date(),
-      updateDate: new Date(),
-    }
+        select ${fields} from tenderimport 
+          where mergeMethod is null and status = 20 and uuid = $1 returning *`
 
+  console.log(query3)
+  const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ event.uuid ], 'tenders');
+  await BddTool.QueryExecPrepared(client, 'COMMIT;');
 
+  const created = (tender !== undefined) ? tender : false
+  console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'created', (tender !== undefined) )
+  const error = !(mergedProcurementId || mergedBuyerBiddeadline || created)
+  return {
+    mergedProcurementId,
+    mergedBuyerBiddeadline,
+    created,
+    error,
   }
-
-  return tender
 }

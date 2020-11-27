@@ -3,13 +3,15 @@ const { StepFunctions } = require('aws-sdk')
 const xml2js = require('xml2js')
 const util = require('util')
 const { v4: uuidv4 } = require('uuid');
+const { createHash } = require('crypto');
 
 const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
 const startImportSteps = (data) => {
   return new Promise(async (callback, reject) => {
-    const normedObject = data.fileSource.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
-    const name = `${normedObject}-${data.fileSourceIndex}-a`
+    const normedObject = data.fileSource.split('/').slice(2).join('').split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
+    const contentHash = createHash('sha1').update(JSON.stringify(data)).digest('hex')
+    const name = `${normedObject}-${data.fileSourceIndex}-${contentHash}`.substring(0,79)
     log(name, process.env.TENDER_STATE_MACHINE_ARN)
     const params = {
       stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
@@ -22,7 +24,8 @@ const startImportSteps = (data) => {
     request.on("extractData", res => {
       log(`startExecution Succeeded:\n`, res);
       callback({
-        statusCode: 200
+        statusCode: 200,
+        duplicate: false,
       });
     });
     // listen for error
@@ -30,7 +33,13 @@ const startImportSteps = (data) => {
       log(
         `Error --  ${err.message} ${err.code}, ${err.statusCode}`
       );
-      reject(err);
+      if (err.code !== 'ExecutionAlreadyExists') {
+        reject(err);
+      }
+      callback({
+        statusCode: 200,
+        duplicate: true,
+      });
     });
     // send request
     request.send();
@@ -50,25 +59,26 @@ exports.handler =  async function(event, ) {
   const parseData = await parseString(fileData)
   const iterableData = (dataSource === 'tenderinfo') ? parseData.import.row : parseData.notices.notice
   let tenderCount = 0
+  let duplicateCount = 0
   for (const row of iterableData) {
     tenderCount++
 
     row["dataSource"] = dataSource;
 
-    const importTenderInfo = {
+    const rawTender = {
       tenderData: row,
       fileSource: objectName,
       fileSourceIndex: tenderCount,
       dataSource,
-      exclusion: '',
-      exclusionWord: '',
+//      exclusion: '',
+//      exclusionWord: '',
       status: 1,
       creationDate: new Date(),
       updateDate: new Date()
     }
-    await startImportSteps(importTenderInfo)
-    if (tenderCount >= 1) { break }
+    const { duplicate } = await startImportSteps(rawTender)
+    duplicateCount += duplicate ? 1 : 0 
+    if (tenderCount >= 5) { break }
   }
-  log(`Started ${tenderCount} jobs`)
+  log(`Processed ${tenderCount} jobs, started ${tenderCount-duplicateCount} (${duplicateCount} duplicates)`)
 }
-

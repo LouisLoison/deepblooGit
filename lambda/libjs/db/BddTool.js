@@ -6,7 +6,7 @@ let Environnement
 let configBdd
 let Schema
 
-exports.bddInit = (localBddId, localEnvironnement) => {
+exports.bddInit = async (localBddId, localEnvironnement) => {
   var Config = require(process.cwd() + '/config')
   BddId=localBddId
   Environnement=localEnvironnement
@@ -15,6 +15,7 @@ exports.bddInit = (localBddId, localEnvironnement) => {
 
   if (configBdd.type === 'PostgreSql') {
     pgInitPool()
+    return await pgPool.connect() // Passes the client to enable transaction
   }
 }
 
@@ -43,6 +44,8 @@ const pgInitPool = (onError) => {
 var getSHA1ofJSON = function(input){
   return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
 }
+
+exports.getSHA1ofJSON = getSHA1ofJSON
 
 var QueryExecMsSql = async function(onError, onSuccess, Query) {
   var sql = require('mssql')
@@ -188,6 +191,19 @@ var QueryExecPostgreSql = (onError, onSuccess, Query, rowsCount) => {
   }
 }
 
+exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false) => {
+  const preparedQuery = {
+    name: getSHA1ofJSON(Query),
+    text: Query,
+    values: actualValues || [],
+    rowMode: 'array',
+  }
+
+  console.log(preparedQuery);
+  const { rows, fields, rowCount } = await client.query(preparedQuery)
+
+  return tableName ? pgMapResult(rows, fields, tableName) : rowCount
+}
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
   if (configBdd.type === 'MsSql') {
@@ -273,26 +289,29 @@ const RecordAddUpdatePostgreSql = async(TableName, Record, ColumnKey) => {
     rowMode: 'array',
   }
 
-  const { rows } = await pgPool.query(preparedQuery)
+  const { rows, fields } = await pgPool.query(preparedQuery)
+  console.log(rows);
 
-  return pgMapResult(rows, TableName)
+  return pgMapResult(rows, fields, TableName)
 }
 
-const pgMapResult = (rows, TableName) => {
+const pgMapResult = (rows, fields, TableName) => {
 
   const higherCols = Object.keys(Schema[TableName]).reduce((acc, val) => {
     acc[val.toLower] = val;
     return acc;
   }, {})
 
+  //console.log(fields)
+  //console.log(higherCols)
 
   return rows.map(row => {
     const mapedRow = {};
-    Object.keys(row).forEach(col => {
-      if (col in Object.keys(higherCols)) {
-        mapedRow[higherCols[col]] = row[col]
+    fields.forEach(({ name }, index) => {
+      if (name in Object.keys(higherCols)) {
+        mapedRow[higherCols[name]] = row[index]
       } else {
-        mapedRow[col] = row[col]
+        mapedRow[name] = row[index]
       }
     })
     return mapedRow
