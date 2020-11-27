@@ -522,7 +522,7 @@ export class TextractPipelineStack extends cdk.Stack {
         OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
         ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
-        TEXTRACT_ONLY: "true", // "true" or "false"
+        TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
       }
     });
