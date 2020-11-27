@@ -4,11 +4,13 @@ from helper import AwsHelper, S3Helper
 from pdfplumber.cli import parse_args, main, convert
 from pdfplumber.pdf import PDF
 import pdfplumber
+import simplejson
 
 
 def send_message(client, qUrl, json_message) -> None:
     message = json.dumps(json_message)
     client.send_message(QueueUrl=qUrl, MessageBody=message)
+    print("Message to queue: {}".format(qUrl))
     print("Submitted message to queue: {}".format(message))
 
 
@@ -44,25 +46,22 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
 
     :param pdf_tmp_path: the tmp path of the pdf to pass to pdfplumber
     :param bbox_output: the tmp file of the json to create and to stock pdf information
-    :param output_format: the output format of the bounding boxes. Can be "json" or "csv"
-    :param output_type: object types to extract. "char", "rect", "line", "curve", "image", "annot"
     :return: int
     """
-    available_format = ["json", "csv"]
-    available_types = ["char", "rect", "line", "curve", "image", "annot"]
-    if output_format not in available_format:
-        print("[pdfplumber execution] => Wrong format parameter given {0}".format(output_format))
-        return True
-    if output_type not in available_types:
-        print("[pdfplumber execution] => Wrong type parameter given {0}".format(output_type))
-        return True
-    args_raw = "--format {0} --types {1} --indent 4".format(output_format, output_type).split()
-    args = parse_args(args_raw)
-    converter = {"csv": convert.to_csv, "json": convert.to_json}[args.format]
-    kwargs = {"csv": {}, "json": {"indent": args.indent}}[args.format]
-    with open(bbox_output, "w") as json_file:
-        with PDF.open(pdf_tmp_path) as pdf:
-            converter(pdf, json_file, args.types, **kwargs)
+    with pdfplumber.open(pdf_tmp_path) as pdf_file:
+        page_pdf = []
+        if os.path.isfile(bbox_output):
+            os.remove(bbox_output)
+        with open(bbox_output, "w") as json_file:
+            for page in pdf_file.pages:
+                page_pdf.append({
+                    "page_number": page.page_number,
+                    "page_content": page.extract_words(x_tolerance=3, y_tolerance=3, keep_blank_chars=False,
+                                                       use_text_flow=False, horizontal_ltr=True, vertical_ttb=True,
+                                                       extra_attrs=[])
+                })
+            json_pretty_content = simplejson.dumps(page_pdf, indent=4)
+            json_file.write(json_pretty_content)
     return False
 
 
@@ -115,7 +114,7 @@ def lambda_handler(event, context):
         'body': 'All right'
     }
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
-    if aws_env['TEXTRACT_ONLY'] == "false" and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
+    if aws_env['textractOnly'] == "false" and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
         print("Extracting bounding box without textract")
         if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
             print("Error while trying to get pdf information")
