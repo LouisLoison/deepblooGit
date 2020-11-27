@@ -6,20 +6,6 @@ from xhtml2pdf import pisa
 from helper import FileHelper, S3Helper, AwsHelper
 
 
-def convert_html_to_pdf(html_str, aws_env) -> None:
-    aws_region = aws_env['awsRegion']
-    output_bucket = aws_env['outputBucket']
-    output_file = aws_env['outputName']
-    output_content = BytesIO()
-
-    print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
-    s3 = AwsHelper().getResource('s3', aws_region)
-    s3_obj = s3.Object(output_bucket, output_file)
-    pisa.CreatePDF(html_str, dest=output_content)
-    content = output_content.getvalue().decode("utf-8", errors="ignore")
-    s3_obj.put(Body=content)
-
-
 def send_message(client, qUrl, json_message) -> None:
     message = json.dumps(json_message)
     client.send_message(QueueUrl=qUrl, MessageBody=message)
@@ -36,6 +22,20 @@ def send_to_pdf_to_bbox_lambda(aws_env: dict) -> None:
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
     qUrl = aws_env['pdfToBboxQueueUrl']
     send_message(client, qUrl, json_message)
+
+
+def convert_html_to_pdf(html_str, aws_env) -> None:
+    aws_region = aws_env['awsRegion']
+    output_bucket = aws_env['outputBucket']
+    output_file = aws_env['outputName']
+    output_content = BytesIO()
+
+    print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
+    s3 = AwsHelper().getResource('s3', aws_region)
+    s3_obj = s3.Object(output_bucket, output_file)
+    pisa.CreatePDF(html_str, dest=output_content)
+    content = output_content.getvalue().decode("utf-8", errors="ignore")
+    s3_obj.put(Body=content)
 
 
 def read_from_s3(aws_env):
@@ -73,12 +73,11 @@ def lambda_handler(event, context):
         "pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
         "outputName": get_pdf_filename(body['objectName'], body['documentId'])
     }
-
-    html_content = read_from_s3(aws_env)
-    convert_html_to_pdf(html_content, aws_env)
-    send_to_pdf_to_bbox_lambda(aws_env)
-
-    return {
+    status = {
         'statusCode': 200,
         'body': 'All right'
     }
+    html_content = read_from_s3(aws_env)
+    convert_html_to_pdf(html_content, aws_env)
+    send_to_pdf_to_bbox_lambda(aws_env)
+    return status

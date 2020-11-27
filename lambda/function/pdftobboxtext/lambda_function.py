@@ -1,8 +1,27 @@
 import json
 import os
-import pdfplumber
-import subprocess
 from helper import AwsHelper, S3Helper
+from pdfplumber.cli import parse_args, main, convert
+from pdfplumber.pdf import PDF
+import pdfplumber
+
+
+def send_message(client, qUrl, json_message) -> None:
+    message = json.dumps(json_message)
+    client.send_message(QueueUrl=qUrl, MessageBody=message)
+    print("Submitted message to queue: {}".format(message))
+
+
+def send_to_textract(aws_env: dict):
+    json_message = {
+        "bucketName": aws_env["outputBucket"],
+        "objectName": aws_env["outputName"],
+        "documentId": aws_env["documentId"],
+        "awsRegion": aws_env["awsRegion"]
+    }
+    client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
+    qUrl = aws_env['textractQueueUrl']
+    send_message(client, qUrl, json_message)
 
 
 def get_bbox_filename(path_to_pdf: str) -> str:
@@ -13,65 +32,50 @@ def get_bbox_filename(path_to_pdf: str) -> str:
     return json_output
 
 
-def prepare_pdfplumber():
-    cmd_cp_list = "cp /opt/bin/pdfplumber /tmp/".split()
-    cmd_chmod_list = "chmod 755 /tmp/pdfplumber".split()
-    cmd_ls_list = "ls -al /tmp".split()
-    print("[RUN] {}".format(cmd_cp_list))
-    subprocess.run(cmd_cp_list)
-    print("[RUN] {}".format(cmd_chmod_list))
-    subprocess.run(cmd_chmod_list)
-    with subprocess.Popen(cmd_ls_list, stdout=subprocess.PIPE, encoding="utf-8") as proc:
-        print(proc.stdout.read())
+def write_bbox_to_s3(aws_env: dict) -> None:
+    with open(aws_env['tmpJsonOutput'], "r") as file:
+        content = file.read()
+        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
 
 
-
-def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> int:
+def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> bool:
     """
     Execute the pdfplumber binary with pdf_tmp_path to extract bounding boxes.
 
     :param pdf_tmp_path: the tmp path of the pdf to pass to pdfplumber
+    :param bbox_output: the tmp file of the json to create and to stock pdf information
     :param output_format: the output format of the bounding boxes. Can be "json" or "csv"
     :param output_type: object types to extract. "char", "rect", "line", "curve", "image", "annot"
-    :return: None
+    :return: int
     """
     available_format = ["json", "csv"]
     available_types = ["char", "rect", "line", "curve", "image", "annot"]
     if output_format not in available_format:
         print("[pdfplumber execution] => Wrong format parameter given {0}".format(output_format))
-        return 0
+        return True
     if output_type not in available_types:
         print("[pdfplumber execution] => Wrong type parameter given {0}".format(output_type))
-    pdfplumber_cmd = "/tmp/pdfplumber --format {0} --types {1}".format(output_format, output_type)
-    cmd_list = pdfplumber_cmd.split()
-    print("Current Path: {}".format(bbox_output))
-    prepare_pdfplumber()
-    print("Pdf tmp file: {}".format(pdf_tmp_path))
-    print("Json tmp file: {}".format(bbox_output))
-    try:
-        print("Executing PDF to Bounding box: {}".format(cmd_list))
-        with open(bbox_output, "w") as json_file:
-            with open(pdf_tmp_path, "r") as file:
-                subprocess.run(cmd_list, stdout=json_file, stdin=file,
-                                 encoding="utf-8", universal_newlines=True)
-    except subprocess.CalledProcessError as error:
-        print("[EXIT CODE] : {0}\n[DESCRIPTION]  => {1}".format(error.returncode, error.stdout))
-        return error.returncode
-    return 0
+        return True
+    args_raw = "--format {0} --types {1} --indent 4".format(output_format, output_type).split()
+    args = parse_args(args_raw)
+    converter = {"csv": convert.to_csv, "json": convert.to_json}[args.format]
+    kwargs = {"csv": {}, "json": {"indent": args.indent}}[args.format]
+    with open(bbox_output, "w") as json_file:
+        with PDF.open(pdf_tmp_path) as pdf:
+            converter(pdf, json_file, args.types, **kwargs)
+    return False
 
 
-def is_pdf_with_images(pdf_path) -> bool:
+def is_valid_pdf(pdf_path, min_char_required) -> bool:
     with pdfplumber.open(pdf_path) as pdf_content:
         images = pdf_content.images
         if len(images) == 0:
             return False
+        for page in pdf_content.pages:
+            nb_char_in_page = len(page.chars)
+            if nb_char_in_page < min_char_required:
+                return False
     return True
-
-
-def write_bbox_to_s3(file_path, aws_env: dict) -> None:
-    with open(file_path, "r") as file:
-        content = file.read()
-        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
 
 
 def copy_pdf_to_tmp(aws_env: dict) -> str:
@@ -101,18 +105,23 @@ def lambda_handler(event, context):
         "awsRegion": aws_region,
         "tmpJsonOutput": "/tmp/tmp_result.json",
         "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputName": get_bbox_filename(body['objectName'])
+        "outputName": get_bbox_filename(body['objectName']),
+        "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
+        "textractOnly": os.environ['TEXTRACT_ONLY'],
+        "minCharNeeded": os.environ['MIN_CHAR_NEEDED']
     }
-
-    pdf_tmp_path = copy_pdf_to_tmp(aws_env)
-    if is_pdf_with_images(pdf_tmp_path) is False:
-        print("Extracting bounding box without textract")
-        execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput'])
-        write_bbox_to_s3(aws_env['tmpJsonOutput'], aws_env)
-    else:
-        print("Extracting bounding box with textract")
-        # send to textract
-    return {
+    status = {
         'statusCode': 200,
         'body': 'All right'
     }
+    pdf_tmp_path = copy_pdf_to_tmp(aws_env)
+    if aws_env['TEXTRACT_ONLY'] == "false" and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
+        print("Extracting bounding box without textract")
+        if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
+            print("Error while trying to get pdf information")
+            return status
+        write_bbox_to_s3(aws_env)
+    else:
+        print("Extracting bounding box with textract")
+        send_to_textract(aws_env)
+    return status
