@@ -5,7 +5,8 @@ const { BddTool } = require('deepbloo');
 exports.handler =  async function(event, ) {
   console.log(event)
 
-  const client = BddTool.bddInit('deepbloo','devAws')
+  const client = await BddTool.bddInit('deepbloo','devAws')
+
   await BddTool.QueryExecPrepared(client, 'BEGIN;');
 
   const query = `UPDATE tenderimport
@@ -22,10 +23,10 @@ exports.handler =  async function(event, ) {
   const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ event.uuid ])
 
   const query2 = `UPDATE      tenderimport 
-	  FROM tenders
     SET   tenderUuid = tenders.uuid,
           tenderId = tenders.id, 
           mergeMethod = 'TITLE_BUYER_BIDDEADLINE'
+    FROM tenders
     WHERE tenderimport.buyerName = tenders.buyerName 
       AND tenderimport.title = tenders.title 
       AND tenderimport.title != '' 
@@ -44,11 +45,14 @@ exports.handler =  async function(event, ) {
 
   console.log(query3)
   const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ event.uuid ], 'tenders');
+
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
 
   const created = (tender !== undefined) ? tender : false
   console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'created', (tender !== undefined) )
   const error = !(mergedProcurementId || mergedBuyerBiddeadline || created)
+
+  client.release()
   return {
     mergedProcurementId,
     mergedBuyerBiddeadline,

@@ -25,7 +25,7 @@ alter table tenderimport add column dataRaw json;
 alter table tenderimport add column if not exists uuid UUID NOT NULL DEFAULT uuid_generate_v4();
 alter table tenderimport add column if not exists tenderuuid UUID;
 alter table tenderimport add column cpvDescriptions varchar;
-alter table tenderimport add column cpvOrigines varchar;
+alter table tenderimport add column cpvsOrigine varchar;
 
 
 create unique index if not exists source_id_import_unicity_key on tenderimport(dataSource, source_id);

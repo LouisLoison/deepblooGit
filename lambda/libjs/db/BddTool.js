@@ -5,6 +5,7 @@ let BddId
 let Environnement
 let configBdd
 let Schema
+let pgPool = false;
 
 exports.bddInit = async (localBddId, localEnvironnement) => {
   var Config = require(process.cwd() + '/config')
@@ -19,7 +20,6 @@ exports.bddInit = async (localBddId, localEnvironnement) => {
   }
 }
 
-let pgPool = false;
 
 const pgInitPool = (onError) => {
   try {
