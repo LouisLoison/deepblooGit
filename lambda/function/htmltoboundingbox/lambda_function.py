@@ -55,10 +55,8 @@ def read_from_s3(aws_env):
     return content
 
 
-def get_pdf_filename(path_to_html: str, document_id: str) -> str:
-    folder_output = "/".join(path_to_html.split('/')[:-1])  # get path without file
-    path_without_ext, _ = os.path.splitext(path_to_html.split('/')[-1])
-    pdf_output = path_without_ext + '.pdf'
+def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
+    folder_output, pdf_output = os.path.split(path_to_pdf)
     output_file = "{}-analysis/{}/{}".format(folder_output, document_id, pdf_output)
     return output_file
 

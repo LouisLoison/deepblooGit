@@ -5,12 +5,25 @@ import subprocess
 from helper import AwsHelper, S3Helper
 
 
-def get_bbox_filename(path_to_pdf: str, document_id: str) -> str:
-    folder_output = "/".join(path_to_pdf.split('/')[:-1])  # get path without file
-    path_without_ext, _ = os.path.splitext(path_to_pdf.split('/')[-1])
-    pdf_output = path_without_ext + '.pdf'
-    output_file = "{}-analysis/{}/{}".format(folder_output, document_id, pdf_output)
-    return output_file
+def get_bbox_filename(path_to_pdf: str) -> str:
+    folder_output, pdf_output = os.path.split(path_to_pdf)
+    file_name, ext = os.path.splitext(pdf_output)
+    json_file = file_name + ".json"
+    json_output = os.path.join(folder_output, json_file)
+    return json_output
+
+
+def prepare_pdfplumber():
+    cmd_cp_list = "cp /opt/bin/pdfplumber /tmp/".split()
+    cmd_chmod_list = "chmod 755 /tmp/pdfplumber".split()
+    cmd_ls_list = "ls -al /tmp".split()
+    print("[RUN] {}".format(cmd_cp_list))
+    subprocess.run(cmd_cp_list)
+    print("[RUN] {}".format(cmd_chmod_list))
+    subprocess.run(cmd_chmod_list)
+    with subprocess.Popen(cmd_ls_list, stdout=subprocess.PIPE, encoding="utf-8") as proc:
+        print(proc.stdout.read())
+
 
 
 def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> int:
@@ -29,11 +42,18 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
         return 0
     if output_type not in available_types:
         print("[pdfplumber execution] => Wrong type parameter given {0}".format(output_type))
-    pdfplumber_cmd = ["pdfplumber", "--format", output_format, output_type]
-    commands = [*pdfplumber_cmd, "< {}".format(pdf_tmp_path), "> {0}".format(bbox_output)]
+    pdfplumber_cmd = "/tmp/pdfplumber --format {0} --types {1}".format(output_format, output_type)
+    cmd_list = pdfplumber_cmd.split()
+    print("Current Path: {}".format(bbox_output))
+    prepare_pdfplumber()
+    print("Pdf tmp file: {}".format(pdf_tmp_path))
+    print("Json tmp file: {}".format(bbox_output))
     try:
-        print("Executing PDF to Bounding box")
-        subprocess.call(commands, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        print("Executing PDF to Bounding box: {}".format(cmd_list))
+        with open(bbox_output, "w") as json_file:
+            with open(pdf_tmp_path, "r") as file:
+                subprocess.run(cmd_list, stdout=json_file, stdin=file,
+                                 encoding="utf-8", universal_newlines=True)
     except subprocess.CalledProcessError as error:
         print("[EXIT CODE] : {0}\n[DESCRIPTION]  => {1}".format(error.returncode, error.stdout))
         return error.returncode
@@ -48,10 +68,10 @@ def is_pdf_with_images(pdf_path) -> bool:
     return True
 
 
-def write_bbox_to_s3(aws_env: dict) -> None:
-    with open(aws_env['outputName']) as file:
-        bbox_content = file.read()
-        AwsHelper.writeTos3(bbox_content, aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
+def write_bbox_to_s3(file_path, aws_env: dict) -> None:
+    with open(file_path, "r") as file:
+        content = file.read()
+        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
 
 
 def copy_pdf_to_tmp(aws_env: dict) -> str:
@@ -79,14 +99,16 @@ def lambda_handler(event, context):
         "objectName": body['objectName'],
         "documentId": body['documentId'],
         "awsRegion": aws_region,
+        "tmpJsonOutput": "/tmp/tmp_result.json",
         "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputName": get_bbox_filename(body['objectName'], body['documentId'])
+        "outputName": get_bbox_filename(body['objectName'])
     }
+
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
     if is_pdf_with_images(pdf_tmp_path) is False:
         print("Extracting bounding box without textract")
-        execute_pdf_to_bbox(pdf_tmp_path, aws_env["outputName"])
-        #write_bbox_to_s3(aws_env)
+        execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput'])
+        write_bbox_to_s3(aws_env['tmpJsonOutput'], aws_env)
     else:
         print("Extracting bounding box with textract")
         # send to textract
