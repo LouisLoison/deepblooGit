@@ -291,8 +291,9 @@ const RecordAddUpdatePostgreSql = async(TableName, Record, ColumnKey) => {
 
   const { rows, fields } = await pgPool.query(preparedQuery)
   console.log(rows);
+  const [ result ] = pgMapResult(rows, fields, TableName)
 
-  return pgMapResult(rows, fields, TableName)
+  return result
 }
 
 const pgMapResult = (rows, fields, TableName) => {

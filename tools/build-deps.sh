@@ -16,8 +16,8 @@ cp -a ../deepbloo-back/config lambda/function/appsearchIndex/
 mkdir -p lambda/layer/npm/nodejs/node_modules/deepbloo/
 cp -a lambda/libjs/* lambda/layer/npm/nodejs/node_modules/deepbloo/
 
-mkdir -p lambda/function/stepTenderStore/node_modules/deepbloo
-cp -a lambda/libjs/* lambda/function/stepTenderStore/node_modules/deepbloo/
+#mkdir -p lambda/function/stepTenderStore/node_modules/deepbloo
+#cp -a lambda/libjs/* lambda/function/stepTenderStore/node_modules/deepbloo/
 
 
 sudo rm $(find lambda/layer/pipenv/bin/ -type l)

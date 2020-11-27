@@ -3,7 +3,7 @@
 const { BddTool } = require('deepbloo');
 
 exports.handler =  async function(event, ) {
-  console.log(event)
+  const { uuid } = event
 
   const client = await BddTool.bddInit('deepbloo','devAws')
 
@@ -20,7 +20,7 @@ exports.handler =  async function(event, ) {
     AND tenderimport.tenderUuid IS NULL`
 
   console.log(query)
-  const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ event.uuid ])
+  const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ uuid ])
 
   const query2 = `UPDATE      tenderimport 
     SET   tenderUuid = tenders.uuid,
@@ -35,16 +35,15 @@ exports.handler =  async function(event, ) {
       AND tenderimport.tenderUuid IS NULL`
 
   console.log(query2)
-  const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ event.uuid ]);
+  const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ uuid ]);
 
-  const fields = 'biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
+  const fields = 'uuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
   const query3 = `insert into tenders (${fields})
-
         select ${fields} from tenderimport 
           where mergeMethod is null and status = 20 and uuid = $1 returning *`
 
   console.log(query3)
-  const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ event.uuid ], 'tenders');
+  const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ uuid ], 'tenders');
 
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
 

@@ -9,7 +9,7 @@ const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
 const startImportSteps = (data) => {
   return new Promise(async (callback, reject) => {
-    const normedObject = data.fileSource.split('/').slice(2).join('').split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
+    const normedObject = data.fileSource.split('/').slice(1).join('').slice(-30).split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
     const contentHash = createHash('sha1').update(JSON.stringify(data)).digest('hex')
     const name = `${normedObject}-${data.fileSourceIndex}-${contentHash}`.substring(0,79)
     log(name, process.env.TENDER_STATE_MACHINE_ARN)
