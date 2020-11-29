@@ -494,8 +494,6 @@ export class TextractPipelineStack extends cdk.Stack {
     existingContentBucket.grantReadWrite(htmlToBoundingBox)
     outputBucket.grantReadWrite(htmlToBoundingBox)
     htmltoboundingboxQueue.grantConsumeMessages(htmlToBoundingBox)
-    // Allow to write to the pdf queue
-    pdfToBoundingBoxAndTextQueue.grantSendMessages(htmlToBoundingBox)
     //--------------
     // PDF Generator
     /*
@@ -523,6 +521,9 @@ export class TextractPipelineStack extends cdk.Stack {
       environment: {
         OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+        TEXTRACT_ONLY: "false", // "true" or "false"
+        MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
       }
     });
 
@@ -539,5 +540,9 @@ export class TextractPipelineStack extends cdk.Stack {
     existingContentBucket.grantReadWrite(pdfToBoundingBox)
     outputBucket.grantReadWrite(pdfToBoundingBox)
     pdfToBoundingBoxAndTextQueue.grantConsumeMessages(pdfToBoundingBox)
+    // Allow to write to the pdf queue
+    pdfToBoundingBoxAndTextQueue.grantSendMessages(htmlToBoundingBox)
+    // Allow to write pdf in textract queue
+    esIndexQueue.grantSendMessages(pdfToBoundingBox)
   }
 }
