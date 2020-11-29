@@ -8,13 +8,13 @@ sudo docker run --rm -v "$PWD":/var/task lambci/lambda:build-python3.8 bash tool
 sudo docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash tools/build-deps-node.sh
 
 
-mkdir -p lambda/layer/npm/nodejs/node_modules/deepblooback/
-cp -a ../deepbloo-back/controllers lambda/layer/npm/nodejs/node_modules/deepblooback/
-cp -a ../deepbloo-back/global lambda/function/appsearchIndex/
-cp -a ../deepbloo-back/config lambda/function/appsearchIndex/
+#mkdir -p lambda/layer/npm/nodejs/node_modules/deepblooback/
+#cp -a ../deepbloo-back/controllers lambda/layer/npm/nodejs/node_modules/deepblooback/
+#cp -a ../deepbloo-back/global lambda/function/appsearchIndex/
+#cp -a ../deepbloo-back/config lambda/function/appsearchIndex/
 
-mkdir -p lambda/layer/npm/nodejs/node_modules/deepbloo/
-cp -a lambda/libjs/* lambda/layer/npm/nodejs/node_modules/deepbloo/
+#mkdir -p lambda/layer/npm/nodejs/node_modules/deepbloo/
+#cp -a lambda/libjs/* lambda/layer/npm/nodejs/node_modules/deepbloo/
 
 #mkdir -p lambda/function/stepTenderStore/node_modules/deepbloo
 #cp -a lambda/libjs/* lambda/function/stepTenderStore/node_modules/deepbloo/

@@ -1,5 +1,6 @@
-var crypto = require('crypto')
+const crypto = require('crypto')
 const BddSchema = require('./BddSchema')
+const { getDbSecret } = require('../config')
 
 let BddId
 let Environnement
@@ -7,14 +8,13 @@ let configBdd
 let Schema
 let pgPool = false;
 
-exports.bddInit = async (localBddId, localEnvironnement) => {
-  var Config = require(process.cwd() + '/config')
-  BddId=localBddId
-  Environnement=localEnvironnement
-  configBdd = Config.bdd[BddId][Environnement].config
+exports.bddInit = async () => {
+  configBdd = configBdd || await getDbSecret()
+  configBdd.type = configBdd.type || configBdd.engine
+
   Schema = BddSchema.getSchema().deepbloo
 
-  if (configBdd.type === 'PostgreSql') {
+  if (configBdd.type === 'postgres') {
     pgInitPool()
     return await pgPool.connect() // Passes the client to enable transaction
   }
@@ -25,10 +25,10 @@ const pgInitPool = (onError) => {
   try {
     if(!pgPool) {
       const pgArgs = {
-        host: configBdd.server,
-        user: configBdd.user,
+        host: configBdd.host,
+        user: configBdd.username,
         password: configBdd.password,
-        database: configBdd.database
+        database: configBdd.username,
       }
       console.log(pgArgs)
       const { Pool } = require('pg')
@@ -168,7 +168,7 @@ var QueryExecOracle = async function(onError, onSuccess, Query) {
 }
 
 
-var QueryExecPostgreSql = (onError, onSuccess, Query, rowsCount) => {
+var QueryExecpostgres = (onError, onSuccess, Query, rowsCount) => {
   try {
     pgPool.query(Query, (err, results) => {
       if (err) {
@@ -212,8 +212,8 @@ var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
     QueryExecMySql(onError, onSuccess, Query, rowsCount)
   } else if (configBdd.type === 'Oracle') {
     QueryExecOracle(onError, onSuccess, Query)
-  } else if (configBdd.type === 'PostgreSql') {
-    QueryExecPostgreSql(onError, onSuccess, Query, rowsCount)
+  } else if (configBdd.type === 'postgres') {
+    QueryExecpostgres(onError, onSuccess, Query, rowsCount)
   }
 }
 exports.QueryExecBdd = QueryExecBdd
@@ -227,7 +227,7 @@ exports.QueryExecBdd2 = (Query, rowsCount) => {
 // Now using prepared statement for SQL injection prevention
 // Also allow to set NULLs (null) and default values (undefined)
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
-const RecordAddUpdatePostgreSql = async(TableName, Record, ColumnKey) => {
+const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey) => {
   let ColumnList = []
   let Table = Schema[TableName]
   console.log(TableName, Record)
@@ -447,14 +447,14 @@ const RecordAddUpdateGeneric = (TableName, Record) => {
 }
 
 exports.RecordAddUpdate = async (TableName, Record, ColumnKey) => {
-  if (configBdd.type === 'PostgreSql') {
-    return await RecordAddUpdatePostgreSql(TableName, Record, ColumnKey)
+  if (configBdd.type === 'postgres') {
+    return await RecordAddUpdatepostgres(TableName, Record, ColumnKey)
   } else {
     return await RecordAddUpdateGeneric(TableName,   Record)
   }
 }
 
-const bulkInsertPostgreSql = async (TableName, records) => {
+const bulkInsertpostgres = async (TableName, records) => {
   let Table = Schema[TableName]
 
   const columns = []
@@ -474,7 +474,7 @@ const bulkInsertPostgreSql = async (TableName, records) => {
     values.push(value)
   }
 
-  const pgPool = pgInitPool (BddId, Environnement);
+  const pgPool = pgInitPool ();
 
   const Query = {
     name: getSHA1ofJSON(TableName + '-' + columns.join('-')),
@@ -546,8 +546,8 @@ const bulkInsertGeneric = (TableName, records) => {
 }
 
 exports.bulkInsert = async (TableName, records) => {
-  if (configBdd.type === 'PostgreSql') {
-    return await bulkInsertPostgreSql(TableName, records)
+  if (configBdd.type === 'postgres') {
+    return await bulkInsertpostgres(TableName, records)
   } else {
     return await bulkInsertGeneric(TableName, records)
   }
@@ -637,7 +637,7 @@ var BddColumnType = (Type) => {
     } else if (Type === 'Time') {
       TypeTexte = `time`
     }
-  } else if (configBdd.type === 'PostgreSql') {
+  } else if (configBdd.type === 'postgres') {
     if (Type === 'String') {
       TypeTexte = `varchar(255)`
     } else if (Type === 'Text') {
@@ -690,7 +690,7 @@ var ChaineFormater = (Texte) => {
     Texte = Texte
   } else if (configBdd.type === 'MySql') {
     Texte = Texte.replace(/\\/gi, '\\\\')
-  } else if (configBdd.type === 'PostgreSql') {
+  } else if (configBdd.type === 'postgres') {
     Texte = Texte.replace(/\\/gi, '\\\\')
   } else if (configBdd.type === 'Oracle') {
     Texte = Texte
@@ -760,7 +760,7 @@ exports.DateFormater = (Texte) => {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DDTHH:mm:ss')
   } else if (configBdd.type === 'MySql') {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
-  } else if (configBdd.type === 'PostgreSql') {
+  } else if (configBdd.type === 'postgres') {
     Texte = moment(Texte, "YYYYMMDD HH:mm:ss:SSS").format('YYYY-MM-DD HH:mm:ss')
   } else if (configBdd.type === 'Oracle') {
     Texte = `to_date(${Texte},'yyyymmdd hh24:mi:ss')`

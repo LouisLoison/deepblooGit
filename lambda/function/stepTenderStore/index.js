@@ -2,12 +2,11 @@
 
 const { log, BddTool } = require('deepbloo');
 
-BddTool.bddInit('deepbloo','devAws')
 
 exports.handler = async function(event, ) {
   const { analyzedData, convertedData, tenderData } = event
   analyzedData.dataRaw = tenderData
-
+  await BddTool.bddInit()
   const tender = await BddTool.RecordAddUpdate (
     'tenderimport',
     analyzedData,

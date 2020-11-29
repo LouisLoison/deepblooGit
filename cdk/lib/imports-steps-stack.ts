@@ -3,6 +3,7 @@ import { InvokeFunction } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion, ILayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
 import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
+import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
 import iam = require('@aws-cdk/aws-iam');
@@ -21,10 +22,20 @@ export class ImportsStepsStack extends Stack {
     const environment = {
       NODE_ENV: "dev",
     }
+
+    const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx',
+      DB_SECRET: secretArn,
     }
+
+    const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
+      secretArn,
+
+      // If the secret is encrypted using a KMS-hosted CMK, either import or reference that key:
+      // encryptionKey,
+    });
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
@@ -33,7 +44,7 @@ export class ImportsStepsStack extends Stack {
       availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
       // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
       // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
-      privateSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
+      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
     });
 
     const nodeLayer = new LayerVersion(this, 'NodeLib', {
@@ -42,6 +53,14 @@ export class ImportsStepsStack extends Stack {
       license: 'Apache-2.0, MIT',
       description: 'Old backend and dependencies layer.',
     });
+
+    const deepblooLayer = new LayerVersion(this, 'DeepblooLib', {
+      code: new AssetCode('../lambda/layer/deepbloo'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Private, Unlicensed',
+      description: 'Deepbloo lib layer.',
+    });
+
 
 
     const stepTenderConvert = new Function(this, 'convertTender', {
@@ -63,9 +82,10 @@ export class ImportsStepsStack extends Stack {
       vpc,
       memorySize: 500,
       //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(60),
       environment: {
         ...environment,
+        ...dbEnv,
       }
     });
 
@@ -79,6 +99,7 @@ export class ImportsStepsStack extends Stack {
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
+        ...dbEnv,
       }
     });
 
@@ -89,9 +110,10 @@ export class ImportsStepsStack extends Stack {
       vpc,
       memorySize: 500,
       //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(60),
       environment: {
         ...environment,
+        ...dbEnv,
       }
     });
 
@@ -101,7 +123,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       memorySize: 500,
       //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(60),
       environment: {
         ...environment,
       }
@@ -113,18 +135,22 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       memorySize: 500,
       //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(60),
       environment: {
         ...environment,
       }
     });
 
-    stepTenderConvert.addLayers(nodeLayer)
-    stepTenderAnalyze.addLayers(nodeLayer)
-    stepTenderStore.addLayers(nodeLayer)
-    stepTenderMerge.addLayers(nodeLayer)
-    stepTenderIndex.addLayers(nodeLayer)
-    downloadAttachments.addLayers(nodeLayer)
+    stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
+    stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
+    stepTenderStore.addLayers(nodeLayer, deepblooLayer)
+    stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
+    stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
+    downloadAttachments.addLayers(nodeLayer, deepblooLayer)
+    dbSecret.grantRead(stepTenderAnalyze)
+    dbSecret.grantRead(stepTenderStore)
+    dbSecret.grantRead(stepTenderMerge)
+    dbSecret.grantRead(stepTenderIndex)
 
     const convertTenderTask = new Task(this, 'Tender Conversion Task', {
       task: new InvokeFunction(stepTenderConvert),
@@ -201,7 +227,7 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
-    xmlImport.addLayers(nodeLayer)
+    xmlImport.addLayers(nodeLayer, deepblooLayer)
     //Trigger
     xmlImport.addEventSource(new S3EventSource(sftpBucket, {
       events: [ s3.EventType.OBJECT_CREATED ],
