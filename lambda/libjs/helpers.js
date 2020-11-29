@@ -47,7 +47,7 @@ ${data === undefined ? '' : JSON.stringify(data, null, 2)}`)
   } catch (e) {
     if (e instanceof TypeError) {
       console.log(message)
-      if (data !== undefined) { console.log(data) };
+      if (data !== undefined) { console.log(data) }
     }
     else {
       throw e

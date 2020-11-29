@@ -72,14 +72,14 @@ exports.handler =  async function(event, ) {
       fileSource: objectName,
       fileSourceIndex: tenderCount,
       dataSource,
-//      exclusion: '',
-//      exclusionWord: '',
+      //      exclusion: '',
+      //      exclusionWord: '',
       status: 1,
       creationDate: new Date(),
       updateDate: new Date()
     }
     const { duplicate } = await startImportSteps(rawTender)
-    duplicateCount += duplicate ? 1 : 0 
+    duplicateCount += duplicate ? 1 : 0
     if (tenderCount >= 5) { break }
   }
   log(`Processed ${tenderCount} jobs, started ${tenderCount-duplicateCount} (${duplicateCount} duplicates)`)
