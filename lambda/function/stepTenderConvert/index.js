@@ -1,8 +1,7 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 
-const { getXmlJsonData, log } = require('deepbloo');
+const { getXmlJsonData, getXmlJsonArray, log } = require('deepbloo');
 const moment = require('moment')
-
 
 exports.handler =  async function(event, ) {
   let tender = {}
@@ -37,6 +36,9 @@ exports.handler =  async function(event, ) {
     const publicationDateText = getXmlJsonData(event.publicationDate)
     const publicationDate = `${publicationDateText.substring(0, 4)}-${publicationDateText.substring(4, 6)}-${publicationDateText.substring(6, 8)}`
 
+    const sourceUrl = []
+    getXmlJsonArray(event.sourceUrl).forEach(d => sourceUrl.push(...d.split(',')))
+
     tender = {
       dataSourceId: parseInt(getXmlJsonData(event.id), 10),
       procurementId: getXmlJsonData(event.procurementId).substring(0, 90),
@@ -61,7 +63,7 @@ exports.handler =  async function(event, ) {
       publicationDate,
       cpvs: getXmlJsonData(event.cpvs),
       bidDeadlineDate,
-      sourceUrl: getXmlJsonData(event.sourceUrl).substring(0, 1900),
+      sourceUrl: sourceUrl,
       dataSource: event.dataSource,
       origine: 'DgMarket',
       creationDate: new Date(),
@@ -145,10 +147,13 @@ exports.handler =  async function(event, ) {
       .filter(k => !(k in ['related_documents']))
       .reduce((acc, k) => ({...acc, [k]: getXmlJsonData(event[k])}), {})
 
-    tenderData.related_documents = event.related_documents ?
+    const relatedDocuments = []
+    if(event.related_documents) {
       event.related_documents
         .map(d => d.document_url)
-        .filter(d => d) : []
+        .filter(d => d)
+        .forEach(d => relatedDocuments.push(...d))
+    }
 
     const title = tenderData.short_desc
     const description = tenderData.tenders_details
@@ -180,7 +185,7 @@ exports.handler =  async function(event, ) {
       //      cpvDescriptions: null,
       words: '',
       bidDeadlineDate: tenderData.doc_last,
-      sourceUrl: tenderData.related_documents,
+      sourceUrl: relatedDocuments,
       termDate: termDate,
       fileSource: tenderData.fileSource,
       dataSource: event.dataSource,

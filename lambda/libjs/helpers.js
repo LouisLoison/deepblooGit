@@ -30,6 +30,7 @@ const putFile = async (bucketName, fileKey, fileContent) => {
 }
 
 const getXmlJsonData = (data) => {
+  if (!data) return null
   if (data && data.length > 0) {
     if (data[0]._) {
       return data[0]._
@@ -38,6 +39,11 @@ const getXmlJsonData = (data) => {
     }
   }
   return ''
+}
+
+const getXmlJsonArray = (data) => {
+  if (!data) return null
+  return data.map(d => d._ || d)
 }
 
 const log = (message, data, level='INFO') => {
@@ -59,5 +65,6 @@ export {
   getFileContent,
   putFile,
   getXmlJsonData,
+  getXmlJsonArray,
   log,
 }

@@ -38,9 +38,12 @@ exports.handler =  async function(event, ) {
   const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ uuid ]);
 
   const fields = 'uuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
-  const query3 = `insert into tenders (${fields})
+  const query3 = `
+        update tenderimport set tenderuuid = uuid
+        where mergeMethod is null and status = 20 and uuid = $1;
+        insert into tenders (${fields})
         select ${fields} from tenderimport 
-          where mergeMethod is null and status = 20 and uuid = $1 returning *`
+          where mergeMethod is null and status = 20 and uuid = $1 returning *;`
 
   console.log(query3)
   const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ uuid ], 'tenders');
