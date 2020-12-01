@@ -1,0 +1,409 @@
+[
+  {
+    "label": "Africa",
+    "regions": [
+      {
+        "label": "Eastern",
+        "countrys": [
+          "Burundi",
+          "Comoros",
+          "Djibouti",
+          "Eritrea",
+          "Ethiopia",
+          "Kenya",
+          "Madagascar",
+          "Malawi",
+          "Mauritius",
+          "Mayotte",
+          "Mozambique",
+          "Reunion",
+          "Rwanda",
+          "Seychelles",
+          "Somalia",
+          "Tanzania",
+          "Uganda"
+        ]
+      },
+      {
+        "label": "Northern",
+        "countrys": [
+          "Algeria",
+          "Egypt",
+          "Libya",
+          "Morocco",
+          "South Sudan",
+          "Sudan",
+          "Tunisia"
+        ]
+      },
+      {
+        "label": "Southern",
+        "countrys": [
+          "South Africa",
+          "Botswana",
+          "Comores",
+          "Eswatini",
+          "Lesotho",
+          "Malawi",
+          "Namibia",
+          "Swaziland",
+          "Zambia",
+          "Zimbabwe"
+        ]
+      },
+      {
+        "label": "Western",
+        "countrys": [
+          "Benin",
+          "Burkina Faso",
+          "Cape Verde",
+          "Cote d'Ivoire (Ivory Coast)",
+          "Côte d'Ivoire",
+          "Cote d'Ivoire",
+          "Gambia",
+          "Ghana",
+          "Guinea",
+          "Guinea-Bissau",
+          "Liberia",
+          "Mali",
+          "Mauritania",
+          "Niger",
+          "Nigeria",
+          "Saint Helena",
+          "Senegal",
+          "Sierra Leone",
+          "Sao Tome and Principe",
+          "Togo",
+          "Western Sahara"
+        ]
+      },
+      {
+        "label": "Central",
+        "countrys": [
+          "Angola",
+          "Cameroon",
+          "Central African Republic",
+          "Chad",
+          "Congo",
+          "Congo, Democratic Republic",
+          "Congo, the Democratic Republic of the",
+          "Democratic Republic of the Congo",
+          "Equatorial Guinea",
+          "Gabon"
+        ]
+      }
+    ],
+    "continents": [{
+      "code": "AF",
+      "label": "Africa"
+    }]
+  },
+  {
+    "label": "America",
+    "regions": [
+      {
+        "label": "Central",
+        "countrys": [
+          "Anguilla",
+          "Antigua and Barbuda",
+          "Aruba",
+          "Bahamas",
+          "Barbados",
+          "Belize",
+          "Bermuda",
+          "Cayman Islands ",
+          "Costa Rica",
+          "Cuba",
+          "Dominica",
+          "Dominican Republic",
+          "El Salvador",
+          "Grenada",
+          "Guadeloupe",
+          "Guatemala",
+          "Haiti",
+          "Honduras",
+          "Jamaica",
+          "Martinique",
+          "Mexico",
+          "Montserrat",
+          "Navassa Island",
+          "Netherlands Antilles",
+          "Nicaragua",
+          "Panama",
+          "Puerto Rico",
+          "Saint Kitts and Nevis",
+          "Saint Lucia",
+          "Saint-Pierre and Miquelon",
+          "Saint Vincent and the Grenadines",
+          "Trinidad and Tobago",
+          "Turks and Caicos Islands",
+          "Virgin Islands, U.S."
+        ],
+        "continents": [{
+          "code": "AF",
+          "label": "North America"
+        }]
+      },
+      {
+        "label": "North/Canada",
+        "countrys": [
+          "Canada",
+          "Greenland",
+          "United States"
+        ],
+        "continents": [{
+          "code": "NA",
+          "label": "North America"
+        }]
+      },
+      {
+        "label": "South",
+        "countrys": [
+          "Argentina",
+          "Bolivia",
+          "Bolivia, Plurinational State of",
+          "Brazil",
+          "Chile",
+          "Colombia",
+          "Ecuador",
+          "Falkland Islands",
+          "French Guiana ",
+          "Guyana",
+          "Paraguay",
+          "Peru",
+          "Suriname",
+          "Uruguay",
+          "Venezuela"
+        ],
+        "continents": [{
+          "code": "SA",
+          "label": "South America"
+        }]
+      }
+    ]
+  },
+  {
+    "label": "Asia",
+    "regions": [
+      {
+        "label": "Central",
+        "countrys": [
+          "Kazakhstan",
+          "Kyrgyzstan",
+          "Tajikistan",
+          "Turkmenistan",
+          "Uzbekistan"
+        ]
+      },
+      {
+        "label": "Eastern",
+        "countrys": [
+          "Democratic People's Republic of Korea",
+          "Hong Kong",
+          "Japan",
+          "Macao",
+          "Mongolia",
+          "North Korea",
+          "Republic of Korea",
+          "South Korea",
+          "Taiwan"
+        ]
+      },
+      {
+        "label": "Southern",
+        "countrys": [
+          "Afghanistan",
+          "Bangladesh",
+          "Bhutan",
+          "Iran (Islamic Republic of)",
+          "Iran",
+          "Maldives",
+          "Nepal",
+          "Sri Lanka",
+          "Brunei Darussalam",
+          "Cambodia",
+          "Indonesia",
+          "Lao People's Democratic Republic",
+          "Malaysia",
+          "Myanmar",
+          "Philippines",
+          "Singapore",
+          "Thailand",
+          "Timor-Leste",
+          "Viet Nam"
+        ]
+      }
+    ],
+    "continents": [{
+      "code": "AS",
+      "label": "Asia"
+    }]
+  },
+  {
+    "label": "Europe",
+    "regions": [
+      {
+        "label": "East",
+        "countrys": [
+          "Albania",
+          "Belarus",
+          "Bosnia and Herzegovina",
+          "Bulgaria",
+          "Croatia",
+          "Czech Republic",
+          "Hungary",
+          "Kosovo",
+          "Macedonia",
+          "Macedonia, the former Yugoslav Republic of",
+          "Moldova",
+          "Montenegro",
+          "Poland",
+          "Romania",
+          "Russia",
+          "Russian Federation",
+          "Serbia",
+          "Slovakia",
+          "Slovenia",
+          "Ukraine"
+        ]
+      },
+      {
+        "label": "West",
+        "countrys": [
+          "Austria",
+          "Belgium",
+          "Denmark",
+          "Estonia",
+          "Finland",
+          "France",
+          "Germany",
+          "Greece",
+          "Iceland",
+          "Ireland",
+          "Isle of Man",
+          "Italy",
+          "Latvia",
+          "Lithuania",
+          "Luxembourg",
+          "Malta",
+          "Netherlands",
+          "Northern Ireland",
+          "Norway",
+          "Portugal",
+          "Spain",
+          "Sweden",
+          "Switzerland",
+          "United Kingdom",
+          "Vatican"
+        ]
+      }
+    ],
+    "continents": [{
+      "code": "EU",
+      "label": "Europe"
+    }]
+  },
+  {
+    "label": "India",
+    "countrys": [
+      "India"
+    ],
+    "continents": [{
+      "code": "AS",
+      "label": "Asia"
+    }]
+  },
+  {
+    "label": "Near & Middle East",
+    "countrys": [
+      "Azerbaijan",
+      "Bahrain",
+      "Cyprus",
+      "Iran",
+      "Iran (Islamic Republic of)",
+      "Iraq",
+      "Israel",
+      "Jordan",
+      "Kuwait",
+      "Lebanon",
+      "Oman",
+      "Pakistan",
+      "Palestinian Territory",
+      "Palestinian Territory, Occupied",
+      "Qatar",
+      "Saudi Arabia",
+      "State of Palestine",
+      "Syrian Arab Republic",
+      "Turkey",
+      "United Arab Emirates",
+      "Yemen"
+    ],
+    "continents": [{
+      "code": "AS",
+      "label": "Asia"
+    }, {
+      "code": "EU",
+      "label": "Europe"
+    }]
+  },
+  {
+    "label": "Pacific",
+    "countrys": [
+      "American Samoa",
+      "Australia",
+      "Bougainville",
+      "Cook Islands",
+      "Federated States of Micronesia",
+      "Fiji",
+      "French Polynesia",
+      "Guam",
+      "Kiribati",
+      "Marshall Islands",
+      "Micronesia, Federated States of",
+      "Nauru",
+      "New Caledonia",
+      "New Zealand",
+      "Papua New Guinea",
+      "Samoa",
+      "Solomon Islands",
+      "Tokelau Islands",
+      "Tonga",
+      "Tuvalu",
+      "Vanuatu",
+      "Wallis & Futuna Islands",
+      "Micronesia"
+    ],
+    "continents": [{
+      "code": "OC",
+      "label": "Oceania"
+    }]
+  },
+  {
+    "label": "Russia and CIS",
+    "countrys": [
+      "Armenia",
+      "Georgia",
+      "Uzbekistan"
+    ],
+    "continents": [{
+      "code": "AS",
+      "label": "Asia"
+    }, {
+      "code": "EU",
+      "label": "Europe"
+    }]
+  },
+  {
+    "label": "China",
+    "countrys": [
+      "China"
+    ],
+    "continents": [{
+      "code": "AS",
+      "label": "Asia"
+    }]
+  },
+  {
+    "label": "Worldwide"
+  }
+]
