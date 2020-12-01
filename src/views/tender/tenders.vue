@@ -244,6 +244,7 @@ export default {
       brands: [],
       origine: [],
       groups: [],
+      buyer_name: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',

@@ -78,6 +78,9 @@ const config = {
       groups: {
         type: "value"
       },
+      buyer_name: {
+        type: "value"
+      },
     }
   }
 }

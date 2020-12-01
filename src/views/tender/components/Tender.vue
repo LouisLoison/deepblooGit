@@ -388,12 +388,7 @@
                       <span v-if="hasReadRight">
                         <a :href="url" target="_blank">
                           <i class="fa fa-external-link" />
-                          {{
-                            url.includes("www.dgmarket.com") ||
-                            url.includes("www2.dgmarket.com")
-                              ? "Link to tender documents"
-                              : url
-                          }}
+                          {{ "Link to tender documents" }}
                         </a>
                       </span>
                       <span v-else class="text-blur">

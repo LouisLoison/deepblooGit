@@ -65,7 +65,7 @@
                 'region',
                 'country',
                 'notice_type',
-                'buyer',
+                'buyer_name',
                 'bid_deadline',
                 'publication_date',
                 'scope_of_work',
@@ -213,6 +213,15 @@
                   @change="handleFacetChange($event, 'currency')"
                   @checkAll="handleFacetCheckAll('currency')"
                   @unCheckAll="handleFacetUnCheckAll('currency')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'buyer_name'"
+                  :checked="filter.buyer_name"
+                  :facet="searchState.facets.buyer_name[0]"
+                  @change="handleFacetChange($event, 'buyer_name')"
+                  @checkAll="handleFacetCheckAll('buyer_name')"
+                  @unCheckAll="handleFacetUnCheckAll('buyer_name')"
                 />
               </v-card>
             </v-menu>
@@ -573,7 +582,7 @@ export default {
       {
         show: true,
         title: "Buyer",
-        property: "buyer",
+        property: "buyer_name",
         menu: null
       },
       {

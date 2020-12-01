@@ -74,6 +74,21 @@
     >
       <v-card-text>
         <SearchFacet
+          :checked="filter.buyer_name"
+          :facet="searchState.facets.buyer_name[0]"
+          @change="handleFacetChange($event, 'buyer_name')"
+          @checkAll="handleFacetCheckAll('buyer_name')"
+          @unCheckAll="handleFacetUnCheckAll('buyer_name')"
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
+      class="mx-auto mb-3"
+      outlined
+    >
+      <v-card-text>
+        <SearchFacet
           :checked="filter.user_id"
           :facet="searchState.facets.user_id[0]"
           @change="handleFacetChange($event, 'user_id')"
@@ -245,6 +260,7 @@
     </v-card>
 
     <v-card
+      v-if="getUserType === 1"
       class="mx-auto mb-3"
       outlined
     >
@@ -258,6 +274,7 @@
         />
       </v-card-text>
     </v-card>
+
   </div>
 </template>
 
@@ -309,11 +326,13 @@ export default {
       brands: [],
       origine: [],
       groups: [],
+      buyer_name: [],
     },
   }),
 
   computed: {
     ...mapGetters([
+      'getUserType',
       'getIsPremiumMembership',
     ]),
   },
