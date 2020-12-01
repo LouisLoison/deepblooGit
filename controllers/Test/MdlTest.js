@@ -233,13 +233,30 @@ exports.CountryCreateCsv = () => {
   })
 }
 
-exports.Test = (data1, data2) => {
+exports.Test = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const { v4: uuidv4 } = require('uuid')
+
+      let count = 0
+      for (i = 0; i < 6; i++) {
+        const tenderDatas = await require(process.cwd() + '/controllers/Tender/MdlTender').tenders({
+          noUuid: true,
+        }, null, 500)
+
+        for (const tender of tenderDatas.entries) {
+          tender.tenderUuid = uuidv4()
+          await require(process.cwd() + '/controllers/Tender/MdlTender').tenderAddUpdate(tender)
+        }
+        count += tenderDatas.entries.length
+      }
+
+      /*
       const line = 'sgfkhjdfgk dfk fdkjv dfskjvn fdkvjn dfskvjndfsvkjn fdsvkjdnfs vkj dnfs vkdjsfn vkdjnvkdsjnvdfkjvn sdfkjv nddfg'
       const regex = '(?:.*fdk|d88fk)(?:.*vkdjsfn)'
       const value = line.match(regex)
-      resolve(value)
+      */
+      resolve(count)
     } catch (err) {
       reject(err)
     }

@@ -85,6 +85,7 @@ exports.statistics = (filter) => {
 exports.importTender = (tender, CpvList, textParses) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const { v4: uuidv4 } = require('uuid')
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
@@ -134,6 +135,8 @@ exports.importTender = (tender, CpvList, textParses) => {
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
         query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      } else {
+        tender.tenderUuid = uuidv4()
       }
 
       const tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'id')

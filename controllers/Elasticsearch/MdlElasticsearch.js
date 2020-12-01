@@ -90,7 +90,6 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
   })
 }
 
-
 // This way of updating (PATCH operation) will NOT add any new field
 exports.updateObject = (objects, engineName = "deepbloo") => {
   return new Promise(async (resolve, reject) => {
@@ -113,6 +112,33 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
     } catch (err) { reject(err) }
   })
 }
+
+exports.tendersFormat = (tenders) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const tenderNews = []
+      for (const tender of tenders) {
+        const tenderNew = JSON.parse(JSON.stringify(tender))
+        tenderNew.buyer_name = ''
+        if (tenderNew.buyer && tenderNew.buyer.name) {
+          tenderNew.buyer_name = tenderNew.buyer.name
+        }
+        delete tenderNew.contact
+        delete tenderNew.buyer
+        delete tenderNew.contact
+        delete tenderNew.words
+        delete tenderNew.cpvsOrigine
+        delete tenderNew.sourceUrls
+        delete tenderNew.fileSource
+        delete tenderNew.origine
+        delete tenderNew.dgmarketId
+        tenderNews.push(tenderNew)
+      }
+      resolve(tenderNews)
+    } catch (err) { reject(err) }
+  })
+}
+
 
 // Import tender into elastic search
 exports.tendersImport = (tendersNumberMax = 100) => {

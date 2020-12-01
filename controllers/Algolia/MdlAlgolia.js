@@ -9,6 +9,7 @@ exports.TendersImport = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       
+      const tenderStatus = '100'
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
@@ -23,7 +24,7 @@ exports.TendersImport = () => {
                     tenderCriterion.updateDate AS "updateDate" 
         FROM        dgmarket 
         INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
-        WHERE       dgmarket.status = 0 
+        WHERE       dgmarket.status = ${tenderStatus} 
       `
       let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenderCriterionAlls = []
@@ -80,7 +81,7 @@ exports.TendersImport = () => {
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
         FROM        dgmarket 
-        WHERE       status = 0 
+        WHERE       status = ${tenderStatus} 
       `
       recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       const tenders = []
@@ -96,7 +97,7 @@ exports.TendersImport = () => {
           continue
         }
         if (tender.algoliaId) {
-          tender.objectID = tender.algoliaId;
+          tender.objectID = tender.algoliaId
         }
         tenders.push(tender)
         const tenderWithCriterions = {
@@ -122,11 +123,13 @@ exports.TendersImport = () => {
       for (tranche of tranches) {
         if (tranche.length > 0) {
           try {
-            await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').indexObjectToAppsearch(tranche)
+            let trancheNew = await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').tendersFormat(tranche)
+            await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').indexObjectToAppsearch(trancheNew)
           } catch (err) {
             console.log('Elasticsearch indexObject error')
           }
-          await this.TendersAdd(tranche, index)
+          // TODO : temp
+          // await this.TendersAdd(tranche, index)
         }
       }
 

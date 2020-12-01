@@ -221,6 +221,11 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
+      if (limit && !page && !pageLimit) {
+        page = 1
+        pageLimit = limit
+      }
+
       let cpvCodes = null
       let cpvLabelFormats = []
       if (filter && filter.cpvs && filter.cpvs.length) {
@@ -389,6 +394,10 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           if (where !== '') { where += 'AND ' }
           where += `dgmarket.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
         }
+        if (filter.noUuid) {
+          if (where !== '') { where += 'AND ' }
+          where += `dgmarket.tenderUuid IS NULL \n`
+        }
       }
       if (where !== '') { query += '\nWHERE ' + where }
       if (orderBy) {
@@ -526,7 +535,6 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
 
       resolve({
         entries: tenders,
-        limit,
         page,
         pageLimit,
         totalCount: recordset.total,

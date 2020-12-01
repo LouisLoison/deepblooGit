@@ -86,6 +86,7 @@ var Schema = {
       id: { type: "Int", key: true },
       dgmarketId: { type: "Int" },
       procurementId: { type: "String" },
+      tenderUuid: { type: "String" },
       title: { type: "String" },
       description: { type: "String" },
       lang: { type: "String" },
