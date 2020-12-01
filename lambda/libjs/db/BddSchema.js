@@ -122,6 +122,7 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     tenderimport: {
+      tenderImportId: { type: "Int" },
       uuid: { type: "String" },
       tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
@@ -164,6 +165,7 @@ var Schema = {
     tenderCriterionCpv: {
       tenderCriterionCpvId: { type: "Int", key: true },
       tenderId: { type: "Int" },
+      tenderUuid: { type: "String" },
       documentId: { type: "Int" },
       cpvId: { type: "Int" },
       value: { type: "String" },
@@ -177,6 +179,7 @@ var Schema = {
     tenderCriterion: {
       tenderCriterionId: { type: "Int", key: true },
       tenderId: { type: "Int" },
+      tenderUuid: { type: "String" },
       documentId: { type: "Int" },
       textParseId: { type: "Int" },
       value: { type: "String" },

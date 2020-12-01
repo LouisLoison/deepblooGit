@@ -1,5 +1,6 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 const { importTender } = require('deepbloo').tenderimport
+const { tenderFormat } = require('deepbloo').tenderformat
 const { CpvList } = require('deepbloo').cpv
 const { textParseList } = require('deepbloo').textparse
 const { log } = require('deepbloo');
@@ -14,15 +15,22 @@ const analyzeTender = async (tender) => {
 }
 
 exports.handler =  async function(event, ) {
-  const { tender, importOrigine } = await analyzeTender(event)
-  if (tender) {
-    tender.status = 20
-    return tender;
+  const result = { ...event }
+  const { tender, importOrigine } = await analyzeTender(event.convertedData)
+  if (!tender) {
+    result.analyzedData = {
+      ...event.convertedData,
+      exclusion:  importOrigine.exclusion,
+      exclusionWord: importOrigine.exclusionWord,
+      status: importOrigine.status,
+    }
+  } else {
+    result.analyzedData = tender
+    result.formatedData = await tenderFormat(tender, cpvList, textParseList)
+    if(result.formatedData) {
+      result.analyzedData.status = 20
+      result.formatedData.status = 20
+    }
   }
-  return {
-    ...event,
-    exclusion:  importOrigine.exclusion,
-    exclusionWord: importOrigine.exclusionWord,
-    status: importOrigine.status,
-  }
+  return result
 }

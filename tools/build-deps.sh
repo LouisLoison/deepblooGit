@@ -22,6 +22,8 @@ sudo docker run --rm -v "$PWD":/var/task lambci/lambda:build-nodejs12.x bash too
 
 sudo rm $(find lambda/layer/pipenv/bin/ -type l)
 
+./tools/build-lib.sh
+
 rm -fr lambda/layer/combined/{python,nodejs,bin}
 mkdir -p lambda/layer/combined/{python,nodejs,bin}
 cp -au lambda/layer/*/python/* lambda/layer/combined/python

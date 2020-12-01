@@ -19,7 +19,6 @@ exports.handler =  async function(event, ) {
 	  AND tenderimport.uuid = $1
     AND tenderimport.tenderUuid IS NULL`
 
-  console.log(query)
   const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ uuid ])
 
   const query2 = `UPDATE      tenderimport 
@@ -34,31 +33,38 @@ exports.handler =  async function(event, ) {
 	    AND tenderimport.uuid = $1
       AND tenderimport.tenderUuid IS NULL`
 
-  console.log(query2)
   const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ uuid ]);
 
   const fields = 'uuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
   const query3 = `
         update tenderimport set tenderuuid = uuid
-        where mergeMethod is null and status = 20 and uuid = $1;
+        where mergeMethod is null and status = 20 and uuid = $1;`
+  await BddTool.QueryExecPrepared(client, query3, [ uuid ]);
+
+  const query4 = `	
         insert into tenders (${fields})
         select ${fields} from tenderimport 
-          where mergeMethod is null and status = 20 and uuid = $1 returning *;`
+          where mergeMethod is null and status = 20 and uuid = $1 returning *;` // TODO: upsert
+  await BddTool.QueryExecPrepared(client, query4, [ uuid ])
 
-  console.log(query3)
-  const [ tender ] = await BddTool.QueryExecPrepared(client, query3, [ uuid ], 'tenders');
+  const query5 = `select tenders.*
+        from tenders, tenderimport
+	where tenders.uuid = tenderimport.tenderuuid
+	and tenderimport.uuid = $1`;
+
+  const [ tender ] = await BddTool.QueryExecPrepared(client, query5, [ uuid ], 'tenders');
 
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
 
-  const created = (tender !== undefined) ? tender : false
-  console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'created', (tender !== undefined) )
-  const error = !(mergedProcurementId || mergedBuyerBiddeadline || created)
+  const data = (tender !== undefined) ? tender : false
+  console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'data', (tender !== undefined) )
+  const error = !(mergedProcurementId || mergedBuyerBiddeadline || data)
 
   client.release()
   return {
     mergedProcurementId,
     mergedBuyerBiddeadline,
-    created,
+    data,
     error,
   }
 }

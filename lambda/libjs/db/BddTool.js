@@ -28,7 +28,7 @@ const pgInitPool = (onError) => {
         host: configBdd.host,
         user: configBdd.username,
         password: configBdd.password,
-        database: configBdd.username,
+        database: configBdd.dbname,
       }
       console.log(pgArgs)
       const { Pool } = require('pg')

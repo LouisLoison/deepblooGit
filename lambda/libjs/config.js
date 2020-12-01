@@ -5,16 +5,24 @@ AWS.config.apiVersions = {
 };
 
 let dbSecret = false;
+let appsearchSecret = false;
+
+const getSecret = async (SecretId) => {
+  const secretsmanager = new AWS.SecretsManager()
+  const data = await secretsmanager.getSecretValue({ SecretId }).promise()
+  console.log(data)
+  return JSON.parse(data.SecretString)
+}
 
 exports.getDbSecret = async () => {
-  if(!dbSecret) {
-    const secretsmanager = new AWS.SecretsManager()
-    const SecretId = process.env.DB_SECRET
-    const data = await secretsmanager.getSecretValue({ SecretId }).promise()
-    console.log(data)
-    dbSecret = JSON.parse(data.SecretString)
-  }
-  return (dbSecret)
+  dbSecret = dbSecret || await getSecret(process.env.DB_SECRET)
+  return dbSecret
+}
+
+exports.getAppsearchSecret = async () => {
+  appsearchSecret = appsearchSecret || await getSecret(process.env.APPSEARCH_SECRET)
+  const appsearchEndpoint = process.env.APPSEARCH_ENDPOINT
+  return { ...appsearchSecret, appsearchEndpoint }
 }
 
 /*

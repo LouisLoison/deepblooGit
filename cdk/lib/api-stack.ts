@@ -152,7 +152,7 @@ messageTableServiceRole.addToPolicy(
         rdsHttpEndpointConfig: {
           awsRegion: 'eu-west-1',
           awsSecretStoreArn,
-          databaseName: 'deepbloo',
+          databaseName: 'deepbloo_dev',
           dbClusterIdentifier: dbArn
         }
       },

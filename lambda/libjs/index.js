@@ -6,6 +6,8 @@ const BddTool = require('./db/BddTool')
 const textparse = require('./textparse')
 const tenderimport = require('./tenderimport')
 const cpv = require('./cpv')
+const tenderformat = require('./tenderformat')
+const appsearch = require('./appsearch')
 
 module.exports = {
   ...esmRequire('./main.js'),
@@ -13,5 +15,6 @@ module.exports = {
   textparse,
   tenderimport,
   cpv,
+  tenderformat,
+  appsearch,
 }
-

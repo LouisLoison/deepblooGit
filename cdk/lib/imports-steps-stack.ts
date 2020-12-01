@@ -30,12 +30,23 @@ export class ImportsStepsStack extends Stack {
       DB_SECRET: secretArn,
     }
 
+    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
+    const appsearchEnv = {
+      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
+      APPSEARCH_SECRET: appsearchSecretArn,
+    }
+
+
     const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
       secretArn,
 
       // If the secret is encrypted using a KMS-hosted CMK, either import or reference that key:
       // encryptionKey,
     });
+    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
+      secretArn: appsearchSecretArn,
+    });
+
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
@@ -126,6 +137,7 @@ export class ImportsStepsStack extends Stack {
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
+	...appsearchEnv,
       }
     });
 
@@ -150,7 +162,7 @@ export class ImportsStepsStack extends Stack {
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
     dbSecret.grantRead(stepTenderMerge)
-    dbSecret.grantRead(stepTenderIndex)
+    appsearchSecret.grantRead(stepTenderIndex)
 
     const convertTenderTask = new Task(this, 'Tender Conversion Task', {
       task: new InvokeFunction(stepTenderConvert),
@@ -161,8 +173,8 @@ export class ImportsStepsStack extends Stack {
 
     const analyzeTenderTask = new Task(this, 'Tender Analyze Task', {
       task: new InvokeFunction(stepTenderAnalyze),
-      inputPath: '$.convertedData',
-      resultPath: '$.analyzedData',
+      // inputPath: '$.convertedData',
+      // resultPath: '$.analyzedData',
     });
 
     const storeTenderTask = new Task(this, 'Tender Store Task', {
@@ -173,6 +185,7 @@ export class ImportsStepsStack extends Stack {
     const mergeTenderTask = new Task(this, 'Tender Merge Task', {
       task: new InvokeFunction(stepTenderMerge),
       inputPath: '$.storedData',
+      resultPath: '$.mergedData',
     });
 
     const stepTenderIndexTask = new Task(this, 'Appsearch Index Task', {
