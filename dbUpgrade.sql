@@ -32,8 +32,8 @@ update tenders set biddeadlinedate = NULL where biddeadlinedate=''; -- 19673 upd
 alter table tenders alter column biddeadlinedate type date using (substring(biddeadlinedate, 1, 4) || '-' || substring(biddeadlinedate, 5, 2) ||'-' || substring(biddeadlinedate, 7, 2))::date ;
 
 
-alter table "user" add column if not exists uuid UUID NOT NULL DEFAULT uuid_generate_v4();
-create unique index if not exists user_uuid_unique on "user"(uuid);
+alter table "user" add column if not exists uuid UUID UNIQUE NOT NULL DEFAULT uuid_generate_v4();
+-- create unique index if not exists user_uuid_unique on "user"(uuid);
 
 alter table importdgmarket rename to tenderimport;
 
@@ -48,8 +48,8 @@ alter table tenderimport rename dgmarketId to datasourceid;
 
 alter table tenderimport add column dataSource varchar;
 alter table tenderimport add column dataRaw json;
-alter table tenderimport add column if not exists uuid UUID NOT NULL DEFAULT uuid_generate_v4();
-create unique index if not exists tenderimport_uuid_unique on tenderimport(uuid);
+alter table tenderimport add column if not exists uuid UUID UNIQUE NOT NULL DEFAULT uuid_generate_v4();
+-- create unique index if not exists tenderimport_uuid_unique on tenderimport(uuid);
 
 alter table tenderimport add column if not exists tenderuuid UUID;
 update tenderimport set tenderuuid=tenders.tenderuuid from tenders where tenderimport.tenderid=tenders.id;
@@ -82,7 +82,8 @@ create index tenderCriterionCpv_tenderuuid_index on tendercriterioncpv(tenderuui
 
 alter table document add column if not exists tenderuuid UUID; 
 update document set tenderuuid=tenders.tenderuuid from tenders where document.tenderid=tenders.id;
-alter table document add column if not exists documentuuid UUID NOT NULL DEFAULT uuid_generate_v4();
+alter table document add column if not exists documentuuid UUID UNIQUE NOT NULL DEFAULT uuid_generate_v4();
+alter table document add column contenthash varchar unique;
 
 alter table documentMessage add column if not exists  documentuuid UUID;
 update documentMessage set documentuuid=document.documentuuid from document where documentMessage.documentid = document.documentid;
@@ -99,4 +100,4 @@ alter table tenderCriterionCpv  drop column documentid;
 create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tendercriterion(textparseid, scope, tenderuuid) where documentuuid is null;
 create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
-
+create unique index  document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);

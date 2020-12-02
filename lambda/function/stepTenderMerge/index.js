@@ -6,7 +6,7 @@ exports.handler =  async function(event, ) {
   const { uuid } = event.storedData
   const { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
 
-  const client = await BddTool.bddInit()
+  const client = await BddTool.getClient()
 
   await BddTool.QueryExecPrepared(client, 'BEGIN;');
 
@@ -86,6 +86,14 @@ exports.handler =  async function(event, ) {
 
 
   const data = (tender !== undefined) ? tender : false
+  const newSourceUrls = []
+  if(data) {
+    event.convertedData.sourceUrl.forEach(sourceUrl => newSourceUrls.push({
+      tenderUuid: data.tenderUuid,
+      sourceUrl,
+    }))
+  }
+
   console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'data', (tender !== undefined) )
   const error = !(mergedProcurementId || mergedBuyerBiddeadline || data)
 
@@ -96,5 +104,6 @@ exports.handler =  async function(event, ) {
     mergedBuyerBiddeadline,
     data,
     error,
+    newSourceUrls,
   }
 }

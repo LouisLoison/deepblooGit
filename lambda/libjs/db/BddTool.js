@@ -16,10 +16,13 @@ exports.bddInit = async () => {
 
   if (configBdd.type === 'postgres') {
     pgInitPool()
-    return await pgPool.connect() // Passes the client to enable transaction
   }
 }
 
+exports.getClient = async () => {
+  await this.bddInit()
+  return await pgPool.connect() // Passes the client to enable transaction
+}
 
 const pgInitPool = (onError) => {
   try {
@@ -299,17 +302,13 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
 const pgMapResult = (rows, fields, TableName) => {
 
   const higherCols = Object.keys(Schema[TableName]).reduce((acc, val) => {
-    acc[val.toLower] = val;
-    return acc;
+    return {...acc, [val.toLowerCase()]: val };
   }, {})
-
-  //console.log(fields)
-  //console.log(higherCols)
 
   return rows.map(row => {
     const mapedRow = {};
     fields.forEach(({ name }, index) => {
-      if (name in Object.keys(higherCols)) {
+      if (name in higherCols) {
         mapedRow[higherCols[name]] = row[index]
       } else {
         mapedRow[name] = row[index]
@@ -447,6 +446,7 @@ const RecordAddUpdateGeneric = (TableName, Record) => {
 }
 
 exports.RecordAddUpdate = async (TableName, Record, ColumnKey, client=false) => {
+  if(!configBdd) { await this.bddInit() }
   if (configBdd.type === 'postgres') {
     return await RecordAddUpdatepostgres(TableName, Record, ColumnKey, client)
   } else {

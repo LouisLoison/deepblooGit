@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, Task, LogLevel } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, Task, LogLevel, Map } from '@aws-cdk/aws-stepfunctions';
 import { InvokeFunction } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion, ILayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -47,6 +47,8 @@ export class ImportsStepsStack extends Stack {
       secretArn: appsearchSecretArn,
     });
 
+    const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
+    const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
@@ -79,7 +81,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderConvert'),
       handler: 'index.handler',
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -92,7 +94,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -106,7 +108,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -120,7 +122,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -133,7 +135,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderIndex'),
       handler: 'index.handler',
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -141,15 +143,17 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
-    const downloadAttachments = new Function(this, 'downloadDocument', {
+    const stepDocumentDownload = new Function(this, 'downloadDocument', {
       runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/downloadDocument'),
+      code: new AssetCode('../lambda/function/stepDocumentDownload'),
       handler: 'index.handler',
       memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 4,
       timeout: Duration.seconds(60),
+      vpc,
       environment: {
         ...environment,
+        ...dbEnv,
       }
     });
 
@@ -158,11 +162,13 @@ export class ImportsStepsStack extends Stack {
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
-    downloadAttachments.addLayers(nodeLayer, deepblooLayer)
+    stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
     dbSecret.grantRead(stepTenderMerge)
+    dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
+    documentsBucket.grantReadWrite(stepDocumentDownload)
 
     const convertTenderTask = new Task(this, 'Tender Conversion Task', {
       task: new InvokeFunction(stepTenderConvert),
@@ -190,11 +196,19 @@ export class ImportsStepsStack extends Stack {
 
     const stepTenderIndexTask = new Task(this, 'Appsearch Index Task', {
       task: new InvokeFunction(stepTenderIndex),
+      resultPath: '$.appsearchResult',
     });
 
     const downloadTask = new Task(this, 'Download Task', {
-      task: new InvokeFunction(downloadAttachments),
+      task: new InvokeFunction(stepDocumentDownload),
+      // inputPath: '$.convertedData',
     });
+
+    const downloadMap = new Map(this, 'Download Map', {
+      inputPath: '$.mergedData',
+      itemsPath: '$.newSourceUrls',
+      resultPath: '$.downloadedData',
+    }).iterator(downloadTask);
 
 
     const chain = Chain.start(convertTenderTask)
@@ -206,7 +220,7 @@ export class ImportsStepsStack extends Stack {
       .next(storeTenderTask)
       .next(mergeTenderTask)
       .next(stepTenderIndexTask)
-      .next(downloadTask)
+      .next(downloadMap)
     //)
 
     //  .next(downloadTask)

@@ -5,7 +5,7 @@ const { log, BddTool } = require('deepbloo');
 
 exports.handler = async function(event, ) {
   const { analyzedData, convertedData, tenderData } = event
-  const client = await BddTool.bddInit()
+  const client = await BddTool.getClient()
   await BddTool.QueryExecPrepared(client, 'BEGIN;');
 
   analyzedData.dataRaw = tenderData

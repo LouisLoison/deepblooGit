@@ -46,6 +46,8 @@ export class TextractPipelineStack extends cdk.Stack {
     const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { versioned: false});
 
     const outputBucket = new s3.Bucket(this, 'OutputBucket', { versioned: false});
+    new cdk.CfnOutput(this, 'CONTENT_BUCKET', { value: contentBucket.bucketArn });
+    new cdk.CfnOutput(this, 'OUTPUT_BUCKET', { value: outputBucket.bucketArn });
 
     const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', { versioned: false});
     existingContentBucket.grantReadWrite(s3BatchOperationsRole)

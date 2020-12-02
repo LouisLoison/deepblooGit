@@ -4,6 +4,9 @@ AWS.config.apiVersions = {
   // other service API versions
 };
 
+exports.AWS = AWS
+exports.documentsBucket = process.env.CONTENT_BUCKET
+
 let dbSecret = false;
 let appsearchSecret = false;
 

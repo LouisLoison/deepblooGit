@@ -33,9 +33,8 @@ exports.cpvDelete = (cpvId) => {
       else {
         throw new Error("No available filter !")
       }
-      const client = await BddTool.bddInit('deepbloo','devAws')
+      await BddTool.bddInit('deepbloo','devAws')
       await BddTool.QueryExecBdd2(query)
-      client.release()
       resolve()
     } catch (err) {
       reject(err)
@@ -76,7 +75,7 @@ exports.CpvList = (filter, removeDiacritic) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
-      const client = await BddTool.bddInit()
+      await BddTool.bddInit()
       let recordset = await BddTool.QueryExecBdd2(query)
       let cpv = null
       for (const record of recordset) {
@@ -162,7 +161,6 @@ exports.CpvList = (filter, removeDiacritic) => {
           cpv.cpvWords = cpvWords
         }
       }
-      client.release()
       resolve(cpvs)
     } catch (err) {
       reject(err)

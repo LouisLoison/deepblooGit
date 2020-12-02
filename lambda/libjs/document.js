@@ -86,6 +86,7 @@ exports.fileDownload = (url) => {
       // File download
       const fileDownload = async (fileResponse) => {
         let filename = decodeURI(fileResponse.headers["content-disposition"])
+        console.log(fileResponse.headers)
         filename = filename.split('filename=')[1]
         filename = filename.replace(/"/g, '')
         const folderTemp = path.join(os.tmpdir(), uuidv4())
