@@ -227,7 +227,7 @@ exports.QueryExecBdd2 = (Query, rowsCount) => {
 // Now using prepared statement for SQL injection prevention
 // Also allow to set NULLs (null) and default values (undefined)
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
-const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey) => {
+const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = false) => {
   let ColumnList = []
   let Table = Schema[TableName]
   console.log(TableName, Record)
@@ -289,7 +289,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey) => {
     rowMode: 'array',
   }
 
-  const { rows, fields } = await pgPool.query(preparedQuery)
+  const { rows, fields } = await (client || pgPool).query(preparedQuery)
   console.log(rows);
   const [ result ] = pgMapResult(rows, fields, TableName)
 
@@ -446,15 +446,15 @@ const RecordAddUpdateGeneric = (TableName, Record) => {
   })
 }
 
-exports.RecordAddUpdate = async (TableName, Record, ColumnKey) => {
+exports.RecordAddUpdate = async (TableName, Record, ColumnKey, client=false) => {
   if (configBdd.type === 'postgres') {
-    return await RecordAddUpdatepostgres(TableName, Record, ColumnKey)
+    return await RecordAddUpdatepostgres(TableName, Record, ColumnKey, client)
   } else {
     return await RecordAddUpdateGeneric(TableName,   Record)
   }
 }
 
-const bulkInsertpostgres = async (TableName, records) => {
+exports.bulkInsertpostgres = async (TableName, records, client=false) => {
   let Table = Schema[TableName]
 
   const columns = []
@@ -474,7 +474,6 @@ const bulkInsertpostgres = async (TableName, records) => {
     values.push(value)
   }
 
-  const pgPool = pgInitPool ();
 
   const Query = {
     name: getSHA1ofJSON(TableName + '-' + columns.join('-')),
@@ -484,14 +483,18 @@ const bulkInsertpostgres = async (TableName, records) => {
     rowMode: 'array',
   }
 
+  pgInitPool()
+  let errors = 0
   await values.forEach(async value => {
     Query.values = value
-    await pgPool.query(Query)
+    await (client || pgPool) .query(Query)
       .catch(err => {
         err.Query = Query
         err.Values = values
+        errors += 1
       })
   })
+  return { updated: values.length, errors }
 }
 
 const bulkInsertGeneric = (TableName, records) => {
@@ -547,7 +550,7 @@ const bulkInsertGeneric = (TableName, records) => {
 
 exports.bulkInsert = async (TableName, records) => {
   if (configBdd.type === 'postgres') {
-    return await bulkInsertpostgres(TableName, records)
+    return await this.bulkInsertpostgres(TableName, records)
   } else {
     return await bulkInsertGeneric(TableName, records)
   }

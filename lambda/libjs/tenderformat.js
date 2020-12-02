@@ -8,7 +8,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
   textParses = textParses ? textParses : textParseList
 
   // Url source list
-  let sourceUrls = tender.sourceUrl
+  // let sourceUrls = tender.sourceUrl
 
   // CPV list
   let cpvOkCount = 0
@@ -88,13 +88,14 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
   let bidDeadline_timestamp = new Date(tender.bidDeadlineDate).getTime()
 
   let tenderNew = {
-    objectID: tender.algoliaId ? tender.algoliaId : undefined,
-    dgmarketId: tender.dgmarketId,
+    // objectID: tender.algoliaId ? tender.algoliaId : undefined,
+    // dgmarketId: tender.dgmarketId,
     tenderId: tender.id,
     procurementId: tender.procurementId,
     title: tender.title,
     lang: tender.lang,
     description: tender.description,
+    /*
     contact: {
       firstName: tender.contactFirstName,
       lastName: tender.contactLastName,
@@ -109,6 +110,8 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       name: tender.buyerName,
       country: tender.buyerCountry,
     },
+    */
+    buyer_name: tender.buyerName,
     procurementMethod: tender.procurementMethod,
     noticeType: tender.noticeType,
     country: tender.country,
@@ -119,27 +122,27 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     families: families,
     categoryLvl0: categoryLvl0,
     categoryLvl1: categoryLvl1,
-    words: tender.words,
+    // words: tender.words,
     currency: tender.currency ? tender.currency.trim() : '',
     publicationDate: tender.publicationDate,
     publication_timestamp: publication_timestamp,
-    cpvsOrigine: tender.cpvsOrigine,
+    // cpvsOrigine: tender.cpvsOrigine,
     cpvs: cpvs,
     bidDeadlineDate: tender.bidDeadlineDate,
     bidDeadline_timestamp: bidDeadline_timestamp,
     creation_timestamp: new Date().getTime(),
     // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
     // creation_timestamp: publication_timestamp,
-    sourceUrls: sourceUrls,
+    // sourceUrls: sourceUrls,
     userId: tender.userId ? tender.userId : 0,
     scopeOfWorks: [],
     segments: [],
     designs: [],
     contractTypes: [],
     brands: [],
-    fileSource: tender.fileSource,
+    // fileSource: tender.fileSource,
     groups: [],
-    origine: tender.origine,
+    // origine: tender.origine,
   }
 
   if (tender.tenderCriterions) {
@@ -161,7 +164,6 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       }
     }
   }
-  return(tenderNew)
+  return(JSON.parse(JSON.stringify(tenderNew)))
 }
-
 

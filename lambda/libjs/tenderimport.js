@@ -253,6 +253,11 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
   let words = [...new Set(tenderCriterionCpvs.filter(a => a.word.trim() !== '').map(a => a.word))]
   let cpvCodes = [...new Set(tenderCriterionCpvs.map(a => a.cpv.code))]
   let cpvDescriptions = [...new Set(tenderCriterionCpvs.map(a => a.cpv.label))]
+
+  for (const tenderCriterionCpv of tenderCriterionCpvs) {
+    delete tenderCriterionCpv.cpv
+  }
+
   if (!cpvCodes || !cpvCodes.length) {
     importExclusion.exclusion = 'NO_CPV'
     importExclusion.exclusionWord = ''

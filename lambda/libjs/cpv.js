@@ -4,7 +4,7 @@ const { removeDiacritics } = require('./textparse')
 exports.CpvAddUpdate = (cpv) => {
   return new Promise(async (resolve, reject) => {
     try {
-      await BddTool.bddInit('deepbloo','devAws')
+      // await BddTool.bddInit('deepbloo','devAws')
       let cpvNew = await BddTool.RecordAddUpdate('cpv', cpv)
       resolve(cpvNew);
     } catch (err) { reject(err) }
@@ -33,8 +33,9 @@ exports.cpvDelete = (cpvId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.bddInit('deepbloo','devAws')
+      const client = await BddTool.bddInit('deepbloo','devAws')
       await BddTool.QueryExecBdd2(query)
+      client.release()
       resolve()
     } catch (err) {
       reject(err)
@@ -75,7 +76,7 @@ exports.CpvList = (filter, removeDiacritic) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
-      await BddTool.bddInit()
+      const client = await BddTool.bddInit()
       let recordset = await BddTool.QueryExecBdd2(query)
       let cpv = null
       for (const record of recordset) {
@@ -161,7 +162,7 @@ exports.CpvList = (filter, removeDiacritic) => {
           cpv.cpvWords = cpvWords
         }
       }
-
+      client.release()
       resolve(cpvs)
     } catch (err) {
       reject(err)

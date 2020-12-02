@@ -3,14 +3,15 @@
 const { BddTool } = require('deepbloo');
 
 exports.handler =  async function(event, ) {
-  const { uuid } = event
+  const { uuid } = event.storedData
+  const { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
 
-  const client = await BddTool.bddInit('deepbloo','devAws')
+  const client = await BddTool.bddInit()
 
   await BddTool.QueryExecPrepared(client, 'BEGIN;');
 
   const query = `UPDATE tenderimport
-  SET  tenderUuid = tenders.uuid,
+  SET  tenderUuid = tenders.tenderuuid,
        tenderId = tenders.id, 
        mergeMethod = 'PROCUREMENT_ID'
 	  FROM tenders
@@ -22,7 +23,7 @@ exports.handler =  async function(event, ) {
   const mergedProcurementId = await BddTool.QueryExecPrepared(client, query, [ uuid ])
 
   const query2 = `UPDATE      tenderimport 
-    SET   tenderUuid = tenders.uuid,
+    SET   tenderUuid = tenders.tenderuuid,
           tenderId = tenders.id, 
           mergeMethod = 'TITLE_BUYER_BIDDEADLINE'
     FROM tenders
@@ -35,7 +36,7 @@ exports.handler =  async function(event, ) {
 
   const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ uuid ]);
 
-  const fields = 'uuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
+  const fields = 'tenderuuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
   const query3 = `
         update tenderimport set tenderuuid = uuid
         where mergeMethod is null and status = 20 and uuid = $1;`
@@ -49,17 +50,46 @@ exports.handler =  async function(event, ) {
 
   const query5 = `select tenders.*
         from tenders, tenderimport
-	where tenders.uuid = tenderimport.tenderuuid
+	where tenders.tenderuuid = tenderimport.tenderuuid
 	and tenderimport.uuid = $1`;
 
   const [ tender ] = await BddTool.QueryExecPrepared(client, query5, [ uuid ], 'tenders');
 
-  await BddTool.QueryExecPrepared(client, 'COMMIT;');
+  // Bulk insert into tenderCriterion table
+  if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
+    for (const tenderCriterionCpv of tenderCriterionCpvs) {
+      tenderCriterionCpv.tenderUuid = tender.tenderuuid
+      tenderCriterionCpv.cpv = undefined
+      tenderCriterionCpv.creationDate = new Date()
+      tenderCriterionCpv.updateDate = new Date()
+      await BddTool.RecordAddUpdate (
+        'tenderCriterionCpv',
+        tenderCriterionCpv,
+        'tenderUuid, scope, cpvId',
+        client,
+      )
+    }
+  }
+  if (tenderCriterions && tenderCriterions.length) {
+    for (const tenderCriterion of tenderCriterions) {
+      tenderCriterion.tenderUuid = tender.tenderuuid
+      tenderCriterion.creationDate = new Date()
+      tenderCriterion.updateDate = new Date()
+      await BddTool.RecordAddUpdate (
+        'tenderCriterion',
+        tenderCriterion,
+        'tenderUuid, scope, textparseId',
+        client,
+      )
+    }
+  }
+
 
   const data = (tender !== undefined) ? tender : false
   console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'data', (tender !== undefined) )
   const error = !(mergedProcurementId || mergedBuyerBiddeadline || data)
 
+  await BddTool.QueryExecPrepared(client, 'COMMIT;');
   client.release()
   return {
     mergedProcurementId,

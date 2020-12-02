@@ -52,7 +52,8 @@ var Schema = {
     },
     document: {
       documentId: { type: "Int", key: true },
-      tenderId: { type: "Int" },
+      documentUuid: { type: "String" },
+      tenderUuid: { type: "String" },
       cpvs: { type: "String" },
       filename: { type: "String" },
       size: { type: "Int" },
@@ -68,7 +69,7 @@ var Schema = {
     },
     documentMessage: {
       documentMessageId: { type: "Int", key: true },
-      documentId: { type: "Int" },
+      documentUuid: { type: "String" },
       organizationId: { type: "Int" },
       userId: { type: "Int" },
       type: { type: "String" },
@@ -82,7 +83,7 @@ var Schema = {
     },
     tenders: {
       id: { type: "Int", key: true },
-      uuid: { type: "String", key: true },
+      tenderUuid: { type: "String", key: true },
       dgmarketId: { type: "Int" },
       procurementId: { type: "String" },
       title: { type: "String" },
@@ -163,10 +164,8 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     tenderCriterionCpv: {
-      tenderCriterionCpvId: { type: "Int", key: true },
-      tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
-      documentId: { type: "Int" },
+      documentUuid: { type: "String" },
       cpvId: { type: "Int" },
       value: { type: "String" },
       word: { type: "String" },
@@ -178,9 +177,8 @@ var Schema = {
     },
     tenderCriterion: {
       tenderCriterionId: { type: "Int", key: true },
-      tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
-      documentId: { type: "Int" },
+      documentUuid: { type: "String" },
       textParseId: { type: "Int" },
       value: { type: "String" },
       word: { type: "String" },

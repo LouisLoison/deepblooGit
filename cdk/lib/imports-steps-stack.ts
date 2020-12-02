@@ -137,7 +137,7 @@ export class ImportsStepsStack extends Stack {
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
-	...appsearchEnv,
+        ...appsearchEnv,
       }
     });
 
@@ -184,7 +184,7 @@ export class ImportsStepsStack extends Stack {
 
     const mergeTenderTask = new Task(this, 'Tender Merge Task', {
       task: new InvokeFunction(stepTenderMerge),
-      inputPath: '$.storedData',
+      // inputPath: '$.storedData',
       resultPath: '$.mergedData',
     });
 
