@@ -16,25 +16,39 @@ const fileHash = (fileName) => {
 }
 
 
-exports.documentAddUpdate = async (document) => {
-  const documentNew = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl')
+exports.documentAddUpdate = async (client, document) => {
+  const documentNew = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl', client)
   return(documentNew)
 }
 
 exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
-  const document = await this.documentAddUpdate({ tenderUuid, sourceUrl })
+  const client = await BddTool.getClient()
+  await BddTool.QueryExecPrepared(client, 'BEGIN;');
+
+  const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl })
 
   if (sourceUrl.includes('www2.dgmarket.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
     sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
   }
-  const fileInfo = await this.fileDownload(sourceUrl)
-  const { location: s3Url } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation)
+  let result
+  if(!document.size) {
+    try {
+      const fileInfo = await this.fileDownload(sourceUrl)
+      const { location: s3Url } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation)
 
-  document.contentHash = fileHash(fileInfo.fileLocation)
-  document.size = fileInfo.size
-  document.s3Url = s3Url
-  return await this.documentAddUpdate(document)
-
+      document.contentHash = fileHash(fileInfo.fileLocation)
+      document.size = fileInfo.size
+      document.s3Url = s3Url
+      result = await this.documentAddUpdate(client, document)
+    } catch (err) {
+      client.release()
+      result = err
+      throw new Error(err)
+    }
+  }
+  await BddTool.QueryExecPrepared(client, 'COMMIT;');
+  client.release()
+  return result
 }
 
 exports.fileDownload = (url) => {

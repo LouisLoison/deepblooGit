@@ -1,12 +1,12 @@
-import { Chain, Choice, Condition, Fail, StateMachine, Task, LogLevel, Map } from '@aws-cdk/aws-stepfunctions';
-import { InvokeFunction, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
-import { AssetCode, Function, Runtime, LayerVersion, ILayerVersion } from '@aws-cdk/aws-lambda';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map } from '@aws-cdk/aws-stepfunctions';
+import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
+import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
 import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
-import iam = require('@aws-cdk/aws-iam');
+// import iam = require('@aws-cdk/aws-iam');
 import logs = require('@aws-cdk/aws-logs');
 
 /*
@@ -171,39 +171,49 @@ export class ImportsStepsStack extends Stack {
     appsearchSecret.grantRead(stepTenderIndex)
     documentsBucket.grantReadWrite(stepDocumentDownload)
 
-    const convertTenderTask = new Task(this, 'Tender Conversion Task', {
-      task: new InvokeFunction(stepTenderConvert),
+    const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
+      lambdaFunction: stepTenderConvert,
       inputPath: '$.tenderData',
       resultPath: '$.convertedData',
-      // outputPath: '$.convertedData',
+      // outputPath: '$.Payload',
+      payloadResponseOnly: true,
     })
 
-    const analyzeTenderTask = new Task(this, 'Tender Analyze Task', {
-      task: new InvokeFunction(stepTenderAnalyze),
+    const analyzeTenderTask = new LambdaInvoke(this, 'Tender Analyze Task', {
+      lambdaFunction: stepTenderAnalyze,
       // inputPath: '$.convertedData',
       // resultPath: '$.analyzedData',
+      payloadResponseOnly: true,
     });
 
-    const storeTenderTask = new Task(this, 'Tender Store Task', {
-      task: new InvokeFunction(stepTenderStore),
+    const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
+      lambdaFunction: stepTenderStore,
       resultPath: '$.storedData',
+      payloadResponseOnly: true,
     });
 
-    const mergeTenderTask = new Task(this, 'Tender Merge Task', {
-      task: new InvokeFunction(stepTenderMerge),
+    const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
+      lambdaFunction: stepTenderMerge,
       // inputPath: '$.storedData',
       resultPath: '$.mergedData',
+      payloadResponseOnly: true,
     });
 
-    const stepTenderIndexTask = new Task(this, 'Appsearch Index Task', {
-      task: new InvokeFunction(stepTenderIndex),
+    const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
+      lambdaFunction: stepTenderIndex,
       resultPath: '$.appsearchResult',
+      payloadResponseOnly: true,
     });
 
-    const downloadTask = new Task(this, 'Download Task', {
-      task: new InvokeFunction(stepDocumentDownload),
-      // inputPath: '$.convertedData',
+    const downloadFail = new Fail(this, 'Fail', {
+      error: 'WorkflowFailure',
+      cause: "Download task failed"
     });
+
+    const downloadTask = new LambdaInvoke(this, 'Download Task', {
+      lambdaFunction: stepDocumentDownload,
+      // inputPath: '$.convertedData',
+    }).addCatch(downloadFail);
 
     const downloadMap = new Map(this, 'Download Map', {
       inputPath: '$.mergedData',
@@ -225,7 +235,7 @@ export class ImportsStepsStack extends Stack {
     //)
 
     //  .next(downloadTask)
-      /*      .next(
+    /*      .next(
         isComplete
       .when(Condition.numberEquals('$.Status', 1), closeCase)
       .when(Condition.numberEquals('$.Status', 0), escalateCase.next(jobFailed)),
@@ -238,7 +248,7 @@ export class ImportsStepsStack extends Stack {
       definition: chain,
       logs: {
         destination: logGroup,
-        level: LogLevel.ALL,
+        level: LogLevel.ERROR,
       }
     });
 

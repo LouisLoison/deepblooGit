@@ -37,7 +37,9 @@ exports.handler =  async function(event, ) {
     const publicationDate = `${publicationDateText.substring(0, 4)}-${publicationDateText.substring(4, 6)}-${publicationDateText.substring(6, 8)}`
 
     const sourceUrl = []
-    getXmlJsonArray(event.sourceUrl).forEach(d => sourceUrl.push(...d.split(',')))
+    getXmlJsonArray(event.sourceUrl)
+      .filter(d => d)
+      .forEach(d => sourceUrl.push(...d.split(',')))
 
     tender = {
       dataSourceId: parseInt(getXmlJsonData(event.id), 10),
