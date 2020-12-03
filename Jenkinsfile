@@ -2,6 +2,7 @@ pipeline {
   agent any
 
   environment {
+    ENV = "${env.BRANCH_NAME == "develop" ? "dev" : env.BRANCH_NAME == "master" ? "prod" : env.BRANCH_NAME.matches("^release/.*") ? "stage" : "test"}"
   }
 
       stages {
