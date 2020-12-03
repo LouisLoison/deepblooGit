@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -81,7 +81,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderConvert'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -94,7 +94,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -108,7 +108,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -122,7 +122,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -135,7 +135,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderIndex'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -148,7 +148,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepDocumentDownload'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 4,
+      reservedConcurrentExecutions: 40,
       timeout: Duration.seconds(60),
       vpc,
       environment: {
@@ -177,6 +177,10 @@ export class ImportsStepsStack extends Stack {
       resultPath: '$.convertedData',
       // outputPath: '$.Payload',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
     })
 
     const analyzeTenderTask = new LambdaInvoke(this, 'Tender Analyze Task', {
@@ -203,9 +207,13 @@ export class ImportsStepsStack extends Stack {
       lambdaFunction: stepTenderIndex,
       resultPath: '$.appsearchResult',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
     });
 
-    const downloadFail = new Fail(this, 'Fail', {
+    const downloadFail = new Fail(this, 'documentFail', {
       error: 'WorkflowFailure',
       cause: "Download task failed"
     });
@@ -219,28 +227,26 @@ export class ImportsStepsStack extends Stack {
       inputPath: '$.mergedData',
       itemsPath: '$.newSourceUrls',
       resultPath: '$.downloadedData',
+      maxConcurrency: 2,
     }).iterator(downloadTask);
 
-
+    const noInterest = new Succeed(this, 'No interest', {comment: "e.g. tender has no CPV match"})
+    const fullSucceed = new Succeed(this, 'Completed', {comment: "Tender fully available"})
     const chain = Chain.start(convertTenderTask)
-    //.start(new Choice(this, 'Tender source ?')
-    //.when(Condition.stringEquals('$.tenderFormat', 'tenderinfo'), convertTenderTask)
-    //.when(Condition.stringEquals('$.tenderFormat', 'dgmarket'), convertTenderTask)
-    //.afterwards()
       .next(analyzeTenderTask)
-      .next(storeTenderTask)
-      .next(mergeTenderTask)
-      .next(stepTenderIndexTask)
-      .next(downloadMap)
-    //)
-
-    //  .next(downloadTask)
-    /*      .next(
-        isComplete
-      .when(Condition.numberEquals('$.Status', 1), closeCase)
-      .when(Condition.numberEquals('$.Status', 0), escalateCase.next(jobFailed)),
-  );
-       */
+      .next(new Choice(this, 'Has interest ?')
+        .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
+        .otherwise(storeTenderTask
+          .next(mergeTenderTask)
+          .next(stepTenderIndexTask)
+          .next(new Choice(this, 'Has documents ?')
+            .when(Condition.numberGreaterThan('$.mergedData.newSourceUrls.length()', 0), downloadMap
+              .next(fullSucceed)
+            ).otherwise(fullSucceed)
+          )
+        )
+      )
+ 
 
     const logGroup = new logs.LogGroup(this, 'MyLogGroup');
 

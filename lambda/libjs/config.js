@@ -13,7 +13,7 @@ let appsearchSecret = false;
 const getSecret = async (SecretId) => {
   const secretsmanager = new AWS.SecretsManager()
   const data = await secretsmanager.getSecretValue({ SecretId }).promise()
-  console.log(data)
+  // console.log(data)
   return JSON.parse(data.SecretString)
 }
 

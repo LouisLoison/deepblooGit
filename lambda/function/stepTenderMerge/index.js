@@ -105,5 +105,6 @@ exports.handler =  async function(event, ) {
     data,
     error,
     newSourceUrls,
+    hasDocuments: !!newSourceUrls,
   }
 }

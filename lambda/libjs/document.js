@@ -103,6 +103,7 @@ exports.fileDownload = (url) => {
         console.log(fileResponse.headers)
         filename = filename.split('filename=')[1]
         filename = filename.replace(/"/g, '')
+	if (filename === "") { filename = 'unnamedFile' }
         const folderTemp = path.join(os.tmpdir(), uuidv4())
         fs.mkdirSync(folderTemp)
         const fileLocation = path.join(folderTemp, filename)

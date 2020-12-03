@@ -24,12 +24,17 @@ exports.handler =  async function(event, ) {
       exclusionWord: importOrigine.exclusionWord,
       status: importOrigine.status,
     }
+    result.formatedData = { status: result.analyzedData.status }
   } else {
     result.analyzedData = tender
-    result.formatedData = await tenderFormat(tender, cpvList, textParseList)
-    if(result.formatedData) {
+    const formatedData = await tenderFormat(tender, cpvList, textParseList)
+    if(formatedData) {
       result.analyzedData.status = 20
-      result.formatedData.status = 20
+      formatedData.status = 20
+      result.formatedData = formatedData
+    }
+    else {
+      result.formatedData = { status: -1 }
     }
   }
   return result

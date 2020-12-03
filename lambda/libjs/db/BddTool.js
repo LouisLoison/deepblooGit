@@ -33,7 +33,7 @@ const pgInitPool = (onError) => {
         password: configBdd.password,
         database: configBdd.dbname,
       }
-      console.log(pgArgs)
+      console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
       const { Pool } = require('pg')
       pgPool = new Pool(pgArgs)
     }
@@ -293,7 +293,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
   }
 
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
-  console.log(rows);
+  // console.log(rows);
   const [ result ] = pgMapResult(rows, fields, TableName)
 
   return result
