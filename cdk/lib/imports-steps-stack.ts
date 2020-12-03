@@ -240,7 +240,7 @@ export class ImportsStepsStack extends Stack {
           .next(mergeTenderTask)
           .next(stepTenderIndexTask)
           .next(new Choice(this, 'Has documents ?')
-            .when(Condition.numberGreaterThan('$.mergedData.newSourceUrls.length()', 0), downloadMap
+            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), downloadMap
               .next(fullSucceed)
             ).otherwise(fullSucceed)
           )

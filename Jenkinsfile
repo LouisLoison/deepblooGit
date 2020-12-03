@@ -14,7 +14,7 @@ pipeline {
 
               # (echo $DIR_PATH | grep -Eq "(backend|frontend)"; if [[ $? = 0 ]] ; then yarn; fi) ||true
 
-              yarn
+              npm install
            '''
           }
           post {
@@ -48,20 +48,6 @@ pipeline {
           post {
             failure {
               slackSend channel: "#${env.ENV}", color: 'danger', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} unit test failed ❌(last commit by ${env.GIT_USERNAME}): failure (<${env.BUILD_URL}/console|Open>)"
-            }
-          }
-        }
-
-        stage('Locks Test') {
-          steps {
-            sh '''
-              set -xe;
-              yarn test:locks
-            '''
-          }
-          post {
-            failure {
-              slackSend channel: "#${env.ENV}", color: 'danger', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} locks test failed ❌(last commit by ${env.GIT_USERNAME}): failure (<${env.BUILD_URL}/console|Open>)"
             }
           }
         }
