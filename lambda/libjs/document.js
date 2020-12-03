@@ -17,7 +17,7 @@ const fileHash = (fileName) => {
 
 
 exports.documentAddUpdate = async (document) => {
-  const [ documentNew ] = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl')
+  const documentNew = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl')
   return(documentNew)
 }
 
@@ -33,7 +33,7 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
   document.contentHash = fileHash(fileInfo.fileLocation)
   document.size = fileInfo.size
   document.s3Url = s3Url
-  await this.documentAddUpdate(document)
+  return await this.documentAddUpdate(document)
 
 }
 
@@ -98,9 +98,11 @@ exports.fileDownload = (url) => {
         let file = fs.createWriteStream(fileLocation)
         fileResponse.pipe(file)
 
+        /*
         fileResponse.on('data', (d) => {
           process.stdout.write(d)
         })
+	*/
 
         file.on('error', (err) => {
           reject(err)

@@ -1,5 +1,5 @@
 import { Chain, Choice, Condition, Fail, StateMachine, Task, LogLevel, Map } from '@aws-cdk/aws-stepfunctions';
-import { InvokeFunction } from '@aws-cdk/aws-stepfunctions-tasks';
+import { InvokeFunction, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion, ILayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
 import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
@@ -154,6 +154,7 @@ export class ImportsStepsStack extends Stack {
       environment: {
         ...environment,
         ...dbEnv,
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
       }
     });
 

@@ -2,8 +2,9 @@ const { getFileContent, log } = require('deepbloo');
 const { StepFunctions } = require('aws-sdk')
 const xml2js = require('xml2js')
 const util = require('util')
-const { v4: uuidv4 } = require('uuid');
-const { createHash } = require('crypto');
+// const { v4: uuidv4 } = require('uuid');
+// const { createHash } = require('crypto');
+const objectHash = require('object-hash');
 
 const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
@@ -12,7 +13,8 @@ const startImportSteps = (data) => {
     const dataSource = data.dataSource.slice(0,10)
     const fileStamp = data.fileSource.split('/').slice(2).join('').slice(-24,-4)
     const normedObject = `${dataSource}-${fileStamp}`.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
-    const contentHash = createHash('sha1').update(JSON.stringify(data)).digest('hex')
+    const contentHash = objectHash(data, { algorithm: 'sha256' })
+    // const contentHash = createHash('sha256').update(JSON.stringify(data)).digest('hex')
     const name = `${normedObject}-${data.fileSourceIndex}-${contentHash}`.substring(0,79)
     log(name, process.env.TENDER_STATE_MACHINE_ARN)
     const params = {
@@ -80,7 +82,7 @@ exports.handler =  async function(event, ) {
     }
     const { duplicate } = await startImportSteps(rawTender)
     duplicateCount += duplicate ? 1 : 0
-    if (tenderCount >= 5) { break }
+    //if (tenderCount >= 5) { break }
   }
   log(`Processed ${tenderCount} jobs, started ${tenderCount-duplicateCount} (${duplicateCount} duplicates)`)
 }

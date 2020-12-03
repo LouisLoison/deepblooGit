@@ -97,7 +97,12 @@ alter table tenderCriterionCpv add column if not exists  documentuuid UUID;
 update tenderCriterionCpv  set documentuuid=document.documentuuid from document where tenderCriterionCpv.documentid = document.documentid;
 alter table tenderCriterionCpv  drop column documentid;
 
-create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tendercriterion(textparseid, scope, tenderuuid) where documentuuid is null;
-create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
+create table tendercriteriondocument as select * from tendercriterion where documentuuid is not null;
+delete from tendercriterion where documentuuid is not null;
+alter table tendercriterion drop column documentuuid;
+create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tendercriterion(textparseid, scope, tenderuuid);
+-- create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
 create unique index  document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
+alter table document drop column documentid;
+
