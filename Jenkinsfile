@@ -42,7 +42,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
-              npm run test:unit
+              npm run
             '''
           }
           post {
