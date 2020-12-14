@@ -63,9 +63,9 @@ config.bdd = {
     },
     devAws: {
       config: {
-        type: 'PostgreSql',
-        user: 'deepbloo',
-        password: 'quieraKeey0eig',
+        type: 'MySql',
+        user: 'admin',
+        password: 'zaiH9ahnohiej',
         server: 'database-deepbloo-dev.cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
         database: 'deepbloo'
       }
