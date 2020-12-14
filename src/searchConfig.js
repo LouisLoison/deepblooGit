@@ -21,10 +21,12 @@ const config = {
     ],
     facets: {
       region_lvl0: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       region_lvl1: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       country: {
         type: "value"

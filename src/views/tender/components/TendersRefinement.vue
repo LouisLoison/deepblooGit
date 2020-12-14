@@ -1,6 +1,23 @@
 <template>
   <div>
     <div
+      v-if="searchInputValue.trim() !== ''"
+      style="display: inline-block; background-color: #f5f5f5; border-radius: 10px;"
+      class="mr-1 mb-1"
+    >
+      <span class="blue-grey--text ml-2" style="font-size: 12px;">
+        Search
+      </span>
+      <v-chip
+        close
+        small
+        @click:close="searchInputValueRemove()"
+        class="ma-1"
+      >
+        {{ searchInputValue }}
+      </v-chip>
+    </div>
+    <div
       v-for="(facet, index) in getFacets"
       :key="`facet${index}`"
       style="display: inline-block; background-color: #f5f5f5; border-radius: 10px;"
@@ -28,6 +45,11 @@ export default {
   name: 'TendersRefinement',
 
   props: {
+    searchInputValue: {
+      type: String,
+      required: true
+    },
+
     filter: {
       type: Object,
       required: true
@@ -54,6 +76,10 @@ export default {
   },
 
   methods: {
+    searchInputValueRemove() {
+      this.$emit('searchInputValueRemove')
+    },
+
     facetItemRemove(facet, item) {
       this.$emit('facetItemRemove', {
         facet,

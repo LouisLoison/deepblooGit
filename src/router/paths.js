@@ -106,6 +106,14 @@ export default [
         component: () => import(`@/views/setting/SettingNotify.vue`)
       },
       {
+        path: "/setting/import/tender/analytics",
+        meta: {
+          public: true
+        },
+        name: "SettingAnalytics",
+        component: () => import(`@/views/setting/SettingAnalytics.vue`)
+      },
+      {
         path: "/setting/import/tender/statistique",
         meta: {
           public: true

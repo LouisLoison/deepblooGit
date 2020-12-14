@@ -36,9 +36,9 @@
 
                 <v-list-item-content>
                   <v-list-item-title v-html="user.username" />
-                  <v-list-item-sub-title>
+                  <v-list-item-subtitle>
                     {{ moment(user.creationDate).format("LL - LTS") }}
-                  </v-list-item-sub-title>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </template>

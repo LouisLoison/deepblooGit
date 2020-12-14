@@ -222,7 +222,7 @@
                 </template>
                 <template slot="item" slot-scope="data">
                   <template v-if="typeof data.item !== 'object'">
-                    <v-list-tile-content v-text="data.item"></v-list-tile-content>
+                    <v-list-item-content v-text="data.item"></v-list-item-content>
                   </template>
                   <template v-else>
                     <img
@@ -230,12 +230,12 @@
                       class="pa-2"
                       style="height: 40px; width: 40px;"
                     />
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="data.item.name" />
-                      <v-list-tile-sub-title
+                    <v-list-item-content>
+                      <v-list-item-title v-html="data.item.name" />
+                      <v-list-item-subtitle
                         v-html="`${data.item.code} - ${data.item.group}`"
                       />
-                    </v-list-tile-content>
+                    </v-list-item-content>
                   </template>
                 </template>
               </v-autocomplete>
@@ -277,24 +277,24 @@
                         <v-btn text @click="menu = false">Cancel</v-btn>
                       </v-card-actions>
                       <v-list>
-                        <v-list-tile
+                        <v-list-item
                           v-for="(item, i) in getCpvItems"
                           :key="i"
                           @click="organizationCpvAdd(item)"
                         >
                           <template v-if="item.header">
-                            <v-list-tile-title
+                            <v-list-item-title
                               class="blue-grey--text text--lighten-2"
-                              >{{ item.header }}</v-list-tile-title
+                              >{{ item.header }}</v-list-item-title
                             >
                           </template>
                           <template v-else>
-                            <v-list-tile-avatar>
+                            <v-list-item-avatar>
                               <img :src="item.avatar" />
-                            </v-list-tile-avatar>
-                            <v-list-tile-title>{{ item.name }}</v-list-tile-title>
+                            </v-list-item-avatar>
+                            <v-list-item-title>{{ item.name }}</v-list-item-title>
                           </template>
-                        </v-list-tile>
+                        </v-list-item>
                       </v-list>
                     </v-card>
                   </v-menu>

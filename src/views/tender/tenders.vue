@@ -28,6 +28,7 @@
           <v-expansion-panel-content>
             <TendersGroup
               ref="TendersGroup"
+              @erraseSearchFilter="erraseSearchFilter()"
               @change="
                 tenderGroupChange(
                   $event.tenderGroupId,
@@ -36,6 +37,7 @@
                   $event.isAllTenders
                 )
               "
+              @erraseFilter="erraseSearchFilter()"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -47,7 +49,7 @@
           <v-expansion-panel-header>Filters</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersFilter
-              v-if="searchState.wasSearched && thereAreResults"
+              v-if="searchState.wasSearched"
               :driver="driver"
               :searchState="searchState"
               @filterChange="filterChange($event)"
@@ -90,6 +92,7 @@
     >
       <div class="searchbox-grid mb-1">
         <SearchHeader
+          ref="searchInputValue"
           v-model="searchInputValue"
           @submit="handleFormSubmit($event)"
           @newValue="handleFormSubmit($event)"
@@ -152,7 +155,9 @@
         </div>
       </div>
       <TendersRefinement
+        :searchInputValue="searchInputValue"
         :filter="filter"
+        @searchInputValueRemove="searchInputValueRemove()"
         @facetItemRemove="facetItemRemove($event.facet, $event.item)"
       />
       <div v-if="searchState.wasSearched" class="sui-layout-body">
@@ -324,6 +329,13 @@ export default {
     }
 
     // Init publication
+    let nowStartDay_timestamp = new Date()
+    nowStartDay_timestamp.setDate(nowStartDay_timestamp.getDate() - 2)
+    nowStartDay_timestamp.setHours(0)
+    nowStartDay_timestamp.setMinutes(0)
+    nowStartDay_timestamp.setSeconds(0)
+    nowStartDay_timestamp = nowStartDay_timestamp.getTime()
+
     let nowEndDay_timestamp = new Date()
     nowEndDay_timestamp.setDate(nowEndDay_timestamp.getDate() + 1)
     nowEndDay_timestamp.setHours(0)
@@ -363,7 +375,7 @@ export default {
     let yearPast = year - 1
 
     config.searchQuery.facets.publication_timestamp.ranges = [
-      { from: now_timestamp, to: nowEndDay_timestamp, name: 'Today'},
+      { from: nowStartDay_timestamp, to: nowEndDay_timestamp, name: 'Today'},
       { from: week_1_ago_timestamp, name: 'This week' },
       { from: week_2_ago_timestamp, to: now_timestamp, name: '2 weeks ago' },
       { from: week_3_ago_timestamp, to: now_timestamp, name: '3 weeks ago' },
@@ -497,6 +509,12 @@ export default {
         ...this.filter,
         ...filter,
       }
+      this.setSearchFilter()
+    },
+
+    searchInputValueRemove() {
+      this.searchInputValue = ''
+      this.$refs.searchInputValue.setValue('')
     },
 
     facetItemRemove(facet, item) {
@@ -540,7 +558,31 @@ export default {
         this.filter.region_lvl1 = []
       }
       this.isMyPipeline = isMyPipeline
-      if (isMyPipeline && this.getDataOpportunity.loading) {
+      this.setSearchFilter()
+    },
+
+    handleFormSubmit(event) {
+      this.searchInputValue = event || ''
+      this.setSearchFilter()
+    },
+
+    erraseSearchFilter() {
+      this.$refs.searchInputValue.sentValue('')
+      for (let facet in this.filter) {
+        if (facet === 'groups') {
+          continue
+        }
+        this.filter[facet] = []
+      }
+      this.$refs.TendersFilter.updateFilter(this.filter)
+      this.setSearchFilter()
+    },
+
+    setSearchFilter() {
+      driver.clearFilters()
+      driver.getActions().setSearchTerm(this.searchInputValue)
+
+      if (this.isMyPipeline && this.getDataOpportunity.loading) {
         if (
           this.getDataOpportunity.data.cpvs &&
           this.getDataOpportunity.data.cpvs.length
@@ -552,8 +594,6 @@ export default {
           }
         }
 
-        this.filter.region_lvl0 = []
-        this.filter.region_lvl1 = []
         let regions = this.getDataOpportunity.data.user.regions.split(',')
         if (regions.length && !regions.includes('Worldwide')) {
           for (let region of regions) {
@@ -570,18 +610,10 @@ export default {
             }
           }
         }
+        
+        this.$refs.TendersFilter.updateFilter(this.filter)
       }
-      this.setSearchFilter()
-    },
-
-    handleFormSubmit(event) {
-      this.searchInputValue = event
-      this.setSearchFilter()
-    },
-
-    setSearchFilter() {
-      driver.clearFilters()
-      driver.getActions().setSearchTerm(this.searchInputValue)
+      
       for (let facet in this.filter) {
         for (let value of this.filter[facet]) {
           const facetFromDriver = this.driver.getState().facets[facet][0]
