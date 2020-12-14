@@ -116,9 +116,19 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
 exports.tendersFormat = (tenders) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const htmlToText = require('html-to-text')
+
       const tenderNews = []
       for (const tender of tenders) {
         const tenderNew = JSON.parse(JSON.stringify(tender))
+
+        tenderNew.title = htmlToText.fromString(tenderNew.title)
+        tenderNew.title = tenderNew.title.replace(/&amp;amp;/g, '')
+        tenderNew.title = tenderNew.title.replace(/&amp;/g, '')
+        tenderNew.title = tenderNew.title.replace(/amp;/g, '')
+  
+        tenderNew.description = htmlToText.fromString(tenderNew.description)
+
         tenderNew.buyer_name = ''
         if (tenderNew.buyer && tenderNew.buyer.name) {
           tenderNew.buyer_name = tenderNew.buyer.name

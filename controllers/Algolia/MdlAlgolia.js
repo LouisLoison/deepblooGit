@@ -9,7 +9,7 @@ exports.TendersImport = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       
-      const tenderStatus = '100'
+      const tenderStatus = '0'
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
@@ -128,8 +128,7 @@ exports.TendersImport = () => {
           } catch (err) {
             console.log('Elasticsearch indexObject error')
           }
-          // TODO : temp
-          // await this.TendersAdd(tranche, index)
+          await this.TendersAdd(tranche, index)
         }
       }
 

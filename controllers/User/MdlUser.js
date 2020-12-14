@@ -619,6 +619,11 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
 
       // Update user bdd list
       for (let user of users) {
+        /*
+        if (user.email !== 'pieter@ist.co.za') {
+          continue
+        }
+        */
         let userBdd = usersBdd.find(a => a.email === user.email)
         if (!userBdd) {
           userBdd = await this.AddUpdate({
