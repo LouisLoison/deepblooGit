@@ -63,6 +63,8 @@ var Schema = {
       boxFolderId: { type: "String" },
       boxFileId: { type: "String" },
       parseResult: { type: "String" },
+      contentType: { type: "String" },
+      objectName: { type: "String" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }

@@ -6,13 +6,12 @@ const path = require('path')
 const os = require('os')
 const { v4: uuidv4 } = require('uuid')
 const { AWS, documentsBucket } = require('./config')
-const crypto = require('crypto');
+const objectHash = require('object-hash')
 
 const fileHash = (fileName) => {
-  const data = fs.readFileSync(fileName);
-  const hash = crypto.createHash('sha256');
-  hash.update(data);
-  return hash.digest('hex');
+  const data = fs.readFileSync(fileName)
+  const hash = objectHash(data, { algorithm: 'sha256' })
+  return hash
 }
 
 
@@ -23,32 +22,37 @@ exports.documentAddUpdate = async (client, document) => {
 
 exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
   const client = await BddTool.getClient()
-  await BddTool.QueryExecPrepared(client, 'BEGIN;');
+  await BddTool.QueryExecPrepared(client, 'BEGIN;')
 
   const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl })
 
   if (sourceUrl.includes('www2.dgmarket.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
     sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
   }
-  let result
+  let result = {}
   if(!document.size) {
     try {
       const fileInfo = await this.fileDownload(sourceUrl)
-      const { location: s3Url } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation)
+      const {
+        location: s3Url, objectName, contentType
+      } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation)
 
       document.contentHash = fileHash(fileInfo.fileLocation)
       document.size = fileInfo.size
       document.s3Url = s3Url
+      document.bucketName = documentsBucket
+      document.objectName = objectName
+      document.contentType = contentType
       result = await this.documentAddUpdate(client, document)
     } catch (err) {
       client.release()
-      result = err
+      // result = err
       throw new Error(err)
     }
   }
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
   client.release()
-  return result
+  return {...document, ...result}
 }
 
 exports.fileDownload = (url) => {
@@ -103,7 +107,7 @@ exports.fileDownload = (url) => {
         console.log(fileResponse.headers)
         filename = filename.split('filename=')[1]
         filename = filename.replace(/"/g, '')
-	if (filename === "") { filename = 'unnamedFile' }
+        if (filename === "") { filename = 'unnamedFile' }
         const folderTemp = path.join(os.tmpdir(), uuidv4())
         fs.mkdirSync(folderTemp)
         const fileLocation = path.join(folderTemp, filename)
@@ -139,41 +143,49 @@ exports.fileDownload = (url) => {
   })
 }
 
-exports.awsFileAdd = (fileLocation, fileDestination) => {
+const getContentType = (fileLocation) => {
+  const [ extension ] = fileLocation.toLowerCase().split('.').slice(-1)
+  let contentType = "unknown"
+  if (extension === 'htm' || extension === 'html') {
+    contentType = "text/html"
+  } else if (extension ==='png') {
+    contentType = "image/png"
+  } else if (extension ==='jpg') {
+    contentType = "image/jpeg"
+  } else if (extension ==='pdf') {
+    contentType = "application/pdf"
+  } else if (extension ==='docx') {
+    contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  } else if (extension ==='doc') {
+    contentType = "application/msword"
+  } else if (extension ==='zip') {
+    contentType = "application/zip"
+  }
+  return contentType
+}
+
+exports.awsFileAdd = (fileLocation, objectName) => {
   return new Promise(async (resolve, reject) => {
     try {
-
       const s3 = new AWS.S3()
 
       const params = {
         Bucket: documentsBucket,
         Body : fs.createReadStream(fileLocation),
-        Key : fileDestination
+        Key : objectName
       }
-
-      if (
-        fileLocation.toLowerCase().endsWith('.htm')
-        || fileLocation.toLowerCase().endsWith('.html')
-      ) {
-        params.ContentType = "text/html"
-      } else if (fileLocation.toLowerCase().endsWith('.png')) {
-        params.ContentType = "image/png"
-      } else if (fileLocation.toLowerCase().endsWith('.jpg')) {
-        params.ContentType = "image/jpeg"
-      } else if (fileLocation.toLowerCase().endsWith('.pdf')) {
-        params.ContentType = "application/pdf"
-      }
-
+      const contentType = getContentType(fileLocation)
+      if(contentType) { params.ContentType = contentType }
       s3.upload(params, (err, data) => {
         if (err) {
           reject(err)
         } else if (data) {
           resolve({
-            location: data.Location
+            location: data.Location,
+            contentType
           })
         }
       })
-
     } catch (err) { reject(err) }
   })
 }
@@ -183,9 +195,9 @@ exports.fileExportAws = (tenderId, fileLocation) => {
     try {
       const path = require('path')
 
-      const fileDestination = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
-      const location = await this.awsFileAdd(fileLocation, fileDestination)
-      resolve(location)
+      const objectName = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+      const res = await this.awsFileAdd(fileLocation, objectName)
+      resolve({...res, objectName})
     } catch (err) { reject(err) }
   })
 }
@@ -193,17 +205,17 @@ exports.fileExportAws = (tenderId, fileLocation) => {
 exports.fileDeleteAws = (tenderId, filename) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
-      const AWS = require('aws-sdk')
 
-      AWS.config.update({
+      /*
+       * AWS.config.update({
         accessKeyId: config.awsAccessKeyId,
         secretAccessKey: config.awsSecretAccessKey
       })
+      */
       const s3 = new AWS.S3()
 
       var params = {
-        Bucket: config.awsBucket,
+        Bucket: documentsBucket,
         Key : `tenders/tender#${tenderId}/${filename}`
       }
 

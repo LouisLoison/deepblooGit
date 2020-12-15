@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -221,14 +221,44 @@ export class ImportsStepsStack extends Stack {
     const downloadTask = new LambdaInvoke(this, 'Download Task', {
       lambdaFunction: stepDocumentDownload,
       // inputPath: '$.convertedData',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
     }).addCatch(downloadFail);
 
-    const downloadMap = new Map(this, 'Download Map', {
+    const processDoc = new Pass(this, 'Doc/docx process')
+  
+    const processDocx = new Pass(this, 'Docx process')
+
+    const processHtml = new Pass(this, 'Html process')
+    
+    const processPdf = new Pass(this, 'Pdf process')
+
+    const processImg = new Pass(this, 'Img process')
+
+    const processZip = new Pass(this, 'Zip process')
+    
+    const documentIterator = downloadTask
+      .next(new Choice(this, 'Document type ?')
+        .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
+        .when(Condition.or(
+          Condition.stringEquals('$.document.contentType', 'image/png'),
+          Condition.stringEquals('$.document.contentType', 'image/jpeg'),
+        ), processImg)
+        .when(Condition.stringEquals('$.document.contentType', 'application/pdf'), processPdf)
+        .when(Condition.stringEquals('$.document.contentType', 'application/msword'), processDoc)
+        .when(Condition.stringEquals('$.document.contentType',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), processDocx)
+        .when(Condition.stringEquals('$.document.contentType', 'application/zip'), processZip)
+        .otherwise(new Pass(this,'Document type unknown'))
+        .afterwards()
+      )
+      
+    const documentMap = new Map(this, 'Document Map', {
       inputPath: '$.mergedData',
       itemsPath: '$.newSourceUrls',
       resultPath: '$.downloadedData',
       maxConcurrency: 2,
-    }).iterator(downloadTask);
+    }).iterator(documentIterator);
 
     const noInterest = new Succeed(this, 'No interest', {comment: "e.g. tender has no CPV match"})
     const fullSucceed = new Succeed(this, 'Completed', {comment: "Tender fully available"})
@@ -240,7 +270,7 @@ export class ImportsStepsStack extends Stack {
           .next(mergeTenderTask)
           .next(stepTenderIndexTask)
           .next(new Choice(this, 'Has documents ?')
-            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), downloadMap
+            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
               .next(fullSucceed)
             ).otherwise(fullSucceed)
           )
@@ -255,7 +285,8 @@ export class ImportsStepsStack extends Stack {
       logs: {
         destination: logGroup,
         level: LogLevel.ERROR,
-      }
+      },
+      tracingEnabled: true,
     });
 
     const xmlImport = new Function(this, 'XmlImport', {

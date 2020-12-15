@@ -104,5 +104,8 @@ create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tende
 -- create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
 create unique index  document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
-alter table document drop column documentid;
+-- alter table document drop column documentid;
+alter table document add column contenttype varchar;
+alter table document add column objectname varchar;
+
 
