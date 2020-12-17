@@ -160,9 +160,10 @@
         @searchInputValueRemove="searchInputValueRemove()"
         @facetItemRemove="facetItemRemove($event.facet, $event.item)"
       />
-      <div v-if="searchState.wasSearched" class="sui-layout-body">
+      <div v-show="searchState.wasSearched" class="sui-layout-body">
         <SearchResults
-          :results="searchState.results"
+          ref="SearchResults"
+          :results="searchState.results || []"
           :displayType="displayType"
           :filter="filter"
           :searchState="searchState"
@@ -174,7 +175,7 @@
           @tenderOpen="tenderOpen($event)"
         />
       </div>
-      <div v-else class="text-center pa-5">
+      <div v-if="!searchState.wasSearched" class="text-center pa-5">
         <div class="blue-grey--text text--lighten-2 pa-5">loading...</div>
         <div style="width: 250px; display: inline-block;">
           <v-progress-linear
@@ -397,6 +398,20 @@ export default {
     // Hide header
     if (this.$route.query.header === 'hide') {
       this.setHeaderShow(false)
+    }
+
+    if (this.$route.params && (this.$route.query.tenderId || this.$route.query.tenderUuid)) {
+      this.$refs.SearchResults.tenderOpen({
+        tender_id: {
+          raw: this.$route.query.tenderId
+        },
+        id: {
+          raw: this.$route.query.tenderId
+        },
+        tenderUuid: {
+          raw: this.$route.query.tenderUuid
+        },
+      })
     }
 
     if (this.$route.query.userToken) {

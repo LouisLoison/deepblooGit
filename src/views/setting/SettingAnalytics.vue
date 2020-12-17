@@ -5,6 +5,7 @@
     >
       <v-tab @click="loading = true; dashboardUrl = 'https://crmplus.zoho.com/reports/open-view/1876166000002145353/4ddd511e4a07bf182cf00c4ab57c6580'">Exclusion</v-tab>
       <v-tab @click="loading = true; dashboardUrl = 'https://crmplus.zoho.com/reports/open-view/1876166000003018208/3e7f5c1a32a16c4edfe89de13fe01e66'">Tender source</v-tab>
+      <v-tab @click="loading = true; dashboardUrl = 'https://crmplus.zoho.com/reports/open-view/1876166000003091457/d026a80e69111f61e7eb15a0b4b72a23'">Community</v-tab>
     </v-tabs>
     <div v-if="loading" class="pa-5 text-center">
       <div class="pa-2 grey--text">
