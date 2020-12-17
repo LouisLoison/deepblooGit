@@ -38,8 +38,12 @@ export default {
   name: 'SearchFacetRegion',
 
   props: {
-    driver: {
-      type: Object,
+    region_lvl0: {
+      type: Array,
+      required: true
+    },
+    region_lvl1: {
+      type: Array,
       required: true
     },
   },
@@ -54,8 +58,8 @@ export default {
       const regions = JSON.parse(JSON.stringify(this.constRegions))
       let regionId = 0
 
-      const facetRegionLvl0 = this.driver.getState().facets['region_lvl0'][0].data
-      const facetRegionLvl1 = this.driver.getState().facets['region_lvl1'][0].data
+      const facetRegionLvl0 = this.region_lvl0
+      const facetRegionLvl1 = this.region_lvl1
 
       let items = []
       for (const region of regions) {
@@ -99,16 +103,12 @@ export default {
         region_lvl1: [],
       }
       for (const item of this.getItems) {
-        this.driver.removeFilter('region_lvl0', item.name, "any")
         if (this.active.includes(item.id)) {
           filter.region_lvl0.push(item.name)
-          this.driver.addFilter('region_lvl0', item.name, "any")
         }
         for (const itemSub of item.children) {
-          this.driver.removeFilter('region_lvl1', `${item.name} > ${itemSub.name}`, "any")
           if (this.active.includes(itemSub.id)) {
             filter.region_lvl1.push(`${item.name} > ${itemSub.name}`)
-            this.driver.addFilter('region_lvl1', `${item.name} > ${itemSub.name}`, "any")
           }
         }
       }
@@ -123,13 +123,27 @@ export default {
         if (!filter.region_lvl0.includes(item.name)) {
           activeNew = activeNew.filter(a => a !== item.id)
         }
+        
+        let parentCheked = false
+        if (filter.region_lvl0.includes(item.name)) {
+          parentCheked = true
+        }
         for (const itemSub of item.children) {
           if (!filter.region_lvl1.includes(`${item.name} > ${itemSub.name}`)) {
             activeNew = activeNew.filter(a => a !== itemSub.id)
           }
+
+          if (
+            parentCheked
+            && !activeNew.includes(itemSub.id)
+          ) {
+            activeNew.push(itemSub.id)
+          }
         }
       }
-      this.active = activeNew
+      if (JSON.stringify(this.active) !== JSON.stringify(activeNew)) {
+        this.active = activeNew
+      }
     },
   }
 

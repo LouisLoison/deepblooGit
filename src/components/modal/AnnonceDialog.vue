@@ -49,8 +49,8 @@
                 <template v-for="(annonceClick, index) in getAnnonceClicks">
                   <v-divider :key="`annonceClick-divider${index}`" />
 
-                  <v-list-tile :key="`annonceClick${index}`" avatar @click.stop>
-                    <v-list-tile-avatar>
+                  <v-list-item :key="`annonceClick${index}`" avatar @click.stop>
+                    <v-list-item-avatar>
                       <img
                         v-if="annonceClick.user"
                         :src="annonceClick.user.photo"
@@ -61,21 +61,21 @@
                         style="font-size: 30px;"
                         >fa-user</v-icon
                       >
-                    </v-list-tile-avatar>
+                    </v-list-item-avatar>
 
-                    <v-list-tile-content>
-                      <v-list-tile-title
+                    <v-list-item-content>
+                      <v-list-item-title
                         v-if="annonceClick.user"
                         v-html="annonceClick.user.username"
-                      ></v-list-tile-title>
-                      <v-list-tile-title v-else class="grey--text"
-                        >Unknow</v-list-tile-title
+                      ></v-list-item-title>
+                      <v-list-item-title v-else class="grey--text"
+                        >Unknow</v-list-item-title
                       >
-                      <v-list-tile-sub-title
+                      <v-list-item-subtitle
                         v-html="annonceClick.creationDate"
-                      ></v-list-tile-sub-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                      />
+                    </v-list-item-content>
+                  </v-list-item>
                 </template>
               </v-list>
             </div>

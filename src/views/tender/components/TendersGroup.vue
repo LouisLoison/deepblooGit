@@ -129,27 +129,58 @@
           >
             {{ group.label }}
           </div>
-          <div @click.stop>
-            <v-menu transition="slide-y-transition" offset-y left>
+          <div
+            @click.stop
+            class="ml-2 mr-1 pl-1 group-action"
+            style="margin-left: -100px !important;"
+          >
+            <v-btn
+              depressed
+              rounded
+              text
+              x-small
+              @click="tenderGroupChange(group.tenderGroupId, true)"
+            >
+              Errase filters
+            </v-btn>
+            <v-menu
+              transition="slide-y-transition"
+              offset-y
+              left
+              dense
+            >
               <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on">
-                  <v-icon>fa-ellipsis-v</v-icon>
+                <v-btn
+                  v-on="on"
+                  icon
+                >
+                  <v-icon size="16">
+                    fa-ellipsis-v
+                  </v-icon>
                 </v-btn>
               </template>
 
-              <v-list class="list-icon">
-                <v-list-item avatar @click="openGroupDialog(group)">
+              <v-list dense class="list-icon">
+                <v-list-item
+                  @click="openGroupDialog(group)"
+                  avatar
+                  style="height: 20px;"
+                >
                   <v-list-item-avatar>
-                    <v-icon text>fa-edit</v-icon>
+                    <v-icon size="14" text>fa-edit</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-title>
                     Edit
                   </v-list-item-title>
                 </v-list-item>
 
-                <v-list-item avatar @click="deleteTenderGroupDialog(group)">
+                <v-list-item
+                  @click="deleteTenderGroupDialog(group)"
+                  avatar
+                  style="height: 20px;"
+                >
                   <v-list-item-avatar>
-                    <v-icon text color="red">fa-trash</v-icon>
+                    <v-icon size="14" text color="red">fa-trash</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-title class="red--text">
                     Delete
@@ -511,9 +542,9 @@ export default {
         this.$emit("insufficientRight")
         return
       }
-
       this.isAllTenders = false
       this.isMyPipeline = true
+      this.$emit("erraseSearchFilter")
       this.$emit("change", {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
@@ -535,7 +566,7 @@ export default {
       })
     },
 
-    tenderGroupChange(tenderGroupId) {
+    tenderGroupChange(tenderGroupId, erraseFilter) {
       this.isWithoutGroup = false
       if (this.tenderGroupId === tenderGroupId) {
         this.tenderGroupId = null
@@ -548,6 +579,9 @@ export default {
         isWithoutGroup: this.isWithoutGroup,
         tenderGroupId: this.tenderGroupId
       })
+      if (erraseFilter) {
+        this.$emit("erraseFilter")
+      }
     }
   }
 }
@@ -577,5 +611,20 @@ export default {
   border-radius: 10px;
   font-weight: 600;
   padding: 0px 5px;
+}
+
+.group-list-grid .group-action{
+  display: none;
+}
+.group-list-grid:hover .group-action{
+  display: block;
+}
+
+.group-action {
+  background-color: rgb(223 226 238 / 50%);
+  border-radius: 50px;
+  white-space: nowrap !important;
+  margin-top: 7px !important;
+  height: 35px;
 }
 </style>

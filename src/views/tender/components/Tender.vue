@@ -67,7 +67,10 @@
             style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
             title="Share this opportuntiy with a colleague"
           >
-            <v-icon color="black darken-2" style="font-size: 20px;">
+            <v-icon
+              color="black darken-2"
+              style="font-size: 20px;"
+            >
               fa fa-envelope
             </v-icon>
           </v-btn>
@@ -107,7 +110,7 @@
           class="display-1"
           style="position: absolute; z-index: 10; right: 70px; background-color: rgba(255, 255, 255, 0.4);"
           title="Open the tender in a new tab"
-          :to="{ name: 'tender', query: { tenderId: tender.id } }"
+          :to="{ name: 'Tenders', query: { tenderId: tender.id } }"
           target="_blank"
         >
           <v-icon color="black darken-2" style="font-size: 20px;">
@@ -188,7 +191,11 @@
                 class="mr-1 mb-1"
               >
                 <v-avatar class="pa-1">
-                  <img :src="cpvLogo(cpv)" alt="" />
+                  <img
+                    :src="cpvLogo(cpv)"
+                    alt=""
+                    class="mr-2"
+                  />
                 </v-avatar>
                 {{ cpv }}
               </v-chip>
@@ -1002,15 +1009,25 @@
         </div>
       </div>
     </div>
+
+    <SentEmailDialog
+      ref="SentEmailDialog"
+      @notifySent="loadUserNotifys()"
+    />
   </v-card>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
+import SentEmailDialog from "@/components/modal/SentEmailDialog"
 
 export default {
   name: 'Tender',
+
+  components: {
+    SentEmailDialog,
+  },
 
   data: () => ({
     moment,
@@ -1275,12 +1292,13 @@ export default {
   },
 
   methods: {
-    async loadTender(tenderId) {
+    async loadTender(tenderId, tenderUuid) {
       try {
         this.tender = null
         this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
-          id: tenderId
+          id: tenderId,
+          tenderUuid: tenderUuid,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -1425,12 +1443,13 @@ export default {
     },
 
     loadOrganizations() {
-      this.TenderOrganizations = null;
+      this.TenderOrganizations = null
       if (
         !this.tender.cpvDescriptions ||
         !this.tender.cpvDescriptions.length
       ) {
-        return;
+        this.TenderOrganizations = []
+        return
       }
       this.$api
         .post("/Organization/ListFromCpvs", {
@@ -1444,45 +1463,45 @@ export default {
           if (!res.success) {
             throw new Error(res.Error);
           }
-          this.TenderOrganizations = res.data;
+          this.TenderOrganizations = res.data
           // this.initCpvs();
           this.chartStatistique.yAxis.max =
-            this.tender.cpvDescriptions.length + 1;
+            this.tender.cpvDescriptions.length + 1
           let cpvMax = Math.max(
             ...this.TenderOrganizations.map(a =>
               a.organization && a.organization.cpvs
                 ? a.organization.cpvs.length
                 : 0
             )
-          );
+          )
           let userMax = Math.max(
             ...this.TenderOrganizations.map(a =>
               a.organization && a.organization.users
                 ? a.organization.users.length
                 : 0
             )
-          );
+          )
           for (const tenderOrganization of this.TenderOrganizations) {
             if (!this.hasReadRight) {
-              tenderOrganization.name = "---";
+              tenderOrganization.name = "---"
             }
             let regionNum = 0;
             if (tenderOrganization.userCountryFlg) {
-              regionNum = 3;
+              regionNum = 3
             } else if (tenderOrganization.userSubRegionFlg) {
-              regionNum = 2;
+              regionNum = 2
             } else if (tenderOrganization.userRegionFlg) {
-              regionNum = 1;
+              regionNum = 1
             }
             let xValue =
               regionNum +
               (tenderOrganization.users.length * 0.8) /
                 (userMax ? userMax : 1) +
-              0.1;
+              0.1
             let yValue =
               tenderOrganization.cpvFounds.length +
               (tenderOrganization.cpvs.length * 0.8) / (cpvMax ? cpvMax : 1) +
-              0.1;
+              0.1
             const data = {
               x: xValue,
               y: yValue,
@@ -1504,27 +1523,28 @@ export default {
                 tenderOrganization.organization.users
                   ? tenderOrganization.organization.users.length
                   : 0
-            };
+            }
             if (
               tenderOrganization &&
               this.user &&
               tenderOrganization.organizationId === this.user.organizationId
             ) {
-              this.chartStatistique.series[4].data.push(data);
+              this.chartStatistique.series[4].data.push(data)
             } else if (regionNum === 3) {
-              this.chartStatistique.series[3].data.push(data);
+              this.chartStatistique.series[3].data.push(data)
             } else if (regionNum === 2) {
-              this.chartStatistique.series[2].data.push(data);
+              this.chartStatistique.series[2].data.push(data)
             } else if (regionNum === 1) {
-              this.chartStatistique.series[1].data.push(data);
+              this.chartStatistique.series[1].data.push(data)
             } else {
-              this.chartStatistique.series[0].data.push(data);
+              this.chartStatistique.series[0].data.push(data)
             }
           }
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.TenderOrganizations = []
+          this.$api.error(err, this)
+        })
     },
 
     async loadUserList() {
@@ -1691,12 +1711,12 @@ export default {
       let subject = "Deepbloo - this tender should interest you";
       let body = "\n";
       body += "Title :\n";
-      body += `${this.htmlText(item.title)
+      body += `${this.$global.htmlText(item.title)
         .trim()
         .substring(0, 50)}...\n`;
       body += "\n";
       body += "Description :\n";
-      body += `${this.htmlText(item.description)
+      body += `${this.$global.htmlText(item.description)
         .trim()
         .substring(0, 400)}...\n`;
       body += "\n";

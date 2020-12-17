@@ -98,6 +98,11 @@ export default {
         link: { name: 'SettingNotify' }
       },
       {
+        ico: 'fa-chart-pie',
+        label: 'Analytics',
+        link: { name: 'SettingAnalytics' }
+      },
+      {
         ico: 'fa-file-import',
         label: 'Import',
         link: { name: 'SettingImportStatistique' }

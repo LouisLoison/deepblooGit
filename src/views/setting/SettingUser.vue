@@ -46,7 +46,11 @@
 
         <v-card class="pa-3 mb-3">
           <div class="title pb-3">Type</div>
-          <v-radio-group v-model="typeGroup" class="ma-0" @click="loadUsers()">
+          <v-radio-group
+            v-model="typeGroup"
+            class="ma-0"
+            @change="loadUsers()"
+          >
             <v-radio label="All" :value="0" />
             <v-radio
               v-for="(type, index) in types"
@@ -62,7 +66,7 @@
             v-model="typeGroup"
             hide-details
             class="ma-0"
-            @click="loadUsers()"
+            @change="loadUsers()"
           >
             <v-checkbox
               v-model="isActive"
@@ -322,243 +326,237 @@
               required
             />
           </v-form>
-          <div class="px-0 pb-3">
-            <v-expansion-panel inset>
-              <v-expansion-panel-content>
-                <template v-slot:header>
-                  <div>
-                    Interested by following business opportunities (CPV)
+          <div class="px-0 pb-5">
+            <v-expansion-panels inset multiple focusable>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Interested by following business opportunities (CPV)
+                </v-expansion-panel-header>
+                <v-expansion-panel-content class="pt-3">
+                  <div
+                    v-if="!UserCpvs || !UserCpvs.length"
+                    class="grey--text"
+                  >
+                    none
                   </div>
-                </template>
-                <v-card>
-                  <v-card-text>
-                    <div
-                      v-if="!UserCpvs || !UserCpvs.length"
-                      class="grey--text"
+                  <div v-else>
+                    <v-chip
+                      v-for="(cpv, index) in UserCpvs"
+                      :key="index"
+                      outlined
+                      class="ma-1"
                     >
-                      none
-                    </div>
-                    <div v-else>
+                      <v-avatar class="mr-1">
+                        <img
+                          :src="getCpvsLogoFromCode([cpv.cpvCode])"
+                          alt=""
+                        />
+                      </v-avatar>
+                      {{ cpv.cpvName }}
+                    </v-chip>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Interested in business opportunities in these areas
+                </v-expansion-panel-header>
+                <v-expansion-panel-content class="pt-3">
+                  <div
+                    v-if="!user.regions || !user.regions === ''"
+                    class="grey--text"
+                  >
+                    none
+                  </div>
+                  <div v-else>
+                    <v-chip
+                      v-for="(region, index) in user.regions.split(',')"
+                      :key="index"
+                      outlined
+                      class="ma-1"
+                    >
+                      {{ region }}
+                    </v-chip>
+                  </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+              <v-expansion-panel>
+                <v-expansion-panel-header>
+                  Notify options
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-autocomplete
+                    label="CPV"
+                    v-model="cpvs"
+                    :items="cpvItems"
+                    chips
+                    item-text="name"
+                    item-value="code"
+                    multiple
+                    autocomplete="none"
+                  >
+                    <template slot="selection" slot-scope="data">
                       <v-chip
-                        v-for="(cpv, index) in UserCpvs"
-                        :key="index"
-                        outlined
+                        :input-value="data.selected"
+                        close
+                        class="chip--select-multi"
+                        @click:close="cpvRemove(data.item)"
                       >
-                        <v-avatar class="pa-1">
-                          <img
-                            :src="getCpvsLogoFromCode([cpv.cpvCode])"
-                            alt=""
-                          />
+                        <v-avatar>
+                          <img :src="data.item.avatar" class="pa-1" />
                         </v-avatar>
-                        {{ cpv.cpvName }}
+                        {{ data.item.name }}
                       </v-chip>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template v-slot:header>
-                  <div>Interested in business opportunities in these areas</div>
-                </template>
-                <v-card>
-                  <v-card-text>
-                    <div
-                      v-if="!user.regions || !user.regions === ''"
-                      class="grey--text"
-                    >
-                      none
-                    </div>
-                    <div v-else>
-                      <v-chip
-                        v-for="(region, index) in user.regions.split(',')"
-                        :key="index"
-                        outlined
-                      >
-                        {{ region }}
-                      </v-chip>
-                    </div>
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-              <v-expansion-panel-content>
-                <template v-slot:header>
-                  <div>Notify options</div>
-                </template>
-                <v-card>
-                  <v-card-text>
-                    <v-autocomplete
-                      label="CPV"
-                      v-model="cpvs"
-                      :items="cpvItems"
-                      chips
-                      item-text="name"
-                      item-value="code"
-                      multiple
-                      browser-autocomplete="none"
-                    >
-                      <template slot="selection" slot-scope="data">
-                        <v-chip
-                          :selected="data.selected"
-                          close
-                          class="chip--select-multi"
-                          @input="remove(data.item)"
-                        >
-                          <v-avatar>
-                            <img :src="data.item.avatar" class="pa-1" />
-                          </v-avatar>
-                          {{ data.item.name }}
-                        </v-chip>
+                    </template>
+                    <template slot="item" slot-scope="data">
+                      <template v-if="typeof data.item !== 'object'">
+                        <v-list-item-content
+                          v-text="data.item"
+                        ></v-list-item-content>
                       </template>
-                      <template slot="item" slot-scope="data">
-                        <template v-if="typeof data.item !== 'object'">
-                          <v-list-tile-content
-                            v-text="data.item"
-                          ></v-list-tile-content>
-                        </template>
-                        <template v-else>
-                          <img
-                            :src="data.item.avatar"
-                            class="pa-2"
-                            style="height: 40px; width: 40px;"
+                      <template v-else>
+                        <img
+                          :src="data.item.avatar"
+                          class="pa-2"
+                          style="height: 40px; width: 40px;"
+                        />
+                        <v-list-item-content>
+                          <v-list-item-title v-html="data.item.name" />
+                          <v-list-item-subtitle
+                            v-html="`${data.item.code} - ${data.item.group}`"
                           />
-                          <v-list-tile-content>
-                            <v-list-tile-title v-html="data.item.name" />
-                            <v-list-tile-sub-title
-                              v-html="`${data.item.code} - ${data.item.group}`"
-                            />
-                          </v-list-tile-content>
-                        </template>
+                        </v-list-item-content>
                       </template>
-                    </v-autocomplete>
-                    <v-autocomplete
-                      label="Regions"
-                      v-model="regions"
-                      :items="regionItems"
-                      multiple
-                      browser-autocomplete="none"
-                    >
-                      <template slot="selection" slot-scope="data">
-                        <v-chip
-                          :selected="data.selected"
-                          close
-                          class="chip--select-multi"
-                          @input="remove(data.item)"
-                        >
-                          {{ data.item }}
-                        </v-chip>
-                      </template>
-                    </v-autocomplete>
-                    <v-switch
-                      v-model="user.notifSend"
-                      :label="
-                        `Send notifications: ${user.notifSend ? 'Yes' : 'No'}`
-                      "
-                    />
-                    <v-divider />
-                    <v-switch
-                      v-model="user.notifPostEmail"
-                      :label="
-                        `New user post: ${user.notifPostEmail ? 'Yes' : 'No'}`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifTripEmail"
-                      :label="
-                        `New trip around me: ${
-                          user.notifTripEmail ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifEventEmail"
-                      :label="`Event: ${user.notifEventEmail ? 'Yes' : 'No'}`"
-                    />
-                    <v-switch
-                      v-model="user.notifCommentEmail"
-                      :label="
-                        `Comment: ${user.notifCommentEmail ? 'Yes' : 'No'}`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifVentureEmail"
-                      :label="
-                        `Project comment: ${
-                          user.notifVentureEmail ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifBusinessRequest"
-                      :label="
-                        `Business opportunities: ${
-                          user.notifBusinessRequest ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifDigestEmail"
-                      :label="`Digest: ${user.notifDigestEmail ? 'Yes' : 'No'}`"
-                    />
-                    <v-switch
-                      v-model="user.notifCurrentLocationEmail"
-                      :label="
-                        `Current location: ${
-                          user.notifCurrentLocationEmail ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifEmailingComEmail"
-                      :label="
-                        `Emailing campaign: ${
-                          user.notifEmailingComEmail ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifForumPostEmail"
-                      :label="
-                        `Forum Post Email: ${
-                          user.notifForumPostEmail ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifContactByPost"
-                      :label="
-                        `Contact by post: ${
-                          user.notifContactByPost ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifContactByPhone"
-                      :label="
-                        `notifContactByPhone: ${
-                          user.notifContactByPhone ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.notifContactBySms"
-                      :label="
-                        `notifContactBySms: ${
-                          user.notifContactBySms ? 'Yes' : 'No'
-                        }`
-                      "
-                    />
-                    <v-switch
-                      v-model="user.doNotContact"
-                      :label="
-                        `Do not contact: ${user.doNotContact ? 'Yes' : 'No'}`
-                      "
-                    />
-                  </v-card-text>
-                </v-card>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
+                    </template>
+                  </v-autocomplete>
+                  <v-autocomplete
+                    label="Regions"
+                    v-model="regions"
+                    :items="regionItems"
+                    multiple
+                    autocomplete="none"
+                  >
+                    <template slot="selection" slot-scope="data">
+                      <v-chip
+                        :input-value="data.selected"
+                        close
+                        class="chip--select-multi"
+                        @click:close="regionRemove(data.item)"
+                      >
+                        {{ data.item }}
+                      </v-chip>
+                    </template>
+                  </v-autocomplete>
+                  <v-switch
+                    v-model="user.notifSend"
+                    :label="
+                      `Send notifications: ${user.notifSend ? 'Yes' : 'No'}`
+                    "
+                  />
+                  <v-divider />
+                  <v-switch
+                    v-model="user.notifPostEmail"
+                    :label="
+                      `New user post: ${user.notifPostEmail ? 'Yes' : 'No'}`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifTripEmail"
+                    :label="
+                      `New trip around me: ${
+                        user.notifTripEmail ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifEventEmail"
+                    :label="`Event: ${user.notifEventEmail ? 'Yes' : 'No'}`"
+                  />
+                  <v-switch
+                    v-model="user.notifCommentEmail"
+                    :label="
+                      `Comment: ${user.notifCommentEmail ? 'Yes' : 'No'}`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifVentureEmail"
+                    :label="
+                      `Project comment: ${
+                        user.notifVentureEmail ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifBusinessRequest"
+                    :label="
+                      `Business opportunities: ${
+                        user.notifBusinessRequest ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifDigestEmail"
+                    :label="`Digest: ${user.notifDigestEmail ? 'Yes' : 'No'}`"
+                  />
+                  <v-switch
+                    v-model="user.notifCurrentLocationEmail"
+                    :label="
+                      `Current location: ${
+                        user.notifCurrentLocationEmail ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifEmailingComEmail"
+                    :label="
+                      `Emailing campaign: ${
+                        user.notifEmailingComEmail ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifForumPostEmail"
+                    :label="
+                      `Forum Post Email: ${
+                        user.notifForumPostEmail ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifContactByPost"
+                    :label="
+                      `Contact by post: ${
+                        user.notifContactByPost ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifContactByPhone"
+                    :label="
+                      `notifContactByPhone: ${
+                        user.notifContactByPhone ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.notifContactBySms"
+                    :label="
+                      `notifContactBySms: ${
+                        user.notifContactBySms ? 'Yes' : 'No'
+                      }`
+                    "
+                  />
+                  <v-switch
+                    v-model="user.doNotContact"
+                    :label="
+                      `Do not contact: ${user.doNotContact ? 'Yes' : 'No'}`
+                    "
+                  />
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </div>
-          <div class="px-3">
+          <div class="px-3 pt-3">
             <div>
               <span class="grey--text pr-2">Status:</span>
               {{ user.status ? "Active" : "Inactive" }}
@@ -696,31 +694,31 @@ export default {
   },
 
   async mounted() {
-    this.setHeaderShow(true);
-    this.loadUsers();
+    this.setHeaderShow(true)
+    this.loadUsers()
 
     // Create CPV list
-    await this.loadCpvs();
-    this.cpvItems = [];
+    await this.loadCpvs()
+    this.cpvItems = []
     let constCpvSort = this.getDataCpvs.data.sort((a, b) => {
       if (a.category < b.category) {
-        return -1;
+        return -1
       }
       if (a.category > b.category) {
-        return 1;
+        return 1
       }
-      return 0;
+      return 0
     });
     let categoryCurrent = null;
     for (let cpv of constCpvSort) {
       if (!cpv.active || !cpv.code) {
-        continue;
+        continue
       }
       if (categoryCurrent !== cpv.category) {
         this.cpvItems.push({
           header: cpv.category && cpv.category !== "" ? cpv.category : "Other"
-        });
-        categoryCurrent = cpv.category;
+        })
+        categoryCurrent = cpv.category
       }
       this.cpvItems.push({
         name: cpv.label,
@@ -731,57 +729,57 @@ export default {
           cpv && cpv.logo && cpv.logo != ""
             ? cpv.logo
             : "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
-      });
+      })
     }
 
     // Create country list
-    this.regionItems = [];
-    this.countryItems = [];
+    this.regionItems = []
+    this.countryItems = []
     for (let region of constRegions) {
-      this.regionItems.push(region.label);
+      this.regionItems.push(region.label)
       if (region.countrys) {
-        this.countryItems = this.countryItems.concat(region.countrys);
+        this.countryItems = this.countryItems.concat(region.countrys)
       }
       if (region.regions) {
         for (let regionSub of region.regions) {
-          this.countryItems = this.countryItems.concat(regionSub.countrys);
+          this.countryItems = this.countryItems.concat(regionSub.countrys)
         }
       }
     }
-    this.countryItems = this.countryItems.sort();
+    this.countryItems = this.countryItems.sort()
   },
 
   methods: {
     ...mapActions([
-      "setHeaderShow",
-      "loadCpvs",
+      'setHeaderShow',
+      'loadCpvs',
     ]),
 
     async loadUsers() {
       try {
-        this.dataUsers.loading = 0;
-        this.pagination.page = 1;
-        let filter = {};
+        this.dataUsers.loading = 0
+        this.pagination.page = 1
+        let filter = {}
         if (this.typeGroup) {
-          filter.type = this.typeGroup;
+          filter.type = this.typeGroup
         }
         if (this.isActive) {
-          filter.status = 1;
+          filter.status = 1
         }
         if (this.notifSend) {
-          filter.notifSend = 1;
+          filter.notifSend = 1
         }
-        filter.hasConnexionTender = this.hasConnexionTender;
-        filter.hasConnexionBusiness = this.hasConnexionBusiness;
-        const res = await this.$api.post("/User/List", { filter });
+        filter.hasConnexionTender = this.hasConnexionTender
+        filter.hasConnexionBusiness = this.hasConnexionBusiness
+        const res = await this.$api.post("/User/List", { filter })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.dataUsers.data = res.data;
-        this.dataUsers.loading = 1;
+        this.dataUsers.data = res.data
+        this.dataUsers.loading = 1
       } catch (err) {
-        this.dataUsers.loading = -1;
-        this.$api.error(err, this);
+        this.dataUsers.loading = -1
+        this.$api.error(err, this)
       }
     },
 
@@ -881,6 +879,20 @@ export default {
         .catch(err => {
           this.$api.error(err, this);
         });
+    },
+
+    cpvRemove(item) {
+      const index = this.cpvs.indexOf(item.code)
+      if (index >= 0) {
+        this.cpvs.splice(index, 1)
+      }
+    },
+
+    regionRemove(item) {
+      const index = this.regions.indexOf(item)
+      if (index >= 0) {
+        this.regions.splice(index, 1)
+      }
     },
 
     userSynchroFull() {

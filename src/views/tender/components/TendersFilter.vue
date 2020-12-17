@@ -32,7 +32,8 @@
       <v-card-text class="pa-0">
         <SearchFacetRegion
           ref="SearchFacetRegion"
-          :driver="driver"
+          :region_lvl0="filter.region_lvl0"
+          :region_lvl1="filter.region_lvl1"
           @filterChange="facetRegionChange($event)"
         />
       </v-card-text>
@@ -348,6 +349,11 @@ export default {
       'showInsufficientRightDialog',
     ]),
 
+    updateFilter(filter) {
+      this.filter = filter
+      this.$refs.SearchFacetRegion.filterChange(filter)
+    },
+
     handleFacetChange(event, facet) {
       if (
         !this.driver ||
@@ -359,22 +365,24 @@ export default {
         return
       }
       const { value, checked } = event.target
+      /*
       const facetFromDriver = this.driver.getState().facets[facet][0]
       const valueforApi =
         facetFromDriver.type === 'range'
           ? facetFromDriver.data.find(item => item.value.name === value).value
           : value
+      */
 
       if (checked) {
         this.filter[facet].push(value)
-        this.driver.addFilter(facet, valueforApi, 'any')
+        // this.driver.addFilter(facet, valueforApi, 'any')
       } else {
         const index = this.filter[facet].indexOf(value)
         if (index > -1) {
           this.filter[facet].splice(index, 1)
         }
-        this.driver.removeFilter(facet, valueforApi, 'any')
-        if (facet === 'region_lvl1') {
+        // this.driver.removeFilter(facet, valueforApi, 'any')
+        if (facet === 'region_lvl0' || facet === 'region_lvl1') {
           this.$refs.SearchFacetRegion.filterChange(this.filter)
         }
       }
@@ -385,23 +393,27 @@ export default {
       const facetFromDriver = this.driver.getState().facets[facet][0]
       for (const data of facetFromDriver.data) {
         const value = facetFromDriver.type === 'range' ? data.value.name : data.value
+        /*
         const valueforApi =
           facetFromDriver.type === 'range'
             ? facetFromDriver.data.find(a => a.value.name === data.value.name).value
             : data.value
+        */
         if (this.filter[facet].includes(value)) {
           continue
         }
         this.filter[facet].push(value)
-        this.driver.addFilter(facet, valueforApi, 'any')
+        // this.driver.addFilter(facet, valueforApi, 'any')
       }
       this.$emit('filterChange', this.filter)
     },
 
     handleFacetUnCheckAll(facet) {
+      /*
       for (const item of this.filter[facet]) {
         this.driver.removeFilter(facet, item, 'any')
       }
+      */
       this.filter[facet] = []
       this.$emit('filterChange', this.filter)
     },
