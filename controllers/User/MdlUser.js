@@ -1267,7 +1267,7 @@ exports.SendPeriodicDashboard = () => {
             html += `      ${description.substring(0, 150)}...`
             html += `    </td>`
             html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-            html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}" target="_blank">#${tender.tenderId}</a>`
+            html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}&tenderUuid=${tender.tenderUuid}" target="_blank">#${tender.tenderId}</a>`
             html += `    </td>`
             html += `  </tr>`
           }
