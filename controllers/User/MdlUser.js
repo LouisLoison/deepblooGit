@@ -619,6 +619,11 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
 
       // Update user bdd list
       for (let user of users) {
+        /*
+        if (user.email !== 'pieter@ist.co.za') {
+          continue
+        }
+        */
         let userBdd = usersBdd.find(a => a.email === user.email)
         if (!userBdd) {
           userBdd = await this.AddUpdate({
@@ -1262,7 +1267,7 @@ exports.SendPeriodicDashboard = () => {
             html += `      ${description.substring(0, 150)}...`
             html += `    </td>`
             html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-            html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}" target="_blank">#${tender.tenderId}</a>`
+            html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}&tenderUuid=${tender.tenderUuid}" target="_blank">#${tender.tenderId}</a>`
             html += `    </td>`
             html += `  </tr>`
           }

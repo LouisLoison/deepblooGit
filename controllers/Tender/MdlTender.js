@@ -99,7 +99,7 @@ exports.tenderCount = () => {
   })
 }
 
-exports.TenderGet = (id, algoliaId) => {
+exports.TenderGet = (id, algoliaId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -112,6 +112,7 @@ exports.TenderGet = (id, algoliaId) => {
         SELECT      id AS "id",
                     dgmarketId AS "dgmarketId",
                     procurementId AS "procurementId",
+                    tenderUuid AS "tenderUuid",
                     title AS "title",
                     description AS "description",
                     lang AS "lang",
@@ -154,6 +155,12 @@ exports.TenderGet = (id, algoliaId) => {
         }
         where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
       }
+      if (tenderUuid && tenderUuid !== '') {
+        if (where !== '') {
+          where += 'AND '
+        }
+        where += `tenderUuid = ${BddTool.NumericFormater(tenderUuid, BddEnvironnement, BddId)} \n`
+      }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
@@ -168,6 +175,7 @@ exports.TenderGet = (id, algoliaId) => {
           id: record.id,
           dgmarketId: record.dgmarketId,
           procurementId: record.procurementId,
+          tenderUuid: record.tenderUuid,
           title: record.title,
           description: record.description,
           lang: record.lang,
@@ -249,6 +257,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
                     dgmarket.id AS "id",
                     dgmarket.dgmarketId AS "dgmarketId",
                     dgmarket.procurementId AS "procurementId",
+                    dgmarket.tenderUuid AS "tenderUuid",
                     dgmarket.title AS "title",
                     dgmarket.description AS "description",
                     dgmarket.lang AS "lang",
@@ -485,6 +494,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
             id: record.id,
             dgmarketId: record.dgmarketId,
             procurementId: record.procurementId,
+            tenderUuid: record.tenderUuid,
             title: record.title,
             description: record.description,
             lang: record.lang,
@@ -574,6 +584,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         SELECT      id AS "id",
                     dgmarketId AS "dgmarketId",
                     procurementId AS "procurementId",
+                    tenderUuid AS "tenderUuid",
                     title AS "title",
                     description AS "description",
                     lang AS "lang",
@@ -761,6 +772,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
           id: record.id,
           dgmarketId: record.dgmarketId,
           procurementId: record.procurementId,
+          tenderUuid: record.tenderUuid,
           title: record.title,
           description: record.description,
           lang: record.lang,

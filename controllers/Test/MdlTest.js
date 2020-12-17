@@ -236,6 +236,14 @@ exports.CountryCreateCsv = () => {
 exports.Test = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      /*
+      let text = '123456789 1288&amp;amp;994 4654 4654 588&amp;amp;994 646846849 7498 79amp8 7 94 98 49 84amp;'
+      let html = text.replace(/&amp;amp;/g, '')
+      html = html.replace(/&amp;/g, '')
+      html = html.replace(/amp;/g, '')
+      html = html
+      */
+
       const { v4: uuidv4 } = require('uuid')
 
       let count = 0

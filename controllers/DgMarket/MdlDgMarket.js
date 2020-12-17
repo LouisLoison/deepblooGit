@@ -723,6 +723,7 @@ exports.ExportUrlFromFile = () => {
         SELECT      id AS "id", 
                     dgmarketId AS "dgmarketId", 
                     procurementId AS "procurementId", 
+                    tenderUuid AS "tenderUuid", 
                     title AS "title", 
                     description AS "description", 
                     lang AS "lang", 

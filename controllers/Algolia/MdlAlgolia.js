@@ -9,7 +9,7 @@ exports.TendersImport = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       
-      const tenderStatus = '100'
+      const tenderStatus = '0'
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
@@ -48,6 +48,7 @@ exports.TendersImport = () => {
         SELECT      id AS "id", 
                     dgmarketId AS "dgmarketId", 
                     procurementId AS "procurementId", 
+                    tenderUuid AS "tenderUuid", 
                     title AS "title", 
                     description AS "description", 
                     lang AS "lang", 
@@ -128,8 +129,7 @@ exports.TendersImport = () => {
           } catch (err) {
             console.log('Elasticsearch indexObject error')
           }
-          // TODO : temp
-          // await this.TendersAdd(tranche, index)
+          await this.TendersAdd(tranche, index)
         }
       }
 
@@ -267,6 +267,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         dgmarketId: tender.dgmarketId,
         tenderId: tender.id,
         procurementId: tender.procurementId,
+        tenderUuid: tender.tenderUuid,
         title: tender.title,
         lang: tender.lang,
         description: tender.description,
@@ -682,6 +683,7 @@ exports.TendersSynchro = () => {
                 id,
                 dgmarketId,
                 procurementId,
+                tenderUuid,
                 title,
                 description,
                 lang,
@@ -718,6 +720,7 @@ exports.TendersSynchro = () => {
                 ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)},
                 ${BddTool.NumericFormater(hit.dgmarketId, BddEnvironnement, BddId)},
                 '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}',
+                '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}',
                 '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}',
                 '${BddTool.ChaineFormater(hit.description, BddEnvironnement, BddId)}',
                 '${BddTool.ChaineFormater(hit.lang, BddEnvironnement, BddId)}',
@@ -758,6 +761,7 @@ exports.TendersSynchro = () => {
             query = `
               UPDATE      dgmarket 
               SET         procurementId = '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}', 
+                          tenderUuid = '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}', 
                           title = '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}', 
                           description = '${BddTool.ChaineFormater(hit.description, BddEnvironnement, BddId)}', 
                           lang = '${BddTool.ChaineFormater(hit.lang, BddEnvironnement, BddId)}', 

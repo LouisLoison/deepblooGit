@@ -11,7 +11,7 @@ exports.tenderCount = (req, res) => {
 }
 
 exports.TenderGet = (req, res) => {
-  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(req.body.id, req.body.algoliaId).then((data) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(req.body.id, req.body.algoliaId, req.body.tenderUuid).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
