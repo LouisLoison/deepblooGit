@@ -128,6 +128,27 @@
       >
         <v-icon style="font-size: 16px;">fa-envelope</v-icon>
       </v-btn>
+      <v-btn
+        v-if="
+          (
+            result.user_id
+            && result.user_id.raw
+            && result.user_id.raw > 0
+            && result.user_id.raw === getUserId
+          )
+          || getUserType === 1
+        "
+        title="Remove this opportunity"
+        color="red"
+        fab
+        x-small
+        dark
+        text
+        style="height: 24px; width: 24px; margin: 0px 4px 0px 0px;"
+        @click.stop="removeTender(result)"
+      >
+        <v-icon style="font-size: 12px;">fa-trash</v-icon>
+      </v-btn>
       <div
         v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
         style="display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
@@ -160,6 +181,7 @@ export default {
 
   computed: {
     ...mapGetters([
+      'getUserId',
       'getUserType',
       'getDataCpvs',
       'getDataGroups',
@@ -249,6 +271,10 @@ export default {
 
     openSentEmailDialog() {
       this.$emit('openSentEmailDialog')
+    },
+
+    removeTender(result) {
+      this.$emit('removeTender', result)
     },
 
     groupLoadingStatus(status) {

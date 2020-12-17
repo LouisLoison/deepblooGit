@@ -16,9 +16,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import Tender from '@/views/tender/components/Tender'
-
-import { mapGetters } from "vuex"
 
 export default {
   name: 'TenderDialog',

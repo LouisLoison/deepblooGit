@@ -47,8 +47,9 @@
               <v-alert
                 :value="error"
                 color="error"
-                icon="warning"
+                icon="fa-exclamation"
                 outlined
+                dense
                 transition="scale-transition"
               >
                 The username or password you entered is incorrect.

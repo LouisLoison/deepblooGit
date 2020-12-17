@@ -173,6 +173,7 @@
           @handleFacetCheckAll="$refs.TendersFilter.handleFacetCheckAll($event)"
           @handleFacetUnCheckAll="$refs.TendersFilter.handleFacetUnCheckAll($event)"
           @tenderOpen="tenderOpen($event)"
+          @removeTender="removeTender($event)"
         />
       </div>
       <div v-if="!searchState.wasSearched" class="text-center pa-5">
@@ -549,6 +550,12 @@ export default {
         this.driver.trackClickThrough(result.id.raw, [])
       } catch (err) {
         console.log(err)
+      }
+    },
+
+    removeTender(result) {
+      if (this.searchState.results && result.id && result.id.raw) {
+        this.searchState.results = this.searchState.results.filter(a => a.id.raw !== result.id.raw)
       }
     },
 

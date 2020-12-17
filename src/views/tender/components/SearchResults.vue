@@ -21,6 +21,7 @@
           @tenderDialogShow="tenderOpen(result)"
           @openTenderGroupChoice="openTenderGroupChoice(result)"
           @openSentEmailDialog="openSentEmailDialog(result)"
+          @removeTender="removeTenderDialog(result)"
         />
       </div>
     </div>
@@ -52,6 +53,10 @@
       ref="SentEmailDialog"
       @notifySent="loadUserNotifys()"
     />
+    <TenderRemoveDialog
+      ref="TenderRemoveDialog"
+      @removeTender="removeTender($event)"
+    />
   </div>
 </template>
 
@@ -62,6 +67,7 @@ import SearchResultsTable from "./SearchResultsTable"
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from "@/views/tender/components/TenderGroupChoice"
 import SentEmailDialog from "@/components/modal/SentEmailDialog"
+import TenderRemoveDialog from '@/views/tender/components/TenderRemoveDialog'
 
 export default {
   name: 'SearchResults',
@@ -72,6 +78,7 @@ export default {
     TenderGroupChoice,
     SentEmailDialog,
     TenderDialog,
+    TenderRemoveDialog,
   },
 
   props: {
@@ -215,7 +222,15 @@ export default {
     tenderOpen(result) {
       this.$refs.TenderDialog.show(result)
       this.$emit('tenderOpen', result)
-    }
+    },
+
+    removeTenderDialog(result) {
+      this.$refs.TenderRemoveDialog.show(result)
+    },
+
+    removeTender(result) {
+      this.$emit('removeTender', result)
+    },
   },
 };
 </script>
