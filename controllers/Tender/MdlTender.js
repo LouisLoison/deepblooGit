@@ -847,6 +847,7 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       if (where !== '') {
         query += '  WHERE ' + where
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').deleteObject([id])
         await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
       }
 

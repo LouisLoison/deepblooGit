@@ -113,6 +113,16 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
   })
 }
 
+exports.deleteObject = (objectIds, engineName = "deepbloo") => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const response = await client.destroyDocuments(engineName, objectIds)
+      resolve(response)
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.tendersFormat = (tenders) => {
   return new Promise(async (resolve, reject) => {
     try {
