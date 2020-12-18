@@ -526,7 +526,7 @@ export class TextractPipelineStack extends cdk.Stack {
         ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
-        EXTRACT_PDF_LINES: true,
+        EXTRACT_PDF_LINES: "true",
       }
     });
 
