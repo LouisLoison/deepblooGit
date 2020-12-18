@@ -1,21 +1,54 @@
-const { getFileContent, getXmlJsonData, log } = require('deepbloo');
+const { getFileContent, log } = require('deepbloo');
 const { StepFunctions } = require('aws-sdk')
 const xml2js = require('xml2js')
 const util = require('util')
+// const { v4: uuidv4 } = require('uuid');
+// const { createHash } = require('crypto');
+const objectHash = require('object-hash');
 
 const stepfunctions = new StepFunctions({apiVersion: '2016-11-23'});
 
-const startImportSteps = async (data) => {
-  const normedObject = data.fileSource.split('').filter(char => /[a-zA-Z0-9-_]/.test(char))
-  const name = `${normedObject}-${data.fileSourceIndex}`
-  const params = {
-    stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
-    input: JSON.stringify(data, null, 2),
-    name,
+const startImportSteps = (data) => {
+  return new Promise(async (callback, reject) => {
+    const dataSource = data.dataSource.slice(0,10)
+    const fileStamp = data.fileSource.split('/').slice(2).join('').slice(-24,-4)
+    const normedObject = `${dataSource}-a-${fileStamp}`.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
+    const contentHash = objectHash(data, { algorithm: 'sha256' })
+    // const contentHash = createHash('sha256').update(JSON.stringify(data)).digest('hex')
+    const name = `${normedObject}-${data.fileSourceIndex}-${contentHash}`.substring(0,79)
+    log(name, process.env.TENDER_STATE_MACHINE_ARN)
+    const params = {
+      stateMachineArn: process.env.TENDER_STATE_MACHINE_ARN, /* required */
+      input: JSON.stringify(data, null, 2),
+      name,
     // traceHeader: 'STRING_VALUE'
-  };
-  const result = stepfunctions.startExecution(params);
-  log(result, 'Started stepfunctions');
+    };
+    const request = await stepfunctions.startExecution(params);
+    // listen for success
+    request.on("extractData", res => {
+      log(`startExecution Succeeded:\n`, res);
+      callback({
+        statusCode: 200,
+        duplicate: false,
+      });
+    });
+    // listen for error
+    request.on("error", (err, response) => {
+      log(
+        `Error --  ${err.message} ${err.code}, ${err.statusCode}`
+      );
+      if (err.code !== 'ExecutionAlreadyExists') {
+        reject(err);
+      }
+      callback({
+        statusCode: 200,
+        duplicate: true,
+      });
+    });
+    // send request
+    request.send();
+    log('Started stepfunctions', request);
+  });
 }
 
 exports.handler =  async function(event, ) {
@@ -30,71 +63,26 @@ exports.handler =  async function(event, ) {
   const parseData = await parseString(fileData)
   const iterableData = (dataSource === 'tenderinfo') ? parseData.import.row : parseData.notices.notice
   let tenderCount = 0
+  let duplicateCount = 0
   for (const row of iterableData) {
     tenderCount++
-    const relatedDocuments = row.related_documents ?
-      row.related_documents
-        .map(d => d.document_url)
-        .filter(d => d) : []
-    log('Raw row',row,'DEBUG')
-    let importData = {}
-    if (dataSource === 'tenderinfo') {
-      importData = {
-        posting_id: getXmlJsonData(row.posting_id),
-        date_c: getXmlJsonData(row.date_c),
-        email_id: getXmlJsonData(row.email_id),
-        region: getXmlJsonData(row.region),
-        region_code: getXmlJsonData(row.region_code),
-        add1: getXmlJsonData(row.add1),
-        adid2: getXmlJsonData(row.add2),
-        city: getXmlJsonData(row.city),
-        state: getXmlJsonData(row.state),
-        pincode: getXmlJsonData(row.pincode),
-        country: getXmlJsonData(row.country),
-        country_code: getXmlJsonData(row.country_code),
-        url: getXmlJsonData(row.url),
-        tel: getXmlJsonData(row.tel),
-        fax: getXmlJsonData(row.fax),
-        contact_person: getXmlJsonData(row.contact_person),
-        maj_org: getXmlJsonData(row.maj_org),
-        tender_notice_no: getXmlJsonData(row.tender_notice_no),
-        notice_type: getXmlJsonData(row.notice_type),
-        notice_type_code: getXmlJsonData(row.notice_type_code),
-        bidding_type: getXmlJsonData(row.bidding_type),
-        global: getXmlJsonData(row.global),
-        mfa: getXmlJsonData(row.mfa),
-        tenders_details: getXmlJsonData(row.tenders_details),
-        short_desc: getXmlJsonData(row.short_desc),
-        currency: getXmlJsonData(row.currency),
-        est_cost: getXmlJsonData(row.est_cost),
-        doc_last: getXmlJsonData(row.doc_last),
-        financier: getXmlJsonData(row.financier),
-        sector: getXmlJsonData(row.sector),
-        sector_code: getXmlJsonData(row.sector_code),
-        corregendum_details: getXmlJsonData(row.corregendum_details),
-        project_name: getXmlJsonData(row.project_name),
-        cpv: getXmlJsonData(row.cpv),
-        authorize: getXmlJsonData(row.authorize),
-      }
-    } else if (dataSource === 'dgmarket') {
-      importData = row
-    }
 
-    const importTenderInfo = {
-      ...importData,
-      related_documents: relatedDocuments,
+    row["dataSource"] = dataSource;
+
+    const rawTender = {
+      tenderData: row,
       fileSource: objectName,
       fileSourceIndex: tenderCount,
-      tenderFormat: 'tenderinfo',
-      exclusion: '',
-      exclusionWord: '',
+      dataSource,
+      //      exclusion: '',
+      //      exclusionWord: '',
       status: 1,
       creationDate: new Date(),
       updateDate: new Date()
     }
-    await startImportSteps(importTenderInfo)
-    if (tenderCount > 1) { break }
+    const { duplicate } = await startImportSteps(rawTender)
+    duplicateCount += duplicate ? 1 : 0
+    //if (tenderCount >= 5) { break }
   }
-  console.log(`Started ${tenderCount} jobs`)
+  log(`Processed ${tenderCount} jobs, started ${tenderCount-duplicateCount} (${duplicateCount} duplicates)`)
 }
-

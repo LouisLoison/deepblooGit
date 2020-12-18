@@ -46,6 +46,8 @@ export class TextractPipelineStack extends cdk.Stack {
     const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { versioned: false});
 
     const outputBucket = new s3.Bucket(this, 'OutputBucket', { versioned: false});
+    new cdk.CfnOutput(this, 'CONTENT_BUCKET', { value: contentBucket.bucketArn });
+    new cdk.CfnOutput(this, 'OUTPUT_BUCKET', { value: outputBucket.bucketArn });
 
     const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', { versioned: false});
     existingContentBucket.grantReadWrite(s3BatchOperationsRole)
@@ -521,6 +523,10 @@ export class TextractPipelineStack extends cdk.Stack {
       environment: {
         OUTPUT_BUCKET: outputBucket.bucketName,
         OUTPUT_TABLE: outputTable.tableName,
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+        TEXTRACT_ONLY: "false", // "true" or "false"
+        MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+        EXTRACT_PDF_LINES: true,
       }
     });
 
@@ -532,10 +538,14 @@ export class TextractPipelineStack extends cdk.Stack {
       batchSize: 1
     }));
 
-    //Permissions
+    // Permissions
     contentBucket.grantRead(pdfToBoundingBox)
     existingContentBucket.grantReadWrite(pdfToBoundingBox)
     outputBucket.grantReadWrite(pdfToBoundingBox)
     pdfToBoundingBoxAndTextQueue.grantConsumeMessages(pdfToBoundingBox)
+    // Allow to write to the pdf queue
+    pdfToBoundingBoxAndTextQueue.grantSendMessages(htmlToBoundingBox)
+    // Allow to write pdf in textract queue
+    esIndexQueue.grantSendMessages(pdfToBoundingBox)
   }
 }

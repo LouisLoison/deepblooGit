@@ -4,7 +4,6 @@ import json
 from decimal import Decimal
 
 
-
 class Pdf:
     def __init__(self, pdf_path, json_output_path, y_tolerance=3):
         self.parser: PdfBboxLineParser = PdfBboxLineParser(pdf_path, y_tolerance)

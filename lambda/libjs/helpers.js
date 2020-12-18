@@ -30,6 +30,7 @@ const putFile = async (bucketName, fileKey, fileContent) => {
 }
 
 const getXmlJsonData = (data) => {
+  if (!data) return null
   if (data && data.length > 0) {
     if (data[0]._) {
       return data[0]._
@@ -40,14 +41,19 @@ const getXmlJsonData = (data) => {
   return ''
 }
 
+const getXmlJsonArray = (data) => {
+  if (!data) return null
+  return data.map(d => d._ || d)
+}
+
 const log = (message, data, level='INFO') => {
   try {
-    console.log(`${level} ${JSON.stringify(message, null, 2)}
-${JSON.stringify(data, null, 2)}`)
+    console.log(`${JSON.stringify(message, null, 2)}
+${data === undefined ? '' : JSON.stringify(data, null, 2)}`)
   } catch (e) {
     if (e instanceof TypeError) {
-      console.log(`${level} ${message}`)
-      console.log(data);
+      console.log(message)
+      if (data !== undefined) { console.log(data) }
     }
     else {
       throw e
@@ -59,5 +65,6 @@ export {
   getFileContent,
   putFile,
   getXmlJsonData,
+  getXmlJsonArray,
   log,
 }

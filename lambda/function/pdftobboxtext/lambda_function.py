@@ -108,15 +108,19 @@ def lambda_handler(event, context):
         "textractOnly": os.environ['TEXTRACT_ONLY'],
         "minCharNeeded": os.environ['MIN_CHAR_NEEDED'],
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
+
     }
     status = {
         'statusCode': 200,
         'body': 'All right'
     }
+    extract_pdf_lines = bool(aws_env['extract_pdf_lines'])
+    textract_only = bool(aws_env['textractOnly'])
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
-    if aws_env['textractOnly'] == "false" and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
+
+    if textract_only is False and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
         print("=> Extracting bounding box without textract")
-        if aws_env['extract_pdf_lines'] is True:
+        if extract_pdf_lines is True:
             print("=> Extracting pdf lines bbox")
             pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'])
             pdf.parse_pdf()
