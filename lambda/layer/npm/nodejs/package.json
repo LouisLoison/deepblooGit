@@ -6,11 +6,14 @@
     "canvas": "^2.6",
     "esm": "^3.2",
     "fs-extra": "^9.0",
+    "html-to-text": "^6.0",
+    "mammoth": "^1.4",
     "moment": "^2.29",
     "object-hash": "^2.0",
-    "pdfjs-dist": "^2.4",
+    "pdfjs-dist": "^2.5",
     "pg": "^8.5",
     "string-strip-html": "^7.0",
+    "word-extractor": "^0.3",
     "xml2js": "^0.4"
   },
   "devDependencies": {

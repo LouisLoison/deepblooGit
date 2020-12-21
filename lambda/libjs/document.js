@@ -164,6 +164,26 @@ const getContentType = (fileLocation) => {
   return contentType
 }
 
+const awsFileGet = async (objectName) => {
+  const s3 = new AWS.S3()
+  const params = {
+    Bucket: documentsBucket,
+    Key : objectName
+  }
+  const folderTemp = path.join(os.tmpdir(), uuidv4())
+  fs.mkdirSync(folderTemp)
+  const fileLocation = path.join(folderTemp, path.basename(objectName))
+
+  var file = fs.createWriteStream(fileLocation);
+  await new Promise((resolve, reject) =>
+    s3.getObject(params).createReadStream()
+      .on('end', () => { return resolve(); })
+      .on('error', (error) => { return reject(error); })
+      .pipe(file)
+  )
+  return fileLocation
+}
+
 exports.awsFileAdd = (fileLocation, objectName) => {
   return new Promise(async (resolve, reject) => {
     try {

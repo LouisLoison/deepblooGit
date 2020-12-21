@@ -95,17 +95,17 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    body = json.loads(event['Records'][0]['body'])
-    aws_region = event['Records'][0]['awsRegion']
+    # body = json.loads(event['Records'][0]['body'])
+    aws_region = 'eu-west-1',
     aws_env = {
-        "bucketName": body['bucketName'],
-        "objectName": body['objectName'],
-        "documentId": body['documentId'],
+        "bucketName": os.environ['DOCUMENTS_BUCKET'],
+        "objectName": event['objectName'],
+        "documentId": event['documentUuid'],
         "awsRegion": aws_region,
         "tmpJsonOutput": "/tmp/tmp_result.json",
-        "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputName": get_bbox_filename(body['objectName']),
-        "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
+        "outputBucket": os.environ['DOCUMENTS_BUCKET'],
+        "outputName": get_bbox_filename(event['objectName']),
+        # "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
         "textractOnly": os.environ['TEXTRACT_ONLY'],
         "minCharNeeded": os.environ['MIN_CHAR_NEEDED']
     }
@@ -122,5 +122,5 @@ def lambda_handler(event, context):
         write_bbox_to_s3(aws_env)
     else:
         print("Extracting bounding box with textract")
-        send_to_textract(aws_env)
-    return status
+        # send_to_textract(aws_env)
+    return { **event, 'status': status }

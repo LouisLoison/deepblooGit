@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -50,7 +50,7 @@ export class ImportsStepsStack extends Stack {
     const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
     const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
 
-    const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false});
+    const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
@@ -58,6 +58,30 @@ export class ImportsStepsStack extends Stack {
       // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
       // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
       privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+    });
+
+    // Helper Layer with helper functions
+    const helperLayer = new LayerVersion(this, 'HelperLayer', {
+      code: new AssetCode('../lambda/layer/helper'),
+      compatibleRuntimes: [Runtime.PYTHON_3_8],
+      license: 'Apache-2.0',
+      description: 'Helper layer.',
+    });
+
+    // Textractor helper layer
+    const textractorLayer = new LayerVersion(this, 'Textractor', {
+      code: new AssetCode('../lambda/layer/textractor'),
+      compatibleRuntimes: [Runtime.PYTHON_3_8],
+      license: 'Apache-2.0',
+      description: 'Textractor layer.',
+    });
+
+    // Python libs helper layer
+    const pythonModulesLayer = new LayerVersion(this, 'PythonModules', {
+      code: new AssetCode('../lambda/layer/pipenv'),
+      compatibleRuntimes: [Runtime.PYTHON_3_8],
+      license: 'Apache-2.0, MIT',
+      description: 'Pipenv-installed pypi modules layer.',
     });
 
     const nodeLayer = new LayerVersion(this, 'NodeLib', {
@@ -73,8 +97,6 @@ export class ImportsStepsStack extends Stack {
       license: 'Private, Unlicensed',
       description: 'Deepbloo lib layer.',
     });
-
-
 
     const stepTenderConvert = new Function(this, 'convertTender', {
       runtime: Runtime.NODEJS_12_X,
@@ -158,18 +180,64 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
+    const stepPdfToImg = new Function(this, 'PdfToImg', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/pdftoimg'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+      }
+    })
+
+    const stepPdfToBoxes = new Function(this, 'PdfToBoxes', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/pdftobboxtext'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+        TEXTRACT_ONLY: "false", // "true" or "false"
+        MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+      }
+    })
+
+    const stepHtmlToPdf = new Function(this, 'HtmlToPdf', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/htmltoboundingbox'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+      }
+    })
+
     stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
     stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
+    stepPdfToImg.addLayers(nodeLayer, deepblooLayer)
+    stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
+    stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
+
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
     dbSecret.grantRead(stepTenderMerge)
     dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
     documentsBucket.grantReadWrite(stepDocumentDownload)
+    documentsBucket.grantReadWrite(stepHtmlToPdf)
+    documentsBucket.grantReadWrite(stepPdfToImg)
+    documentsBucket.grantReadWrite(stepPdfToBoxes)
 
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
@@ -225,18 +293,43 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     }).addCatch(downloadFail);
 
+
+    const pdfToImgTask = new LambdaInvoke(this, 'Pdf to Image', {
+      lambdaFunction: stepPdfToImg,
+      inputPath: '$.document',
+      resultPath: '$.pdf2img',
+      payloadResponseOnly: true,
+    })
+
+    const pdfToBoxesTask = new LambdaInvoke(this, 'Pdf to Boxes', {
+      lambdaFunction: stepPdfToBoxes,
+      inputPath: '$.document',
+      resultPath: '$.pdf2bbox',
+      payloadResponseOnly: true,
+    })
+
+    const htmlToPdfTask = new LambdaInvoke(this, 'Html To Pdf', {
+      lambdaFunction: stepHtmlToPdf,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
     const processDoc = new Pass(this, 'Doc/docx process')
-  
+
     const processDocx = new Pass(this, 'Docx process')
 
-    const processHtml = new Pass(this, 'Html process')
-    
-    const processPdf = new Pass(this, 'Pdf process')
+    const processPdf = new Parallel(this, 'Pdf process', {})
+      .branch(pdfToImgTask)
+      .branch(pdfToBoxesTask)
+
+    const processHtml = htmlToPdfTask
+      .next(processPdf)
 
     const processImg = new Pass(this, 'Img process')
 
     const processZip = new Pass(this, 'Zip process')
-    
+
     const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
         .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
@@ -249,10 +342,10 @@ export class ImportsStepsStack extends Stack {
         .when(Condition.stringEquals('$.document.contentType',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), processDocx)
         .when(Condition.stringEquals('$.document.contentType', 'application/zip'), processZip)
-        .otherwise(new Pass(this,'Document type unknown'))
+        .otherwise(new Pass(this, 'Document type unknown'))
         .afterwards()
       )
-      
+
     const documentMap = new Map(this, 'Document Map', {
       inputPath: '$.mergedData',
       itemsPath: '$.newSourceUrls',
@@ -260,8 +353,8 @@ export class ImportsStepsStack extends Stack {
       maxConcurrency: 2,
     }).iterator(documentIterator);
 
-    const noInterest = new Succeed(this, 'No interest', {comment: "e.g. tender has no CPV match"})
-    const fullSucceed = new Succeed(this, 'Completed', {comment: "Tender fully available"})
+    const noInterest = new Succeed(this, 'No interest', { comment: "e.g. tender has no CPV match" })
+    const fullSucceed = new Succeed(this, 'Completed', { comment: "Tender fully available" })
     const chain = Chain.start(convertTenderTask)
       .next(analyzeTenderTask)
       .next(new Choice(this, 'Has interest ?')
@@ -276,7 +369,7 @@ export class ImportsStepsStack extends Stack {
           )
         )
       )
- 
+
 
     const logGroup = new logs.LogGroup(this, 'MyLogGroup');
 
@@ -305,8 +398,8 @@ export class ImportsStepsStack extends Stack {
     xmlImport.addLayers(nodeLayer, deepblooLayer)
     //Trigger
     xmlImport.addEventSource(new S3EventSource(sftpBucket, {
-      events: [ s3.EventType.OBJECT_CREATED ],
-      filters: [{ prefix: 'incoming/', suffix: '.xml'}]
+      events: [s3.EventType.OBJECT_CREATED],
+      filters: [{ prefix: 'incoming/', suffix: '.xml' }]
     }))
     sftpBucket.grantReadWrite(xmlImport)
     stateMachine.grantStartExecution(xmlImport)
