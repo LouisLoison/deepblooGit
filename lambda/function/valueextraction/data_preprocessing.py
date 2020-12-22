@@ -9,4 +9,6 @@ def clean_html(raw_html):
 
 
 def process_column(column_name, dataframe, process):
+    # Define a method to apply the same process to every
+    # row in a pandas DataFrame column
     dataframe[column_name] = pd.DataFrame(map(process, dataframe[column_name]))
