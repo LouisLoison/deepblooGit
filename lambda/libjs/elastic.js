@@ -15,27 +15,30 @@ exports.connectToElasticsearch = async () => {
     }
 
     // Elasticsearch connexion
+    console.log('Connecting to ', node)
     elasticSearchClient = new Client({
       node,
       auth,
       maxRetries: 5,
-      requestTimeout: 60000,
-      sniffOnStart: true
+      requestTimeout: 3000,
+//      sniffOnStart: true
     })
   }
   return elasticSearchClient
 }
 
 exports.indexToElasticsearch = async (objects, index) => {
-  const client = await this.connectToElasticsearch()
-  await objects.forEach(async body => {
+  const client = elasticSearchClient || await this.connectToElasticsearch()
+  const result = await Promise.all(objects.map(async body => {
     //console.log(body.id)
-    await client.index({
+    // delete body.tenderCriterions
+    return  client.index({
       id: body.id,
       index: `${index}-${env}`,
       body,
     }).catch(err => console.log(err))
-  })
+  }))
+  return result
 }
 
 
