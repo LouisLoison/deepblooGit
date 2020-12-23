@@ -7,14 +7,25 @@ AWS.config.apiVersions = {
 exports.AWS = AWS
 exports.documentsBucket = process.env.DOCUMENTS_BUCKET
 
+let env = process.env.NODE_ENV || 'dev'
+env = process.env.NODE_ENV == 'local' ? 'dev' : env
+
+exports.env = env
+
 let dbSecret = false;
 let appsearchSecret = false;
+let elasticSecret = false
 
 const getSecret = async (SecretId) => {
   const secretsmanager = new AWS.SecretsManager()
   const data = await secretsmanager.getSecretValue({ SecretId }).promise()
   // console.log(data)
-  return JSON.parse(data.SecretString)
+  const params = JSON.parse(data.SecretString)
+  if (process.env.NODE_ENV === 'local') {
+    params.host = 'localhost'
+    params.port = 5434
+  }
+  return params
 }
 
 exports.getDbSecret = async () => {
@@ -26,6 +37,12 @@ exports.getAppsearchSecret = async () => {
   appsearchSecret = appsearchSecret || await getSecret(process.env.APPSEARCH_SECRET)
   const appsearchEndpoint = process.env.APPSEARCH_ENDPOINT
   return { ...appsearchSecret, appsearchEndpoint }
+}
+
+exports.getElasticSecret = async () => {
+  elasticSecret = elasticSecret || await getSecret(process.env.ELASTIC_SECRET)
+  const appsearchEndpoint = process.env.APPSEARCH_ENDPOINT
+  return { ...elasticSecret }
 }
 
 /*

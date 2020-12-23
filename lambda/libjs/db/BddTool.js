@@ -24,23 +24,20 @@ exports.getClient = async () => {
   return await pgPool.connect() // Passes the client to enable transaction
 }
 
-const pgInitPool = (onError) => {
-  try {
-    if(!pgPool) {
-      const pgArgs = {
-        host: configBdd.host,
-        user: configBdd.username,
-        password: configBdd.password,
-        database: configBdd.dbname,
-      }
-      console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
-      const { Pool } = require('pg')
-      pgPool = new Pool(pgArgs)
+const pgInitPool = () => {
+  if(!pgPool) {
+    const pgArgs = {
+      host: configBdd.host,
+      user: configBdd.username,
+      password: configBdd.password,
+      database: configBdd.dbname,
+      port: configBdd.port || 5432,
     }
-    return pgPool;
-  } catch (err) {
-    onError(err)
+    console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
+    const { Pool } = require('pg')
+    pgPool = new Pool(pgArgs)
   }
+  return pgPool;
 }
 
 

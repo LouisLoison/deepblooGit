@@ -1,0 +1,15 @@
+{
+  "name": "elastic-index-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "index": "bash -c 'NODE_ENV=local DB_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx ELASTIC_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr AWS_REGION=eu-west-1 node --max-old-space-size=7200 index.js'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "deepbloo": "file:../../lambda/libjs"
+  }
+}

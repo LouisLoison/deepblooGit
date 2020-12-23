@@ -17,7 +17,7 @@ const fileHash = (fileName) => {
 
 exports.documentAddUpdate = async (client, document) => {
   const documentNew = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl', client)
-  return(documentNew)
+  return (documentNew)
 }
 
 exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
@@ -26,11 +26,11 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
 
   const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl })
 
-  if (sourceUrl.includes('www2.dgmarket.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
+  if (sourceUrl.includes('www2.dgmarket.com') && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
     sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
   }
   let result = {}
-  if(!document.size) {
+  if (!document.size) {
     try {
       const fileInfo = await this.fileDownload(sourceUrl)
       const {
@@ -52,7 +52,7 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
   }
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
   client.release()
-  return {...document, ...result}
+  return { ...document, ...result }
 }
 
 exports.fileDownload = (url) => {
@@ -121,7 +121,7 @@ exports.fileDownload = (url) => {
         fileResponse.on('data', (d) => {
           process.stdout.write(d)
         })
-	*/
+  */
 
         file.on('error', (err) => {
           reject(err)
@@ -144,21 +144,21 @@ exports.fileDownload = (url) => {
 }
 
 const getContentType = (fileLocation) => {
-  const [ extension ] = fileLocation.toLowerCase().split('.').slice(-1)
+  const [extension] = fileLocation.toLowerCase().split('.').slice(-1)
   let contentType = "unknown"
   if (extension === 'htm' || extension === 'html') {
     contentType = "text/html"
-  } else if (extension ==='png') {
+  } else if (extension === 'png') {
     contentType = "image/png"
-  } else if (extension ==='jpg') {
+  } else if (extension === 'jpg') {
     contentType = "image/jpeg"
-  } else if (extension ==='pdf') {
+  } else if (extension === 'pdf') {
     contentType = "application/pdf"
-  } else if (extension ==='docx') {
+  } else if (extension === 'docx') {
     contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-  } else if (extension ==='doc') {
+  } else if (extension === 'doc') {
     contentType = "application/msword"
-  } else if (extension ==='zip') {
+  } else if (extension === 'zip') {
     contentType = "application/zip"
   }
   return contentType
@@ -168,7 +168,7 @@ const awsFileGet = async (objectName) => {
   const s3 = new AWS.S3()
   const params = {
     Bucket: documentsBucket,
-    Key : objectName
+    Key: objectName
   }
   const folderTemp = path.join(os.tmpdir(), uuidv4())
   fs.mkdirSync(folderTemp)
@@ -191,11 +191,11 @@ exports.awsFileAdd = (fileLocation, objectName) => {
 
       const params = {
         Bucket: documentsBucket,
-        Body : fs.createReadStream(fileLocation),
-        Key : objectName
+        Body: fs.createReadStream(fileLocation),
+        Key: objectName
       }
       const contentType = getContentType(fileLocation)
-      if(contentType) { params.ContentType = contentType }
+      if (contentType) { params.ContentType = contentType }
       s3.upload(params, (err, data) => {
         if (err) {
           reject(err)
@@ -217,7 +217,7 @@ exports.fileExportAws = (tenderId, fileLocation) => {
 
       const objectName = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
       const res = await this.awsFileAdd(fileLocation, objectName)
-      resolve({...res, objectName})
+      resolve({ ...res, objectName })
     } catch (err) { reject(err) }
   })
 }
@@ -236,7 +236,7 @@ exports.fileDeleteAws = (tenderId, filename) => {
 
       var params = {
         Bucket: documentsBucket,
-        Key : `tenders/tender#${tenderId}/${filename}`
+        Key: `tenders/tender#${tenderId}/${filename}`
       }
 
       s3.deleteObject(params, (err, data) => {
@@ -252,4 +252,153 @@ exports.fileDeleteAws = (tenderId, filename) => {
 
     } catch (err) { reject(err) }
   })
+}
+
+
+exports.fileParsePdf = async (fileLocation, tenderId) => {
+
+  // const text = await require(process.cwd() + '/controllers/CtrlTool').pdfGetText(fileLocation)
+
+  // Convert PDF to images
+  const imageDatas = await pdfToImages(fileLocation)
+
+  // Put image on S3
+  const pages = []
+  for (const imageData of imageDatas) {
+    const s3Location = `tenders/tender#${tenderId}/textParse/${path.basename(imageData.location)}`
+    const location = await this.awsFileAdd(imageData.location, s3Location)
+    // const textData = await this.textractAnalyzeDocument(s3Location)
+    pages.push({
+      s3Location,
+      location: location.location,
+      imgWidth: imageData.width,
+      imgHeight: imageData.height,
+      textData,
+    })
+  }
+
+  return ({
+    text,
+    pages,
+  })
+
+}
+
+exports.fileParseDoc = async (objectName) => {
+  const fileLocation = awsFileGet(objectName)
+  const WordExtractor = require("word-extractor");
+  const extractor = new WordExtractor();
+  const extracted = extractor.extract(fileLocation);
+  const doc = await extracted
+  return (doc.getBody())
+}
+
+exports.fileParseDocx = async (objectName) => {
+  const fileLocation = awsFileGet(objectName)
+  const mammoth = require("mammoth");
+  const result = await mammoth.extractRawText({ path: fileLocation })
+  return (result.value)
+}
+
+exports.fileParseHtml = (fileLocation,  ) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const nodeHtmlToImage = require('node-html-to-image')
+      const imageSizeOf = require('image-size')
+      const htmlToText = require('html-to-text')
+
+      const htmlText = require(process.cwd() + '/controllers/CtrlTool').readFileSync(fileLocation)
+      const text = htmlToText.fromString(htmlText, {
+        wordwrap: 130
+      })
+
+      const folderTemp = path.join(config.WorkSpaceFolder, '/Temp/')
+      let filename = path.basename(fileLocation)
+      filename = `${filename.split('.')[0]}.png`
+      const imageLocation = path.join(folderTemp, filename)
+      if (fs.existsSync(imageLocation)) {
+        fs.unlinkSync(imageLocation)
+      }
+
+      // Convert HTML to image
+      await nodeHtmlToImage({
+        output: imageLocation,
+        puppeteerArgs: { defaultViewport: { width: 2000, height: 2000 } },
+        html: htmlText,
+      })
+
+      // Put image on S3
+      const s3Location = `tenders/tender#${tenderId}/textParse/${filename}`
+      const location = await this.awsFileAdd(imageLocation, s3Location)
+      const textData = await this.textractAnalyzeDocument(s3Location)
+      const imgSizeInfo = imageSizeOf(imageLocation)
+
+      resolve({
+        text,
+        pages: [{
+          s3Location,
+          location: location.location,
+          imgWidth: imgSizeInfo.width,
+          imgHeight: imgSizeInfo.height,
+          textData,
+        }]
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.textractAnalyzeDocument = (awsLocation) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const AWS = require('aws-sdk')
+
+      AWS.config.update({
+        accessKeyId: config.awsAccessKeyId,
+        secretAccessKey: config.awsSecretAccessKey
+      });
+      AWS.config.region = "eu-west-1";
+      const textract = new AWS.Textract();
+
+      var params = {
+        Document: {
+          S3Object: {
+            Bucket: config.awsBucket,
+            Name: awsLocation
+          }
+        },
+        FeatureTypes: ['FORMS']
+      }
+      textract.analyzeDocument(params, (err, data) => {
+        if (err) {
+          reject(err)
+          return
+        }
+        resolve(data)
+      })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.fileParseImage = async (fileLocation, tenderId, exportAws) => {
+  const imageSizeOf = require('image-size')
+
+  const s3Location = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+  const textData = await this.textractAnalyzeDocument(s3Location)
+  const imgSizeInfo = imageSizeOf(fileLocation)
+
+  return ({
+    text: '',
+    pages: [{
+      s3Location,
+      location: exportAws.location,
+      imgWidth: imgSizeInfo.width,
+      imgHeight: imgSizeInfo.height,
+      textData,
+    }]
+  })
+
 }

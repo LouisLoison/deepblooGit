@@ -108,4 +108,7 @@ create unique index  document_tenderuuid_sourceurl_unique on document(tenderuuid
 alter table document add column contenttype varchar;
 alter table document add column objectname varchar;
 
+alter table tendercriterion ADD CONSTRAINT tendercriterion_tenders_tenderuuid_fk FOREIGN KEY (tenderuuid) references tenders(tenderuuid);
+
+create index tendercriterion_tenderuuid_idx on tendercriterion(tenderuuid);
 

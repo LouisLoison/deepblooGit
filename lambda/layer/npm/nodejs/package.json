@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "@elastic/app-search-node": "^7.10",
+    "@elastic/elasticsearch": "^7.10",
     "canvas": "^2.6",
     "esm": "^3.2",
     "fs-extra": "^9.0",

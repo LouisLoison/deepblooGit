@@ -8,6 +8,7 @@ const tenderimport = require('./tenderimport')
 const cpv = require('./cpv')
 const tenderformat = require('./tenderformat')
 const appsearch = require('./appsearch')
+const elastic = require('./elastic')
 const document = require('./document')
 
 module.exports = {
@@ -19,4 +20,5 @@ module.exports = {
   tenderformat,
   appsearch,
   document,
+  elastic,
 }

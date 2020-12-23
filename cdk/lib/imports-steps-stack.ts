@@ -36,6 +36,7 @@ export class ImportsStepsStack extends Stack {
       APPSEARCH_SECRET: appsearchSecretArn,
     }
 
+    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
 
     const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
       secretArn,
@@ -45,6 +46,10 @@ export class ImportsStepsStack extends Stack {
     });
     const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
       secretArn: appsearchSecretArn,
+    });
+
+    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
+      secretArn: elasticSecretArn,
     });
 
     const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
@@ -162,6 +167,7 @@ export class ImportsStepsStack extends Stack {
       environment: {
         ...environment,
         ...appsearchEnv,
+        ELASTIC_SECRET: elasticSecretArn,
       }
     });
 
@@ -234,6 +240,7 @@ export class ImportsStepsStack extends Stack {
     dbSecret.grantRead(stepTenderMerge)
     dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
+    elasticSecret.grantRead(stepTenderIndex)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
