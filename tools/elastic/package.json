@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "deepbloo": "file:../../lambda/libjs"
+    "deepbloo": "file:../../lambda/libjs",
+    "string-strip-html": "^7.0.3"
   }
 }
