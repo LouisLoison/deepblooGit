@@ -58,7 +58,7 @@ const processResults = (results) => {
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (tranche.length >= 71) {
+    if (tranche.length >= 300) {
       const res = await indexToElasticsearch(tranche, 'newtenders')
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche = []
