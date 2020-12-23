@@ -29,14 +29,21 @@ const main = async (limit = 9) => {
     nulls last
     limit $1`
   const query2 = `
-    select tenders.* from tenders order by tenders.creationdate desc
+    select tenders.*, '{}' as "tenderCriterions" from tenders
+    where tenderuuid not in (select distinct tenderuuid from tenderCriterions)
+    order by tenders.creationdate desc
     nulls last
     limit $1`
 
   // console.log(JSON.stringify((await getElasticMapping('tenders')).body['tenders-dev'], null, 2))
   // console.log(JSON.stringify((await getElasticMapping('newtenders')).body['newtenders-dev'], null, 2))
-  const results = await BddTool.QueryExecPrepared(client, query, [limit], 'tenders')
+  const results = await BddTool.QueryExecPrepared(client, query2, [limit], 'tenders')
   // console.log(results)
+  processResults(results)
+  process.exit()
+}
+
+const processResults = (results) => {
   let tranche = []
   let processed = 0
   for (const result of results) {
@@ -63,8 +70,7 @@ const main = async (limit = 9) => {
   }
   
   console.log(processed)
-  process.exit()
   // return result.length
 }
 
-main(10000)// .then(process.exit())
+main(10000000)// .then(process.exit())
