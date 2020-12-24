@@ -64,14 +64,18 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
     return False
 
 
-def is_valid_pdf(pdf_path, min_char_required) -> bool:
+def is_pdf_has_enough_characters(pdf_path, min_char_required) -> bool:
+    message = "Not enough characters:"
     with pdfplumber.open(pdf_path) as pdf_content:
         images = pdf_content.images
-        if len(images) == 0:
+        image_nb = len(images)
+        if image_nb != 0:
+            print("{} {} image(s) detected !".format(message, image_nb))
             return False
         for page in pdf_content.pages:
             nb_char_in_page = len(page.chars)
             if nb_char_in_page < min_char_required:
+                print("{} page with {} characters but need {} characters !".format(message, nb_char_in_page, min_char_required))
                 return False
     return True
 
@@ -106,7 +110,7 @@ def lambda_handler(event, context):
         "outputName": get_bbox_filename(body['objectName']),
         "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
         "textractOnly": os.environ['TEXTRACT_ONLY'],
-        "minCharNeeded": os.environ['MIN_CHAR_NEEDED'],
+        "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
 
     }
@@ -114,13 +118,13 @@ def lambda_handler(event, context):
         'statusCode': 200,
         'body': 'All right'
     }
-    extract_pdf_lines = bool(aws_env['extract_pdf_lines'])
-    textract_only = bool(aws_env['textractOnly'])
+    extract_pdf_lines = aws_env['extract_pdf_lines']
+    textract_only = aws_env['textractOnly']
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
 
-    if textract_only is False and is_valid_pdf(pdf_tmp_path, aws_env['minCharNeeded']) is False:
-        print("=> Extracting bounding box without textract")
-        if extract_pdf_lines is True:
+    if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
+        print("=> Extracting bounding box with pdfplumber")
+        if extract_pdf_lines == "true":
             print("=> Extracting pdf lines bbox")
             pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'])
             pdf.parse_pdf()
