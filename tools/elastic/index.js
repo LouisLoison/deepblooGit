@@ -2,6 +2,7 @@
 const { BddTool } = require('deepbloo')
 const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
+const { CpvList } = require('deepbloo').cpv
 const stripHtml = require("string-strip-html")
 
 const main = async (limit = 9) => {
@@ -44,13 +45,14 @@ const main = async (limit = 9) => {
 const processResults = async ({ rows, fields, rowCount }) => {
   let tranche = []
   let processed = 0
+  const cpvList = await CpvList()
   for (let i=0; i < rowCount; i += 1) {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
     delete rows[i]
     result.title = stripHtml(result.title).result
     result.description = stripHtml(result.description).result
     result.contactAddress = stripHtml(result.contactAddress).result
-    const formated = await tenderFormat(result)
+    const formated = await tenderFormat(result, cpvList)
     const elasticDoc = {
       ...result,
       ...formated,
@@ -81,4 +83,4 @@ const processResults = async ({ rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(20)// .then(process.exit())
+main(2000000)// .then(process.exit())
