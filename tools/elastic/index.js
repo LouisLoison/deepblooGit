@@ -6,11 +6,9 @@ const { CpvList } = require('deepbloo').cpv
 const stripHtml = require("string-strip-html")
 
 const main = async (limit = 9) => {
-  const cpvList = await CpvList()
   const client = await BddTool.getClient()
 
-  const query = `
-    
+  const query1 = `
     select tenders.*, json_agg(
       json_build_object(
         'status', tenderCriterion.status,
@@ -30,29 +28,38 @@ const main = async (limit = 9) => {
     limit $1`
   const query2 = `
     select tenders.*, '{}' as "tenderCriterions" from tenders
-    where tenderuuid not in (select distinct tenderuuid from tenderCriterions)
+    where (select count(*)=0 from tendercriterion where tenderuuid=tenders.tenderuuid)
     order by tenders.creationdate desc
     nulls last
     limit $1`
 
-  // console.log(JSON.stringify((await getElasticMapping('tenders')).body['tenders-dev'], null, 2))
-  // console.log(JSON.stringify((await getElasticMapping('newtenders')).body['newtenders-dev'], null, 2))
-  const results = await BddTool.QueryExecPrepared(client, query2, [limit], 'tenders')
-  // console.log(results)
-  processResults(results)
+  const results = await BddTool.QueryExecPrepared(client, query1, [limit], 'tenders')
+  await processResults(results)
+
+  const results2 = await BddTool.QueryExecPrepared(client, query2, [limit], 'tenders')
+  await processResults(results2)
+
   process.exit()
 }
 
-const processResults = (results) => {
+const processResults = async (results) => {
   let tranche = []
   let processed = 0
   for (const result of results) {
     result.title = stripHtml(result.title).result
     result.description = stripHtml(result.description).result
     result.contactAddress = stripHtml(result.contactAddress).result
-    const formated = await tenderFormat(result, cpvList)
-    const elasticDoc = { ...formated, ...result, id: result.tenderUuid }
-    // console.log(elasticDoc)
+    const formated = await tenderFormat(result)
+    const elasticDoc = {
+      ...result,
+      ...formated,
+      id: result.tenderUuid,
+      zone0: formated.regionLvl0[0],
+      zone1: formated.regionLvl1[0],
+      zone2: formated.regionLvl2[0],
+    }
+    delete result.tenderUuid
+    console.log(elasticDoc)
     tranche.push(elasticDoc)
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
@@ -66,11 +73,12 @@ const processResults = (results) => {
     //console.log(formated.title, formated.cpv)
   }
   if (tranche.length) {
-    await indexToElasticsearch(tranche, 'newtenders')
+    const res = await indexToElasticsearch(tranche, 'nnewtenders')
+    console.log(res)
   }
   
   console.log(processed)
   // return result.length
 }
 
-main(10000000)// .then(process.exit())
+main(10)// .then(process.exit())

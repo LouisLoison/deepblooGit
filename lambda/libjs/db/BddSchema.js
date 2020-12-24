@@ -120,6 +120,7 @@ var Schema = {
       brand: { type: "String" },
       contractType1: { type: "Int" },
       dataSource: { type: "String" },
+      dataSourceId: { type: "String" },
       origine: { type: "String", description: 'Import source data : DgMarket, TenderInfo' },
       status: { type: "Int", description: '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
       creationDate: { type: "DateTime" },

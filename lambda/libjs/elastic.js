@@ -21,7 +21,7 @@ exports.connectToElasticsearch = async () => {
       auth,
       maxRetries: 5,
       requestTimeout: 3000,
-//      sniffOnStart: true
+      //      sniffOnStart: true
     })
   }
   return elasticSearchClient

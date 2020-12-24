@@ -1,6 +1,8 @@
 const BddTool = require('./db/BddTool');
 const { removeDiacritics } = require('./textparse')
 
+let cpvList = false
+
 exports.CpvAddUpdate = (cpv) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -45,6 +47,9 @@ exports.cpvDelete = (cpvId) => {
 exports.CpvList = (filter, removeDiacritic) => {
   return new Promise(async (resolve, reject) => {
     try {
+      if(cpvList) {
+        resolve(cpvList)
+      }
       // Get cpv list
       var cpvs = []
       let query = `
@@ -161,6 +166,7 @@ exports.CpvList = (filter, removeDiacritic) => {
           cpv.cpvWords = cpvWords
         }
       }
+      cpvList = cpvs
       resolve(cpvs)
     } catch (err) {
       reject(err)
