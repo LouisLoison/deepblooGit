@@ -44,8 +44,9 @@ const main = async (limit = 9) => {
 const processResults = async ({ rows, fields }) => {
   let tranche = []
   let processed = 0
-  for (const row of rows) {
+  await rows.forEach(async (row, index) => {
     const [result] = BddTool.pgMapResult([row], fields, 'tenders')
+    delete rows[index]
     result.title = stripHtml(result.title).result
     result.description = stripHtml(result.description).result
     result.contactAddress = stripHtml(result.contactAddress).result
@@ -58,7 +59,7 @@ const processResults = async ({ rows, fields }) => {
       zone1: formated.regionLvl1[0],
       zone2: formated.regionLvl2[0],
     }
-    delete result.tenderUuid
+    delete elasticDoc.tenderUuid
     tranche.push(elasticDoc)
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
@@ -67,10 +68,11 @@ const processResults = async ({ rows, fields }) => {
     if (tranche.length >= 300) {
       await indexToElasticsearch(tranche, 'newtenders')
       console.log(processed) //, JSON.stringify(res, null, 2))
+      tranche.forEach((r, index) => delete tranche[index])
       tranche = []
     }
     //console.log(formated.title, formated.cpv)
-  }
+  })
   if (tranche.length) {
     await indexToElasticsearch(tranche, 'newtenders')
   }
