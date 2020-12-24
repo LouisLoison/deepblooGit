@@ -1,8 +1,7 @@
 
 const { BddTool } = require('deepbloo')
 const { tenderFormat } = require('deepbloo').tenderformat
-const { indexToElasticsearch, getElasticMapping } = require('deepbloo').elastic
-const { CpvList } = require('deepbloo').cpv
+const { indexToElasticsearch } = require('deepbloo').elastic
 const stripHtml = require("string-strip-html")
 
 const main = async (limit = 9) => {
@@ -59,22 +58,20 @@ const processResults = async (results) => {
       zone2: formated.regionLvl2[0],
     }
     delete result.tenderUuid
-    console.log(elasticDoc)
     tranche.push(elasticDoc)
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
     if (tranche.length >= 300) {
-      const res = await indexToElasticsearch(tranche, 'newtenders')
+      await indexToElasticsearch(tranche, 'newtenders')
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
   if (tranche.length) {
-    const res = await indexToElasticsearch(tranche, 'newtenders')
-    console.log(res)
+    await indexToElasticsearch(tranche, 'newtenders')
   }
   
   console.log(processed)
