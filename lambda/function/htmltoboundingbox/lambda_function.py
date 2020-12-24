@@ -64,16 +64,16 @@ def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
 
 
 def lambda_handler(event, context):
-    body = json.loads(event['Records'][0]['body'])
-    aws_region = event['Records'][0]['awsRegion']
+    # body = json.loads(event['Records'][0]['body'])
+    aws_region = 'eu-west-1'
     aws_env = {
-        "bucketName": body['bucketName'],
-        "objectName": body['objectName'],
-        "documentId": body['documentId'],
+        "bucketName": os.environ['DOCUMENTS_BUCKET'],
+        "objectName": event['objectName'],
+        "documentId": event['documentUuid'],
         "awsRegion": aws_region,
-        "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
-        "outputName": get_pdf_filename(body['objectName'], body['documentId'])
+        "outputBucket": os.environ['DOCUMENTS_BUCKET'],
+        # "pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
+        "outputName": get_pdf_filename(event['objectName'], event['documentUuid'])
     }
     status = {
         'statusCode': 200,
@@ -81,5 +81,5 @@ def lambda_handler(event, context):
     }
     html_content = read_from_s3(aws_env)
     convert_html_to_pdf(html_content, aws_env)
-    send_to_pdf_to_bbox_lambda(aws_env)
-    return status
+    # send_to_pdf_to_bbox_lambda(aws_env)
+    return { **event, 'status': status, 'objectName': aws_env['outputName'] }

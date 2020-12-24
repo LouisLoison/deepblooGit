@@ -16,7 +16,6 @@ exports.handler = async function(event, ) {
     client,
   )
 
-
   await BddTool.QueryExecPrepared(client, 'COMMIT;');
   client.release()
   return {...tender}

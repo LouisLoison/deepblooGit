@@ -24,23 +24,20 @@ exports.getClient = async () => {
   return await pgPool.connect() // Passes the client to enable transaction
 }
 
-const pgInitPool = (onError) => {
-  try {
-    if(!pgPool) {
-      const pgArgs = {
-        host: configBdd.host,
-        user: configBdd.username,
-        password: configBdd.password,
-        database: configBdd.dbname,
-      }
-      console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
-      const { Pool } = require('pg')
-      pgPool = new Pool(pgArgs)
+const pgInitPool = () => {
+  if(!pgPool) {
+    const pgArgs = {
+      host: configBdd.host,
+      user: configBdd.username,
+      password: configBdd.password,
+      database: configBdd.dbname,
+      port: configBdd.port || 5432,
     }
-    return pgPool;
-  } catch (err) {
-    onError(err)
+    console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
+    const { Pool } = require('pg')
+    pgPool = new Pool(pgArgs)
   }
+  return pgPool;
 }
 
 
@@ -205,7 +202,7 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
   console.log(preparedQuery);
   const { rows, fields, rowCount } = await client.query(preparedQuery)
 
-  return tableName ? pgMapResult(rows, fields, tableName) : rowCount
+  return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
 }
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
@@ -317,6 +314,8 @@ const pgMapResult = (rows, fields, TableName) => {
     return mapedRow
   })
 }
+
+exports.pgMapResult = pgMapResult
 
 const RecordAddUpdateGeneric = (TableName, Record) => {
   return new Promise((resolve, reject) => {

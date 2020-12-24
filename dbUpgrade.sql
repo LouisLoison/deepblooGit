@@ -66,7 +66,7 @@ create unique index if not exists source_id_import_unicity_key on tenderimport(d
 
 alter table tenderCriterion add column if not exists tenderuuid UUID;
 update tenderCriterion set tenderuuid=tenders.tenderuuid from tenders where tenderCriterion.tenderid=tenders.id;
-alter table tenderCriterion  drop column tenderid;
+-- alter table tenderCriterion  drop column tenderid;
 
 create sequence tendercriterion_id_seq;
 alter table tendercriterion alter column tendercriterionid set default nextval('tendercriterion_id_seq');
@@ -75,7 +75,7 @@ select setval('tendercriterion_id_seq',  (SELECT MAX(tendercriterionid) FROM ten
 
 alter table tenderCriterionCpv add column if not exists tenderuuid UUID;
 update tenderCriterionCpv set tenderuuid=tenders.tenderuuid from tenders where tenderCriterionCpv.tenderid=tenders.id;
-alter table tenderCriterionCpv  drop column tenderid;
+-- alter table tenderCriterionCpv  drop column tenderid;
 create unique index tendercriterioncpv_cpvid_scope_tenderuuid_unique on tendercriterioncpv(cpvid, scope, tenderuuid);
 alter table tenderCriterionCpv  drop column tenderCriterionCpvId;
 create index tenderCriterionCpv_tenderuuid_index on tendercriterioncpv(tenderuuid);
@@ -103,9 +103,15 @@ alter table tendercriterion drop column documentuuid;
 create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tendercriterion(textparseid, scope, tenderuuid);
 -- create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
-create unique index  document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
+create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
 -- alter table document drop column documentid;
 alter table document add column contenttype varchar;
 alter table document add column objectname varchar;
 
+alter table tendercriterion ADD CONSTRAINT tendercriterion_tenders_tenderuuid_fk FOREIGN KEY (tenderuuid) references tenders(tenderuuid);
 
+create index tendercriterion_tenderuuid_idx on tendercriterion(tenderuuid);
+
+
+update tenders set datasource='dgmarket' where origine='DgMarket';
+update tenders set datasource='tenderinfo' where origine='TenderInfo';

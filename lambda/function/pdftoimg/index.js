@@ -1,10 +1,9 @@
-const pdfToImages = async (fileLocation) => {
-  const config = require(process.cwd() + '/config')
-  const path = require('path')
-  const { createCanvas } = require('canvas')
-  const assert = require('assert')
-  const pdfjsLib = require('pdfjs-dist')
+const path = require('path')
+const { createCanvas } = require('canvas')
+const assert = require('assert')
+const pdfjsLib = require('pdfjs-dist')
 
+const pdfToImages = async (fileLocation) => {
   function NodeCanvasFactory() {
   }
 
@@ -99,12 +98,11 @@ const getFileStream = (bucketName, fileKey) => {
 }
 
 exports.handler =  async function(event, context) {
+  const { objectName } = event
   console.log("EVENT: \n" + JSON.stringify(event, null, 2))
-  const message = JSON.parse(event.record[0]['body'])
-  const { bucketName, fileKey, outputBucket, documentId } = message
   const fileStream  = getFileStream(bucketName, fileKey)
   const imageData = await pdfToImages(fileStream)
   console.log(imageData)
-
-  return context.logStreamName
+ 
+  return {...event, pageCount: imageData.length }
 }

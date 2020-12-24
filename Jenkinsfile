@@ -78,6 +78,11 @@ pipeline {
               echo "Deploy in ${ENV}"
               # $(./tools/assume_role.sh $ENV)
               npm run deploy-all
+	      ssh deepbloo@172.31.1.146 "cd deepbloo-back && git pull && npm install && nohup npm run restart &"
+              ssh deepbloo-front@172.31.1.146 "cd deepbloo-front && git pull && npm install"
+              sleep 10
+              aws cloudfront create-invalidation --distribution-id EEY9ER5MY2XRN --paths '/*'
+              aws cloudfront create-invalidation --distribution-id E3US7LPL6BXFWF --paths '/*'
             '''
           }
 

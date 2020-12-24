@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const { AWS } = require('./config');
 
 const getFileContent = async (bucketName, fileKey) => {
   const s3 = new AWS.S3({apiVersion: '2006-03-01'});
