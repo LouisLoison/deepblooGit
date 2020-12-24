@@ -202,7 +202,7 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
   console.log(preparedQuery);
   const { rows, fields, rowCount } = await client.query(preparedQuery)
 
-  return tableName ? pgMapResult(rows, fields, tableName) : rowCount
+  return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
 }
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
@@ -314,6 +314,8 @@ const pgMapResult = (rows, fields, TableName) => {
     return mapedRow
   })
 }
+
+exports.pgMapResult = pgMapResult
 
 const RecordAddUpdateGeneric = (TableName, Record) => {
   return new Promise((resolve, reject) => {
