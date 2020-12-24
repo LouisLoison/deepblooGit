@@ -41,12 +41,12 @@ const main = async (limit = 9) => {
   process.exit()
 }
 
-const processResults = async ({ rows, fields }) => {
+const processResults = async ({ rows, fields, rowCount }) => {
   let tranche = []
   let processed = 0
-  await rows.forEach(async (row, index) => {
-    const [result] = BddTool.pgMapResult([row], fields, 'tenders')
-    delete rows[index]
+  for (let i=0; i < rowCount; i += 1) {
+    const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
+    delete rows[i]
     result.title = stripHtml(result.title).result
     result.description = stripHtml(result.description).result
     result.contactAddress = stripHtml(result.contactAddress).result
@@ -72,7 +72,7 @@ const processResults = async ({ rows, fields }) => {
       tranche = []
     }
     //console.log(formated.title, formated.cpv)
-  })
+  }
   if (tranche.length) {
     await indexToElasticsearch(tranche, 'newtenders')
   }
@@ -81,4 +81,4 @@ const processResults = async ({ rows, fields }) => {
   // return result.length
 }
 
-main(2000000)// .then(process.exit())
+main(20)// .then(process.exit())
