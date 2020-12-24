@@ -73,7 +73,7 @@ const processResults = async (results) => {
     //console.log(formated.title, formated.cpv)
   }
   if (tranche.length) {
-    const res = await indexToElasticsearch(tranche, 'nnewtenders')
+    const res = await indexToElasticsearch(tranche, 'newtenders')
     console.log(res)
   }
   
@@ -81,4 +81,4 @@ const processResults = async (results) => {
   // return result.length
 }
 
-main(10)// .then(process.exit())
+main(2000000)// .then(process.exit())
