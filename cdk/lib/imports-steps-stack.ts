@@ -225,6 +225,18 @@ export class ImportsStepsStack extends Stack {
       }
     })
 
+    const stepZipExtraction = new Function(this, 'ZipExtraction', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/zipExtraction'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+      }
+    })
+
     stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
     stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
@@ -234,6 +246,7 @@ export class ImportsStepsStack extends Stack {
     stepPdfToImg.addLayers(nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
+    stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
@@ -245,6 +258,7 @@ export class ImportsStepsStack extends Stack {
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
     documentsBucket.grantReadWrite(stepPdfToBoxes)
+    documentsBucket.grantReadWrite(stepZipExtraction)
 
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
@@ -322,6 +336,13 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     })
 
+    const zipExtractionTask = new LambdaInvoke(this, 'Zip Extraction', {
+      lambdaFunction: stepZipExtraction,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
     const processDoc = new Pass(this, 'Doc/docx process')
 
     const processDocx = new Pass(this, 'Docx process')
@@ -335,7 +356,8 @@ export class ImportsStepsStack extends Stack {
 
     const processImg = new Pass(this, 'Img process')
 
-    const processZip = new Pass(this, 'Zip process')
+    const processZip = new Parallel(this, 'Zip process', {})
+        .branch(zipExtractionTask)
 
     const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
