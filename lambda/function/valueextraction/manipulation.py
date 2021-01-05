@@ -52,4 +52,4 @@ def to_base_unit(value, unit):
     quant = value * ureg(unit)
     quant.ito_base_units()
     
-    return quant.magnitude, quant.unit
+    return quant.magnitude, quant.units
