@@ -17,7 +17,7 @@ export default [
     component: () => import(`@/views/Login.vue`)
   },
   {
-    path: "/tender/",
+    path: "/tender",
     meta: {
       public: true
     },

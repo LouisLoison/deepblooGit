@@ -194,7 +194,7 @@ export default {
           Open this tender #${tenderId}
         </a>
         The Deepbloo team
-      `;
+      `
       this.$refs.SentEmailDialog.show(
         subject.trim(),
         body.trim(),

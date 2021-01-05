@@ -16,7 +16,7 @@
         style="height: 30px;"
       />
       <div
-        v-if="getDataGroups && getDataGroups.loading === 1"
+        v-if="getDataTenderGroups && getDataTenderGroups.loading === 1"
         style="display: inline-block; height: 24px; width: 24px; margin: 0px 0px 0px 4px; position: absolute;"
       >
         <div v-if="!tenderGroups">
@@ -28,7 +28,7 @@
             small
             class="blue-grey--text text--lighten-4"
             style="height: 20px; width: 20px; margin: 0px 4px 0px 0px;"
-            title="Add tender to a group"
+            title="Add tender to a business pipeline"
           >
             <v-icon style="font-size: 12px;">fa-circle</v-icon>
           </v-btn>
@@ -184,7 +184,7 @@ export default {
       'getUserId',
       'getUserType',
       'getDataCpvs',
-      'getDataGroups',
+      'getDataTenderGroups',
       'getDataUserNotifys',
     ]),
 
@@ -220,13 +220,13 @@ export default {
       if (
         !this.result.groups ||
         !this.result.groups.raw ||
-        !this.getDataGroups ||
-        this.getDataGroups.loading !== 1 ||
-        !this.getDataGroups.data
+        !this.getDataTenderGroups ||
+        this.getDataTenderGroups.loading !== 1 ||
+        !this.getDataTenderGroups.data
       ) {
         return null
       }
-      const tenderGroups = this.getDataGroups.data.filter(a =>
+      const tenderGroups = this.getDataTenderGroups.data.filter(a =>
         this.result.groups.raw.includes(a.tenderGroupId.toString())
       )
       if (!tenderGroups || !tenderGroups.length) {

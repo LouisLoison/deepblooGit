@@ -267,7 +267,7 @@
                       <v-icon text>fa fa-circle</v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
-                      Assign to group
+                      Assign to business pipeline
                     </v-list-item-title>
                   </v-list-item>
 
@@ -308,7 +308,7 @@
                 style="height: 32px;"
               />
               <div
-                v-if="getDataGroups && getDataGroups.loading === 1"
+                v-if="getDataTenderGroups && getDataTenderGroups.loading === 1"
                 style="display: inline-block; position: absolute; left: 12px; bottom: 0px;"
               >
                 <div v-if="!tenderGroups(result)">
@@ -319,7 +319,7 @@
                     small
                     class="blue-grey--text text--lighten-4"
                     style="height: 16px; width: 16px; margin: 0px; background-color: #ffffff !important;"
-                    title="Add tender to a group"
+                    title="Add tender to a business pipeline"
                   >
                     <v-icon size="14">fa-circle</v-icon>
                   </v-btn>
@@ -668,7 +668,7 @@ export default {
       'getIsBusinessMembership',
       'getScreenTenders',
       'getCpvsLogoFromLabel',
-      'getDataGroups',
+      'getDataTenderGroups',
     ]),
 
     tenderGroups() {
@@ -676,13 +676,13 @@ export default {
         if (
           !result.groups ||
           !result.groups.raw ||
-          !this.getDataGroups ||
-          this.getDataGroups.loading !== 1 ||
-          !this.getDataGroups.data
+          !this.getDataTenderGroups ||
+          this.getDataTenderGroups.loading !== 1 ||
+          !this.getDataTenderGroups.data
         ) {
           return null
         }
-        const tenderGroups = this.getDataGroups.data.filter(a =>
+        const tenderGroups = this.getDataTenderGroups.data.filter(a =>
           result.groups.raw.includes(a.tenderGroupId.toString())
         )
         if (!tenderGroups || !tenderGroups.length) {
