@@ -46,8 +46,7 @@ class Quantity:
         self.unit = unit
         self.entity = entity
         self.uri = uri
-        
-    def 
+         
         
     
      
