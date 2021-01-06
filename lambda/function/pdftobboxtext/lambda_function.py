@@ -37,6 +37,9 @@ def write_bbox_to_s3(aws_env: dict) -> None:
     with open(aws_env['tmpJsonOutput'], "r") as file:
         content = file.read()
         S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
+    with open(aws_env['tmpTxtOutput'], "r") as file:
+        content = file.read()
+        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
 
 
 def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> bool:
@@ -106,6 +109,7 @@ def lambda_handler(event, context):
         "documentId": event['documentUuid'],
         "awsRegion": aws_region,
         "tmpJsonOutput": "/tmp/tmp_result.json",
+        "tmpTxtOutput": "/tmp/tmp_result.txt",
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
         "outputName": get_bbox_filename(event['objectName']),
         # "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
@@ -122,13 +126,16 @@ def lambda_handler(event, context):
     textract_only = aws_env['textractOnly']
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
 
+    print("==> event: ", event)
+    print("==> aws_env: ", aws_env)
     if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
         print("=> Extracting bounding box with pdfplumber")
         if extract_pdf_lines == "true":
             print("=> Extracting pdf lines bbox")
-            pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'])
+            pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'], aws_env['tmpTxtOutput'])
             pdf.parse_pdf()
             pdf.save_in_json()
+            pdf.save_in_txt()
         else:
             print("=> Extracting pdf words bbox")
             if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
