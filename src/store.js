@@ -457,7 +457,6 @@ export default new Vuex.Store({
         state.dataCpvs.data = res.data
         state.dataCpvs.loading = 1
       } catch (err) {
-        console.log('-- err')
         console.log(err)
         state.dataCpvs.loading = -1
         Vue.api.error(err, this)

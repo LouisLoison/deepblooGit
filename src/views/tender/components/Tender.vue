@@ -1,11 +1,29 @@
 <template>
   <v-card>
-    <div v-if="!tender" class="text-center pa-5">
+    <div v-if="tenderLoading === null" class="text-center pa-5">
       <v-progress-circular
         :size="50"
         color="blue-grey lighten-4"
         indeterminate
       />
+    </div>
+    <div
+      v-else-if="tenderLoading === -1"
+      class="text-center pa-5 red--text"
+    >
+      <v-icon
+        color="red"
+        size="18"
+        class="pb-1"
+      >
+        fa-exclamation-triangle
+      </v-icon>
+      <span class="title">
+        Error
+      </span>
+      <div class="caption pa-3 red lighten-5">
+        {{ tenderError }}
+      </div>
     </div>
     <div v-else>
       <div>
@@ -1032,6 +1050,8 @@ export default {
   data: () => ({
     moment,
     tender: null,
+    tenderLoading: null,
+    tenderError: null,
     loadingMembership: false,
     isFreeMembership: false,
     isPremiumMembership: false,
@@ -1295,6 +1315,8 @@ export default {
     async loadTender(tenderId, tenderUuid) {
       try {
         this.tender = null
+        this.tenderLoading = null
+        this.tenderError = null
         this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
           id: tenderId,
@@ -1306,8 +1328,11 @@ export default {
         res.data.cpvs = res.data.cpvs.split(',').map(Number)
         res.data.cpvDescriptions = res.data.cpvDescriptions.split(',')
         this.tender = res.data
+        this.tenderLoading = 1
         this.initData()
       } catch (err) {
+        this.tenderLoading = -1
+        this.tenderError = err
         this.$api.error(err, this)
       }
     },

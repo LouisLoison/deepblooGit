@@ -18,7 +18,10 @@
         class="font-weight-bold display-table-row px-0"
         style="border-bottom: 1px solid #78909c; margin-bottom: 14px; color: #3d4872; background-color: #fafafa; padding-top: 6px;"
       >
-        <div class="display-table-head display-table-cell-option">
+        <div
+          class="display-table-head display-table-cell-option"
+          style="overflow: visible;"
+        >
           <v-menu transition="slide-y-transition" offset-y left>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
@@ -246,6 +249,7 @@
           >
             <div
               class="display-table-cell display-table-cell-option"
+              style="overflow: visible;"
             >
               <v-menu transition="slide-y-transition" offset-y left>
                 <template v-slot:activator="{ on }">
@@ -752,7 +756,7 @@ export default {
       this.$emit('openTenderGroupChoice', result)
     },
   },
-};
+}
 </script>
 
 <style>
@@ -793,8 +797,8 @@ export default {
 }
 
 .display-table-cell-option {
-  width: 36px;
-  min-width: 36px;
+  width: 26px;
+  min-width: 26px;
   text-align: center;
 }
 </style>

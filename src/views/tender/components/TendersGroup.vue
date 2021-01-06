@@ -3,6 +3,24 @@
     <div v-if="!dataTenderGroups.loading" class="text-center pa-5">
       <v-progress-circular :size="50" color="grey" indeterminate />
     </div>
+    <div
+      v-else-if="dataTenderGroups.loading === -1"
+      class="text-center pa-5 red--text"
+    >
+      <v-icon
+        color="red"
+        size="18"
+        class="pb-1"
+      >
+        fa-exclamation-triangle
+      </v-icon>
+      <span class="title">
+        Error
+      </span>
+      <div class="caption pa-3 red lighten-5">
+        {{ dataTenderGroups.error }}
+      </div>
+    </div>
     <div v-else>
       <!-- All tenders -->
       <div>
@@ -435,6 +453,7 @@ export default {
         this.dataTenderGroups.loading = 1
       } catch (err) {
         this.dataTenderGroups.loading = -1
+        this.dataTenderGroups.error = err
         this.$api.error(err, this)
       }
     },
