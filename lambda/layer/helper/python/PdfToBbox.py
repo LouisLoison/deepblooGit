@@ -5,13 +5,15 @@ from decimal import Decimal
 
 
 class Pdf:
-    def __init__(self, pdf_path, json_output_path, y_tolerance=3):
+    def __init__(self, pdf_path, json_output_path, txt_output_path, y_tolerance=3):
         self.parser: PdfBboxLineParser = PdfBboxLineParser(pdf_path, y_tolerance)
         self.json_folder_path, self.json_name = os.path.split(json_output_path)
+        self.txt_folder_path, self.txt_name = os.path.split(txt_output_path)
         self.pages: [PdfPage] = []
+        self.pdf_content: str = ""
 
     def parse_pdf(self):
-        self.pages = self.parser.parse_pdf_file()
+        self.pages, self.pdf_content = self.parser.parse_pdf_file()
 
     def dump_pdf(self):
         for page in self.pages:
@@ -25,6 +27,14 @@ class Pdf:
         pdf_json = json.dumps(pdf_pages, indent=4, ensure_ascii=False)
         with open(json_path, "w", encoding='utf-8') as json_file:
             json_file.write(pdf_json)
+
+    def get_pdf_txt(self) -> str:
+        return self.pdf_content
+
+    def save_in_txt(self) -> None:
+        txt_path = os.path.join(self.txt_folder_path, self.txt_name)
+        with open(txt_path, "w") as pdf_txt:
+            pdf_txt.write(self.pdf_content)
 
 
 class PdfPage:
@@ -58,10 +68,11 @@ class PdfBboxLineParser:
         self.folder_path, self.pdf_file_name = os.path.split(pdf_path)
         self.y_tolerance = y_tolerance
 
-    def parse_pdf_file(self) -> [PdfPage]:
+    def parse_pdf_file(self) -> ([PdfPage], str):
         pdf_path = os.path.join(self.folder_path, self.pdf_file_name)
         index = 1
         pdf_pages: [PdfPage] = []
+        pdf_content: str = ""
 
         with pdfplumber.open(pdf_path) as pdf_file:
             for page in pdf_file.pages:
@@ -69,8 +80,9 @@ class PdfBboxLineParser:
                                                 use_text_flow=False, horizontal_ltr=True, vertical_ttb=True,
                                                 extra_attrs=[])
                 pdf_pages.append(self.extract_page_lines(page_words, index))
+                pdf_content += page.extract_text()
                 index += 1
-        return pdf_pages
+        return pdf_pages, pdf_content
 
     def is_same_line(self, line_top: Decimal, line_bot: Decimal, current_top: Decimal, current_bot: Decimal) -> bool:
         top_diff = line_top - current_top
