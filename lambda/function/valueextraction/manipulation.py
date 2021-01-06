@@ -1,5 +1,5 @@
 """
-This module implements functions to manipulate numerical values
+This module implements functions to manipulate metrics
 previously extracted from a text
 """
 
@@ -51,5 +51,10 @@ def to_base_unit(value, unit):
     
     quant = value * ureg(unit)
     quant.ito_base_units()
+    
+    # TODO: Make sure the returned unit is written in a conventional
+    # format
+    quant.ito_reduced_units()
+    print(quant.units)
     
     return quant.magnitude, quant.units

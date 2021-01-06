@@ -1,6 +1,6 @@
 """Numerical Values Extraction
 
-This module implements functions to extract numerical values from text
+This module implements functions to extract metrics from text
 """
 
 from quantulum3 import parser
