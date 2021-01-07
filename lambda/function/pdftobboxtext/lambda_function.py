@@ -16,7 +16,7 @@ def send_message(client, qUrl, json_message) -> None:
 def send_to_textract(aws_env: dict):
     json_message = {
         "bucketName": aws_env["outputBucket"],
-        "objectName": aws_env['objectName'],
+        "objectName": aws_env["outputName"],
         "documentId": aws_env["documentId"],
         "awsRegion": aws_env["awsRegion"]
     }
@@ -25,10 +25,10 @@ def send_to_textract(aws_env: dict):
     send_message(client, qUrl, json_message)
 
 
-def get_bbox_filename(path_to_pdf: str, extension: str) -> str:
+def get_bbox_filename(path_to_pdf: str) -> str:
     folder_output, pdf_output = os.path.split(path_to_pdf)
     file_name, ext = os.path.splitext(pdf_output)
-    json_file = file_name + extension
+    json_file = file_name + ".json"
     json_output = os.path.join(folder_output, json_file)
     return json_output
 
@@ -36,16 +36,12 @@ def get_bbox_filename(path_to_pdf: str, extension: str) -> str:
 def write_bbox_to_s3(aws_env: dict) -> None:
     with open(aws_env['tmpJsonOutput'], "r") as file:
         content = file.read()
-        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputNameJson'], aws_env['awsRegion'])
-    with open(aws_env['tmpTxtOutput'], "r") as file:
-        content = file.read()
-        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputNameTxt'], aws_env['awsRegion'])
+        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputName'], aws_env['awsRegion'])
 
 
 def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> bool:
     """
     Execute the pdfplumber binary with pdf_tmp_path to extract bounding boxes.
-
     :param pdf_tmp_path: the tmp path of the pdf to pass to pdfplumber
     :param bbox_output: the tmp file of the json to create and to stock pdf information
     :return: int
@@ -101,19 +97,17 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    body = json.loads(event['Records'][0]['body'])
-    print("==> Event: {0}".format(json.dumps(event)))
+    # body = json.loads(event['Records'][0]['body'])
+    aws_region = 'eu-west-1',
     aws_env = {
-        "bucketName": body['bucketName'],
-        "objectName": body['objectName'],
-        "documentId": body['documentId'],
-        "awsRegion": 'eu-west-1',
+        "bucketName": os.environ['DOCUMENTS_BUCKET'],
+        "objectName": event['objectName'],
+        "documentId": event['documentUuid'],
+        "awsRegion": aws_region,
         "tmpJsonOutput": "/tmp/tmp_result.json",
-        "tmpTxtOutput": "/tmp/tmp_result.txt",
-        "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputNameJson": get_bbox_filename(body['objectName'], ".json"),
-        "outputNameTxt": get_bbox_filename(body['objectName'], ".txt"),
-        #"textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
+        "outputBucket": os.environ['DOCUMENTS_BUCKET'],
+        "outputName": get_bbox_filename(event['objectName']),
+        # "textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
         "textractOnly": os.environ['TEXTRACT_ONLY'],
         "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
@@ -127,16 +121,13 @@ def lambda_handler(event, context):
     textract_only = aws_env['textractOnly']
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
 
-    print("==> event: ", event)
-    print("==> aws_env: ", aws_env)
     if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
         print("=> Extracting bounding box with pdfplumber")
         if extract_pdf_lines == "true":
             print("=> Extracting pdf lines bbox")
-            pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'], aws_env['tmpTxtOutput'])
+            pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'])
             pdf.parse_pdf()
             pdf.save_in_json()
-            pdf.save_in_txt()
         else:
             print("=> Extracting pdf words bbox")
             if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
@@ -145,5 +136,5 @@ def lambda_handler(event, context):
         write_bbox_to_s3(aws_env)
     else:
         print("Extracting bounding box with textract")
-        #send_to_textract(aws_env)
+        # send_to_textract(aws_env)
     return { **event, 'status': status }
