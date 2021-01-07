@@ -7,9 +7,10 @@ from pint import UnitRegistry
 from xml.sax.expatreader import AttributesImpl
 from lib2to3.pytree import convert
 from tkinter.test.support import units
+from tkinter.tix import Form
 
 ureg = UnitRegistry()
-
+Q_ = ureg.Quantity
 
 def convert(value, start_unit, dest_unit):
     """
@@ -44,6 +45,7 @@ def convert(value, start_unit, dest_unit):
     return quant.magnitude, dest_unit
 
 
+# TODO: to fix
 def to_base_unit(value, unit):
     """
     Convert a value of unit unit to its base unit (e.g. from kW to W)
@@ -58,3 +60,20 @@ def to_base_unit(value, unit):
     print(quant.units)
     
     return quant.magnitude, quant.units
+
+
+# FIXME
+def to_reference_unit(value, unit):
+    """Convert a quantity to its reference unit (eg. km to m)
+    """
+    
+    quant = value * ureg(unit)
+    
+    
+def to_compact(value, unit):
+    """
+    Put the input quantity in a more human readable form 
+    """
+    quant = Q_(value, unit)
+    
+    return quant.to_compact()
