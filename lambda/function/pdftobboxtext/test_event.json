@@ -1,0 +1,20 @@
+{
+    "Records": [
+        {
+            "messageId": "bc343ae5-49e2-4d5d-b879-7f0db30a8f33",
+            "receiptHandle": "AQEBv69dB+gUABuNljEPPcR6rlUfN9cLOWUTkpuc/N3Sbij8tkTgLQu+2QRr3Ma6ctvTxWA/PwYU5AftXQnpfPXUFATXX5k7RTxdy0Nu6YdSpxYctyBVsFE5NhWRvRri2EzJHW8/EM/lSFVuK8sOFNFJ2Rvzu6LXak+/o6js0avBpUvhhGKll75OkpKncqfEUp49IiRyoM57z0A4n8mcZsmEtkLIpsFOxhxCGVJdhnWx0qwTf1TxufFLcu7gbj9M/MbfPQJJLFf/Up2RHSiIhgp4g5HI1zzSW0I22LwxuSQbC0fzkEwA9In/3Q28GYSvixR8HloAQwYq9b2UO2oZXG9D5s5T4Yvv+zF57QvyTc8eXfX4gfRQ+iT6v6qnkmM4UbgBDgzt34dS6IZ6GIg/Cyh8J/j9hQ5RgJ/PN06GC1VAynnMR6jkBqKdrvmFqpE3NpGa7RCikYZ8/5LDm3ROL0pVRA==",
+            "body": "{\"bucketName\": \"textractpipelinestack-outputbucket7114eb27-1taqyye7t644v\", \"objectName\": \"tenders/tender#547532-analysis/76bd187a-50db-11eb-ac6b-3f7ba8dfc30c/T457353938.pdf\", \"documentId\": \"76bd187a-50db-11eb-ac6b-3f7ba8dfc30c\", \"awsRegion\": \"eu-west-1\"}",
+            "attributes": {
+                "ApproximateReceiveCount": "1",
+                "SentTimestamp": "1610018911961",
+                "SenderId": "AROAZXRLCF3CGJF4C7XBI:TextractPipelineStack-HtmlToBoundingBoxC8C151B5-MP7ZDHEJ40O6",
+                "ApproximateFirstReceiveTimestamp": "1610018911971"
+            },
+            "messageAttributes": {},
+            "md5OfBody": "99c5d7313723ab6f24162cfb477a1195",
+            "eventSource": "aws:sqs",
+            "eventSourceARN": "arn:aws:sqs:eu-west-1:669031476932:TextractPipelineStack-PdfToBoundingBoxAndTextQueue88E72AC0-1DRT0RV22JPM4",
+            "awsRegion": "eu-west-1"
+        }
+    ]
+}

@@ -22,6 +22,7 @@ class Pdf:
     def save_in_json(self):
         pdf_pages = []
         json_path = os.path.join(self.json_folder_path, self.json_name)
+        print("Pdf json path: {0}".format(json_path))
         for page in self.pages:
             pdf_pages.append(page.get_page_in_json())
         pdf_json = json.dumps(pdf_pages, indent=4, ensure_ascii=False)
@@ -33,6 +34,7 @@ class Pdf:
 
     def save_in_txt(self) -> None:
         txt_path = os.path.join(self.txt_folder_path, self.txt_name)
+        print("Pdf txt path: {0}".format(txt_path))
         with open(txt_path, "w") as pdf_txt:
             pdf_txt.write(self.pdf_content)
 
