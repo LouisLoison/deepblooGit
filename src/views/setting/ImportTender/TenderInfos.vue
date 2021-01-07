@@ -199,32 +199,32 @@ export default {
     facets: null,
     dataImportTenderInfoFacets: {
       loading: null,
-      data: null
+      data: null,
     },
     dataImportTenderInfos: {
       loading: null,
-      data: null
+      data: null,
     },
     typeGroup: 0,
     headers: [
-      { text: "Id", value: "importTenderInfoId", align: "center" },
-      { text: "Title", value: "short_desc", align: "center" },
+      { text: 'Id', value: 'importTenderInfoId', align: 'center' },
+      { text: 'Title', value: 'short_desc', align: 'center' },
     ],
     pagination: {
       rowsPerPage: 20,
-      sortBy: "importTenderInfoId",
-      descending: true
+      sortBy: 'importTenderInfoId',
+      descending: true,
     },
     dialogUser: false,
     validUser: false,
     importTenderInfo: null,
     UserCpvs: null,
     types: [
-      { id: 3, name: "Public" },
-      { id: 5, name: "Free" },
-      { id: 2, name: "Premium" },
-      { id: 4, name: "Business" },
-      { id: 1, name: "Admin" }
+      { id: 3, name: 'Public' },
+      { id: 5, name: 'Free' },
+      { id: 2, name: 'Premium' },
+      { id: 4, name: 'Business' },
+      { id: 1, name: 'Admin' },
     ],
     isActive: false,
     hasConnexionTender: false,
@@ -237,7 +237,7 @@ export default {
     regionItems: null,
     countries: [],
     countryItems: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required'],
   }),
 
   computed: {
@@ -256,7 +256,7 @@ export default {
       }
 
       return Math.ceil(this.getImportTenderInfos().length / this.pagination.rowsPerPage);
-    }
+    },
   },
 
   async mounted() {
@@ -267,8 +267,8 @@ export default {
 
   methods: {
     ...mapActions([
-      "setHeaderShow",
-      "loadCpvs",
+      'setHeaderShow',
+      'loadCpvs',
     ]),
 
     async loadImportTenderInfos() {
@@ -290,7 +290,7 @@ export default {
             filter.statuss = statuss
           }
         }
-        const res = await this.$api.post("/TenderImport/importTenderInfos", { filter })
+        const res = await this.$api.post('/TenderImport/importTenderInfos', { filter })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -306,7 +306,7 @@ export default {
       try {
         this.dataImportTenderInfoFacets.loading = 0
         let filter = {}
-        const res = await this.$api.post("/TenderImport/importTenderInfoFacets", { filter })
+        const res = await this.$api.post('/TenderImport/importTenderInfoFacets', { filter })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -333,7 +333,7 @@ export default {
         return [];
       }
       let importTenderInfos = null;
-      if (!this.search || this.search.trim() === "") {
+      if (!this.search || this.search.trim() === '') {
         importTenderInfos = this.dataImportTenderInfos.data;
       } else {
         importTenderInfos = this.dataImportTenderInfos.data.filter(
@@ -352,7 +352,7 @@ export default {
     importTenderInfoSetPremium(importTenderInfo) {
       this.dataImportTenderInfos.loading = 0;
       this.$api
-        .post("/User/SetPremium", { importTenderInfoId: importTenderInfo.importTenderInfoId })
+        .post('/User/SetPremium', { importTenderInfoId: importTenderInfo.importTenderInfoId })
         .then(res => {
           if (!res.success) {
             throw new Error(res.Error);
@@ -367,7 +367,7 @@ export default {
 
     logAs(importTenderInfo) {
       this.$router.replace({
-        name: "Login",
+        name: 'Login',
         params: { email: importTenderInfo.email, password: importTenderInfo.password }
       });
     },
@@ -375,7 +375,7 @@ export default {
     importTenderInfoSynchro() {
       this.dataImportTenderInfos.loading = 0;
       this.$api
-        .post("/User/Synchro")
+        .post('/User/Synchro')
         .then(res => {
           if (!res.success) {
             throw new Error(res.Error);
@@ -391,7 +391,7 @@ export default {
     getUserCpvs() {
       this.UserCpvs = null;
       this.$api
-        .post("/User/UserCpvs", {
+        .post('/User/UserCpvs', {
           importTenderInfoId: this.importTenderInfo.importTenderInfoId
         })
         .then(res => {
@@ -408,7 +408,7 @@ export default {
     importTenderInfoSynchroFull() {
       this.loadingUserSynchroFull = true;
       this.$api
-        .post("/User/SynchroFull", {
+        .post('/User/SynchroFull', {
           importTenderInfoId: this.importTenderInfo.importTenderInfoId
         })
         .then(res => {
@@ -442,7 +442,7 @@ export default {
     membershipSynchro() {
       this.dataImportTenderInfos.loading = 0;
       this.$api
-        .post("/Hivebrite/MembershipSynchro")
+        .post('/Hivebrite/MembershipSynchro')
         .then(res => {
           if (!res.success) {
             throw new Error(res.Error);
@@ -463,11 +463,11 @@ export default {
 
     getStatusLabel(status) {
       if (status === 1) {
-        return "Ok"
+        return 'Ok'
       } else if (status === 5) {
-        return "Merge"
+        return 'Merge'
       } else if (status === -10) {
-        return "Delete"
+        return 'Delete'
       }
       return status
     },
@@ -478,7 +478,7 @@ export default {
         this.importTenderInfo.notifCpvs = this.cpvs.join();
         this.importTenderInfo.notifRegions = this.regions.join();
         this.importTenderInfo.notifCountries = this.countries.join();
-        const res = await this.$api.post("/User/AddUpdate", {
+        const res = await this.$api.post('/User/AddUpdate', {
           importTenderInfo: this.importTenderInfo
         });
         if (!res.success) {

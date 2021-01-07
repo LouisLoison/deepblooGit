@@ -76,7 +76,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: "Login",
+  name: 'Login',
 
   data: () => ({
     valid: false,
@@ -84,7 +84,7 @@ export default {
     error: false,
     username: null,
     password: null,
-    redirect: null
+    redirect: null,
   }),
 
   mounted() {
@@ -96,15 +96,17 @@ export default {
   },
 
   methods: {
-    ...mapActions(["loadUser"]),
+    ...mapActions([
+      'loadUser',
+    ]),
 
     login() {
       this.loading = true
       this.error = false
       this.$api
-        .post("/User/Login", {
+        .post('/User/Login', {
           username: this.username,
-          password: this.password
+          password: this.password,
         })
         .then(res => {
           if (!res.success) {
@@ -118,13 +120,13 @@ export default {
             username: res.user.username,
             password: this.password,
             photo: res.user.photo,
-            token: res.token
+            token: res.token,
           })
-          this.$api.init();
+          this.$api.init()
           if (this.redirect) {
             this.$router.push({ name: this.redirect })
           } else {
-            this.$router.push({ name: "Tenders" })
+            this.$router.push({ name: 'Tenders' })
           }
         })
         .catch(err => {
@@ -133,8 +135,8 @@ export default {
           console.log(err)
         })
     }
-  }
-};
+  },
+}
 </script>
 
 <style scoped lang="css">

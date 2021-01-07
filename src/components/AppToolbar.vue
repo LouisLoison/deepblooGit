@@ -106,22 +106,20 @@ import moment from 'moment'
 export default {
   name: 'AppToolbar',
 
-  components: {},
-
   data: () => ({
     moment,
     items: [
       {
         title: 'Live feed',
-        href: 'https://platform.deepbloo.com/'
+        href: 'https://platform.deepbloo.com/',
       },
       {
         title: 'Tenders',
-        to: { name: 'Tenders' }
+        to: { name: 'Tenders' },
       },
       {
         title: 'Private deals',
-        to: { name: 'PrivateDeals' }
+        to: { name: 'PrivateDeals' },
       },
     ]
   }),
@@ -136,8 +134,6 @@ export default {
       'getUserType',
     ])
   },
-
-  mounted() {}
 }
 </script>
 

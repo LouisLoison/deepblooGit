@@ -21,7 +21,7 @@ export class GlobalService {
   }
 
   htmlText (html) {
-    let span = document.createElement("span")
+    let span = document.createElement('span')
     span.innerHTML = html
     span.innerHTML = span.textContent || span.innerText
     return span.textContent || span.innerText
@@ -45,7 +45,7 @@ export class GlobalService {
     }
 
     if (field && field.length) {
-      return field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, " ")
+      return field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' ')
     }
     return field
   }
@@ -84,7 +84,7 @@ export class GlobalService {
       !cpvs ||
       !cpvs.length
     ) {
-      return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg";
+      return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg'
     }
     let cpv = null
     for (const cpvLabel of cpvs) {
@@ -101,7 +101,7 @@ export class GlobalService {
       }
     }
     if (!cpv) {
-      return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg";
+      return 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/FondBleu.jpg'
     }
     return cpv.picture
   }
