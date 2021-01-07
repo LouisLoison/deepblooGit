@@ -55,11 +55,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import moment from "moment";
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
-  name: "UserListDialog",
+  name: 'UserListDialog',
 
   data: () => ({
     moment,
@@ -68,14 +68,16 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["getIsMobile"])
+    ...mapGetters([
+      'getIsMobile',
+    ])
   },
 
   methods: {
     show(users) {
-      this.users = users;
-      this.isShowDialog = true;
+      this.users = users
+      this.isShowDialog = true
     }
   }
-};
+}
 </script>

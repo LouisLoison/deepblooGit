@@ -195,6 +195,34 @@
 
               <v-list dense class="list-icon">
                 <v-list-item
+                  @click="openGroupDialog(group)"
+                  avatar
+                  style="height: 20px;"
+                >
+                  <v-list-item-avatar>
+                    <v-icon size="14" text>fa-edit</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-title>
+                    Edit
+                  </v-list-item-title>
+                </v-list-item>
+
+                <v-list-item
+                  @click="deleteTenderGroupDialog(group)"
+                  avatar
+                  style="height: 20px;"
+                >
+                  <v-list-item-avatar>
+                    <v-icon size="14" text color="red">fa-trash</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-title class="red--text">
+                    Delete
+                  </v-list-item-title>
+                </v-list-item>
+
+                <v-divider />
+
+                <v-list-item
                   @click="saveBusinessPipeline(group)"
                   avatar
                   style="height: 20px;"
@@ -218,34 +246,6 @@
                   </v-list-item-avatar>
                   <v-list-item-title>
                     Erase search filter
-                  </v-list-item-title>
-                </v-list-item>
-
-                <v-divider />
-
-                <v-list-item
-                  @click="openGroupDialog(group)"
-                  avatar
-                  style="height: 20px;"
-                >
-                  <v-list-item-avatar>
-                    <v-icon size="14" text>fa-edit</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title>
-                    Edit
-                  </v-list-item-title>
-                </v-list-item>
-
-                <v-list-item
-                  @click="deleteTenderGroupDialog(group)"
-                  avatar
-                  style="height: 20px;"
-                >
-                  <v-list-item-avatar>
-                    <v-icon size="14" text color="red">fa-trash</v-icon>
-                  </v-list-item-avatar>
-                  <v-list-item-title class="red--text">
-                    Delete
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -340,15 +340,15 @@ export default {
   props: {
     tenderCount: {
       type: Number,
-      default: -1
+      default: -1,
     },
     isWithoutGroupProp: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tenderGroupIdProp: {
       type: Number,
-      default: null
+      default: null,
     }
   },
 
@@ -357,12 +357,12 @@ export default {
     dataTenderGroups: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
     dataTenderGroupLinks: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
     isAllTenders: true,
     isMyPipeline: false,
@@ -370,12 +370,12 @@ export default {
     tenderGroupArchive: {
       count: -1,
       select: false,
-      over: false
+      over: false,
     },
     tenderGroupDelete: {
       count: -1,
       select: false,
-      over: false
+      over: false,
     },
     archiveGroupTenders: [],
     archiveSelect: false,
@@ -431,7 +431,7 @@ export default {
         this.loadTenderGroups()
         this.dataTenderGroups.loading = 0
         const res = await this.$api.post('/Tender/TenderGroupList', {
-          userId: this.getUserId
+          userId: this.getUserId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -447,7 +447,7 @@ export default {
             tenders: [],
             expand: false,
             select: false,
-            over: false
+            over: false,
           })
         }
         this.dataTenderGroups.loading = 1
@@ -467,7 +467,7 @@ export default {
         }
         this.dataTenderGroupLinks.loading = 0
         const res = await this.$api.post('/Tender/TenderGroupLinkList', {
-          userId: this.getUserId
+          userId: this.getUserId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -498,7 +498,7 @@ export default {
       if (!group) {
         group = {
           label: '',
-          color: '#ffffff'
+          color: '#ffffff',
         }
       }
       this.groupDialog = JSON.parse(JSON.stringify(group))
@@ -519,7 +519,7 @@ export default {
           const res = await this.$api.post('/Tender/TenderGroupMove', {
             userId: this.getUserId,
             tenderGroupId: tenderGroup.tenderGroupId,
-            tenderId: tender.id
+            tenderId: tender.id,
           })
           if (!res.success) {
             throw new Error(res.Error)
@@ -538,7 +538,7 @@ export default {
       try {
         this.groupDialog.userId = this.getUserId
         const res = await this.$api.post('/Tender/TenderGroupAddUpdate', {
-          tenderGroup: this.groupDialog
+          tenderGroup: this.groupDialog,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -578,7 +578,7 @@ export default {
     async deleteTenderGroup(tenderGroup) {
       try {
         const res = await this.$api.post('/Tender/TenderGroupDelete', {
-          tenderGroupId: tenderGroup.tenderGroupId
+          tenderGroupId: tenderGroup.tenderGroupId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -597,7 +597,7 @@ export default {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
     },
 
@@ -621,7 +621,7 @@ export default {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
     },
 
@@ -634,7 +634,7 @@ export default {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
     },
 
@@ -649,13 +649,13 @@ export default {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
       if (erraseFilter) {
         this.$emit('erraseFilter')
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

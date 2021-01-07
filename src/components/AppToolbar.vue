@@ -100,11 +100,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
-import moment from "moment"
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
-  name: "AppToolbar",
+  name: 'AppToolbar',
 
   components: {},
 
@@ -113,7 +113,7 @@ export default {
     items: [
       {
         title: 'Live feed',
-        href: "https://platform.deepbloo.com/"
+        href: 'https://platform.deepbloo.com/'
       },
       {
         title: 'Tenders',

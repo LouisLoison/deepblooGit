@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import constLanguage from "@/assets/constants/languages.json"
+import constLanguage from '@/assets/constants/languages.json'
 
 export default {
   name: 'SearchFacet',

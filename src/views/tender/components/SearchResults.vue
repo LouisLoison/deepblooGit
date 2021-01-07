@@ -61,12 +61,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import SearchResult from "./SearchResult"
-import SearchResultsTable from "./SearchResultsTable"
+import { mapGetters, mapActions } from 'vuex'
+import SearchResult from './SearchResult'
+import SearchResultsTable from './SearchResultsTable'
 import TenderDialog from '@/views/tender/components/TenderDialog'
-import TenderGroupChoice from "@/views/tender/components/TenderGroupChoice"
-import SentEmailDialog from "@/components/modal/SentEmailDialog"
+import TenderGroupChoice from '@/views/tender/components/TenderGroupChoice'
+import SentEmailDialog from '@/components/modal/SentEmailDialog'
 import TenderRemoveDialog from '@/views/tender/components/TenderRemoveDialog'
 
 export default {

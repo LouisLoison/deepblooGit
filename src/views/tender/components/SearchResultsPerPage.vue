@@ -34,7 +34,7 @@ export default {
     value: {
       type: Number,
       required: true
-    }
+    },
   },
 
   data: () => ({
@@ -52,19 +52,7 @@ export default {
   padding: .3rem 2rem .3rem .3rem;
   max-width: 100%;
   background-color: #fff;
-  background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M0 7.3l2.8-2.8 9.2 9.3 9.2-9.3L24 7.3 12 19.5z' fill='%233A4570'/%3E%3C/svg%3E);
-  background-repeat: no-repeat;
-  background-size: 10px 10px;
-  background-position: 92% 50%;
-  border: 1px solid #c4c8d8;
-  border-radius: 5px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding: .3rem 2rem .3rem .3rem;
-  max-width: 100%;
-  background-color: #fff;
-  background-image: url(data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M0 7.3l2.8-2.8 9.2 9.3 9.2-9.3L24 7.3 12 19.5z' fill='%233A4570'/%3E%3C/svg%3E);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M0 7.3l2.8-2.8 9.2 9.3 9.2-9.3L24 7.3 12 19.5z' fill='%233A4570'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 10px 10px;
   background-position: 92% 50%;

@@ -25,7 +25,7 @@ export default {
     totalPages: {
       type: Number,
       required: true
-    }
+    },
   },
 
   methods: {

@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "TenderGroupChoice",
+  name: 'TenderGroupChoice',
 
   data: () => ({
     isShow: false,
@@ -76,7 +76,7 @@ export default {
     },
 
     choice(group) {
-      this.$emit("choice", {
+      this.$emit('choice', {
         tender: this.tender,
         group
       })

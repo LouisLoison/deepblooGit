@@ -99,5 +99,5 @@ export default {
       return cpv.logo
     },
   },
-};
+}
 </script>

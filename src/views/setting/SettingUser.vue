@@ -620,12 +620,12 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex"
-import moment from "moment"
-import constRegions from "@/assets/constants/regions.json"
+import { mapGetters, mapActions } from 'vuex'
+import moment from 'moment'
+import constRegions from '@/assets/constants/regions.json'
 
 export default {
-  name: "SettingUser",
+  name: 'SettingUser',
 
   data: () => ({
     moment,
@@ -636,17 +636,17 @@ export default {
     },
     typeGroup: 0,
     headers: [
-      { text: "", value: "photo", align: "center" },
-      { text: " Type", value: "type", align: "center" },
-      { text: "Name ", value: " username", align: "left", sortable: true },
-      { text: "Email ", value: " email", align: "left", sortable: true },
-      { text: " Id", value: "userId", align: "center" },
-      { text: " Free", value: "membershipFree", align: "center" },
-      { text: "", align: "right", sortable: false }
+      { text: '', value: 'photo', align: 'center' },
+      { text: ' Type', value: 'type', align: 'center' },
+      { text: 'Name ', value: ' username', align: 'left', sortable: true },
+      { text: 'Email ', value: ' email', align: 'left', sortable: true },
+      { text: ' Id', value: 'userId', align: 'center' },
+      { text: ' Free', value: 'membershipFree', align: 'center' },
+      { text: '', align: 'right', sortable: false }
     ],
     pagination: {
       rowsPerPage: 20,
-      sortBy: "userId",
+      sortBy: 'userId',
       descending: true
     },
     dialogUser: false,
@@ -654,11 +654,11 @@ export default {
     user: null,
     UserCpvs: null,
     types: [
-      { id: 3, name: "Public" },
-      { id: 5, name: "Free" },
-      { id: 2, name: "Premium" },
-      { id: 4, name: "Business +" },
-      { id: 1, name: "Admin" }
+      { id: 3, name: 'Public' },
+      { id: 5, name: 'Free' },
+      { id: 2, name: 'Premium' },
+      { id: 4, name: 'Business +' },
+      { id: 1, name: 'Admin' }
     ],
     isActive: false,
     hasConnexionTender: false,
@@ -671,7 +671,7 @@ export default {
     regionItems: null,
     countries: [],
     countryItems: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
@@ -686,10 +686,10 @@ export default {
         this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
       ) {
-        return 0;
+        return 0
       }
 
-      return Math.ceil(this.getUsers().length / this.pagination.rowsPerPage);
+      return Math.ceil(this.getUsers().length / this.pagination.rowsPerPage)
     }
   },
 
@@ -709,14 +709,14 @@ export default {
       }
       return 0
     });
-    let categoryCurrent = null;
+    let categoryCurrent = null
     for (let cpv of constCpvSort) {
       if (!cpv.active || !cpv.code) {
         continue
       }
       if (categoryCurrent !== cpv.category) {
         this.cpvItems.push({
-          header: cpv.category && cpv.category !== "" ? cpv.category : "Other"
+          header: cpv.category && cpv.category !== '' ? cpv.category : 'Other'
         })
         categoryCurrent = cpv.category
       }
@@ -724,11 +724,11 @@ export default {
         name: cpv.label,
         code: cpv.code,
         active: cpv.active,
-        group: cpv.category && cpv.category !== "" ? cpv.category : "Other",
+        group: cpv.category && cpv.category !== '' ? cpv.category : 'Other',
         avatar:
-          cpv && cpv.logo && cpv.logo != ""
+          cpv && cpv.logo && cpv.logo != ''
             ? cpv.logo
-            : "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
+            : 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
       })
     }
 
@@ -771,7 +771,7 @@ export default {
         }
         filter.hasConnexionTender = this.hasConnexionTender
         filter.hasConnexionBusiness = this.hasConnexionBusiness
-        const res = await this.$api.post("/User/List", { filter })
+        const res = await this.$api.post('/User/List', { filter })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -785,100 +785,100 @@ export default {
 
     getUsers() {
       if (!this.dataUsers.data) {
-        return [];
+        return []
       }
-      let users = null;
-      if (!this.search || this.search.trim() === "") {
-        users = this.dataUsers.data;
+      let users = null
+      if (!this.search || this.search.trim() === '') {
+        users = this.dataUsers.data
       } else {
         users = this.dataUsers.data.filter(
           a =>
             a.username.toLowerCase().includes(this.search.toLowerCase()) ||
             a.email.toLowerCase().includes(this.search.toLowerCase())
-        );
+        )
       }
-      return users;
+      return users
     },
 
     userOpen(user) {
-      this.dialogUser = true;
-      this.user = JSON.parse(JSON.stringify(user));
-      this.getUserCpvs();
-      this.cpvs = [];
-      if (this.user.notifCpvs && this.user.notifCpvs.trim() !== "") {
-        const notifCpvs = this.user.notifCpvs.split(",");
+      this.dialogUser = true
+      this.user = JSON.parse(JSON.stringify(user))
+      this.getUserCpvs()
+      this.cpvs = []
+      if (this.user.notifCpvs && this.user.notifCpvs.trim() !== '') {
+        const notifCpvs = this.user.notifCpvs.split(',')
         this.cpvs = this.cpvItems.filter(
           a => a.code && notifCpvs.includes(a.code.toString())
-        );
+        )
       }
-      this.regions = [];
-      if (this.user.notifRegions && this.user.notifRegions.trim() !== "") {
-        const notifRegions = this.user.notifRegions.split(",");
-        this.regions = this.regionItems.filter(a => notifRegions.includes(a));
+      this.regions = []
+      if (this.user.notifRegions && this.user.notifRegions.trim() !== '') {
+        const notifRegions = this.user.notifRegions.split(',')
+        this.regions = this.regionItems.filter(a => notifRegions.includes(a))
       }
-      this.countries = [];
-      if (this.user.notifCountries && this.user.notifCountries.trim() !== "") {
-        const notifCountries = this.user.notifCountries.split(",");
+      this.countries = []
+      if (this.user.notifCountries && this.user.notifCountries.trim() !== '') {
+        const notifCountries = this.user.notifCountries.split(',')
         this.countries = this.countryItems.filter(a =>
           notifCountries.includes(a)
-        );
+        )
       }
     },
 
     userSetPremium(user) {
-      this.dataUsers.loading = 0;
+      this.dataUsers.loading = 0
       this.$api
-        .post("/User/SetPremium", { userId: user.userId })
+        .post('/User/SetPremium', { userId: user.userId })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadUsers();
+          this.loadUsers()
         })
         .catch(err => {
-          this.dataUsers.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataUsers.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     logAs(user) {
       this.$router.replace({
-        name: "Login",
+        name: 'Login',
         params: { email: user.email, password: user.password }
-      });
+      })
     },
 
     userSynchro() {
-      this.dataUsers.loading = 0;
+      this.dataUsers.loading = 0
       this.$api
-        .post("/User/Synchro")
+        .post('/User/Synchro')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadUsers();
+          this.loadUsers()
         })
         .catch(err => {
-          this.dataUsers.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataUsers.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     getUserCpvs() {
-      this.UserCpvs = null;
+      this.UserCpvs = null
       this.$api
-        .post("/User/UserCpvs", {
+        .post('/User/UserCpvs', {
           userId: this.user.userId
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.UserCpvs = res.data;
+          this.UserCpvs = res.data
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     cpvRemove(item) {
@@ -896,14 +896,14 @@ export default {
     },
 
     userSynchroFull() {
-      this.loadingUserSynchroFull = true;
+      this.loadingUserSynchroFull = true
       this.$api
-        .post("/User/SynchroFull", {
+        .post('/User/SynchroFull', {
           userId: this.user.userId
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
           this.user = {
             ...this.user,
@@ -911,67 +911,67 @@ export default {
           }
           let userFind = this.dataUsers.data.find(
             a => a.userId === this.user.userId
-          );
+          )
           if (userFind) {
             this.userFind = {
               ...userFind,
               ...res.data
             }
           }
-          this.getUserCpvs();
-          this.loadUsers();
+          this.getUserCpvs()
+          this.loadUsers()
         })
         .catch(err => {
-          this.$api.error(err, this);
+          this.$api.error(err, this)
         })
         .then(() => {
-          this.loadingUserSynchroFull = false;
-        });
+          this.loadingUserSynchroFull = false
+        })
     },
 
     membershipSynchro() {
-      this.dataUsers.loading = 0;
+      this.dataUsers.loading = 0
       this.$api
-        .post("/Hivebrite/MembershipSynchro")
+        .post('/Hivebrite/MembershipSynchro')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadUsers();
+          this.loadUsers()
         })
         .catch(err => {
-          this.dataUsers.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataUsers.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     passwordGet() {
       this.user.password = Math.random()
         .toString(36)
-        .slice(-10);
+        .slice(-10)
     },
 
     async userAddUpdate() {
       try {
-        this.dataUsers.loading = 0;
-        this.user.notifCpvs = this.cpvs.join();
-        this.user.notifRegions = this.regions.join();
-        this.user.notifCountries = this.countries.join();
-        const res = await this.$api.post("/User/AddUpdate", {
+        this.dataUsers.loading = 0
+        this.user.notifCpvs = this.cpvs.join()
+        this.user.notifRegions = this.regions.join()
+        this.user.notifCountries = this.countries.join()
+        const res = await this.$api.post('/User/AddUpdate', {
           user: this.user
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.loadUsers();
-        this.dialogUser = false;
+        this.loadUsers()
+        this.dialogUser = false
       } catch (err) {
-        this.dataUsers.loading = -1;
-        this.$api.error(err, this);
+        this.dataUsers.loading = -1
+        this.$api.error(err, this)
       }
     }
   }
-};
+}
 </script>
 
 <style>

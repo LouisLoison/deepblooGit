@@ -299,7 +299,7 @@ import moment from 'moment'
 import UserListDialog from '@/components/modal/UserListDialog'
 
 export default {
-  name: "SettingOther",
+  name: 'SettingOther',
 
   components: {
     UserListDialog
@@ -307,10 +307,10 @@ export default {
 
   data: () => ({
     moment,
-    Environnement: "prod",
+    Environnement: 'prod',
     dataSchemaCheck: {
       loading: 1,
-      errorMessage: "",
+      errorMessage: '',
       CheckResult: null
     },
     expansionPanel: null,
@@ -321,31 +321,31 @@ export default {
     },
     chartStatistique: {
       chart: {
-        type: "column",
+        type: 'column',
         plotBorderWidth: 1,
-        zoomType: "xy",
+        zoomType: 'xy',
         height: 600
       },
-      title: { text: "" },
+      title: { text: '' },
       credits: { enabled: false },
       exporting: { enabled: false },
       xAxis: { categories: [] },
       yAxis: {
         min: 0,
-        title: { text: "" },
+        title: { text: '' },
         stackLabels: {
           enabled: true,
-          style: { fontWeight: "bold", color: "gray" }
+          style: { fontWeight: 'bold', color: 'gray' }
         }
       },
       tooltip: {
-        headerFormat: "<b>{point.x}</b><br/>",
-        pointFormat: "{series.name}: {point.y}<br/>Total: {point.stackTotal}"
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
       },
       plotOptions: {
         column: {
-          cursor: "pointer",
-          stacking: "normal",
+          cursor: 'pointer',
+          stacking: 'normal',
           dataLabels: {
             enabled: true
           }
@@ -358,205 +358,205 @@ export default {
   computed: {},
 
   mounted() {
-    this.loadUsers();
+    this.loadUsers()
   },
 
   methods: {
     loadUsers() {
-      this.dataUsers.loading = 0;
+      this.dataUsers.loading = 0
       let filter = {
         hasConnexionTender: true
-      };
+      }
       this.$api
-        .post("/User/List", { filter })
+        .post('/User/List', { filter })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.dataUsers.data = res.data;
-          this.initUserConnexionGraph();
-          this.dataUsers.loading = 1;
+          this.dataUsers.data = res.data
+          this.initUserConnexionGraph()
+          this.dataUsers.loading = 1
         })
         .catch(err => {
-          this.dataUsers.loading = -1;
-          this.dataUsers.error = err;
-          this.$api.error(err, this);
-        });
+          this.dataUsers.loading = -1
+          this.dataUsers.error = err
+          this.$api.error(err, this)
+        })
     },
 
     initUserConnexionGraph() {
       const typeLabels = [
         {
           type: 1,
-          name: "Admin",
-          color: "#434348"
+          name: 'Admin',
+          color: '#434348',
         },
         {
           type: 2,
-          name: "Premium",
-          color: "#7cb5ec"
+          name: 'Premium',
+          color: '#7cb5ec',
         },
         {
           type: 3,
-          name: "Public",
-          color: "#f7a35c"
+          name: 'Public',
+          color: '#f7a35c',
         },
         {
           type: 4,
-          name: "Business",
-          color: "#90ed7d"
+          name: 'Business',
+          color: '#90ed7d',
         },
         {
           type: 5,
-          name: "Free",
-          color: "#f7a35c"
+          name: 'Free',
+          color: '#f7a35c',
         }
-      ];
-      const userTypes = [];
-      const periods = [];
+      ]
+      const userTypes = []
+      const periods = []
       for (const data of this.dataUsers.data) {
         if (!userTypes.includes(data.type)) {
-          userTypes.push(data.type);
+          userTypes.push(data.type)
         }
-        let date = null;
-        if (data.connexionTender && data.connexionTender.trim() !== "") {
-          date = data.connexionTender.substring(0, 10);
+        let date = null
+        if (data.connexionTender && data.connexionTender.trim() !== '') {
+          date = data.connexionTender.substring(0, 10)
         }
         if (!date || periods.includes(date)) {
-          continue;
+          continue
         }
-        let period = periods.find(a => a.date === date);
+        let period = periods.find(a => a.date === date)
         if (!period) {
           period = {
             date,
             types: []
-          };
-          periods.push(period);
+          }
+          periods.push(period)
         }
-        let type = period.types.find(a => a.type === data.type);
+        let type = period.types.find(a => a.type === data.type)
         if (!type) {
           type = {
             type: data.type,
-            users: []
-          };
-          period.types.push(type);
+            users: [],
+          }
+          period.types.push(type)
         }
-        type.users.push(data);
+        type.users.push(data)
       }
       periods.sort((a, b) => {
-        let na = a.date;
-        let nb = b.date;
-        return na < nb ? -1 : na > nb ? 1 : 0;
-      });
-      this.chartStatistique.xAxis.categories = periods.map(a => a.date);
-      this.chartStatistique.series = [];
+        let na = a.date
+        let nb = b.date
+        return na < nb ? -1 : na > nb ? 1 : 0
+      })
+      this.chartStatistique.xAxis.categories = periods.map(a => a.date)
+      this.chartStatistique.series = []
       for (const userType of userTypes) {
         const serie = {
           name: userType,
-          data: []
-        };
-        const typeLabel = typeLabels.find(a => a.type === userType);
+          data: [],
+        }
+        const typeLabel = typeLabels.find(a => a.type === userType)
         if (typeLabel) {
-          serie.userType = typeLabel.type;
-          serie.name = typeLabel.name;
-          serie.color = typeLabel.color;
+          serie.userType = typeLabel.type
+          serie.name = typeLabel.name
+          serie.color = typeLabel.color
         }
         for (const period of periods) {
-          let users = [];
-          const type = period.types.find(a => a.type === userType);
+          let users = []
+          const type = period.types.find(a => a.type === userType)
           if (type) {
-            users = type.users;
+            users = type.users
           }
-          serie.data.push(users.length);
+          serie.data.push(users.length)
         }
         serie.events = {
           click: event => {
-            console.log(event);
-            // this.openTenderOrganization(event.point.tenderOrganization);
-            const date = event.point.category;
-            const userType = event.point.series.userOptions.userType;
-            const period = periods.find(a => a.date === date);
+            console.log(event)
+            // this.openTenderOrganization(event.point.tenderOrganization)
+            const date = event.point.category
+            const userType = event.point.series.userOptions.userType
+            const period = periods.find(a => a.date === date)
             if (period) {
-              const type = period.types.find(a => a.type === userType);
+              const type = period.types.find(a => a.type === userType)
               if (type) {
-                this.$refs.UserListDialog.show(type.users);
+                this.$refs.UserListDialog.show(type.users)
               }
             }
           }
-        };
-        this.chartStatistique.series.push(serie);
+        }
+        this.chartStatistique.series.push(serie)
       }
     },
 
     getSchemaCheck() {
-      this.dataSchemaCheck.loading = 0;
+      this.dataSchemaCheck.loading = 0
       this.$api
-        .post("/Setting/SchemaCheck", {
+        .post('/Setting/SchemaCheck', {
           Environnement: this.Environnement
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
           for (let Bdd of res.CheckResult.BddList) {
             Bdd.TableList.sort((a, b) => {
-              let na = a.TableName.toLowerCase();
-              let nb = b.TableName.toLowerCase();
-              return na < nb ? -1 : na > nb ? 1 : 0;
-            });
+              let na = a.TableName.toLowerCase()
+              let nb = b.TableName.toLowerCase()
+              return na < nb ? -1 : na > nb ? 1 : 0
+            })
           }
-          this.dataSchemaCheck.CheckResult = res.CheckResult;
-          this.dataSchemaCheck.loading = 1;
-          this.expansionPanel = [1];
+          this.dataSchemaCheck.CheckResult = res.CheckResult
+          this.dataSchemaCheck.loading = 1
+          this.expansionPanel = [1]
         })
         .catch(err => {
-          console.log(err);
-          this.dataSchemaCheck.loading = -1;
-          this.dataSchemaCheck.errorMessage = "[" + err + "]";
-          this.$api.error(err, this);
-        });
+          console.log(err)
+          this.dataSchemaCheck.loading = -1
+          this.dataSchemaCheck.errorMessage = '[' + err + ']'
+          this.$api.error(err, this)
+        })
     },
 
     TableScriptSql(BddName, Table) {
       this.$api
-        .post("/Setting/TableScriptSql", {
+        .post('/Setting/TableScriptSql', {
           Environnement: this.Environnement,
           BddName: BddName,
           TableName: Table.TableName
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.$refs.ScriptModal.ModalOpen("text/x-sql", res.ScriptSql);
+          this.$refs.ScriptModal.ModalOpen('text/x-sql', res.ScriptSql)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     TableAdd(BddName, Table) {
-      this.dataSchemaCheck.loading = 0;
+      this.dataSchemaCheck.loading = 0
       this.$api
-        .post("/Setting/TableAddBdd", {
+        .post('/Setting/TableAddBdd', {
           Environnement: this.Environnement,
           BddName: BddName,
           TableName: Table.TableName
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.getSchemaCheck();
+          this.getSchemaCheck()
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     ColumnScriptSql(BddName, TableName, Column) {
       this.$api
-        .post("/Setting/ColumnScriptSql", {
+        .post('/Setting/ColumnScriptSql', {
           Environnement: this.Environnement,
           BddName: BddName,
           TableName: TableName,
@@ -564,19 +564,19 @@ export default {
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.$refs.ScriptModal.ModalOpen("text/x-sql", res.ScriptSql);
+          this.$refs.ScriptModal.ModalOpen('text/x-sql', res.ScriptSql)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     ColumnAdd(BddName, TableName, Column) {
-      this.dataSchemaCheck.loading = 0;
+      this.dataSchemaCheck.loading = 0
       this.$api
-        .post("/Setting/ColumnAddBdd", {
+        .post('/Setting/ColumnAddBdd', {
           Environnement: this.Environnement,
           BddName: BddName,
           TableName: TableName,
@@ -584,76 +584,74 @@ export default {
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.getSchemaCheck();
+          this.getSchemaCheck()
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     runFtpGet() {
       this.$api
-        .post("/DgMarket/FtpGet")
+        .post('/DgMarket/FtpGet')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          console.log("runFtpGet");
-          console.log(res);
+          console.log('runFtpGet')
+          console.log(res)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     runBddImport() {
       this.$api
-        .post("/DgMarket/BddImport")
+        .post('/DgMarket/BddImport')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          console.log("runBddImport");
-          console.log(res);
+          console.log('runBddImport')
+          console.log(res)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     runTendersImport() {
       this.$api
-        .post("/Algolia/TendersImport")
+        .post('/Algolia/TendersImport')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          console.log("runTendersImport");
-          console.log(res);
+          console.log('runTendersImport')
+          console.log(res)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     runTendersPurge() {
       this.$api
-        .post("/Algolia/TendersPurge")
+        .post('/Algolia/TendersPurge')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          console.log("runTendersPurge");
-          console.log(res);
+          console.log('runTendersPurge')
+          console.log(res)
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     }
   }
-};
+}
 </script>
-
-<style></style>

@@ -251,7 +251,7 @@
               class="display-table-cell display-table-cell-option"
               style="overflow: visible;"
             >
-              <v-menu transition="slide-y-transition" offset-y left>
+              <v-menu transition="slide-y-transition" offset-y right>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -259,7 +259,9 @@
                     class="ma-0 pa-0"
                     @click.stop
                   >
-                    <v-icon size="16">fa-ellipsis-v</v-icon>
+                    <v-icon size="16">
+                      fa-ellipsis-v
+                    </v-icon>
                   </v-btn>
                 </template>
 
@@ -268,7 +270,12 @@
                     @click="openTenderGroupChoice(result)"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa fa-circle</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa fa-circle
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       Assign to business pipeline
@@ -279,7 +286,12 @@
                     @click="openSentEmailDialog(result)"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa-bell</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa-bell
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       Notify
@@ -293,7 +305,12 @@
                     }"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa-copy</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa-copy
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       Duplicate

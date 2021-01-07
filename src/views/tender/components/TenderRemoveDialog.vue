@@ -69,7 +69,7 @@ export default {
     async removeTender() {
       try {
         this.loadingRemove = true
-        let res = await this.$api.post("/Tender/TenderRemove", {
+        let res = await this.$api.post('/Tender/TenderRemove', {
           id: this.tender.tender_id.raw,
         })
         if (!res.success) {

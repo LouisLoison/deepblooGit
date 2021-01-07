@@ -160,8 +160,8 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
-import moment from "moment"
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
   name: 'SearchResult',

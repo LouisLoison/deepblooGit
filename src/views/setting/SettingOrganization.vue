@@ -449,22 +449,22 @@ export default {
     },
     typeGroup: 0,
     headers: [
-      { text: " Id", value: "organizationId", align: "center" },
-      { text: "Name ", value: "name", align: "left", sortable: true },
-      { text: "CPV ", value: "cpvs", align: "left", sortable: true },
+      { text: ' Id', value: 'organizationId', align: 'center' },
+      { text: 'Name ', value: 'name', align: 'left', sortable: true },
+      { text: 'CPV ', value: 'cpvs', align: 'left', sortable: true },
     ],
     pagination: {
       rowsPerPage: 20,
-      sortBy: "name",
+      sortBy: 'name',
       descending: false
     },
     dialogOrganization: false,
     validOrganization: false,
     organization: null,
     types: [
-      { id: 1, name: "Admin" },
-      { id: 2, name: "Premium" },
-      { id: 3, name: "Public" }
+      { id: 1, name: 'Admin' },
+      { id: 2, name: 'Premium' },
+      { id: 3, name: 'Public' }
     ],
     cpvs: [],
     organizationCpv: null,
@@ -473,7 +473,7 @@ export default {
     cpvItemsSearch: null,
     organizationCountrys: null,
     countryItems: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
@@ -486,40 +486,39 @@ export default {
       if (
         this.pagination.rowsPerPage == null ||
         this.pagination.totalItems == null
-      )
-        return 0;
+      ) {
+        return 0
+      }
 
-      return Math.ceil(
-        this.getOrganizations.length / this.pagination.rowsPerPage
-      );
+      return Math.ceil(this.getOrganizations.length / this.pagination.rowsPerPage)
     },
 
     getCpvs() {
       if (!this.cpvs) {
-        return [];
+        return []
       }
-      let cpvs = null;
-      if (!this.cpvSearch || this.cpvSearch.trim() === "") {
-        cpvs = this.cpvs;
+      let cpvs = null
+      if (!this.cpvSearch || this.cpvSearch.trim() === '') {
+        cpvs = this.cpvs
       } else {
         cpvs = this.cpvs.filter(a =>
           a.name.toLowerCase().includes(this.cpvSearch.toLowerCase())
-        );
+        )
       }
-      return cpvs;
+      return cpvs
     },
 
     getCpvItems() {
       if (!this.cpvItems) {
-        return [];
+        return []
       }
       let cpvItems = this.cpvItems.filter(
         a =>
           a &&
           a.code &&
           !this.organizationCpvs.map(a => a.code).includes(a.code)
-      );
-      if (this.cpvItemsSearch && this.cpvItemsSearch.trim() !== "") {
+      )
+      if (this.cpvItemsSearch && this.cpvItemsSearch.trim() !== '') {
         cpvItems = cpvItems.filter(
           a =>
             a &&
@@ -527,28 +526,28 @@ export default {
             a.name.toLowerCase().includes(this.cpvItemsSearch.toLowerCase())
         );
       }
-      return cpvItems;
+      return cpvItems
     },
 
     getOrganizations() {
       if (!this.dataOrganizations || !this.dataOrganizations.data) {
-        return [];
+        return []
       }
-      let organizations = null;
-      if (!this.search || this.search.trim() === "") {
-        organizations = this.dataOrganizations.data;
+      let organizations = null
+      if (!this.search || this.search.trim() === '') {
+        organizations = this.dataOrganizations.data
       } else {
         organizations = this.dataOrganizations.data.filter(a =>
           a.name.toLowerCase().includes(this.search.toLowerCase())
-        );
+        )
       }
-      let cpvCodes = this.getCpvs.filter(a => a.checked).map(c => c.code);
+      let cpvCodes = this.getCpvs.filter(a => a.checked).map(c => c.code)
       if (cpvCodes.length > 0) {
         organizations = organizations.filter(a =>
           a.cpvs.map(b => b.code).some(r => cpvCodes.indexOf(r) >= 0)
-        );
+        )
       }
-      return organizations;
+      return organizations
     }
   },
 
@@ -558,45 +557,45 @@ export default {
     // this.setHeaderShow(false)
 
     // Create CPV list
-    this.cpvItems = [];
+    this.cpvItems = []
     let constCpvSort = this.getDataCpvs.data.sort((a, b) => {
       if (a.category < b.category) {
-        return -1;
+        return -1
       }
       if (a.category > b.category) {
-        return 1;
+        return 1
       }
-      return 0;
-    });
-    let categoryCurrent = null;
+      return 0
+    })
+    let categoryCurrent = null
     for (let cpv of constCpvSort) {
       if (!cpv.active || !cpv.code) {
-        continue;
+        continue
       }
       if (categoryCurrent !== cpv.category) {
         this.cpvItems.push({
-          header: cpv.category && cpv.category !== "" ? cpv.category : "Other"
-        });
-        categoryCurrent = cpv.category;
+          header: cpv.category && cpv.category !== '' ? cpv.category : 'Other'
+        })
+        categoryCurrent = cpv.category
       }
       this.cpvItems.push({
         name: cpv.label,
         code: cpv.code,
         active: cpv.active,
-        group: cpv.category && cpv.category !== "" ? cpv.category : "Other",
+        group: cpv.category && cpv.category !== '' ? cpv.category : 'Other',
         avatar:
-          cpv && cpv.logo && cpv.logo != ""
+          cpv && cpv.logo && cpv.logo != ''
             ? cpv.logo
-            : "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
-      });
+            : 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
+      })
     }
 
     // Create country list
-    this.countryItems = [];
+    this.countryItems = []
     for (let region of constRegions) {
       this.countryItems.push({
         header: region.label
-      });
+      })
 
       if (region.countrys) {
         for (let country of region.countrys) {
@@ -604,8 +603,8 @@ export default {
             name: country,
             code: country,
             group: region.label,
-            avatar: "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
-          });
+            avatar: 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
+          })
         }
       }
       if (region.regions) {
@@ -615,8 +614,8 @@ export default {
               name: country,
               code: country,
               group: regionSub.label,
-              avatar: "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
-            });
+              avatar: 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
+            })
           }
         }
       }
@@ -630,83 +629,83 @@ export default {
     ]),
 
     loadOrganizations() {
-      this.dataOrganizations.loading = 0;
-      let filter = {};
+      this.dataOrganizations.loading = 0
+      let filter = {}
       if (this.typeGroup) {
-        filter.type = this.typeGroup;
+        filter.type = this.typeGroup
       }
       this.$api
-        .post("/Organization/List", { filter })
+        .post('/Organization/List', { filter })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.dataOrganizations.data = res.data;
-          this.dataOrganizations.loading = 1;
-          this.initCpvs();
+          this.dataOrganizations.data = res.data
+          this.dataOrganizations.loading = 1
+          this.initCpvs()
         })
         .catch(err => {
-          this.dataOrganizations.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataOrganizations.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     initCpvs() {
-      this.cpvs = [];
+      this.cpvs = []
       for (let organization of this.dataOrganizations.data) {
         if (organization.cpvs) {
           for (let cpv of organization.cpvs) {
-            let cpvFound = this.cpvs.find(a => a.code === cpv.code);
+            let cpvFound = this.cpvs.find(a => a.code === cpv.code)
             if (!cpvFound) {
               cpvFound = {
                 code: cpv.code,
                 name: cpv.name,
                 count: 1,
                 checked: false
-              };
-              this.cpvs.push(cpvFound);
+              }
+              this.cpvs.push(cpvFound)
             } else {
-              cpvFound.count++;
+              cpvFound.count++
             }
           }
         }
       }
       this.cpvs.sort((a, b) => {
         if (a.count < b.count) {
-          return 1;
+          return 1
         }
         if (a.count > b.count) {
-          return -1;
+          return -1
         }
-        return 0;
-      });
+        return 0
+      })
     },
 
     remove(item) {
-      const index = this.organizationCpv.indexOf(item.name);
+      const index = this.organizationCpv.indexOf(item.name)
       if (index >= 0) {
-        this.organizationCpv.splice(index, 1);
+        this.organizationCpv.splice(index, 1)
       }
     },
 
     organizationOpen(organization) {
-      this.dialogOrganization = true;
-      this.organization = JSON.parse(JSON.stringify(organization));
-      this.organizationCountrys = [];
+      this.dialogOrganization = true
+      this.organization = JSON.parse(JSON.stringify(organization))
+      this.organizationCountrys = []
       if (this.organization.countrys) {
-        this.organizationCountrys = this.organization.countrys.split("|");
+        this.organizationCountrys = this.organization.countrys.split('|')
       }
       if (this.organization.cpvs) {
-        this.organizationCpv = this.organization.cpvs.map(a => a.name.trim());
+        this.organizationCpv = this.organization.cpvs.map(a => a.name.trim())
       } else {
-        this.organizationCpv = [];
+        this.organizationCpv = []
       }
-      this.organizationCpvs = [];
+      this.organizationCpvs = []
       for (let cpv of this.organization.cpvs) {
-        let cpvFound = this.organizationCpvs.find(a => a.code === cpv.code);
+        let cpvFound = this.organizationCpvs.find(a => a.code === cpv.code)
         let constCpvFound = this.getDataCpvs.data.find(
           a => a.code === parseInt(cpv.code, 10)
-        );
+        )
         if (!cpvFound) {
           cpvFound = {
             code: cpv.code,
@@ -716,20 +715,20 @@ export default {
             isDelete: false,
             rating: cpv.rating,
             avatar:
-              constCpvFound && constCpvFound.logo && constCpvFound.logo != ""
+              constCpvFound && constCpvFound.logo && constCpvFound.logo != ''
                 ? constCpvFound.logo
-                : "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
-          };
-          this.organizationCpvs.push(cpvFound);
+                : 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
+          }
+          this.organizationCpvs.push(cpvFound)
         }
         if (cpv.origineType === 1) {
-          cpvFound.isSynchro = true;
+          cpvFound.isSynchro = true
         }
         if (cpv.origineType === 2) {
-          cpvFound.isManual = true;
+          cpvFound.isManual = true
         }
         if (cpv.origineType === -1) {
-          cpvFound.isDelete = true;
+          cpvFound.isDelete = true
         }
       }
     },
@@ -743,96 +742,96 @@ export default {
         isDelete: false,
         rating: 0,
         avatar: cpv.avatar
-      });
+      })
     },
 
     organizationCpvExclude(organizationCpv) {
-      organizationCpv.isDelete = true;
+      organizationCpv.isDelete = true
     },
 
     organizationCpvRestore(organizationCpv) {
-      organizationCpv.isDelete = false;
+      organizationCpv.isDelete = false
     },
 
     organizationCpvDelete(organizationCpv) {
       this.organizationCpvs = this.organizationCpvs.filter(
         a => a.code !== organizationCpv.code
-      );
+      )
     },
 
     removeCountry(item) {
-      const index = this.organizationCountrys.indexOf(item.name);
-      if (index >= 0) this.organizationCountrys.splice(index, 1);
+      const index = this.organizationCountrys.indexOf(item.name)
+      if (index >= 0) this.organizationCountrys.splice(index, 1)
     },
 
     organizationSetPremium(organization) {
-      this.dataOrganizations.loading = 0;
+      this.dataOrganizations.loading = 0
       this.$api
-        .post("/Organization/SetPremium", {
+        .post('/Organization/SetPremium', {
           organizationId: organization.organizationId
         })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadOrganizations();
+          this.loadOrganizations()
         })
         .catch(err => {
-          this.dataOrganizations.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataOrganizations.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     organizationSynchro() {
-      this.dataOrganizations.loading = 0;
+      this.dataOrganizations.loading = 0
       this.$api
-        .post("/Hivebrite/CompanieSynchro")
+        .post('/Hivebrite/CompanieSynchro')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadOrganizations();
+          this.loadOrganizations()
         })
         .catch(err => {
-          this.dataOrganizations.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataOrganizations.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     membershipSynchro() {
-      this.dataOrganizations.loading = 0;
+      this.dataOrganizations.loading = 0
       this.$api
-        .post("/Hivebrite/MembershipSynchro")
+        .post('/Hivebrite/MembershipSynchro')
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadOrganizations();
+          this.loadOrganizations()
         })
         .catch(err => {
-          this.dataOrganizations.loading = -1;
-          this.$api.error(err, this);
-        });
+          this.dataOrganizations.loading = -1
+          this.$api.error(err, this)
+        })
     },
 
     passwordGet() {
       this.organization.password = Math.random()
         .toString(36)
-        .slice(-10);
+        .slice(-10)
     },
 
     organizationAddUpdate() {
-      this.dataOrganizations.loading = 0;
-      this.organization.name = this.organization.name.trim();
-      this.organization.countrys = this.organizationCountrys.join("|");
-      let cpvs = [];
+      this.dataOrganizations.loading = 0
+      this.organization.name = this.organization.name.trim()
+      this.organization.countrys = this.organizationCountrys.join('|')
+      let cpvs = []
       for (let cpvItem of this.organizationCpvs) {
         if (cpvItem.isSynchro) {
           cpvs.push({
             code: cpvItem.code,
             name: cpvItem.name.trim(),
             origineType: 1
-          });
+          })
         }
         if (cpvItem.isManual) {
           cpvs.push({
@@ -840,32 +839,32 @@ export default {
             name: cpvItem.name.trim(),
             origineType: 2,
             rating: cpvItem.rating
-          });
+          })
         }
         if (cpvItem.isDelete) {
           cpvs.push({
             code: cpvItem.code,
             name: cpvItem.name.trim(),
             origineType: -1
-          });
+          })
         }
       }
-      this.organization.cpvs = cpvs;
+      this.organization.cpvs = cpvs
       this.$api
-        .post("/Organization/AddUpdate", { organization: this.organization })
+        .post('/Organization/AddUpdate', { organization: this.organization })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadOrganizations();
-          this.dialogOrganization = false;
+          this.loadOrganizations()
+          this.dialogOrganization = false
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     }
   }
-};
+}
 </script>
 
 <style>

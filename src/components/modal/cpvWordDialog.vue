@@ -55,62 +55,64 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import moment from "moment";
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
-  name: "CpvWordDialog",
+  name: 'CpvWordDialog',
 
   data: () => ({
     moment,
     isShowDialog: false,
     cpvWord: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
-    ...mapGetters(["getIsMobile"])
+    ...mapGetters([
+      'getIsMobile',
+    ])
   },
 
   methods: {
     show(cpvWord) {
-      this.cpvWord = cpvWord;
-      this.isShowDialog = true;
+      this.cpvWord = cpvWord
+      this.isShowDialog = true
       if (!cpvWord || !cpvWord.cpvWordId || cpvWord.cpvWordId === 0) {
         if (!cpvWord) {
-          this.cpvWord = {};
+          this.cpvWord = {}
         }
-        return;
+        return
       }
-      this.load();
+      this.load()
     },
 
     async load() {
       try {
-        const res = await this.$api.post("Cpv/CpvWord", {
+        const res = await this.$api.post('Cpv/CpvWord', {
           cpvWordId: this.cpvWord.cpvWordId
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.cpvWord = res.data;
+        this.cpvWord = res.data
       } catch (err) {
-        this.$api.error(err, this);
+        this.$api.error(err, this)
       }
     },
 
     async addUpdate() {
       try {
-        const res = await this.$api.post("/cpv/CpvWordAddUpdate", {
+        const res = await this.$api.post('/cpv/CpvWordAddUpdate', {
           cpvWord: this.cpvWord
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.isShowDialog = false;
-        this.$emit("ModalUpdate");
+        this.isShowDialog = false
+        this.$emit('ModalUpdate')
       } catch (err) {
-        this.$api.error(err, this);
+        this.$api.error(err, this)
       }
     }
   }
