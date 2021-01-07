@@ -136,6 +136,10 @@ export class TextractPipelineStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
+    const zipExtractionQueue = new sqs.Queue(this, 'zipExtractionQueue', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    })
+
 
 
     //Trigger
@@ -270,6 +274,7 @@ export class TextractPipelineStack extends cdk.Stack {
     pdftoimgQueue.grantSendMessages(documentProcessor)
     htmltoboundingboxQueue.grantSendMessages(documentProcessor)
     pdfToBoundingBoxAndTextQueue.grantSendMessages(documentProcessor)
+    zipExtractionQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -511,6 +516,32 @@ export class TextractPipelineStack extends cdk.Stack {
     pdfGenerator.grantInvoke(syncProcessor)
     pdfGenerator.grantInvoke(asyncProcessor)
     */
+
+    // Zip extraction lambda
+    const zipExtraction = new lambda.Function(this, 'zipExtraction', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('../lambda/function/zipExtraction'),
+      handler: 'lambda_function.lambda_handler',
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 1280,
+      environment: {
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+      }
+    });
+
+    zipExtraction.addLayers(pythonModulesLayer);
+    zipExtraction.addLayers(helperLayer);
+    zipExtraction.addEventSource(new SqsEventSource(zipExtractionQueue, {
+      batchSize: 1
+    }));
+    // Permissions
+    zipExtractionQueue.grantSendMessages(zipExtraction)
+    contentBucket.grantRead(zipExtraction)
+    existingContentBucket.grantReadWrite(zipExtraction)
+    outputBucket.grantReadWrite(zipExtraction)
 
     // Async Job Processor (Start jobs using Async APIs)
     const pdfToBoundingBox = new lambda.Function(this, 'PdfToBboxAndText', {

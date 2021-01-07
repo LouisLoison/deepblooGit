@@ -1,0 +1,2371 @@
+Resources:
+  JobCompletionF65D4017:
+    Type: AWS::SNS::Topic
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobCompletion/Resource
+  TextractServiceRole720C3B18:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: textract.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TextractServiceRole/Resource
+  TextractServiceRoleDefaultPolicy636FAA3E:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: sns:Publish
+            Effect: Allow
+            Resource:
+              Ref: JobCompletionF65D4017
+        Version: "2012-10-17"
+      PolicyName: TextractServiceRoleDefaultPolicy636FAA3E
+      Roles:
+        - Ref: TextractServiceRole720C3B18
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TextractServiceRole/DefaultPolicy/Resource
+  S3BatchOperationsRole79F42304:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: batchoperations.s3.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3BatchOperationsRole/Resource
+  S3BatchOperationsRoleDefaultPolicy55D2AE09:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - InventoryAndLogsBucketB5DF1E2C
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - InventoryAndLogsBucketB5DF1E2C
+                        - Arn
+                    - /*
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - S3BatchProcessor6C619AEA
+                - Arn
+          - Action: lambda:*
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: S3BatchOperationsRoleDefaultPolicy55D2AE09
+      Roles:
+        - Ref: S3BatchOperationsRole79F42304
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3BatchOperationsRole/DefaultPolicy/Resource
+  DocumentsBucket9EC9DEB9:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/DocumentsBucket/Resource
+  DocumentsBucketNotifications871115F2:
+    Type: Custom::S3BucketNotifications
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691
+          - Arn
+      BucketName:
+        Ref: DocumentsBucket9EC9DEB9
+      NotificationConfiguration:
+        LambdaFunctionConfigurations:
+          - Events:
+              - s3:ObjectCreated:*
+            Filter:
+              Key:
+                FilterRules:
+                  - Name: prefix
+                    Value: tenders/
+            LambdaFunctionArn:
+              Fn::GetAtt:
+                - S3ProcessorF0626C49
+                - Arn
+    DependsOn:
+      - DocumentsBucketAllowBucketNotificationsToTextractPipelineStackS3Processor64034F9FD5954400
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/DocumentsBucket/Notifications/Resource
+  DocumentsBucketAllowBucketNotificationsToTextractPipelineStackS3Processor64034F9FD5954400:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - S3ProcessorF0626C49
+          - Arn
+      Principal: s3.amazonaws.com
+      SourceAccount: "669031476932"
+      SourceArn:
+        Fn::GetAtt:
+          - DocumentsBucket9EC9DEB9
+          - Arn
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/DocumentsBucket/AllowBucketNotificationsToTextractPipelineStackS3Processor64034F9F
+  OutputBucket7114EB27:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/OutputBucket/Resource
+  ExistingDocumentsBucket90147676:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ExistingDocumentsBucket/Resource
+  InventoryAndLogsBucketB5DF1E2C:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/InventoryAndLogsBucket/Resource
+  OutputTable875D8E18:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: documentId
+          KeyType: HASH
+        - AttributeName: outputType
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: documentId
+          AttributeType: S
+        - AttributeName: outputType
+          AttributeType: S
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/OutputTable/Resource
+  DocumentsTable7E808EE5:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: documentId
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: documentId
+          AttributeType: S
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/DocumentsTable/Resource
+  DLQ581697C4:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 30
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/DLQ/Resource
+  SyncJobs0FE0C444:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 30
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/SyncJobs/Resource
+  AsyncJobsE9347181:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/AsyncJobs/Resource
+  JobResults39F5168E:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 900
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResults/Resource
+  JobResultsPolicy26D354DC:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: sqs:SendMessage
+            Condition:
+              ArnEquals:
+                aws:SourceArn:
+                  Ref: JobCompletionF65D4017
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Resource:
+              Fn::GetAtt:
+                - JobResults39F5168E
+                - Arn
+        Version: "2012-10-17"
+      Queues:
+        - Ref: JobResults39F5168E
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResults/Policy/Resource
+  JobResultsTextractPipelineStackJobCompletion9BDE34E4A63AFCA3:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: sqs
+      TopicArn:
+        Ref: JobCompletionF65D4017
+      Endpoint:
+        Fn::GetAtt:
+          - JobResults39F5168E
+          - Arn
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResults/TextractPipelineStackJobCompletion9BDE34E4/Resource
+  ElasticIndexDocumentDA81CE12:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ElasticIndexDocument/Resource
+  PdfToImgA7039066:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToImg/Resource
+  HtmlToBoundingBoxQueue90F88899:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HtmlToBoundingBoxQueue/Resource
+  PdfToBoundingBoxAndTextQueue88E72AC0:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToBoundingBoxAndTextQueue/Resource
+  zipExtractionQueue32EED5D9:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+            - DLQ581697C4
+            - Arn
+        maxReceiveCount: 50
+      VisibilityTimeout: 60
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/zipExtractionQueue/Resource
+  HelperLayer49ADCD6B:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeS3BucketFF9AA894
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeS3VersionKeyF8E0B59A
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeS3VersionKeyF8E0B59A
+      CompatibleRuntimes:
+        - python3.8
+      Description: Helper layer.
+      LicenseInfo: Apache-2.0
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HelperLayer/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/layer/helper
+      aws:asset:property: Content
+  TextractorAF6C0D19:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebS3Bucket7C97087A
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebS3VersionKey47E8C3F7
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebS3VersionKey47E8C3F7
+      CompatibleRuntimes:
+        - python3.8
+      Description: Textractor layer.
+      LicenseInfo: Apache-2.0
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/Textractor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/layer/textractor
+      aws:asset:property: Content
+  PythonModulesB348BFA8:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fS3BucketFB1CFDA7
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fS3VersionKey1EB1241A
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fS3VersionKey1EB1241A
+      CompatibleRuntimes:
+        - python3.8
+      Description: Pipenv-installed pypi modules layer.
+      LicenseInfo: Apache-2.0, MIT
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PythonModules/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/layer/pipenv
+      aws:asset:property: Content
+  NodeModules80884104:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249S3BucketC7AC0BC1
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249S3VersionKey7970993E
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249S3VersionKey7970993E
+      CompatibleRuntimes:
+        - nodejs12.x
+      Description: Old backend and dependencies layer.
+      LicenseInfo: Apache-2.0, MIT
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/NodeModules/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/layer/npm
+      aws:asset:property: Content
+  S3ProcessorServiceRoleB05FBD69:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3Processor/ServiceRole/Resource
+  S3ProcessorServiceRoleDefaultPolicyDB165203:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - SyncJobs0FE0C444
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - AsyncJobsE9347181
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - PdfToImgA7039066
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: S3ProcessorServiceRoleDefaultPolicyDB165203
+      Roles:
+        - Ref: S3ProcessorServiceRoleB05FBD69
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3Processor/ServiceRole/DefaultPolicy/Resource
+  S3ProcessorF0626C49:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08S3Bucket5514AEB8
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08S3VersionKey56E0D201
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08S3VersionKey56E0D201
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - S3ProcessorServiceRoleB05FBD69
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          SYNC_QUEUE_URL:
+            Ref: SyncJobs0FE0C444
+          ASYNC_QUEUE_URL:
+            Ref: AsyncJobsE9347181
+          PDFTOIMG_QUEUE_URL:
+            Ref: PdfToImgA7039066
+          DOCUMENTS_TABLE:
+            Ref: DocumentsTable7E808EE5
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+    DependsOn:
+      - S3ProcessorServiceRoleDefaultPolicyDB165203
+      - S3ProcessorServiceRoleB05FBD69
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3Processor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/s3processor
+      aws:asset:property: Code
+  BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource
+  BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: s3:PutBucketNotification
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36
+      Roles:
+        - Ref: BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource
+  BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)
+      Code:
+        ZipFile: >-
+          exports.handler = (event, context) => {
+              // eslint-disable-next-line @typescript-eslint/no-require-imports, import/no-extraneous-dependencies
+              const s3 = new (require('aws-sdk').S3)();
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const https = require('https');
+              // eslint-disable-next-line @typescript-eslint/no-require-imports
+              const url = require('url');
+              log(JSON.stringify(event, undefined, 2));
+              const props = event.ResourceProperties;
+              if (event.RequestType === 'Delete') {
+                  props.NotificationConfiguration = {}; // this is how you clean out notifications
+              }
+              const req = {
+                  Bucket: props.BucketName,
+                  NotificationConfiguration: props.NotificationConfiguration,
+              };
+              return s3.putBucketNotificationConfiguration(req, (err, data) => {
+                  log({ err, data });
+                  if (err) {
+                      return submitResponse('FAILED', err.message + `\nMore information in CloudWatch Log Stream: ${context.logStreamName}`);
+                  }
+                  else {
+                      return submitResponse('SUCCESS');
+                  }
+              });
+              function log(obj) {
+                  console.error(event.RequestId, event.StackId, event.LogicalResourceId, obj);
+              }
+              // eslint-disable-next-line max-len
+              // adapted from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-cfnresponsemodule
+              // to allow sending an error messge as a reason.
+              function submitResponse(responseStatus, reason) {
+                  const responseBody = JSON.stringify({
+                      Status: responseStatus,
+                      Reason: reason || 'See the details in CloudWatch Log Stream: ' + context.logStreamName,
+                      PhysicalResourceId: event.PhysicalResourceId || event.LogicalResourceId,
+                      StackId: event.StackId,
+                      RequestId: event.RequestId,
+                      LogicalResourceId: event.LogicalResourceId,
+                      NoEcho: false,
+                  });
+                  log({ responseBody });
+                  const parsedUrl = url.parse(event.ResponseURL);
+                  const options = {
+                      hostname: parsedUrl.hostname,
+                      port: 443,
+                      path: parsedUrl.path,
+                      method: 'PUT',
+                      headers: {
+                          'content-type': '',
+                          'content-length': responseBody.length,
+                      },
+                  };
+                  const request = https.request(options, (r) => {
+                      log({ statusCode: r.statusCode, statusMessage: r.statusMessage });
+                      context.done();
+                  });
+                  request.on('error', (error) => {
+                      log({ sendError: error });
+                      context.done();
+                  });
+                  request.write(responseBody);
+                  request.end();
+              }
+          };
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
+          - Arn
+      Runtime: nodejs10.x
+      Timeout: 300
+    DependsOn:
+      - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36
+      - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource
+  S3BatchProcessorServiceRoleD6C72F8A:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3BatchProcessor/ServiceRole/Resource
+  S3BatchProcessorServiceRoleDefaultPolicyB97F9E74:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: S3BatchProcessorServiceRoleDefaultPolicyB97F9E74
+      Roles:
+        - Ref: S3BatchProcessorServiceRoleD6C72F8A
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3BatchProcessor/ServiceRole/DefaultPolicy/Resource
+  S3BatchProcessor6C619AEA:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10S3Bucket6DAD3BAE
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10S3VersionKeyFFBDDE7B
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10S3VersionKeyFFBDDE7B
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - S3BatchProcessorServiceRoleD6C72F8A
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          DOCUMENTS_TABLE:
+            Ref: DocumentsTable7E808EE5
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+      ReservedConcurrentExecutions: 1
+    DependsOn:
+      - S3BatchProcessorServiceRoleDefaultPolicyB97F9E74
+      - S3BatchProcessorServiceRoleD6C72F8A
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/S3BatchProcessor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/s3batchprocessor
+      aws:asset:property: Code
+  TaskProcessorServiceRoleB5CA2A12:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TaskProcessor/ServiceRole/Resource
+  TaskProcessorServiceRoleDefaultPolicy877E187E:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: dynamodb:ListStreams
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - dynamodb:DescribeStream
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - DocumentsTable7E808EE5
+                - StreamArn
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - SyncJobs0FE0C444
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - AsyncJobsE9347181
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - PdfToImgA7039066
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - HtmlToBoundingBoxQueue90F88899
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - PdfToBoundingBoxAndTextQueue88E72AC0
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - zipExtractionQueue32EED5D9
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: TaskProcessorServiceRoleDefaultPolicy877E187E
+      Roles:
+        - Ref: TaskProcessorServiceRoleB5CA2A12
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TaskProcessor/ServiceRole/DefaultPolicy/Resource
+  TaskProcessor26BEA722:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeS3BucketB7997129
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeS3VersionKeyD3A3F003
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeS3VersionKeyD3A3F003
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - TaskProcessorServiceRoleB5CA2A12
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          PDFTOIMG_QUEUE_URL:
+            Ref: PdfToImgA7039066
+          SYNC_QUEUE_URL:
+            Ref: SyncJobs0FE0C444
+          ASYNC_QUEUE_URL:
+            Ref: AsyncJobsE9347181
+          HTMLTOBOUNDINGBOX_QUEUE_URL:
+            Ref: HtmlToBoundingBoxQueue90F88899
+          PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL:
+            Ref: PdfToBoundingBoxAndTextQueue88E72AC0
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+    DependsOn:
+      - TaskProcessorServiceRoleDefaultPolicy877E187E
+      - TaskProcessorServiceRoleB5CA2A12
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TaskProcessor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/documentprocessor
+      aws:asset:property: Code
+  TaskProcessorDynamoDBEventSourceTextractPipelineStackDocumentsTable2054137D3E69E9E2:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - DocumentsTable7E808EE5
+          - StreamArn
+      FunctionName:
+        Ref: TaskProcessor26BEA722
+      BatchSize: 100
+      StartingPosition: TRIM_HORIZON
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/TaskProcessor/DynamoDBEventSource:TextractPipelineStackDocumentsTable2054137D/Resource
+  SyncProcessorServiceRoleA3A4164E:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/SyncProcessor/ServiceRole/Resource
+  SyncProcessorServiceRoleDefaultPolicy47FE5EFC:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - SyncJobs0FE0C444
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputTable875D8E18
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action: textract:*
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: SyncProcessorServiceRoleDefaultPolicy47FE5EFC
+      Roles:
+        - Ref: SyncProcessorServiceRoleA3A4164E
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/SyncProcessor/ServiceRole/DefaultPolicy/Resource
+  SyncProcessorA0819FA5:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcS3Bucket0855EECE
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcS3VersionKeyAA39A5C1
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcS3VersionKeyAA39A5C1
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - SyncProcessorServiceRoleA3A4164E
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          DOCUMENTS_TABLE:
+            Ref: DocumentsTable7E808EE5
+          AWS_DATA_PATH: models
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+        - Ref: TextractorAF6C0D19
+      ReservedConcurrentExecutions: 1
+      Timeout: 25
+    DependsOn:
+      - SyncProcessorServiceRoleDefaultPolicy47FE5EFC
+      - SyncProcessorServiceRoleA3A4164E
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/SyncProcessor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/syncprocessor
+      aws:asset:property: Code
+  SyncProcessorSqsEventSourceTextractPipelineStackSyncJobsF8FC7C337518D58C:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - SyncJobs0FE0C444
+          - Arn
+      FunctionName:
+        Ref: SyncProcessorA0819FA5
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/SyncProcessor/SqsEventSource:TextractPipelineStackSyncJobsF8FC7C33/Resource
+  ASyncProcessorServiceRoleB60BB53C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ASyncProcessor/ServiceRole/Resource
+  ASyncProcessorServiceRoleDefaultPolicyC603F804:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - AsyncJobsE9347181
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action: iam:PassRole
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - TextractServiceRole720C3B18
+                - Arn
+          - Action: textract:*
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: ASyncProcessorServiceRoleDefaultPolicyC603F804
+      Roles:
+        - Ref: ASyncProcessorServiceRoleB60BB53C
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ASyncProcessor/ServiceRole/DefaultPolicy/Resource
+  ASyncProcessorD1027704:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9S3BucketE30CB8C3
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9S3VersionKey0257A878
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9S3VersionKey0257A878
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - ASyncProcessorServiceRoleB60BB53C
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          ASYNC_QUEUE_URL:
+            Ref: AsyncJobsE9347181
+          SNS_TOPIC_ARN:
+            Ref: JobCompletionF65D4017
+          SNS_ROLE_ARN:
+            Fn::GetAtt:
+              - TextractServiceRole720C3B18
+              - Arn
+          AWS_DATA_PATH: models
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+      MemorySize: 128
+      ReservedConcurrentExecutions: 1
+      Timeout: 50
+    DependsOn:
+      - ASyncProcessorServiceRoleDefaultPolicyC603F804
+      - ASyncProcessorServiceRoleB60BB53C
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ASyncProcessor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/asyncprocessor
+      aws:asset:property: Code
+  ASyncProcessorSqsEventSourceTextractPipelineStackAsyncJobs5FE1C561E29D4AB2:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - AsyncJobsE9347181
+          - Arn
+      FunctionName:
+        Ref: ASyncProcessorD1027704
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/ASyncProcessor/SqsEventSource:TextractPipelineStackAsyncJobs5FE1C561/Resource
+  JobResultProcessorServiceRole836B07ED:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResultProcessor/ServiceRole/Resource
+  JobResultProcessorServiceRoleDefaultPolicyD51ACD91:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - JobResults39F5168E
+                - Arn
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputTable875D8E18
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ElasticIndexDocumentDA81CE12
+                - Arn
+          - Action: textract:*
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: JobResultProcessorServiceRoleDefaultPolicyD51ACD91
+      Roles:
+        - Ref: JobResultProcessorServiceRole836B07ED
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResultProcessor/ServiceRole/DefaultPolicy/Resource
+  JobResultProcessorAD5D1803:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdS3Bucket15996EBB
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdS3VersionKey3478155B
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdS3VersionKey3478155B
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - JobResultProcessorServiceRole836B07ED
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          ELASTIC_QUEUE_URL:
+            Ref: ElasticIndexDocumentDA81CE12
+          OUTPUT_BUCKET:
+            Ref: OutputBucket7114EB27
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          DOCUMENTS_TABLE:
+            Ref: DocumentsTable7E808EE5
+          AWS_DATA_PATH: models
+      Layers:
+        - Ref: HelperLayer49ADCD6B
+        - Ref: TextractorAF6C0D19
+      MemorySize: 1500
+      ReservedConcurrentExecutions: 20
+      Timeout: 900
+    DependsOn:
+      - JobResultProcessorServiceRoleDefaultPolicyD51ACD91
+      - JobResultProcessorServiceRole836B07ED
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResultProcessor/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/jobresultprocessor
+      aws:asset:property: Code
+  JobResultProcessorSqsEventSourceTextractPipelineStackJobResults918E724899ECE5BE:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - JobResults39F5168E
+          - Arn
+      FunctionName:
+        Ref: JobResultProcessorAD5D1803
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/JobResultProcessor/SqsEventSource:TextractPipelineStackJobResults918E7248/Resource
+  AppsearchIndexerServiceRoleBFF12EC6:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/AppsearchIndexer/ServiceRole/Resource
+  AppsearchIndexerServiceRoleDefaultPolicy0889C40B:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ElasticIndexDocumentDA81CE12
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: AppsearchIndexerServiceRoleDefaultPolicy0889C40B
+      Roles:
+        - Ref: AppsearchIndexerServiceRoleBFF12EC6
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/AppsearchIndexer/ServiceRole/DefaultPolicy/Resource
+  AppsearchIndexer6D8A1A84:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3S3BucketE1AC82BD
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3S3VersionKeyD5BC12E3
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3S3VersionKeyD5BC12E3
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+          - AppsearchIndexerServiceRoleBFF12EC6
+          - Arn
+      Runtime: nodejs12.x
+      Layers:
+        - Ref: NodeModules80884104
+      MemorySize: 1500
+      ReservedConcurrentExecutions: 20
+      Timeout: 50
+    DependsOn:
+      - AppsearchIndexerServiceRoleDefaultPolicy0889C40B
+      - AppsearchIndexerServiceRoleBFF12EC6
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/AppsearchIndexer/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/appsearchindexer
+      aws:asset:property: Code
+  AppsearchIndexerSqsEventSourceTextractPipelineStackElasticIndexDocumentA821B5C34AE2A653:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - ElasticIndexDocumentDA81CE12
+          - Arn
+      FunctionName:
+        Ref: AppsearchIndexer6D8A1A84
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/AppsearchIndexer/SqsEventSource:TextractPipelineStackElasticIndexDocumentA821B5C3/Resource
+  Pdf2ImgServiceRole31A2667C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/Pdf2Img/ServiceRole/Resource
+  Pdf2ImgServiceRoleDefaultPolicy62CC65C5:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - SyncJobs0FE0C444
+                - Arn
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputTable875D8E18
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsTable7E808EE5
+                  - Arn
+              - Ref: AWS::NoValue
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: Pdf2ImgServiceRoleDefaultPolicy62CC65C5
+      Roles:
+        - Ref: Pdf2ImgServiceRole31A2667C
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/Pdf2Img/ServiceRole/DefaultPolicy/Resource
+  Pdf2Img2931118C:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157S3Bucket33A255BF
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157S3VersionKeyCB11BDBD
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157S3VersionKeyCB11BDBD
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - Pdf2ImgServiceRole31A2667C
+          - Arn
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          PDFTOIMG_QUEUE_URL:
+            Ref: PdfToImgA7039066
+          OUTPUT_BUCKET:
+            Ref: OutputBucket7114EB27
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          DOCUMENTS_TABLE:
+            Ref: DocumentsTable7E808EE5
+      Layers:
+        - Ref: NodeModules80884104
+      MemorySize: 1500
+      ReservedConcurrentExecutions: 20
+      Timeout: 30
+    DependsOn:
+      - Pdf2ImgServiceRoleDefaultPolicy62CC65C5
+      - Pdf2ImgServiceRole31A2667C
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/Pdf2Img/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/pdftoimg
+      aws:asset:property: Code
+  Pdf2ImgSqsEventSourceTextractPipelineStackSyncJobsF8FC7C3304816852:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - SyncJobs0FE0C444
+          - Arn
+      FunctionName:
+        Ref: Pdf2Img2931118C
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/Pdf2Img/SqsEventSource:TextractPipelineStackSyncJobsF8FC7C33/Resource
+  HtmlToBoundingBoxServiceRole4CD62454:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HtmlToBoundingBox/ServiceRole/Resource
+  HtmlToBoundingBoxServiceRoleDefaultPolicy6C6B2BE3:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - HtmlToBoundingBoxQueue90F88899
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - PdfToBoundingBoxAndTextQueue88E72AC0
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: HtmlToBoundingBoxServiceRoleDefaultPolicy6C6B2BE3
+      Roles:
+        - Ref: HtmlToBoundingBoxServiceRole4CD62454
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HtmlToBoundingBox/ServiceRole/DefaultPolicy/Resource
+  HtmlToBoundingBoxC8C151B5:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963S3Bucket70FCF51A
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963S3VersionKeyC1A4B135
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963S3VersionKeyC1A4B135
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - HtmlToBoundingBoxServiceRole4CD62454
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          OUTPUT_BUCKET:
+            Ref: OutputBucket7114EB27
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL:
+            Ref: PdfToBoundingBoxAndTextQueue88E72AC0
+      Layers:
+        - Ref: PythonModulesB348BFA8
+        - Ref: HelperLayer49ADCD6B
+      MemorySize: 1280
+      ReservedConcurrentExecutions: 1
+      Timeout: 50
+    DependsOn:
+      - HtmlToBoundingBoxServiceRoleDefaultPolicy6C6B2BE3
+      - HtmlToBoundingBoxServiceRole4CD62454
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HtmlToBoundingBox/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/htmltoboundingbox
+      aws:asset:property: Code
+  HtmlToBoundingBoxSqsEventSourceTextractPipelineStackHtmlToBoundingBoxQueue64BABA3F33260615:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - HtmlToBoundingBoxQueue90F88899
+          - Arn
+      FunctionName:
+        Ref: HtmlToBoundingBoxC8C151B5
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/HtmlToBoundingBox/SqsEventSource:TextractPipelineStackHtmlToBoundingBoxQueue64BABA3F/Resource
+  zipExtractionServiceRole0B0DCE68:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/zipExtraction/ServiceRole/Resource
+  zipExtractionServiceRoleDefaultPolicy9DBC0803:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - zipExtractionQueue32EED5D9
+                - Arn
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - zipExtractionQueue32EED5D9
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+        Version: "2012-10-17"
+      PolicyName: zipExtractionServiceRoleDefaultPolicy9DBC0803
+      Roles:
+        - Ref: zipExtractionServiceRole0B0DCE68
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/zipExtraction/ServiceRole/DefaultPolicy/Resource
+  zipExtraction00EF288D:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5S3Bucket9E4E501B
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5S3VersionKey643EF94D
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5S3VersionKey643EF94D
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - zipExtractionServiceRole0B0DCE68
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          OUTPUT_BUCKET:
+            Ref: OutputBucket7114EB27
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          ELASTIC_QUEUE_URL:
+            Ref: ElasticIndexDocumentDA81CE12
+      Layers:
+        - Ref: PythonModulesB348BFA8
+        - Ref: HelperLayer49ADCD6B
+      MemorySize: 1280
+      ReservedConcurrentExecutions: 1
+      Timeout: 50
+    DependsOn:
+      - zipExtractionServiceRoleDefaultPolicy9DBC0803
+      - zipExtractionServiceRole0B0DCE68
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/zipExtraction/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/zipExtraction
+      aws:asset:property: Code
+  zipExtractionSqsEventSourceTextractPipelineStackzipExtractionQueue9674EE3F2F13E6F3:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - zipExtractionQueue32EED5D9
+          - Arn
+      FunctionName:
+        Ref: zipExtraction00EF288D
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/zipExtraction/SqsEventSource:TextractPipelineStackzipExtractionQueue9674EE3F/Resource
+  PdfToBboxAndTextServiceRoleB4159E50:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToBboxAndText/ServiceRole/Resource
+  PdfToBboxAndTextServiceRoleDefaultPolicyC9B0B36E:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - PdfToBoundingBoxAndTextQueue88E72AC0
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - DocumentsBucket9EC9DEB9
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - DocumentsBucket9EC9DEB9
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ExistingDocumentsBucket90147676
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ExistingDocumentsBucket90147676
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - OutputBucket7114EB27
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - OutputBucket7114EB27
+                        - Arn
+                    - /*
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ElasticIndexDocumentDA81CE12
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: PdfToBboxAndTextServiceRoleDefaultPolicyC9B0B36E
+      Roles:
+        - Ref: PdfToBboxAndTextServiceRoleB4159E50
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToBboxAndText/ServiceRole/DefaultPolicy/Resource
+  PdfToBboxAndText3DBD14BD:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bS3Bucket5DC2023B
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bS3VersionKeyC5C8C824
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bS3VersionKeyC5C8C824
+      Handler: lambda_function.lambda_handler
+      Role:
+        Fn::GetAtt:
+          - PdfToBboxAndTextServiceRoleB4159E50
+          - Arn
+      Runtime: python3.8
+      Environment:
+        Variables:
+          OUTPUT_BUCKET:
+            Ref: OutputBucket7114EB27
+          OUTPUT_TABLE:
+            Ref: OutputTable875D8E18
+          ELASTIC_QUEUE_URL:
+            Ref: ElasticIndexDocumentDA81CE12
+          TEXTRACT_ONLY: "false"
+          MIN_CHAR_NEEDED: "10"
+          EXTRACT_PDF_LINES: "true"
+      Layers:
+        - Ref: PythonModulesB348BFA8
+        - Ref: HelperLayer49ADCD6B
+      MemorySize: 1280
+      ReservedConcurrentExecutions: 1
+      Timeout: 50
+    DependsOn:
+      - PdfToBboxAndTextServiceRoleDefaultPolicyC9B0B36E
+      - PdfToBboxAndTextServiceRoleB4159E50
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToBboxAndText/Resource
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/pdftobboxtext
+      aws:asset:property: Code
+  PdfToBboxAndTextSqsEventSourceTextractPipelineStackPdfToBoundingBoxAndTextQueueB36C8DC9CF75D385:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn:
+        Fn::GetAtt:
+          - PdfToBoundingBoxAndTextQueue88E72AC0
+          - Arn
+      FunctionName:
+        Ref: PdfToBboxAndText3DBD14BD
+      BatchSize: 1
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/PdfToBboxAndText/SqsEventSource:TextractPipelineStackPdfToBoundingBoxAndTextQueueB36C8DC9/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=1.78.0,@aws-cdk/assets=1.80.0,@aws-cdk/aws-apigateway=1.80.0,@aws-cdk/aws-applicationautoscaling=1.80.0,@aws-cdk/aws-appsync=1.80.0,@aws-cdk/aws-autoscaling=1.80.0,@aws-cdk/aws-autoscaling-common=1.80.0,@aws-cdk/aws-autoscaling-hooktargets=1.80.0,@aws-cdk/aws-cloudwatch=1.80.0,@aws-cdk/aws-codebuild=1.80.0,@aws-cdk/aws-codeguruprofiler=1.80.0,@aws-cdk/aws-cognito=1.80.0,@aws-cdk/aws-dynamodb=1.80.0,@aws-cdk/aws-ec2=1.80.0,@aws-cdk/aws-ecr=1.80.0,@aws-cdk/aws-ecr-assets=1.80.0,@aws-cdk/aws-ecs=1.80.0,@aws-cdk/aws-elasticloadbalancingv2=1.80.0,@aws-cdk/aws-events=1.80.0,@aws-cdk/aws-iam=1.80.0,@aws-cdk/aws-kms=1.80.0,@aws-cdk/aws-lambda=1.80.0,@aws-cdk/aws-lambda-event-sources=1.80.0,@aws-cdk/aws-logs=1.80.0,@aws-cdk/aws-s3=1.80.0,@aws-cdk/aws-s3-assets=1.80.0,@aws-cdk/aws-s3-notifications=1.80.0,@aws-cdk/aws-sam=1.80.0,@aws-cdk/aws-secretsmanager=1.80.0,@aws-cdk/aws-servicediscovery=1.80.0,@aws-cdk/aws-sns=1.80.0,@aws-cdk/aws-sns-subscriptions=1.80.0,@aws-cdk/aws-sqs=1.80.0,@aws-cdk/aws-ssm=1.80.0,@aws-cdk/aws-stepfunctions=1.80.0,@aws-cdk/aws-stepfunctions-tasks=1.80.0,@aws-cdk/cloud-assembly-schema=1.80.0,@aws-cdk/core=1.80.0,@aws-cdk/custom-resources=1.80.0,@aws-cdk/cx-api=1.80.0,@aws-cdk/region-info=1.80.0,jsii-runtime=node.js/v12.18.2
+    Metadata:
+      aws:cdk:path: TextractPipelineStack/CDKMetadata/Default
+Outputs:
+  CONTENTBUCKET:
+    Value:
+      Fn::GetAtt:
+        - DocumentsBucket9EC9DEB9
+        - Arn
+  OUTPUTBUCKET:
+    Value:
+      Fn::GetAtt:
+        - OutputBucket7114EB27
+        - Arn
+Parameters:
+  AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeS3BucketFF9AA894:
+    Type: String
+    Description: S3 bucket for asset "f8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6ae"
+  AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeS3VersionKeyF8E0B59A:
+    Type: String
+    Description: S3 key for asset version "f8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6ae"
+  AssetParametersf8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6aeArtifactHashC2E4FCD9:
+    Type: String
+    Description: Artifact hash for asset "f8a78235147cb5f7c062ec8d4a8e132c78489639981f46559fd4c4758e45f6ae"
+  AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebS3Bucket7C97087A:
+    Type: String
+    Description: S3 bucket for asset "349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599beb"
+  AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebS3VersionKey47E8C3F7:
+    Type: String
+    Description: S3 key for asset version "349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599beb"
+  AssetParameters349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599bebArtifactHashC17910DD:
+    Type: String
+    Description: Artifact hash for asset "349d9bd70a97da3cd6f07aab16fb03d734b5c5bb56e4711a1f6c61a8f8599beb"
+  AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fS3BucketFB1CFDA7:
+    Type: String
+    Description: S3 bucket for asset "7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8f"
+  AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fS3VersionKey1EB1241A:
+    Type: String
+    Description: S3 key for asset version "7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8f"
+  AssetParameters7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8fArtifactHash65DFA0B5:
+    Type: String
+    Description: Artifact hash for asset "7111cd3ed6d68c6d73f983a2c7f73b36b9e2430395c3bbd507006e5ab502bf8f"
+  AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249S3BucketC7AC0BC1:
+    Type: String
+    Description: S3 bucket for asset "bafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249"
+  AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249S3VersionKey7970993E:
+    Type: String
+    Description: S3 key for asset version "bafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249"
+  AssetParametersbafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249ArtifactHash94A3F07B:
+    Type: String
+    Description: Artifact hash for asset "bafa93bdf869c3e15e70f625459024a36d019337a84f0cb4090f8e54579a5249"
+  AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08S3Bucket5514AEB8:
+    Type: String
+    Description: S3 bucket for asset "28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08"
+  AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08S3VersionKey56E0D201:
+    Type: String
+    Description: S3 key for asset version "28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08"
+  AssetParameters28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08ArtifactHash2F984470:
+    Type: String
+    Description: Artifact hash for asset "28bd635fcefcbe85ca0a95bc448cdf9930579bf24edce0fdc3e05336b46fdb08"
+  AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10S3Bucket6DAD3BAE:
+    Type: String
+    Description: S3 bucket for asset "4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10"
+  AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10S3VersionKeyFFBDDE7B:
+    Type: String
+    Description: S3 key for asset version "4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10"
+  AssetParameters4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10ArtifactHash6272C6BD:
+    Type: String
+    Description: Artifact hash for asset "4c3828afb32289c927c17033f714d980db484e0d88ead977bde6505e2c253e10"
+  AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeS3BucketB7997129:
+    Type: String
+    Description: S3 bucket for asset "136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fde"
+  AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeS3VersionKeyD3A3F003:
+    Type: String
+    Description: S3 key for asset version "136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fde"
+  AssetParameters136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fdeArtifactHashA7FA77B6:
+    Type: String
+    Description: Artifact hash for asset "136a4ec67dc2ce920b59f704f79fe2c0bc1b9d829cafc71829238a851ba00fde"
+  AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcS3Bucket0855EECE:
+    Type: String
+    Description: S3 bucket for asset "ff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bc"
+  AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcS3VersionKeyAA39A5C1:
+    Type: String
+    Description: S3 key for asset version "ff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bc"
+  AssetParametersff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bcArtifactHash355B2BA8:
+    Type: String
+    Description: Artifact hash for asset "ff4ac2d9be87ee91ced8075581b3a8cf93e57ac542ddf46b0e2d5ad2ab8b88bc"
+  AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9S3BucketE30CB8C3:
+    Type: String
+    Description: S3 bucket for asset "9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9"
+  AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9S3VersionKey0257A878:
+    Type: String
+    Description: S3 key for asset version "9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9"
+  AssetParameters9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9ArtifactHashE73A05D8:
+    Type: String
+    Description: Artifact hash for asset "9bfcf51d3a9e3a35f95eba9ce281570960f9bfece7f88aed0f3a05e7ed5289c9"
+  AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdS3Bucket15996EBB:
+    Type: String
+    Description: S3 bucket for asset "11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bd"
+  AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdS3VersionKey3478155B:
+    Type: String
+    Description: S3 key for asset version "11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bd"
+  AssetParameters11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bdArtifactHashF4A93079:
+    Type: String
+    Description: Artifact hash for asset "11de73a4f860f26a17f851a634552a603dc93d46ed7951a617547b0f9e7844bd"
+  AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3S3BucketE1AC82BD:
+    Type: String
+    Description: S3 bucket for asset "d2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3"
+  AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3S3VersionKeyD5BC12E3:
+    Type: String
+    Description: S3 key for asset version "d2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3"
+  AssetParametersd2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3ArtifactHashAA299947:
+    Type: String
+    Description: Artifact hash for asset "d2911f44c945894de741340ec61f1e83a0c709bf0e36b4abf8c2dab4aee9a4a3"
+  AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157S3Bucket33A255BF:
+    Type: String
+    Description: S3 bucket for asset "c1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157"
+  AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157S3VersionKeyCB11BDBD:
+    Type: String
+    Description: S3 key for asset version "c1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157"
+  AssetParametersc1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157ArtifactHash4939C069:
+    Type: String
+    Description: Artifact hash for asset "c1c4baf242e2d21cd0980f065e45977d21d67969d66c65b70eb86ad401bca157"
+  AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963S3Bucket70FCF51A:
+    Type: String
+    Description: S3 bucket for asset "4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963"
+  AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963S3VersionKeyC1A4B135:
+    Type: String
+    Description: S3 key for asset version "4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963"
+  AssetParameters4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963ArtifactHash75914DD0:
+    Type: String
+    Description: Artifact hash for asset "4d8254efe8a58a85586473d1c69b724c787d95d36852c16a8e7747611e1f5963"
+  AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5S3Bucket9E4E501B:
+    Type: String
+    Description: S3 bucket for asset "3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5"
+  AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5S3VersionKey643EF94D:
+    Type: String
+    Description: S3 key for asset version "3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5"
+  AssetParameters3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5ArtifactHash084E1E68:
+    Type: String
+    Description: Artifact hash for asset "3cf9940b47aafb3bf69a70eef873665266b610b7083f6180d3a0a882d12d69f5"
+  AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bS3Bucket5DC2023B:
+    Type: String
+    Description: S3 bucket for asset "b5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8b"
+  AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bS3VersionKeyC5C8C824:
+    Type: String
+    Description: S3 key for asset version "b5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8b"
+  AssetParametersb5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8bArtifactHash71B9C19A:
+    Type: String
+    Description: Artifact hash for asset "b5c73b23895759b871613ed1a74d399351a28f4dcb4f5d5aaa46c22984b21c8b"
+
