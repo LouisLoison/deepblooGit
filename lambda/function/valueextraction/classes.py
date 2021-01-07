@@ -6,7 +6,7 @@ from xml.sax.expatreader import AttributesImpl
 from builtins import float
 
 
-class Quantity:
+class Metric:
     """Class for a quantity (e.g. 2.5 kW)
     
     Attributes
