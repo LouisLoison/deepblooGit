@@ -16,7 +16,7 @@ def send_to_pdf_to_bbox_lambda(aws_env: dict) -> None:
     json_message = {
         "bucketName": aws_env["outputBucket"],
         "objectName": aws_env["outputName"],
-        "documentId": aws_env["documentId"],
+        "documentUuid": aws_env["documentUuid"],
         "awsRegion": aws_env["awsRegion"]
     }
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
@@ -68,14 +68,15 @@ def lambda_handler(event, context):
     aws_region = 'eu-west-1'
     print("==> Event: {0}".format(json.dumps(event)))
     aws_env = {
-        "bucketName": body['bucketName'],
+        "bucketName": body['DOCUMENTS_BUCKET'],
         "objectName": body['objectName'],
-        "documentId": body['documentId'],
+        "documentUuid": body['documentUuid'],
         "awsRegion": aws_region,
         "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
-        "outputName": get_pdf_filename(body['objectName'], body['documentId'])
+        #"pdfToBboxQueueUrl": os.environ['PDFTOBOUNDINGBOXANDTEXT_QUEUE_URL'],
+        "outputName": get_pdf_filename(body['objectName'], body['documentUuid'])
     }
+    print("==> Aws env: {0}".format(aws_env))
     status = {
         'statusCode': 200,
         'body': 'All right'
