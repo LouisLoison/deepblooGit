@@ -86,7 +86,6 @@ def write_extracted_zip(aws_env: dict, zip_tmp: str):
     output_bucket = aws_env['bucketName']
     output_folder = aws_env['outputName']
     aws_region = aws_env['aws_region']
-    s3_path = os.path.join(output_bucket, output_folder)
 
     print("Writing s3://{0}/{1} in {2}".format(output_bucket, output_folder,
                                                aws_region))
@@ -95,7 +94,7 @@ def write_extracted_zip(aws_env: dict, zip_tmp: str):
         for file in files:
             print("=> File: {0}".format(files))
             file_path = os.path.join(path, file)
-            s3_output_path = os.path.join(s3_path, file)
+            s3_output_path = os.path.join(output_folder, file)
             try:
                 with open(file_path, "r") as open_file:
                     content = open_file.read()
