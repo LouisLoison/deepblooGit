@@ -56,6 +56,10 @@ class Metric:
         self.unit = Unit(unit,entity,uri)
         self.surface = surface
         
+    def __str__(self):
+        unit_string = "Metric({}, {})\n".format(self.value, self.unit)
+        unit_string += "Surface: " + self.surface
+        
 class Unit:
     """Class to represent a unit
     
@@ -104,7 +108,9 @@ if __name__ == "__main__":
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
     
+    print(unit)
+    
     print("Test de classe Metric")
     metric = metric(25.4, "kilowatt", "power", "25kW")
-    print("")
+    print(metric)
     
