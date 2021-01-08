@@ -63,10 +63,18 @@
           </v-btn>
         </div>
         <div class="text-center display-1">
-          <v-icon v-if="annonce.status === 1" class="green--text"
-            >fa-check</v-icon
+          <v-icon
+            v-if="annonce.status === 1"
+            class="green--text"
           >
-          <v-icon v-else class="red--text">fa-ban</v-icon>
+            fa-check
+          </v-icon>
+          <v-icon
+            v-else
+            class="red--text"
+          >
+            fa-ban
+          </v-icon>
         </div>
         <div>
           <v-btn
@@ -93,14 +101,22 @@
       :hide-overlay="getIsMobile"
     >
       <v-card class="text-center">
-        <v-toolbar dark dense color="blue-grey lighten-4 black--text">
+        <v-toolbar
+          dark
+          dense
+          color="blue-grey lighten-4 black--text"
+        >
           <div class="title">
             <span v-if="!annonceDialog.annonceId">New annonce</span>
             <span v-else>Annonce #{{ annonceDialog.annonceId }}</span>
           </div>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn icon light @click="annonceDialog = false">
+            <v-btn
+              icon
+              light
+              @click="annonceDialog = false"
+            >
               <v-icon color="grey darken-2" style="font-size: 30px;">
                 fa-times
               </v-icon>
@@ -109,7 +125,11 @@
         </v-toolbar>
 
         <v-card-text v-if="annonceDialog">
-          <v-form v-model="annonceValid" ref="annonceForm" lazy-validation>
+          <v-form
+            v-model="annonceValid"
+            ref="annonceForm"
+            lazy-validation
+          >
             <v-layout row wrap>
               <v-flex xs12 class="text-xs-right">
                 Status
@@ -212,16 +232,18 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["getIsMobile"]),
+    ...mapGetters([
+      'getIsMobile',
+    ]),
 
     getAnnonces() {
-      let annonces = this.dataAnnonces.data;
+      let annonces = this.dataAnnonces.data
       if (this.filterLabel && this.filterLabel.trim() !== "") {
         annonces = annonces.filter(a =>
           a.label.toUpperCase().includes(this.filterLabel.toUpperCase())
-        );
+        )
       }
-      return annonces;
+      return annonces
     }
   },
 
@@ -232,30 +254,30 @@ export default {
         !this.annonceDialog.words.find(
           a => a && v && a.toUpperCase() === v.toUpperCase().trim()
         ) || "Word already exist"
-    ];
-    this.loadAnnonces();
+    ]
+    this.loadAnnonces()
   },
 
   methods: {
     async loadAnnonces() {
       try {
-        this.dataAnnonces.loading = 0;
-        const res = await this.$api.post("/Annonce/List");
+        this.dataAnnonces.loading = 0
+        const res = await this.$api.post("/Annonce/List")
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.dataAnnonces.data = res.data;
-        this.dataAnnonces.loading = 1;
+        this.dataAnnonces.data = res.data
+        this.dataAnnonces.loading = 1
       } catch (err) {
-        this.dataAnnonces.loading = -1;
-        this.$api.error(err, this);
+        this.dataAnnonces.loading = -1
+        this.$api.error(err, this)
       }
     },
 
     openAnnonceDialog(annonce) {
-      this.annonceDialog = null;
+      this.annonceDialog = null
       if (annonce) {
-        this.annonceDialog = JSON.parse(JSON.stringify(annonce));
+        this.annonceDialog = JSON.parse(JSON.stringify(annonce))
       } else {
         this.annonceDialog = {
           title: ``,
@@ -264,49 +286,49 @@ export default {
           url: ``,
           priority: 0,
           status: 1,
-          creationDate: new Date()
-        };
+          creationDate: new Date(),
+        }
       }
-      this.isAnnonceDialog = true;
+      this.isAnnonceDialog = true
       Vue.nextTick(() => {
-        this.$refs.annonceForm.resetValidation();
-      });
+        this.$refs.annonceForm.resetValidation()
+      })
     },
 
     updateAnnonceDialog() {
-      this.dataAnnonces.loading = 0;
-      this.annonceDialog.updateDate = new Date();
+      this.dataAnnonces.loading = 0
+      this.annonceDialog.updateDate = new Date()
       this.$api
         .post("/Annonce/AddUpdate", { annonce: this.annonceDialog })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadAnnonces();
-          this.isAnnonceDialog = false;
+          this.loadAnnonces()
+          this.isAnnonceDialog = false
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     },
 
     deleteAnnonce(annonce) {
-      this.dataAnnonces.loading = 0;
+      this.dataAnnonces.loading = 0
       this.$api
         .post("/Annonce/Remove", { annonceId: annonce.annonceId })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadAnnonces();
-          this.isAnnonceDialog = false;
+          this.loadAnnonces()
+          this.isAnnonceDialog = false
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     }
   }
-};
+}
 </script>
 
 <style>
