@@ -14,14 +14,14 @@ class Metric:
     Attributes
     ----------
     value : float
-        value of the quantity
+        value of the metric
         
-    unit : str
-        unit of the quantity
+    unit : Unit
+        unit of the metric
         
-    entity : str
-        Entity represented by the unit (e.g. energy potential,
-        currency...)
+    surface : str
+        String that represents how the metric was written 
+        in the text it was taken from
         
     uri : str
         WikiPedia URI
@@ -31,28 +31,30 @@ class Metric:
     
     """
     
-    def __init__(self, value, unit, entity, uri=None):
+    def __init__(self, value, unit, entity, surface, uri=""):
         """
         Parameters
         ----------
         value : float
-            value of the quantity
+            value of the metric
         
         unit : str
-            unit of the quantity
+            name of the unit used for that metric
         
         entity : str
             Entity represented by the unit (e.g. energy potential,
             currency...)
+            
+        surface: str
+            String that represents how the metric was written 
+        in the text it was taken from
         
         uri : str, optional
             WikiPedia URI
         """
         self.value = value
-        self.unit = unit
-        self.entity = entity
-        self.uri = uri
-        self.surface = None
+        self.unit = Unit(unit,entity,uri)
+        self.surface = surface
         
 class Unit:
     """Class to represent a unit
@@ -78,6 +80,7 @@ class Unit:
     
     
 if __name__ == "__main__":
+    print("Test de la classe Unit")
     unit = Unit("kilowatt", "power")
     print("Unit:",unit.name)
     print("Entity:", unit.entity)
