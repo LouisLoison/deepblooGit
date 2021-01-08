@@ -215,7 +215,7 @@ export class ImportsStepsStack extends Stack {
 
     const stepHtmlToPdf = new Function(this, 'HtmlToPdf', {
       runtime: Runtime.PYTHON_3_8,
-      code: new AssetCode('../lambda/function/htmltoboundingbox'),
+      code: new AssetCode('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
       reservedConcurrentExecutions: 40,

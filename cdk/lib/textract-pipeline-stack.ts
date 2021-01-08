@@ -476,7 +476,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Job Processor (Start jobs using Async APIs)
     const htmlToBoundingBox = new lambda.Function(this, 'HtmlToBoundingBox', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('../lambda/function/htmltoboundingbox'),
+      code: lambda.Code.asset('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),

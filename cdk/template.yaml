@@ -988,7 +988,7 @@ Resources:
       - HtmlToPdfServiceRoleAAEF8033
     Metadata:
       aws:cdk:path: StepsStackDevelop/HtmlToPdf/Resource
-      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/htmltoboundingbox
+      aws:asset:path: /Users/valentin/delivery/deepbloo/deepbloo-document-process/lambda/function/htmltopdf
       aws:asset:property: Code
   ZipExtractionServiceRole2ECECD07:
     Type: AWS::IAM::Role
