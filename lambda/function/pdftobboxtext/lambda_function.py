@@ -116,6 +116,7 @@ def lambda_handler(event, context):
         "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
     }
+    print("==> Aws env: {0}".format(json.dumps(aws_env)))
     status = {
         'statusCode': 200,
         'body': 'All right'
