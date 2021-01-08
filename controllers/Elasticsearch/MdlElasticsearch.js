@@ -159,7 +159,6 @@ exports.tendersFormat = (tenders) => {
   })
 }
 
-
 // Import tender into elastic search
 exports.tendersImport = (tendersNumberMax = 100) => {
   return new Promise(async (resolve, reject) => {
