@@ -72,6 +72,16 @@ class Unit:
     """
     
     def __init__(self,name,entity,uri=""):
+        """
+        Parameters
+        ----------
+        name: str
+            unit name (eg. kilowatt)
+        entity: str
+            entity represented by the unit (eg. power, current)
+        uri: str, optional
+            WikiPedia URI
+        """
         self.name = name
         self.entity = entity
         self.ref_unit = unit_references[unit_references.entity == entity]["unit"][0]
