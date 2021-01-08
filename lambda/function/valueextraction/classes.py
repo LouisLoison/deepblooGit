@@ -87,6 +87,14 @@ class Unit:
         self.ref_unit = unit_references[unit_references.entity == entity]["unit"][0]
         self.uri = uri
         
+    def __str__(self):
+        unit_string = "{}\n".format(self.name)
+        unit_string += "Entity: {}\n".format(self.entity)
+        unit_string += "Reference unit: {}n".format(self.ref_unit)
+        unit_string += "Wikipedia URI: {}\n".format(self.uri)
+        
+        return unit_string
+        
     
     
 if __name__ == "__main__":
@@ -95,4 +103,8 @@ if __name__ == "__main__":
     print("Unit:",unit.name)
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
+    
+    print("Test de classe Metric")
+    metric = metric(25.4, "kilowatt", "power", "25kW")
+    print("")
     
