@@ -79,8 +79,14 @@ class Unit:
         print(unit_references)
         
     
-     def __set_entity__(self, new_entity):
-         # When we set the entity, we can use that information
-         # to set the reference unit
-         self._entity = new_entity
+    def _set_entity(self, new_entity):
+        # When we set the entity, we can use that information
+        # to set the reference unit
+        self._entity = new_entity
+        ref_unit = unit_references[unit_references.entity == new_entity]["unit"][0]
          
+    def _get_entity(self):
+        return self._entity
+    
+    entity = property(_get_entity, _set_entity)
+    
