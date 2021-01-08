@@ -2,10 +2,11 @@
 This module implements a class Quantity designed specifically
 for the needs of the project
 """
-from xml.sax.expatreader import AttributesImpl
-from builtins import float, None
+
 import pandas as pd
 
+
+unit_references = pd.read_csv("unit_references.csv")
 
 class Metric:
     """Class for a quantity (e.g. 2.5 kW)
@@ -64,27 +65,21 @@ class Unit:
         reference unit (eg. watt for kilowatt)
     entity: str
         entity represented by the unit
-    uri: str
+    uri: str, optional
         WikiPedia URI
     """
     
-    unit_references = pd.read_csv("unit_references.csv")
-    
-    def __init__(self,name,entity,uri):
+    def __init__(self,name,entity,uri=""):
         self.name = name
-        self.ref_unit = ""
-        self._entity = entity
+        self.entity = entity
+        self.ref_unit = unit_references[unit_references.entity == entity]["unit"][0]
         self.uri = uri
         
     
-    def _set_entity(self, new_entity):
-        # When we set the entity, we can use that information
-        # to set the reference unit
-        self._entity = new_entity
-        ref_unit = unit_references[unit_references.entity == new_entity]["unit"][0]
-         
-    def _get_entity(self):
-        return self._entity
     
-    entity = property(_get_entity, _set_entity)
+if __name__ == "__main__":
+    unit = Unit("kilowatt", "power")
+    print("Unit:",unit.name)
+    print("Entity:", unit.entity)
+    print("Reference unit:", unit.ref_unit)
     
