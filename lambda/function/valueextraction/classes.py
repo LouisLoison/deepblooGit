@@ -72,11 +72,9 @@ class Unit:
     
     def __init__(self,name,entity,uri):
         self.name = name
+        self.ref_unit = ""
         self._entity = entity
-        self.ref_unit = None
         self.uri = uri
-        
-        print(unit_references)
         
     
     def _set_entity(self, new_entity):
