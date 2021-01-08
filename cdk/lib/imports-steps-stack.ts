@@ -210,6 +210,7 @@ export class ImportsStepsStack extends Stack {
         // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+        EXTRACT_PDF_LINES: "true", // false -> extract by words, true -> extract by lines
       }
     })
 
