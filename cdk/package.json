@@ -8,7 +8,7 @@
     "clean": "rm cdk.out",
     "watch": "tsc -w",
     "test": "jest",
-    "deploy-all": "cdk deploy --all",
+    "deploy-all": "cdk deploy --all  --require-approval=never",
     "deploy": "cdk deploy"
   },
   "devDependencies": {

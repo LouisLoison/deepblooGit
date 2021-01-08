@@ -125,6 +125,12 @@ class S3Helper:
         object.put(Body=content)
 
     @staticmethod
+    def readBytesFromS3(bucketName, s3FileName, awsRegion=None):
+        s3 = AwsHelper().getResource('s3', awsRegion)
+        obj = s3.Object(bucketName, s3FileName)
+        return obj.get()['Body'].read()
+
+    @staticmethod
     def readFromS3(bucketName, s3FileName, awsRegion=None):
         s3 = AwsHelper().getResource('s3', awsRegion)
         obj = s3.Object(bucketName, s3FileName)
