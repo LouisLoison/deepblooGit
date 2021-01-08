@@ -101,23 +101,20 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    body = json.loads(event['Records'][0]['body'])
     print("==> Event: {0}".format(json.dumps(event)))
     aws_env = {
-        "bucketName": body['bucketName'],
-        "objectName": body['objectName'],
-        "documentId": body['documentId'],
+        "bucketName": os.environ['DOCUMENTS_BUCKET'],
+        "objectName": event['objectName'],
+        "documentId": event['documentUuid'],
         "awsRegion": 'eu-west-1',
         "tmpJsonOutput": "/tmp/tmp_result.json",
         "tmpTxtOutput": "/tmp/tmp_result.txt",
-        "outputBucket": os.environ['OUTPUT_BUCKET'],
-        "outputNameJson": get_bbox_filename(body['objectName'], ".json"),
-        "outputNameTxt": get_bbox_filename(body['objectName'], ".txt"),
-        #"textractQueueUrl": os.environ['ELASTIC_QUEUE_URL'],
+        "outputBucket": os.environ['DOCUMENTS_BUCKET'],
+        "outputNameJson": get_bbox_filename(event['objectName'], ".json"),
+        "outputNameTxt": get_bbox_filename(event['objectName'], ".txt"),
         "textractOnly": os.environ['TEXTRACT_ONLY'],
         "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
-
     }
     status = {
         'statusCode': 200,
