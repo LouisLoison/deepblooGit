@@ -4,9 +4,13 @@ for the needs of the project
 """
 
 import pandas as pd
+import pint
+from pint.registry import UnitRegistry
 
 
 unit_references = pd.read_csv("unit_references.csv")
+ureg = UnitRegistry() # Pint library unit registry
+Q_ = ureg.Quantity # Pint Quantity class
 
 class Metric:
     """Class for a quantity (e.g. 2.5 kW)
@@ -57,10 +61,35 @@ class Metric:
         self.surface = surface
         
     def __str__(self):
-        unit_string = "Metric({}, ({}))\n".format(self.value, self.unit)
-        unit_string += "Surface: {}".format(self.surface)
+        unit_string = "Metric({}, ({}))".format(self.value, self.unit)
+        #unit_string += "Surface: {}".format(self.surface)
         
         return unit_string
+    
+    def to_official(self):
+        """Returns the metric with its unit converted to the official
+        one
+        """
+        
+        # Step 1: create a pint Quantity object from our Metric
+        quant = Q_(self.value, self.unit.name)
+        
+        # Step 2: Convert said Quantity to the reference unit
+        quant.ito(self.unit.ref_unit)
+        
+        # Step 3: Change the value and the unit of the metric
+        metric = Metric(self.value, self.unit, self.entity, self.surface)
+        metric.value = quant.magnitude
+        metric.unit.name = metric.unit.ref_unit
+        
+        return metric
+    
+    def ito_official(self):
+        """Modifies the object so that the metric is converted to the
+        reference unit"""
+        
+        self = self.to_official()
+        
         
 class Unit:
     """Class to represent a unit
@@ -115,4 +144,7 @@ if __name__ == "__main__":
     print("Test de classe Metric")
     metric = Metric(25.4, "kilowatt", "power", "25kW")
     print(metric)
+    # Conversion dans l'unité de référence
+    print(metric.to_official())
+    
     
