@@ -1,5 +1,5 @@
-entity,unit
-power,W
-electrical potential,V
-current,A
-length,m
+entity,unit,unit_full_name
+power,W,watt
+electrical potential,V,volt
+current,A,ampere
+length,m,meter
