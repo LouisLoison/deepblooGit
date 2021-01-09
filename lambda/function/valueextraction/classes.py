@@ -78,7 +78,7 @@ class Metric:
         quant.ito(self.unit.ref_unit)
         
         # Step 3: Change the value and the unit of the metric
-        metric = Metric(self.value, self.unit, self.entity, self.surface)
+        metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
         metric.value = quant.magnitude
         metric.unit.name = metric.unit.ref_unit
         
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     print("Test de classe Metric")
     metric = Metric(25.4, "kilowatt", "power", "25kW")
     print(metric)
-    # Conversion dans l'unité de référence
+    # Conversion in the reference unit
     print(metric.to_official())
-    
+    print(metric)
     
