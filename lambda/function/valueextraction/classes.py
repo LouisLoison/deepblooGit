@@ -166,7 +166,7 @@ class Unit:
 if __name__ == "__main__":
     print("Test de la classe Unit")
     unit = Unit("kilowatt", "power")
-    print("Unit:",unit.name)
+    print("Unit:", unit.name)
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
     
@@ -175,6 +175,8 @@ if __name__ == "__main__":
     print("Test de classe Metric")
     metric = Metric(25.4, "kilowatt", "power", "25kW")
     print(metric)
+    # Conversion to another unit
+    print(metric.to('mW'))
     # Conversion in the reference unit
     print(metric.to_official())
     print(metric)
