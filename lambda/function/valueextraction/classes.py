@@ -88,7 +88,9 @@ class Metric:
         """Modifies the object so that the metric is converted to the
         reference unit"""
         
-        self = self.to_official()
+        metric = self.to_official()
+        self.value = metric.value
+        self.unit.name = metric.unit.name
         
         
 class Unit:
@@ -146,5 +148,7 @@ if __name__ == "__main__":
     print(metric)
     # Conversion in the reference unit
     print(metric.to_official())
+    print(metric)
+    metric.ito_official()
     print(metric)
     
