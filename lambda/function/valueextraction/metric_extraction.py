@@ -8,9 +8,9 @@ from quantulum3 import parser
 from classes import Metric
 
 
-def extract_values(txt):
+def extract_metrics(txt):
     """
-    Extract numerical values from the input text
+    Extract metrics from the input text
     
     Attributes
     ----------
@@ -24,11 +24,12 @@ def extract_values(txt):
     """
      
     quants = parser.parse(txt)
+    quants = map(to_metric, quants)
     
     return quants
 
 
-def to_metric(quant):
+def quantulum_to_metric(quant):
     """Convert a quantulum Quantity object into a
     Metric object (DeepBloo version of Quantity objects)"""
     
