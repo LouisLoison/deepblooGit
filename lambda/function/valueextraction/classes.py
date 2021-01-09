@@ -100,16 +100,7 @@ class Metric:
         one
         """
         
-        # Step 1: create a pint Quantity object from our Metric
-        quant = Q_(self.value, self.unit.name)
-        
-        # Step 2: Convert said Quantity to the reference unit
-        quant.ito(self.unit.ref_unit)
-        
-        # Step 3: Change the value and the unit of the metric
-        metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
-        metric.value = quant.magnitude
-        metric.unit.name = metric.unit.ref_unit
+        metric = self.to(self.unit.ref_unit)
         
         return metric
     
