@@ -66,6 +66,35 @@ class Metric:
         
         return unit_string
     
+    def to(self,unit):
+        """Converts a metric to another unit
+        
+        Parameters
+        ----------
+        self: Metric
+            Metric object
+        unit: str
+            Name of the unit into which the conversion will be done
+        
+        Returns
+        --------
+        metric: Metric
+            Result of the conversion of the instance to another unit
+        """
+        
+        # Step 1: create a pint Quantity object from our Metric
+        quant = Q_(self.value, self.unit.name)
+        
+        # Step 2: Convert said Quantity to the reference unit
+        quant.ito(unit)
+        
+        # Step 3: Change the value and the unit of the metric
+        metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
+        metric.value = quant.magnitude
+        metric.unit.name = unit
+        
+        return metric
+    
     def to_official(self):
         """Returns the metric with its unit converted to the official
         one
