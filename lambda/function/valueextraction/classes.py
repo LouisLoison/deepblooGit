@@ -141,7 +141,13 @@ class Unit:
         """
         self.name = name
         self.entity = entity
-        self.ref_unit = unit_references[unit_references.entity == entity]["unit"][0]
+        # TODO: continue to fill the unit reference file
+        # TODO: Take in account the fact that the input entity might be
+        # wrong
+        
+        entity_row = unit_references[unit_references.entity == entity]
+        
+        self.ref_unit = entity_row["unit"].iloc[0]
         self.uri = uri
         
     def __str__(self):
