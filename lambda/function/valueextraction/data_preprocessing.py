@@ -1,3 +1,6 @@
+"""Data preprocessing modules created to simplify the preprocessing
+steps of future works"""
+
 import pandas as pd
 import re
 
