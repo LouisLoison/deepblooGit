@@ -35,7 +35,7 @@ def quantulum_to_metric(quant):
     
     metric = Metric(quant.value, # value 
                     quant.unit.name, # unit
-                    quant.unit.entity, # entity
+                    quant.unit.entity.name, # entity
                     quant.surface # surface
                     )
     
