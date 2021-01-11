@@ -33,6 +33,10 @@ def quantulum_to_metric(quant):
     """Convert a quantulum Quantity object into a
     Metric object (DeepBloo version of Quantity objects)"""
     
-    metric = Metric(quant.value, quant.unit.name, quant.unit.entity)
+    metric = Metric(quant.value, # value 
+                    quant.unit.name, # unit
+                    quant.unit.entity, # entity
+                    quant.surface # surface
+                    )
     
     return metric
