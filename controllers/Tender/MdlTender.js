@@ -159,7 +159,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `tenderUuid = ${BddTool.NumericFormater(tenderUuid, BddEnvironnement, BddId)} \n`
+        where += `tenderUuid = '${BddTool.ChaineFormater(tenderUuid, BddEnvironnement, BddId)}' \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
@@ -847,6 +847,7 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       if (where !== '') {
         query += '  WHERE ' + where
         await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').deleteObject([id])
         await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
       }
 
@@ -1335,6 +1336,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
                     userId AS "userId",
                     label AS "label",
                     color AS "color",
+                    searchRequest AS "searchRequest",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
         FROM        tenderGroup 
@@ -1357,6 +1359,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
           userId: record.userId,
           label: record.label,
           color: record.color,
+          searchRequest: record.searchRequest,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })

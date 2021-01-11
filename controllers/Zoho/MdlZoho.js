@@ -104,6 +104,7 @@ exports.synchro = () => {
           DB_Creation_Date: hivebriteUser.created_at ? hivebriteUser.created_at.replace('Z', '+01:00') : null,
           DB_Confirmed_At : hivebriteUser.confirmed_at ? hivebriteUser.confirmed_at.replace('Z', '+01:00') : null,
           Tender_last_connexion_date: user.connexionTender ? moment(user.connexionTender).format() : null,
+          Email_Opt_Out: true,
         }
 
         if (computed.DB_LinkedIn_URL && !computed.DB_LinkedIn_URL.startsWith('http')) {

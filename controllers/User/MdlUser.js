@@ -131,6 +131,7 @@ exports.List = (filter) => {
                   notifContactBySms AS "notifContactBySms",
                   notifContactByPost AS "notifContactByPost",
                   dashboardUrl AS "dashboardUrl",
+                  businessPipeline AS "businessPipeline",
                   connexionTender AS "connexionTender",
                   connexionBusiness AS "connexionBusiness",
                   status AS "status",
@@ -219,6 +220,7 @@ exports.List = (filter) => {
           notifContactBySms: record.notifContactBySms,
           notifContactByPost: record.notifContactByPost,
           dashboardUrl: record.dashboardUrl,
+          businessPipeline: record.businessPipeline,
           connexionTender: record.connexionTender,
           connexionBusiness: record.connexionBusiness,
           status: record.status,
@@ -641,7 +643,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
         }
       }
 
-      resolve(users.length);
+      resolve(users.length)
     } catch (err) { reject(err) }
   })
 }
@@ -691,8 +693,8 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           if (!bValue) {
             bValue = '9999-99-99'
           }
-          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-        });
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+        })
         // for (let experience of experiences) {
         //   let userExperienceResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/experiences/${experience.id}`);
         // }
@@ -740,17 +742,17 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
 
       // Get _Interested_in_business_opportunities_in_these_areas
       let interesteAreaData = userData.custom_attributes.find(a => a.name === '_Interested_in_business_opportunities_in_these_areas');
-      let interesteAreas = [];
+      let interesteAreas = []
       if (interesteAreaData) {
         let interesteAreaLabels = interesteAreaData.value;
         if (interesteAreaLabels && interesteAreaLabels.length > 0) {
           for (interesteAreaLabel of interesteAreaLabels) {
-            let label = interesteAreaLabel.trim();
-            interesteAreas.push(label);
+            let label = interesteAreaLabel.trim()
+            interesteAreas.push(label)
           }
         }
       }
-      let regions = interesteAreas.join(',');
+      let regions = interesteAreas.join(',')
 
       if (!userBdd) {
         userBdd = {
@@ -832,14 +834,14 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
       }
 
       // Get user cpv
-      let cpvData = userData.custom_attributes.find(a => a.name === '_CPV');
-      let cpvs = [];
+      let cpvData = userData.custom_attributes.find(a => a.name === '_CPV')
+      let cpvs = []
       if (cpvData) {
-        let cpvLabels = cpvData.value;
+        let cpvLabels = cpvData.value
         if (cpvLabels && cpvLabels.length > 0) {
           for (cpvLabel of cpvLabels) {
-            let label = cpvLabel.split('-').join(' ').trim();
-            let cpv = CpvList.find(a => a.label.toUpperCase() === label.toUpperCase());
+            let label = cpvLabel.split('-').join(' ').trim()
+            let cpv = CpvList.find(a => a.label.toUpperCase() === label.toUpperCase())
             if (cpv && !cpvs.find(a => a.label.toUpperCase() === label.toUpperCase())) {
               cpvs.push(cpv);
             }
@@ -850,8 +852,8 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
       let query = `
           DELETE FROM userCpv 
           WHERE userId = ${userBdd.userId} 
-      `;
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query);
+      `
+      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       for (let cpv of cpvs) {
         let userCpv= {
           userId: userBdd.userId,
@@ -859,12 +861,12 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           cpvName: cpv.label.trim(),
           origineType: cpv.origineType,
           rating: cpv.rating,
-        };
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv);
+        }
+        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv)
       }
 
       // Synchro membership
-      const userMembership = await this.Memberships(userBdd.userId);
+      const userMembership = await this.Memberships(userBdd.userId)
       if (userMembership) {
         userBdd = {
           ...userBdd,
@@ -892,7 +894,7 @@ exports.SetPremium = (userId) => {
         user.password = Math.random().toString(36).slice(-10)
       }
       await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
-      resolve(user);
+      resolve(user)
     } catch (err) { reject(err) }
   })
 }
@@ -910,7 +912,7 @@ exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
             continue;
           }
           let to = user.email;
-          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
           this.userNotifyAddUpdate({
@@ -925,8 +927,8 @@ exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
       }
       if (emails) {
         for (const email of emails) {
-          let to = email;
-          let text = `${body.trim()}\r\n\r\n${footerHtml}`;
+          let to = email
+          let text = `${body.trim()}\r\n\r\n${footerHtml}`
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
           this.userNotifyAddUpdate({
@@ -1092,7 +1094,7 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
       resolve({
         fileName: fileName, 
         url: `download/${fileName}`,
-      });
+      })
     } catch (err) { reject(err) }
   })
 }
@@ -1433,7 +1435,7 @@ exports.userNotifyList = (filter, userData, tenderData) => {
           tenderTitle: record.tenderTitle
         })
       }
-      resolve(userNotifys);
+      resolve(userNotifys)
     } catch (err) { reject(err) }
   })
 }
