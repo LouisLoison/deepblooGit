@@ -146,8 +146,10 @@ class Unit:
         # wrong
         
         entity_row = unit_references[unit_references.entity == entity]
-        
-        self.ref_unit = entity_row["unit"].iloc[0]
+        try: # Temporary solution to handle units not in the reference
+            self.ref_unit = entity_row["unit"].iloc[0]
+        except IndexError:
+            pass
         self.uri = uri
         
     def __str__(self):
