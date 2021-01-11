@@ -24,7 +24,7 @@ def extract_metrics(txt):
     """
      
     quants = parser.parse(txt)
-    quants = map(to_metric, quants)
+    quants = map(quantulum_to_metric, quants)
     
     return quants
 
