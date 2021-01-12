@@ -52,14 +52,18 @@ for i in range(100):
     )
     for title_metric in title_metrics:
 #         print(title_metric.unit.entity)
-        metrics_lines.append([tenders_data["title"].iloc[i], #text
+        metrics_lines.append([tenders_data["uuid"].iloc[i], # uuid
+                              tenders_data["title"].iloc[i], #text
                               1, # is_title
                               0, # is_description
                               title_metric.surface,
                               title_metric.value,
                               title_metric.unit.name,
                               title_metric.unit.entity,
-                              str(title_metric.to_official())])
+                              str(title_metric.to_official()),
+                              1, # is_title
+                              0 # is_description
+                              ])
     
     description_metrics = metric_extraction.extract_metrics(
         tenders_data["description"].iloc[i]
@@ -67,14 +71,16 @@ for i in range(100):
     
     for description_metric in description_metrics:
 #         print(description_metric.unit.entity)
-        metrics_lines.append([tenders_data["description"].iloc[i], # text
-                              0, # is_title
-                              1, # is_description
+        metrics_lines.append([tenders_data["uuid"].iloc[i], # uuid
+                              tenders_data["description"].iloc[i], # text
                               description_metric.surface,
                               description_metric.value,
                               description_metric.unit.name,
                               description_metric.unit.entity,
-                              str(description_metric.to_official())])
+                              str(description_metric.to_official()),
+                              0, # is_title
+                              1 # is_description
+                              ])
     
 # print(metrics_lines)
 print("Extraction completed!")
@@ -82,8 +88,8 @@ print("Extraction completed!")
 # Step 4: Store the metrics in a file
 print("Storage...")
 # Defining a dataframe to format the data before storing
-columns = ["text", "is_title", "is_desc", "surface", "value", 
-           "unit", "entity", "to_official_unit"]
+columns = ["uuid", "is_desc", "surface", "value", 
+           "unit", "entity", "to_official_unit", "text", "is_title"]
 
 metrics_df = pd.DataFrame(metrics_lines,
                           columns=columns)

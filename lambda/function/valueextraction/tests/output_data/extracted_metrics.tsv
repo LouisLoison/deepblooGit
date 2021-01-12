@@ -1,5 +1,5 @@
-text;is_title;is_desc;surface;value;unit;entity;to_official_unit
-"EU Official Journal Publication: 2019/S 243-598946
+uuid;text;surface;value;unit;entity;to_official_unit;is_title;is_desc
+75e5d630-c43d-4d57-a2c7-381cdede7bf1;"EU Official Journal Publication: 2019/S 243-598946
 Referenced Document Number: 2018/S 217-497802
 Contract Nature: Supplies
 Procedure Type: Open procedure
@@ -46,8 +46,8 @@ Kofa
 Bergen
 Kofa
 Bergen
-2019-12-14Norway-Oslo: Steam, hot water and associated products";0;1;4.0 MW;4.0;megawatt;power;4000000.00 W
-"EU Official Journal Publication: 2019/S 243-598946
+2019-12-14Norway-Oslo: Steam, hot water and associated products";4.0 MW;4.0;megawatt;power;4000000.00 W;0;1
+75e5d630-c43d-4d57-a2c7-381cdede7bf1;"EU Official Journal Publication: 2019/S 243-598946
 Referenced Document Number: 2018/S 217-497802
 Contract Nature: Supplies
 Procedure Type: Open procedure
@@ -94,8 +94,8 @@ Kofa
 Bergen
 Kofa
 Bergen
-2019-12-14Norway-Oslo: Steam, hot water and associated products";0;1;1.0 MW;1.0;megawatt;power;1000000.00 W
-"EU Official Journal Publication: 2019/S 243-598946
+2019-12-14Norway-Oslo: Steam, hot water and associated products";1.0 MW;1.0;megawatt;power;1000000.00 W;0;1
+75e5d630-c43d-4d57-a2c7-381cdede7bf1;"EU Official Journal Publication: 2019/S 243-598946
 Referenced Document Number: 2018/S 217-497802
 Contract Nature: Supplies
 Procedure Type: Open procedure
@@ -142,8 +142,8 @@ Kofa
 Bergen
 Kofa
 Bergen
-2019-12-14Norway-Oslo: Steam, hot water and associated products";0;1;5.0 MW;5.0;megawatt;power;5000000.00 W
-"EU Official Journal Publication: 2019/S 243-598946
+2019-12-14Norway-Oslo: Steam, hot water and associated products";5.0 MW;5.0;megawatt;power;5000000.00 W;0;1
+75e5d630-c43d-4d57-a2c7-381cdede7bf1;"EU Official Journal Publication: 2019/S 243-598946
 Referenced Document Number: 2018/S 217-497802
 Contract Nature: Supplies
 Procedure Type: Open procedure
@@ -190,8 +190,8 @@ Kofa
 Bergen
 Kofa
 Bergen
-2019-12-14Norway-Oslo: Steam, hot water and associated products";0;1;1.2 MW;1.2;megawatt;power;1200000.00 W
-"EU Official Journal Publication: 2019/S 243-598946
+2019-12-14Norway-Oslo: Steam, hot water and associated products";1.2 MW;1.2;megawatt;power;1200000.00 W;0;1
+75e5d630-c43d-4d57-a2c7-381cdede7bf1;"EU Official Journal Publication: 2019/S 243-598946
 Referenced Document Number: 2018/S 217-497802
 Contract Nature: Supplies
 Procedure Type: Open procedure
@@ -238,9 +238,9 @@ Kofa
 Bergen
 Kofa
 Bergen
-2019-12-14Norway-Oslo: Steam, hot water and associated products";0;1;1.0 MW;1.0;megawatt;power;1000000.00 W
-"Periodical Electrical Testing To Corporate Properties 2020 Periodical Electrical Testing to Corporate Properties 2020-2022 A Contract Award Noticeby DARTFORD BOROUGH COUNCIL      Source   Contracts Finder  Type   Contract (Services)   Duration   34.5 month   Value   £0-£22K      Sector    INDUSTRIAL   Published   06&nbsp;Feb&nbsp;2020   Delivery   17&nbsp;Feb&nbsp;2020 to 31&nbsp;Dec&nbsp;2022   Deadline   24&nbsp;Jan&nbsp;2020&nbsp;00:00      Concepts    electrical services   periodical electrical testing   dartford   contract award decision   corporate properties    Location        1 buyer    Dartford Borough Council Dartford      1 supplier   Thompson Electrical Services Bexley      Description Contract Award Decision re: Periodical Electrical Testing to Corporate Properties 2020-2022   Award Detail   1  Thompson Electrical Services(None) Value: £22,133       CPV Codes   71314100 - Electrical services     Indicators  Contract is suitable for SMEs   Reference  DN454219  Domains  dartford.gov.uk  ";0;1;2020-2022 A;4042.0;ampere;current;4042.00 A
-"
+2019-12-14Norway-Oslo: Steam, hot water and associated products";1.0 MW;1.0;megawatt;power;1000000.00 W;0;1
+838f927b-e255-4df8-beea-9e895a188cba;"Periodical Electrical Testing To Corporate Properties 2020 Periodical Electrical Testing to Corporate Properties 2020-2022 A Contract Award Noticeby DARTFORD BOROUGH COUNCIL      Source   Contracts Finder  Type   Contract (Services)   Duration   34.5 month   Value   £0-£22K      Sector    INDUSTRIAL   Published   06&nbsp;Feb&nbsp;2020   Delivery   17&nbsp;Feb&nbsp;2020 to 31&nbsp;Dec&nbsp;2022   Deadline   24&nbsp;Jan&nbsp;2020&nbsp;00:00      Concepts    electrical services   periodical electrical testing   dartford   contract award decision   corporate properties    Location        1 buyer    Dartford Borough Council Dartford      1 supplier   Thompson Electrical Services Bexley      Description Contract Award Decision re: Periodical Electrical Testing to Corporate Properties 2020-2022   Award Detail   1  Thompson Electrical Services(None) Value: £22,133       CPV Codes   71314100 - Electrical services     Indicators  Contract is suitable for SMEs   Reference  DN454219  Domains  dartford.gov.uk  ";2020-2022 A;4042.0;ampere;current;4042.00 A;0;1
+03ba3287-d342-41f5-b702-f600bce0de7a;"
 
     CN ID:
     
@@ -392,4 +392,4 @@ $39,275.00
                     0221
                 
             
-        .list-desc-inner{margin-bottom:12px;}.contact-heading{font-weight:bold}Surveillance and detection equipment";0;1;14A;14.0;ampere;current;14.00 A
+        .list-desc-inner{margin-bottom:12px;}.contact-heading{font-weight:bold}Surveillance and detection equipment";14A;14.0;ampere;current;14.00 A;0;1
