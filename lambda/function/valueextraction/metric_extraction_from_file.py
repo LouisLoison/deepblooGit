@@ -52,10 +52,8 @@ for i in range(100):
     )
     for title_metric in title_metrics:
 #         print(title_metric.unit.entity)
-        metrics_lines.append([tenders_data["uuid"].iloc[i], # uuid
+        metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
                               tenders_data["title"].iloc[i], #text
-                              1, # is_title
-                              0, # is_description
                               title_metric.surface,
                               title_metric.value,
                               title_metric.unit.name,
@@ -71,7 +69,7 @@ for i in range(100):
     
     for description_metric in description_metrics:
 #         print(description_metric.unit.entity)
-        metrics_lines.append([tenders_data["uuid"].iloc[i], # uuid
+        metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
                               tenders_data["description"].iloc[i], # text
                               description_metric.surface,
                               description_metric.value,
@@ -88,8 +86,8 @@ print("Extraction completed!")
 # Step 4: Store the metrics in a file
 print("Storage...")
 # Defining a dataframe to format the data before storing
-columns = ["uuid", "is_desc", "surface", "value", 
-           "unit", "entity", "to_official_unit", "text", "is_title"]
+columns = ["uuid", "text", "surface", "value", 
+           "unit", "entity", "to_official_unit", "is_title", "is_desc"]
 
 metrics_df = pd.DataFrame(metrics_lines,
                           columns=columns)
