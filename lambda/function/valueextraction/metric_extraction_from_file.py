@@ -58,7 +58,8 @@ for i in range(100):
                               title_metric.surface,
                               title_metric.value,
                               title_metric.unit.name,
-                              title_metric.unit.entity])
+                              title_metric.unit.entity,
+                              str(title_metric.to_official())])
     
     description_metrics = metric_extraction.extract_metrics(
         tenders_data["description"].iloc[i]
@@ -72,7 +73,8 @@ for i in range(100):
                               description_metric.surface,
                               description_metric.value,
                               description_metric.unit.name,
-                              description_metric.unit.entity])
+                              description_metric.unit.entity,
+                              str(description_metric.to_official())])
     
 # print(metrics_lines)
 print("Extraction completed!")
@@ -81,7 +83,7 @@ print("Extraction completed!")
 print("Storage...")
 # Defining a dataframe to format the data before storing
 columns = ["text", "is_title", "is_desc", "surface", "value", 
-           "unit", "entity"]
+           "unit", "entity", "to_official_unit"]
 
 metrics_df = pd.DataFrame(metrics_lines,
                           columns=columns)
