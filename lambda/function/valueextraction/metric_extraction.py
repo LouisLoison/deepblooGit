@@ -39,7 +39,7 @@ def extract_metrics(txt, dimensions=["power", "electrical potential",
     quants = parser.parse(txt)
     # Dimension filtering
     quants = [quant for quant in quants 
-              if quants.unit.entity.name in dimensions]
+              if quant.unit.entity.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
     quants = map(quantulum_to_metric, quants)
     
