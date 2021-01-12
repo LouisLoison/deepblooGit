@@ -9,7 +9,7 @@ from classes import Metric
 
 
 def extract_metrics(txt, dimensions=["power", "electrical potential",
-                                     "current", "length"]):
+                                     "current", "length", "energy"]):
     """
     Extract metrics from the input text
     Only metrics representing the input dimensions are selected
