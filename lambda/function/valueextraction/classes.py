@@ -100,12 +100,21 @@ class Metric:
     
     def to_official(self):
         """Returns the metric with its unit converted to the official
-        one
+        one when applied.
+        
+        When not (for currencies for example), simply returns the Metric
+         object as it is
+        
         """
         
-        metric = self.to(self.unit.ref_unit)
+        # Attempt a conversion in the official unit only when
+        # applied
+        if self.unit.ref_unit:
+            metric = self.to(self.unit.ref_unit)
         
-        return metric
+            return metric
+        
+        return self
     
     def ito_official(self):
         """Modifies the object so that the metric is converted to the
