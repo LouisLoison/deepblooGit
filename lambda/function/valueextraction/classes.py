@@ -60,7 +60,7 @@ class Metric:
         self.unit = Unit(unit,entity,uri)
         self.surface = surface
         
-    def __str__(self):
+    def __repr__(self):
         unit_string = "Metric({}, ({}))".format(self.value, self.unit)
         #unit_string += "Surface: {}".format(self.surface)
         
