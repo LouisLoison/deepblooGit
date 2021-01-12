@@ -4,3 +4,4 @@ electrical potential,V,volt
 current,A,ampere
 length,m,meter
 currency,,
+energy,Wh,kilowatt-hour
