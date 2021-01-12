@@ -66,6 +66,9 @@ class Metric:
         
         return unit_string
     
+    def __str__(self):
+        return "{:.2f} {}".format(self.value, self.unit.name)
+    
     def to(self,unit):
         """Converts a metric to another unit
         
