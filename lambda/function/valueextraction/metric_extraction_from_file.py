@@ -12,6 +12,8 @@ import pandas as pd
 metrics_lines = []
 # List of tenders that supposedly do not have metrics
 tenders_without_metrics = []
+# List of metrics that are not interesting for us
+metrics_noise = []
 
 # Destination TSV file
 dest_file = "tests/output_data/extracted_metrics.csv"
@@ -49,10 +51,29 @@ with open("tests/output_data/titles.txt", "w") as titles_out, open("tests/output
 # Step 3: Apply the extraction function to the titles and descriptions
 print("Metrics extraction...")
 for i in range(100):
-    title_metrics = metric_extraction.extract_metrics(
-        tenders_data["title"].iloc[i]
+    # From title
+    print("Analyzing title {}...".format(i))
+    title_metrics, title_noise = metric_extraction.extract_metrics(
+        tenders_data["title"].iloc[i],
+        return_noise=True
     )
 #     print(len(title_metrics))
+
+    # Adding unimportant metrics to the list of metrics noise
+    print("Computing noise...")
+    for metric in title_noise:
+        
+        metrics_noise.append([tenders_data["tenderuuid"].iloc[i],
+                              tenders_data["title"].iloc[i],
+                              metric.surface,
+                              metric.value,
+                              metric.unit.name,
+                              metric.unit.entity,
+                              str(metric.to_official()),
+                              1,
+                              0,
+                              1])
+    print("Computation completed!")
     
     # Saving the information about the titles that do not have metrics
     # (supposedly)
@@ -84,9 +105,27 @@ for i in range(100):
                               1 # has_results
                               ])
     
-    description_metrics = metric_extraction.extract_metrics(
-        tenders_data["description"].iloc[i]
+    
+    print("Analyzing description {}".format(i))
+    description_metrics, desc_noise = metric_extraction.extract_metrics(
+        tenders_data["description"].iloc[i],
+        return_noise=True
     )
+    
+    print("Computing noise...")
+    for metric in desc_noise:
+        
+        metrics_noise.append([tenders_data["tenderuuid"].iloc[i],
+                              tenders_data["title"].iloc[i],
+                              metric.surface,
+                              metric.value,
+                              metric.unit.name,
+                              metric.unit.entity,
+                              str(metric.to_official()),
+                              0,
+                              1,
+                              1])
+    print("Computation completed!")
     
     # Saving the information about the titles that do not have metrics
     # (supposedly)
