@@ -6,6 +6,7 @@ for the needs of the project
 import pandas as pd
 import pint
 from pint.registry import UnitRegistry
+from cmath import nan
 
 
 unit_references = pd.read_csv("unit_references.csv")
@@ -110,6 +111,7 @@ class Metric:
         # Attempt a conversion in the official unit only when
         # applied
         if self.unit.ref_unit:
+            print(self.unit.ref_unit)
             metric = self.to(self.unit.ref_unit)
         
             return metric
@@ -153,13 +155,18 @@ class Unit:
         """
         self.name = name
         self.entity = entity
+        # Defaulting the reference unit to handle units that are not
+        # in the reference file 
+        self.ref_unit = ""
         # TODO: continue to fill the unit reference file
         # TODO: Take in account the fact that the input entity might be
         # wrong
         
         entity_row = unit_references[unit_references.entity == entity]
         try: # Temporary solution to handle units not in the reference
-            self.ref_unit = entity_row["unit"].iloc[0]
+            self.ref_unit = str(entity_row["unit"].iloc[0])
+            if entity == "currency":
+                print(self.ref_unit)
         except IndexError:
             pass
         self.uri = uri
