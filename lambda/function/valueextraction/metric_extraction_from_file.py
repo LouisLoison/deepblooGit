@@ -10,6 +10,8 @@ import pandas as pd
 
 # List of the values to store in the destination file
 metrics_lines = []
+# List of tenders that supposedly do not have metrics
+tenders_without_metrics = []
 
 # Destination TSV file
 dest_file = "tests/output_data/extracted_metrics.tsv"
@@ -50,6 +52,23 @@ for i in range(100):
     title_metrics = metric_extraction.extract_metrics(
         tenders_data["title"].iloc[i]
     )
+    
+    # Saving the information about the tenders that do not have metrics
+    # (supposedly)
+    if not title_metrics:
+        tenders_without_metrics.append([
+            tenders_data["tenderuuid"].iloc[i], # uuid
+            tenders_data["title"].iloc[i],      # text
+            "",                                 # surface
+            "",                                 # value
+            "",                                 # unit
+            "",                                 # entity
+            "",                                 # to_official
+            1,                                  # is_title
+            0,                                  # is_desc
+            0                                   # has_results
+        ])
+    
     for title_metric in title_metrics:
 #         print(title_metric.unit.entity)
         metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
@@ -60,7 +79,8 @@ for i in range(100):
                               title_metric.unit.entity,
                               str(title_metric.to_official()),
                               1, # is_title
-                              0 # is_description
+                              0, # is_description
+                              1 # has_results
                               ])
     
     description_metrics = metric_extraction.extract_metrics(
@@ -77,7 +97,8 @@ for i in range(100):
                               description_metric.unit.entity,
                               str(description_metric.to_official()),
                               0, # is_title
-                              1 # is_description
+                              1, # is_description
+                              1
                               ])
     
 # print(metrics_lines)
@@ -85,11 +106,17 @@ print("Extraction completed!")
 
 # Step 4: Store the metrics in a file
 print("Storage...")
+
+# Creating a single list for the metrics we found and the information
+# on titles or descriptions that did not return metrics
+result_lines = metrics_lines.append(tenders_without_metrics)
+
 # Defining a dataframe to format the data before storing
 columns = ["uuid", "text", "surface", "value", 
-           "unit", "entity", "to_official_unit", "is_title", "is_desc"]
+           "unit", "entity", "to_official_unit", 
+           "is_title", "is_desc", "has_results"]
 
-metrics_df = pd.DataFrame(metrics_lines,
+metrics_df = pd.DataFrame(result_lines,
                           columns=columns)
 # print(metrics_df.head())
 
