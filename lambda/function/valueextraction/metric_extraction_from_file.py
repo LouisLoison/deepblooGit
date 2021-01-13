@@ -14,7 +14,7 @@ metrics_lines = []
 tenders_without_metrics = []
 
 # Destination TSV file
-dest_file = "tests/output_data/extracted_metrics.tsv"
+dest_file = "tests/output_data/extracted_metrics.csv"
 
 # Step 1: Read the first 100 lines of the TSV file
 print("Acquiring tenders data...")
