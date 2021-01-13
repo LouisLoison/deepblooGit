@@ -52,8 +52,9 @@ for i in range(100):
     title_metrics = metric_extraction.extract_metrics(
         tenders_data["title"].iloc[i]
     )
+#     print(len(title_metrics))
     
-    # Saving the information about the tenders that do not have metrics
+    # Saving the information about the titles that do not have metrics
     # (supposedly)
     if not title_metrics:
         tenders_without_metrics.append([
@@ -87,6 +88,22 @@ for i in range(100):
         tenders_data["description"].iloc[i]
     )
     
+    # Saving the information about the titles that do not have metrics
+    # (supposedly)
+    if not description_metrics:
+        tenders_without_metrics.append([
+            tenders_data["tenderuuid"].iloc[i], # uuid
+            tenders_data["description"].iloc[i],      # text
+            "",                                 # surface
+            "",                                 # value
+            "",                                 # unit
+            "",                                 # entity
+            "",                                 # to_official
+            0,                                  # is_title
+            1,                                  # is_desc
+            0                                   # has_results
+        ])
+    
     for description_metric in description_metrics:
 #         print(description_metric.unit.entity)
         metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
@@ -109,7 +126,7 @@ print("Storage...")
 
 # Creating a single list for the metrics we found and the information
 # on titles or descriptions that did not return metrics
-result_lines = metrics_lines.append(tenders_without_metrics)
+result_lines = metrics_lines + tenders_without_metrics
 
 # Defining a dataframe to format the data before storing
 columns = ["uuid", "text", "surface", "value", 
