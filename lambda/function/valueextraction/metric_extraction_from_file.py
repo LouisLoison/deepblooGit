@@ -138,5 +138,5 @@ metrics_df = pd.DataFrame(result_lines,
 # print(metrics_df.head())
 
 # Storage
-metrics_df.to_csv(dest_file, index=False, sep=";")
+metrics_df.to_csv(dest_file, index=False, sep=",")
 print("Storage completed!")
