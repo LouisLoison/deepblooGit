@@ -72,6 +72,7 @@ for i in range(100):
                               str(metric.to_official()),
                               1,
                               0,
+                              1,
                               1])
     print("Computation completed!")
     
@@ -88,7 +89,8 @@ for i in range(100):
             "",                                 # to_official
             1,                                  # is_title
             0,                                  # is_desc
-            0                                   # has_results
+            0,                                  # has_results
+            1                                   # is_noise
         ])
     
     for title_metric in title_metrics:
@@ -102,7 +104,8 @@ for i in range(100):
                               str(title_metric.to_official()),
                               1, # is_title
                               0, # is_description
-                              1 # has_results
+                              1, # has_results
+                              0  # is_noise
                               ])
     
     
@@ -124,7 +127,9 @@ for i in range(100):
                               str(metric.to_official()),
                               0,
                               1,
-                              1])
+                              1,
+                              1  # is_noise
+                              ])
     print("Computation completed!")
     
     # Saving the information about the titles that do not have metrics
@@ -140,7 +145,8 @@ for i in range(100):
             "",                                 # to_official
             0,                                  # is_title
             1,                                  # is_desc
-            0                                   # has_results
+            0,                                  # has_results
+            1                                   # is_noise
         ])
     
     for description_metric in description_metrics:
@@ -153,8 +159,9 @@ for i in range(100):
                               description_metric.unit.entity,
                               str(description_metric.to_official()),
                               0, # is_title
-                              1, # is_description
-                              1
+                              1, # is_desc
+                              1, # has_results
+                              0, # is_noise
                               ])
     
 # print(metrics_lines)
@@ -165,12 +172,12 @@ print("Storage...")
 
 # Creating a single list for the metrics we found and the information
 # on titles or descriptions that did not return metrics
-result_lines = metrics_lines + tenders_without_metrics
+result_lines = metrics_lines + metrics_noise + tenders_without_metrics
 
 # Defining a dataframe to format the data before storing
 columns = ["uuid", "text", "surface", "value", 
            "unit", "entity", "to_official_unit", 
-           "is_title", "is_desc", "has_results"]
+           "is_title", "is_desc", "has_results", "is_noise"]
 
 metrics_df = pd.DataFrame(result_lines,
                           columns=columns)
