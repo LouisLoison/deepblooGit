@@ -6,7 +6,9 @@ and stores them in another
 
 import data_preprocessing
 import metric_extraction
+import json
 import pandas as pd
+import utilities
 
 # List of the values to store in the destination file
 metrics_lines = []
@@ -17,6 +19,8 @@ metrics_noise = []
 
 # Destination TSV file
 dest_file = "tests/output_data/extracted_metrics.csv"
+# JSON file
+json_file = "tests/output_data/extracted_metrics.json"
 
 # Step 1: Read the first 100 lines of the TSV file
 print("Acquiring tenders data...")
@@ -137,7 +141,7 @@ for i in range(100):
     if not description_metrics:
         tenders_without_metrics.append([
             tenders_data["tenderuuid"].iloc[i], # uuid
-            tenders_data["description"].iloc[i],      # text
+            tenders_data["description"].iloc[i],# text
             "",                                 # surface
             "",                                 # value
             "",                                 # unit
@@ -184,5 +188,9 @@ metrics_df = pd.DataFrame(result_lines,
 # print(metrics_df.head())
 
 # Storage
+print("Saving to CSV...")
 metrics_df.to_csv(dest_file, index=False, sep=",")
+# Storage as a JSON file
+print("Saving to JSON...")
+metrics_df.to_json(json_file, orient="records")
 print("Storage completed!")
