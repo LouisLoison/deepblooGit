@@ -9,7 +9,8 @@ from classes import Metric
 
 
 def extract_metrics(txt, dimensions=["power", "electrical potential",
-                                     "current", "length", "energy"],
+                                     "current", "length", "energy",
+                                     "currency"],
                                      return_noise=False):
     """
     Extract metrics from the input text
