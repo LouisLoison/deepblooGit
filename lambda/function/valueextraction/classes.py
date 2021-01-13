@@ -87,7 +87,9 @@ class Metric:
         """
         
         # Step 1: create a pint Quantity object from our Metric
-        quant = Q_(self.value, self.unit.name)
+        # TODO: Not all units can be defined this way. Adapt it
+        # so it encompasses all possible definitions
+        quant = Q_("{} {}".format(self.value, self.unit.name))
         
         # Step 2: Convert said Quantity to the reference unit
         quant.ito(unit)
