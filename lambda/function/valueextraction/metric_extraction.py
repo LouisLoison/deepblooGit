@@ -41,7 +41,7 @@ def extract_metrics(txt, dimensions=["power", "electrical potential",
     quants = [quant for quant in quants 
               if quant.unit.entity.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
-    quants = map(quantulum_to_metric, quants)
+    quants = list(map(quantulum_to_metric, quants))
     
     return quants
 
