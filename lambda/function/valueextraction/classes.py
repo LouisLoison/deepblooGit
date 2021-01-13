@@ -158,18 +158,17 @@ class Unit:
         # Defaulting the reference unit to handle units that are not
         # in the reference file 
         self.ref_unit = ""
+        self.uri = uri
         # TODO: continue to fill the unit reference file
         # TODO: Take in account the fact that the input entity might be
         # wrong
         
+        # If the entity is referenced in unit_references.csv, define
+        # the value of the reference unit using it
         entity_row = unit_references[unit_references.entity == entity]
-        try: # Temporary solution to handle units not in the reference
+        if not entity_row.empty:
             self.ref_unit = str(entity_row["unit"].iloc[0])
-            if entity == "currency":
-                print(self.ref_unit)
-        except IndexError:
-            pass
-        self.uri = uri
+        
         
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
@@ -200,4 +199,11 @@ if __name__ == "__main__":
     print(metric)
     metric.ito_official()
     print(metric)
+    
+    
+    print("Defining a unit not referenced in unit_references.csv")
+    unit = Unit("Hz", "wavelength")
+    print("Unit:", unit.name)
+    print("Entity:", unit.entity)
+    print("Reference unit:", unit.ref_unit)
     
