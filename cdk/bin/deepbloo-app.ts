@@ -16,3 +16,7 @@ new ImportsStepsStack(app, 'ImportsStepsStack', {
   //  nodeLayerArn: textractPipelineStack.nodeLayerArn,
 });
 
+new ImportsStepsStack(app, 'StepsStackDevelop', {
+  env: { account: "669031476932", region:   "eu-west-1" },
+  //  nodeLayerArn: textractPipelineStack.nodeLayerArn,
+});

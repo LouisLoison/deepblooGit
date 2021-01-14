@@ -1,0 +1,21 @@
+{
+    "tenderid": null,
+    "cpvs": null,
+    "filename": null,
+    "size": 111323,
+    "pageCount": null,
+    "sourceUrl": "http://d.infostores.biz/T459071539.html?id=NzhoFzJ8IxIzJSsHVR1Bd1wxLH4bUmttVQ0GNxMW",
+    "s3Url": "https://textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj.s3.eu-west-1.amazonaws.com/tenders/tender%23f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459071539.html",
+    "boxFolderId": null,
+    "boxFileId": null,
+    "parseResult": null,
+    "status": null,
+    "creationDate": null,
+    "updateDate": "2021-01-02T05:32:19.630Z",
+    "tenderUuid": "f3f5e3bf-2bee-423c-ba27-2c08ac05a09d",
+    "documentUuid": "1399e5f0-6031-4f5c-9b32-8572bfbeef2d",
+    "contentHash": "a8fda73256001c30f2ae6fc954abb209fe60c80d24ed3844201ec326eb90fd26",
+    "contentType": "text/html",
+    "objectName": "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459071539.html",
+    "bucketName": "textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj"
+  }
