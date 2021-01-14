@@ -13,6 +13,9 @@ unit_references = pd.read_csv("unit_references.csv")
 ureg = UnitRegistry() # Pint library unit registry
 Q_ = ureg.Quantity # Pint Quantity class
 
+# Add volt-ampere to unit registry
+ureg.define('volt-ampere=VA')
+
 class Metric:
     """Class for a quantity (e.g. 2.5 kW)
     
@@ -89,17 +92,21 @@ class Metric:
         # Step 1: create a pint Quantity object from our Metric
         # TODO: Not all units can be defined this way. Adapt it
         # so it encompasses all possible definitions
-        quant = Q_("{} {}".format(self.value, self.unit.name))
+        if self.unit.entity != "currency":
+            quant = Q_("{} {}".format(self.value, self.unit.name))
+            
+            # Step 2: Convert said Quantity to the reference unit
+            quant.ito(unit)
+            
+            # Step 3: Change the value and the unit of the metric
+            metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
+            metric.value = quant.magnitude
+            metric.unit.name = unit
+            
+            return metric
         
-        # Step 2: Convert said Quantity to the reference unit
-        quant.ito(unit)
-        
-        # Step 3: Change the value and the unit of the metric
-        metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
-        metric.value = quant.magnitude
-        metric.unit.name = unit
-        
-        return metric
+        print("Cannot operate a conversion on this metric unit!")
+        return self
     
     def to_official(self):
         """Returns the metric with its unit converted to the official
