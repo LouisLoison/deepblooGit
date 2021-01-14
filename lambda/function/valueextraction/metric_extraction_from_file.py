@@ -24,7 +24,7 @@ json_file = "tests/output_data/extracted_metrics.json"
 
 # Step 1: Read the first 100 lines of the TSV file
 print("Acquiring tenders data...")
-tenders_data = pd.read_csv("export-titres-desc.tsv", sep=";", 
+tenders_data = pd.read_csv("export-titres-desc-20210113.csv", sep=";", 
                            nrows=100)
 print("Data acquisition completed!")
 # print(tenders_data.head())
