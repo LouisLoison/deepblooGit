@@ -45,7 +45,6 @@ def write_bbox_to_s3(aws_env: dict) -> None:
 def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> bool:
     """
     Execute the pdfplumber binary with pdf_tmp_path to extract bounding boxes.
-
     :param pdf_tmp_path: the tmp path of the pdf to pass to pdfplumber
     :param bbox_output: the tmp file of the json to create and to stock pdf information
     :return: int

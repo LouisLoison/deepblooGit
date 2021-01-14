@@ -24,9 +24,9 @@ def read_from_s3(aws_env):
     bucket_name = aws_env['bucketName']
     s3_file_name = aws_env['objectName']
     aws_region = aws_env['awsRegion']
-    content = S3Helper.readBytesFromS3(bucket_name,
-                                       s3_file_name,
-                                       aws_region)
+    s3 = AwsHelper().getResource('s3', aws_region)
+    obj = s3.Object(bucket_name, s3_file_name)
+    content = obj.get()['Body'].read()
     try:
         encoding = chardet.detect(content)['encoding']
         print("Trying to decode with {}".format(encoding))
