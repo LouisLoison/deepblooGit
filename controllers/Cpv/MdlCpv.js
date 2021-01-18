@@ -5,7 +5,7 @@ exports.CpvAddUpdate = (cpv) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let cpvNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpv', cpv)
+      let cpvNew = await BddTool.RecordAddUpdate('cpv', cpv)
       resolve(cpvNew);
     } catch (err) { reject(err) }
   })
@@ -37,7 +37,7 @@ exports.cpvDelete = (cpvId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -83,7 +83,9 @@ exports.CpvList = (filter, removeDiacritics) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      // console.log(query)
+      let recordset = await BddTool.QueryExecBdd2(query)
+      console.log(recordset)
       let cpv = null
       for (const record of recordset) {
         if (!cpv || cpv.cpvId !== record.cpvId) {
@@ -123,7 +125,7 @@ exports.CpvList = (filter, removeDiacritics) => {
                   cpvExclusion.updateDate AS "updateDate" 
         FROM      cpvExclusion 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(query)
       for (const record of recordset) {
         cpv = cpvs.find(a => a.cpvId === record.cpvId)
         if (cpv) {
@@ -185,8 +187,8 @@ exports.CpvSynchro = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, 'DELETE FROM   cpv')
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, 'DELETE FROM   cpvWord')
+      await BddTool.QueryExecBdd2('DELETE FROM   cpv')
+      await BddTool.QueryExecBdd2('DELETE FROM   cpvWord')
 
       for (const cpv of cpvs) {
         const cpvBdd = {
@@ -200,7 +202,7 @@ exports.CpvSynchro = () => {
           creationDate: new Date(),
           updateDate: new Date()
         }
-        const cpvNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpv', cpvBdd)
+        const cpvNew = await BddTool.RecordAddUpdate('cpv', cpvBdd)
         if (cpv.words) {
           for (const word of cpv.words) {
             const wordBdd = {
@@ -210,7 +212,7 @@ exports.CpvSynchro = () => {
               creationDate: new Date(),
               updateDate: new Date()
             }
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpvWord', wordBdd)
+            await BddTool.RecordAddUpdate('cpvWord', wordBdd)
           }
         }
       }
@@ -265,7 +267,7 @@ exports.CpvWordList = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpvWord.word '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         cpvWords.push({
           cpvWordId: record.cpvWordId,
@@ -290,7 +292,7 @@ exports.CpvWordAddUpdate = (cpvWord) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let cpvWordNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpvWord', cpvWord)
+      let cpvWordNew = await BddTool.RecordAddUpdate('cpvWord', cpvWord)
       resolve(cpvWordNew);
     } catch (err) { reject(err) }
   })
@@ -322,7 +324,7 @@ exports.cpvWordDelete = (cpvWordId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -374,7 +376,7 @@ exports.CpvExclusionList = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpvExclusion.word '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         cpvExclusions.push({
           cpvExclusionId: record.cpvExclusionId,
@@ -399,7 +401,7 @@ exports.CpvExclusionAddUpdate = (cpvExclusion) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let cpvExclusionNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'cpvExclusion', cpvExclusion)
+      let cpvExclusionNew = await BddTool.RecordAddUpdate('cpvExclusion', cpvExclusion)
       resolve(cpvExclusionNew);
     } catch (err) { reject(err) }
   })
@@ -431,7 +433,7 @@ exports.cpvExclusionDelete = (cpvExclusionId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -495,7 +497,7 @@ exports.cpvCategories = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpv.category '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         categories.push(record.category)
       }

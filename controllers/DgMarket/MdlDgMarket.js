@@ -34,7 +34,7 @@ exports.BddImport = () => {
 
       // Bulk insert into Dgmarket import table
       let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       await BddTool.bulkInsert(
         BddId,
         BddEnvironnement,
@@ -54,7 +54,7 @@ exports.BddImport = () => {
         WHERE 		  importDgmarket.status = 1
         AND         importDgmarket.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Move file to archive folder
       const fileSource = path.parse(fileLocation).base
@@ -757,7 +757,7 @@ exports.ExportUrlFromFile = () => {
         FROM        dgmarket 
         WHERE       status = 0 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenders = []
       for (let record of recordset) {
         let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList)
@@ -821,7 +821,7 @@ exports.importDgmarketAddUpdate = (importDgmarket) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let importDgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importDgmarket', importDgmarket)
+      let importDgmarketNew = await BddTool.RecordAddUpdate('importDgmarket', importDgmarket)
       resolve(importDgmarketNew)
     } catch (err) {
       reject(err)
@@ -912,7 +912,7 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let importDgmarkets = []
       for (const record of recordset.results) {
         importDgmarkets.push({

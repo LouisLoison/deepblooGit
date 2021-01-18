@@ -72,7 +72,7 @@ exports.ColumnAddBdd = (Environnement, BddName, TableName, ColumnName) => {
         var BddTool = require(process.cwd() + '/global/BddTool')
         let BddId = BddName
         let BddEnvironnement = Environnement
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, ScriptSql, reject, (recordset) => { 
+        BddTool.QueryExecBdd(ScriptSql, reject, (recordset) => { 
           resolve()
         })
       }).catch((err) => { reject(err) })
@@ -103,7 +103,7 @@ exports.TableAddBdd = (Environnement, BddName, TableName) => {
       var BddTool = require(process.cwd() + '/global/BddTool')
       let BddId = BddName
       let BddEnvironnement = Environnement
-      BddTool.QueryExecBdd(BddId, BddEnvironnement, ScriptSql, reject, (recordset) => { 
+      BddTool.QueryExecBdd(ScriptSql, reject, (recordset) => { 
         resolve(recordset)
       })
     } catch (err) { reject(err) }

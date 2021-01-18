@@ -61,7 +61,7 @@ exports.BddImport = () => {
 
       // Bulk insert into import table
       let query = `DELETE FROM importTenderInfo WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       await BddTool.bulkInsert(
         BddId,
         BddEnvironnement,
@@ -81,7 +81,7 @@ exports.BddImport = () => {
         WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Search tender by title, buyer name and bidDeadline date
       query = `
@@ -97,7 +97,7 @@ exports.BddImport = () => {
         WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Move file to archive folder
       const fileSource = path.parse(fileLocation).base
@@ -326,7 +326,7 @@ exports.importTenderInfoAddUpdate = (importTenderInfo) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let importTenderInfoNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importTenderInfo', importTenderInfo)
+      let importTenderInfoNew = await BddTool.RecordAddUpdate('importTenderInfo', importTenderInfo)
       resolve(importTenderInfoNew)
     } catch (err) {
       reject(err)
@@ -429,7 +429,7 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let importTenderInfos = []
       for (const record of recordset.results) {
         importTenderInfos.push({
@@ -508,7 +508,7 @@ exports.importTenderInfoFacets = () => {
         FROM        importTenderInfo 
         GROUP BY    fileSource 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let fileSources = []
       for (const record of recordset.results) {
         fileSources.push({
@@ -524,7 +524,7 @@ exports.importTenderInfoFacets = () => {
         WHERE       mergeMethod IS NOT NULL 
         GROUP BY    mergeMethod 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       let mergeMethods = []
       for (const record of recordset.results) {
         mergeMethods.push({
@@ -540,7 +540,7 @@ exports.importTenderInfoFacets = () => {
         WHERE       status IS NOT NULL 
         GROUP BY    status 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       let statuss = []
       for (const record of recordset.results) {
         statuss.push({

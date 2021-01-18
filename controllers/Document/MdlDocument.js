@@ -23,7 +23,7 @@ exports.documentAddUpdate = (document) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let documentNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'document', document)
+      let documentNew = await BddTool.RecordAddUpdate('document', document)
       resolve(documentNew)
     } catch (err) { reject(err) }
   })
@@ -54,7 +54,7 @@ exports.documentDelete = (documentId) => {
 
       // Remove document from Deepbloo BDD
       let query = `DELETE FROM document WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -102,7 +102,7 @@ exports.documentList = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       // query += '  ORDER BY document.creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         documents.push({
           documentId: record.documentId,
@@ -185,7 +185,7 @@ exports.documentMessageList = (filter, userData) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY documentMessage.creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         documentMessages.push({
           documentMessageId: record.documentMessageId,
@@ -220,7 +220,7 @@ exports.documentMessageAddUpdate = (documentMessage) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let documentMessageNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'documentMessage', documentMessage)
+      let documentMessageNew = await BddTool.RecordAddUpdate('documentMessage', documentMessage)
       resolve(documentMessageNew)
     } catch (err) { reject(err) }
   })
@@ -240,7 +240,7 @@ exports.documentMessageDelete = (documentMessageId) => {
 
       // Remove documentMessage from Deepbloo BDD
       let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId, BddEnvironnement, BddId)}`
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -284,9 +284,9 @@ exports.tenderFileImport = (tenderId) => {
 
       // Remove tenderCriterion of this tender
       let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       const documentNews = []
       const documents = await this.documentList({ tenderId })

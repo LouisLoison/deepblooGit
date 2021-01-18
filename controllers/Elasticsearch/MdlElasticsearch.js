@@ -186,7 +186,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
         WHERE       dgmarket.status = 0 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionAlls = []
       for (let record of recordset) {
         tenderCriterionAlls.push({
@@ -246,7 +246,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         ORDER BY    creationDate DESC 
         LIMIT ${tendersNumberMax}
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(query)
       const tenders = []
       const tenderIdDeletes = []
       for (const record of recordset) {

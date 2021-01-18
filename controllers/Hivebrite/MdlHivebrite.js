@@ -64,7 +64,7 @@ exports.MembershipSynchro = () => {
             WHERE       type = 3 
             AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id, BddEnvironnement, BddId)} 
           `
-          let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+          let recordset = await BddTool.QueryExecBdd2(query)
           for (let record of recordset) {
             userMemberships.push({
               user: {
@@ -93,7 +93,7 @@ exports.MembershipSynchro = () => {
         if (membership.type_name.startsWith("Premium Free Trial") && user.membershipFree === 1) {
           user.membershipFree = 2
           user.updateDate = new Date()
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+          await BddTool.RecordAddUpdate('user', user)
 
           // Send email
           let to = user.email
@@ -124,7 +124,7 @@ exports.MembershipSynchro = () => {
         }
         user.type = 2
         user.updateDate = new Date()
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+        await BddTool.RecordAddUpdate('user', user)
       
         // Send email
         let to = user.email
@@ -311,7 +311,7 @@ exports.CompanieSynchro = () => {
             creationDate: new Date(),
             updateDate: new Date()
           }
-          organizationBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+          organizationBdd = await BddTool.RecordAddUpdate('organization', organizationBdd)
         } else {
           let countrys = companie.country
           if (organizationBdd.countrys && organizationBdd.countrys !== '') {
@@ -326,7 +326,7 @@ exports.CompanieSynchro = () => {
             organizationBdd.name = companie.name
             organizationBdd.countrys = companie.country
             organizationBdd.updateDate = new Date()
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+            await BddTool.RecordAddUpdate('organization', organizationBdd)
           }
         }
 
@@ -335,7 +335,7 @@ exports.CompanieSynchro = () => {
           WHERE organizationId = ${organizationBdd.organizationId} 
           AND origineType = 1 
         `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         if (companie.cpvFound) {
           let cpvsTextTemp = companie.cpvFound.cpvsText.split(',')
           let cpvsDescriptionTemp = companie.cpvFound.cpvDescriptionsText.split(',')
@@ -348,7 +348,7 @@ exports.CompanieSynchro = () => {
               cpvName: name.trim(),
               origineType: 1,
             }
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
+            await BddTool.RecordAddUpdate('organizationCpv', organizationCpv)
           }
         }
       }

@@ -719,7 +719,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderCriterionNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      let tenderCriterionNew = await BddTool.RecordAddUpdate('tenderCriterion', tenderCriterion)
       resolve(tenderCriterionNew)
     } catch (err) { reject(err) }
   })
@@ -738,7 +738,7 @@ exports.tenderCriterionDelete = (tenderCriterionId, documentId) => {
       if (documentId) {
         query = `DELETE FROM tenderCriterion WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -753,7 +753,7 @@ exports.tenderCriterionCpvAddUpdate = (tenderCriterionCpv) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderCriterionCpvNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterionCpv', tenderCriterionCpv)
+      let tenderCriterionCpvNew = await BddTool.RecordAddUpdate('tenderCriterionCpv', tenderCriterionCpv)
       resolve(tenderCriterionCpvNew)
     } catch (err) { reject(err) }
   })

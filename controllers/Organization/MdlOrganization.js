@@ -31,7 +31,7 @@ exports.List = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY organization.organizationId '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let organization = null
       for (var record of recordset) {
         if (!organization || organization.organizationId !== record.organizationId) {
@@ -83,14 +83,14 @@ exports.AddUpdate = (organization) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let organizationNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organization)
+      let organizationNew = await BddTool.RecordAddUpdate('organization', organization)
 
       if (organization.cpvs) {
         let query = `
             DELETE FROM organizationcpv 
             WHERE organizationId = ${organizationNew.organizationId} 
         `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         for (let cpv of organization.cpvs) {
           let organizationCpv= {
             organizationId: organizationNew.organizationId,
@@ -99,7 +99,7 @@ exports.AddUpdate = (organization) => {
             origineType: cpv.origineType,
             rating: cpv.rating,
           }
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
+          await BddTool.RecordAddUpdate('organizationCpv', organizationCpv)
         }
       }
       resolve(organizationNew);
@@ -193,7 +193,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY organization.organizationId, organizationCpv.cpvCode, user.userId, userCpv.cpvCode '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let organization = null
       let cpvCode = null
       let user = null

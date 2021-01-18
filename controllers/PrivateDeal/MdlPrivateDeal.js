@@ -12,7 +12,7 @@ exports.PrivateDealAdd = (privateDeal) => {
           FROM        privateDeal 
           WHERE       algoliaId = ${BddTool.NumericFormater(privateDeal.algoliaId, BddEnvironnement, BddId)} 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         for (var record of recordset) {
           privateDeal.privateDealId = record.privateDealId
         }
@@ -32,7 +32,7 @@ exports.PrivateDealAdd = (privateDeal) => {
         privateDeal.creationDate = new Date()
       }
       privateDeal.updateDate = new Date()
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'privateDeal', privateDeal)
+      let data = await BddTool.RecordAddUpdate('privateDeal', privateDeal)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').PrivateDealsImport()
       resolve(data)
     } catch (err) {
@@ -104,7 +104,7 @@ exports.PrivateDealGet = (privateDealId, algoliaId) => {
         where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let privateDeal = {}
       for (var record of recordset) {
         privateDeal = {
@@ -237,7 +237,7 @@ exports.PrivateDealList = (filter) => {
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let privateDeals = []
       for (var record of recordset) {
         privateDeals.push({
@@ -320,7 +320,7 @@ exports.PrivateDealRemove = (id, algoliaId) => {
         where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').PrivateDealsPurge()
 
       resolve()

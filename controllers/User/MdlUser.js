@@ -53,7 +53,7 @@ exports.Login = (username, password, userToken) => {
           AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
         `
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let user = {}
       for (let record of recordset) {
         user = { 
@@ -187,7 +187,7 @@ exports.List = (filter) => {
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         users.push({
           userId: record.userId,
@@ -267,7 +267,7 @@ exports.UserCpvs = (userId) => {
         FROM        userCpv 
         WHERE       userCpv.userId = ${userId} 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         cpvs.push({
           cpvCode: record.cpvCode,
@@ -294,10 +294,10 @@ exports.UserDelete = (userId) => {
       }
 
       let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       query = `DELETE FROM user WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       resolve()
     } catch (err) {
@@ -393,7 +393,7 @@ exports.AddUpdate = (user) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      let userNew = await BddTool.RecordAddUpdate('user', user)
       resolve(userNew)
     } catch (err) { reject(err) }
   })
@@ -502,7 +502,7 @@ exports.synchroNew = () => {
 
         if (update) {
           computed.updateDate = new Date()
-          const response = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', computed)
+          const response = await BddTool.RecordAddUpdate('user', computed)
           if (response) {
             user.userId = response.userId
           }
@@ -551,7 +551,7 @@ exports.Synchro = () => {
             creationDate: new Date(),
             updateDate: new Date()
           }
-          userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+          userBdd = await BddTool.RecordAddUpdate('user', userBdd)
         } else {
           if (
             userBdd.hivebriteId !== user.id
@@ -563,7 +563,7 @@ exports.Synchro = () => {
             userBdd.email = user.email
             userBdd.username = user.name.substring(0, 100)
             userBdd.updateDate = new Date()
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+            await BddTool.RecordAddUpdate('user', userBdd)
           }
         }
       }
@@ -782,7 +782,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           creationDate: new Date(),
           updateDate: new Date()
         }
-        userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+        userBdd = await BddTool.RecordAddUpdate('user', userBdd)
       } else {
         if (
           userBdd.email !== user.email
@@ -829,7 +829,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           userBdd.notifContactBySms = user.notifContactBySms
           userBdd.notifContactByPost = user.notifContactByPost
           userBdd.updateDate = new Date()
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+          await BddTool.RecordAddUpdate('user', userBdd)
         }
       }
 
@@ -853,7 +853,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           DELETE FROM userCpv 
           WHERE userId = ${userBdd.userId} 
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       for (let cpv of cpvs) {
         let userCpv= {
           userId: userBdd.userId,
@@ -862,7 +862,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           origineType: cpv.origineType,
           rating: cpv.rating,
         }
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv)
+        await BddTool.RecordAddUpdate('userCpv', userCpv)
       }
 
       // Synchro membership
@@ -893,7 +893,7 @@ exports.SetPremium = (userId) => {
       if (!user.password || user.password.trim() === '') {
         user.password = Math.random().toString(36).slice(-10)
       }
-      await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      await BddTool.RecordAddUpdate('user', user)
       resolve(user)
     } catch (err) { reject(err) }
   })
@@ -978,7 +978,7 @@ exports.Opportunity = (userId) => {
           WHERE       userCpv.userId = ${user.userId} 
         `
         query += '  ORDER BY userCpv.cpvCode '
-        recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        recordset = await BddTool.QueryExecBdd2(query)
         let userCpvCode = null
         for (var record of recordset) {
           if (userCpvCode !== record.userCpvCode) {
@@ -1182,7 +1182,7 @@ exports.SendPeriodicDashboard = () => {
                     tenderCriterionCpv.cpvId 
           ORDER BY  SUM(tenderCriterionCpv.findCount) DESC 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         let tenders = []
         for (var record of recordset) {
           tenders.push({
@@ -1350,7 +1350,7 @@ exports.userNotifyAddUpdate = (userNotify) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let userNotifyNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userNotify', userNotify)
+      let userNotifyNew = await BddTool.RecordAddUpdate('userNotify', userNotify)
       resolve(userNotifyNew)
     } catch (err) { reject(err) }
   })
@@ -1415,7 +1415,7 @@ exports.userNotifyList = (filter, userData, tenderData) => {
       }
       query += `                  
         ORDER BY userNotify.creationDate DESC `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         userNotifys.push({
           userNotifyId: record.userNotifyId,

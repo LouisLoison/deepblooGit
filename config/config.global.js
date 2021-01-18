@@ -63,17 +63,26 @@ config.bdd = {
     },
     devAws: {
       config: {
-        type: 'MySql',
-        user: 'admin',
-        password: 'zaiH9ahnohiej',
-        server: 'database-deepbloo-dev.cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
-        database: 'deepbloo'
+        type: 'postgres',
+        user: 'deepbloo',
+        password: 'taiT6jooy7iza',
+        server: 'serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
+        database: 'deepbloo_dev'
       }
     },
-
+    devLocal: {
+      config: {
+        type: 'postgres',
+        user: 'deepbloo',
+        password: 'taiT6jooy7iza',
+        server: 'localhost',
+        database: 'deepbloo_dev',
+	      port: 5434,
+      }
+    },
     test: {
       config: {
-        type: 'PostgreSql',
+        type: 'postgres',
         user: 'deepbloo',
         password: 'secret',
         server: '127.0.0.1', 

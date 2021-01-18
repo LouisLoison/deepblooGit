@@ -14,7 +14,7 @@ exports.TenderAdd = (tender) => {
           FROM        dgmarket 
           WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId, BddEnvironnement, BddId)} 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         for (var record of recordset) {
           tender.id = record.id
         }
@@ -53,7 +53,7 @@ exports.TenderAdd = (tender) => {
       tender.status = 0
       tender.creationDate = new Date()
       tender.updateDate = tender.creationDate
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
+      let data = await BddTool.RecordAddUpdate('dgmarket', tender)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
       resolve(data)
     } catch (err) {
@@ -69,7 +69,7 @@ exports.tenderAddUpdate = (tender) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'dgmarketid')
+      let tenderNew = await BddTool.RecordAddUpdate('dgmarket', tender, 'dgmarketid')
       resolve(tenderNew)
     } catch (err) { reject(err) }
   })
@@ -84,7 +84,7 @@ exports.tenderCount = () => {
       const BddEnvironnement = config.prefixe
 
       let query = `SELECT COUNT(*) AS tenderCount FROM dgmarket `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let count = 0
       for (const record of recordset.results) {
         count = record.tenderCount;
@@ -168,7 +168,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
         where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tender = {}
       for (var record of recordset) {
         tender = {
@@ -414,7 +414,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let tenders = []
       for (const record of recordset.results) {
         let tender = tenders.find(a => a.id === record.id)
@@ -688,7 +688,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       if (limit && limit !== '') {
         query += ` LIMIT ${limit} `
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenders = []
       for (var record of recordset) {
         // Get country region
@@ -846,14 +846,14 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       }
       if (where !== '') {
         query += '  WHERE ' + where
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').deleteObject([id])
         await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
       }
 
       if (permanentlyDelete && where && where.trim() !== '') {
         query = `DELETE FROM dgmarket WHERE ${where} AND status = -2 `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
       }
 
       resolve()
@@ -1294,7 +1294,7 @@ exports.TenderGroupAddUpdate = (tenderGroup) => {
         tenderGroup.creationDate = new Date()
       }
       tenderGroup.updateDate = new Date()
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroup', tenderGroup)
+      let data = await BddTool.RecordAddUpdate('tenderGroup', tenderGroup)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1314,7 +1314,7 @@ exports.TenderGroupDelete = (tenderGroupId) => {
         DELETE FROM   tenderGroup 
         WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       resolve()
     } catch (err) {
@@ -1351,7 +1351,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
         where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderGroups = []
       for (var record of recordset) {
         tenderGroups.push({
@@ -1385,7 +1385,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
         WHERE         tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
         AND           userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       let tenderGroup = null;
       if (tenderGroupId) {
@@ -1396,7 +1396,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
           creationDate: new Date(),
           updateDate: new Date(),
         }
-        tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
+        tenderGroup = await BddTool.RecordAddUpdate('tenderGroupLink', tenderGroupLink)
       }
 
       if (!algoliaId) {
@@ -1447,7 +1447,7 @@ exports.TenderArchiveMove = (userId, tenderId) => {
         WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
         AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
 
       let tenderDetail = {
@@ -1462,7 +1462,7 @@ exports.TenderArchiveMove = (userId, tenderId) => {
 
       tenderDetail.status = -2;
       tenderDetail.updateDate = new Date();
-      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let tenderGroup = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
 
       resolve(tenderGroup)
     } catch (err) {
@@ -1484,7 +1484,7 @@ exports.TenderDeleteMove = (userId, tenderId) => {
         WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
         AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
 
       let tenderDetail = {
@@ -1499,7 +1499,7 @@ exports.TenderDeleteMove = (userId, tenderId) => {
 
       tenderDetail.status = -1;
       tenderDetail.updateDate = new Date();
-      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let tenderGroup = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
 
       resolve(tenderGroup)
     } catch (err) {
@@ -1535,7 +1535,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
         where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderGroupLinks = []
       for (var record of recordset) {
         tenderGroupLinks.push({
@@ -1586,7 +1586,7 @@ exports.TenderDetailList = (userId, tenderId) => {
         where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderDetails = []
       for (var record of recordset) {
         tenderDetails.push({
@@ -1622,7 +1622,7 @@ exports.TenderDetailAddUpdate = (tenderDetail) => {
         tenderDetail.creationDate = new Date()
       }
       tenderDetail.updateDate = new Date()
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let data = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1676,7 +1676,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      let data = await BddTool.RecordAddUpdate('tenderCriterion', tenderCriterion)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1714,7 +1714,7 @@ exports.tenderCriterions = (filter) => {
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterions = []
       for (let record of recordset) {
         tenderCriterions.push({
@@ -1746,7 +1746,7 @@ exports.tenderFilterAddUpdate = (tenderFilter) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderFilterNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderFilter', tenderFilter)
+      let tenderFilterNew = await BddTool.RecordAddUpdate('tenderFilter', tenderFilter)
       resolve(tenderFilterNew);
     } catch (err) { reject(err) }
   })
@@ -1778,7 +1778,7 @@ exports.tenderFilterDelete = (tenderFilterId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -1819,7 +1819,7 @@ exports.tenderFilterList = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '\nORDER BY tenderFilter.label '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         tenderFilters.push({
           tenderFilterId: record.tenderFilterId,
@@ -2089,7 +2089,7 @@ exports.tenderUserGroupDispatch = (tenders) => {
           FROM        tenderGroupLink 
           WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         for (const record of recordset) {
           tenderGroupLinks = tenderGroupLinks.filter(
             a => a.tenderGroupId !== record.tenderGroupId && a.tenderId !== record.tenderId

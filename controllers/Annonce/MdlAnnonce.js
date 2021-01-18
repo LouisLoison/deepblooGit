@@ -5,7 +5,7 @@ exports.AddUpdate = (annonce) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let annonceNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'annonce', annonce)
+      let annonceNew = await BddTool.RecordAddUpdate('annonce', annonce)
       resolve(annonceNew)
     } catch (err) { reject(err) }
   })
@@ -28,7 +28,7 @@ exports.Click = (annonceId, userId, screen) => {
         updateDate: new Date()
       }
 
-      let annonceNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'annonceClick', annonceClick)
+      let annonceNew = await BddTool.RecordAddUpdate('annonceClick', annonceClick)
       resolve(annonceNew);
     } catch (err) { reject(err) }
   })
@@ -69,7 +69,7 @@ exports.List = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY annonce.annonceId'
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let annonce = null
       for (var record of recordset) {
         if (!annonce || annonce.annonceId !== record.annonceId) {
@@ -129,7 +129,7 @@ exports.Remove = (annonceId) => {
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -178,7 +178,7 @@ exports.AnnonceClickList = (filter) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         let annonceClick = {
           annonceClickId: record.annonceClickId,

@@ -31,7 +31,7 @@ exports.statistics = (filter) => {
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       for (const record of recordset.results) {
         statistics.dgMarket.push({
           fileSource: record.fileSource,
@@ -63,7 +63,7 @@ exports.statistics = (filter) => {
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       for (const record of recordset.results) {
         statistics.tenderInfo.push({
           fileSource: record.fileSource,
@@ -132,14 +132,14 @@ exports.importTender = (tender, CpvList, textParses) => {
       // Remove tenderCriterion
       if (tender.id) {
         query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
       } else {
         tender.tenderUuid = uuidv4()
       }
 
-      const tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'id')
+      const tenderNew = await BddTool.RecordAddUpdate('dgmarket', tender, 'id')
 
       // Bulk insert into tenderCriterion table
       if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {

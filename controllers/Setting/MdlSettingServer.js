@@ -10,7 +10,7 @@ exports.ServerAddUpdate = (Server) => {
         if (Server.ServerID && Server.ServerID !== 0 && Server.Nom !== '') {
             try {
                 // Recherche de l'ancien nom
-                let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                let recordset = await BddTool.QueryExecBdd2(`
                     SELECT     Server.Nom AS "Nom"
                     FROM       Server 
                     WHERE      Server.ServerID = ${BddTool.NumericFormater(Server.ServerID, BddEnvironnement, BddId)} 
@@ -23,7 +23,7 @@ exports.ServerAddUpdate = (Server) => {
                 // Renomage du server sur l'ensemble de la BDD
                 if (ServerNomOld !== '' && ServerNomOld !== Server.Nom) {
                     try {
-                        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                        await BddTool.QueryExecBdd2(`
                             UPDATE     Flux
                             SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
                             WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
@@ -31,7 +31,7 @@ exports.ServerAddUpdate = (Server) => {
                     } catch (err) { }
 
                     try {
-                        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                        await BddTool.QueryExecBdd2(`
                             UPDATE     Interface
                             SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
                             WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
@@ -39,7 +39,7 @@ exports.ServerAddUpdate = (Server) => {
                     } catch (err) { }
 
                     try {
-                        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                        await BddTool.QueryExecBdd2(`
                             UPDATE     DeployItem
                             SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
                             WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
@@ -47,7 +47,7 @@ exports.ServerAddUpdate = (Server) => {
                     } catch (err) { }
 
                     try {
-                        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                        await BddTool.QueryExecBdd2(`
                             UPDATE     PlanExec
                             SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
                             WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
@@ -55,7 +55,7 @@ exports.ServerAddUpdate = (Server) => {
                     } catch (err) { }
 
                     try {
-                        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+                        await BddTool.QueryExecBdd2(`
                             UPDATE     PlanTache
                             SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
                             WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
@@ -66,7 +66,7 @@ exports.ServerAddUpdate = (Server) => {
         }
 
         // Mise à jour des info du server
-        let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'Server', Server)
+        let data = await BddTool.RecordAddUpdate('Server', Server)
         resolve(data)
     })
 }
@@ -104,7 +104,7 @@ exports.ServerGet = (Nom) => {
             Query += `WHERE Nom = '${BddTool.ChaineFormater(Nom, BddEnvironnement, BddId)}' \n`
         }
 
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, Query, reject, (recordset) => {
+        BddTool.QueryExecBdd(Query, reject, (recordset) => {
             let ServerFind = null
             for (var record of recordset) {
                 ServerFind = {
@@ -155,7 +155,7 @@ exports.ServerList = (Nom) => {
         }
         Query += `ORDER BY   Nom `
 
-        BddTool.QueryExecBdd(BddId, BddEnvironnement, Query, reject, (recordset) => { 
+        BddTool.QueryExecBdd(Query, reject, (recordset) => { 
             for (var record of recordset) {
                 ServerList.push({
                     ServerID: record.ServerID,
