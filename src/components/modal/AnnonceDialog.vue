@@ -87,11 +87,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import moment from "moment";
+import { mapGetters } from 'vuex'
+import moment from 'moment'
 
 export default {
-  name: "AnnonceDialog",
+  name: 'AnnonceDialog',
 
   data: () => ({
     moment,
@@ -101,118 +101,118 @@ export default {
       data: null
     },
     annonceId: null,
-    notEmptyRules: [v => !!v || "Data is required"],
-    membership: "Other",
-    memberships: ["Business", "Premium", "Other"],
-    colors: ["#7cb5ec", "#f7a35c", "#434348"],
+    notEmptyRules: [v => !!v || 'Data is required'],
+    membership: 'Other',
+    memberships: ['Business', 'Premium', 'Other'],
+    colors: ['#7cb5ec', '#f7a35c', '#434348'],
     items: [
       {
         userId: 1,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 2,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 3,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 4,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 5,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 6,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 7,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 8,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 9,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 10,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       },
       { divider: true, inset: true },
       {
         userId: 11,
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Xxxx Xxxx",
-        subtitle: "XX/XX/XXXX XX:XX:XX"
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
+        title: 'Xxxx Xxxx',
+        subtitle: 'XX/XX/XXXX XX:XX:XX',
       }
     ],
     chart1: {
       chart: {
         animation: true,
         height: 400,
-        type: "column"
+        type: 'column'
       },
-      title: { text: "" },
+      title: { text: '' },
       credits: { enabled: false },
       exporting: { enabled: false },
       xAxis: {
-        categories: ["Apples", "Oranges", "Pears", "Grapes", "Bananas"]
+        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
       },
       yAxis: {
         min: 0,
-        title: { text: "Total fruit consumption" },
+        title: { text: 'Total fruit consumption' },
         stackLabels: {
           enabled: true,
           style: {
-            fontWeight: "bold",
-            color: "gray"
+            fontWeight: 'bold',
+            color: 'gray'
           }
         }
       },
       tooltip: {
-        headerFormat: "<b>{point.x}</b><br/>",
-        pointFormat: "{series.name}: {point.y}<br/>Total: {point.stackTotal}"
+        headerFormat: '<b>{point.x}</b><br/>',
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
       },
       plotOptions: {
         column: {
-          stacking: "normal",
+          stacking: 'normal',
           dataLabels: {
             enabled: true
           }
@@ -220,15 +220,15 @@ export default {
       },
       series: [
         {
-          name: "Business",
+          name: 'Business',
           data: [5, 3, 4, 7, 2, 4]
         },
         {
-          name: "Premium",
+          name: 'Premium',
           data: [2, 2, 3, 2, 1, 3]
         },
         {
-          name: "Other",
+          name: 'Other',
           data: [15, 13, 12, 14, 20, 15]
         }
       ]
@@ -240,21 +240,21 @@ export default {
         plotBackgroundColor: null,
         plotBorderWidth: null,
         plotShadow: false,
-        type: "pie"
+        type: 'pie'
       },
-      title: { text: "" },
+      title: { text: '' },
       credits: { enabled: false },
       exporting: { enabled: false },
       tooltip: {
-        pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>"
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
       },
       plotOptions: {
         pie: {
           allowPointSelect: true,
-          cursor: "pointer",
+          cursor: 'pointer',
           dataLabels: {
             enabled: true,
-            format: "<b>{point.name}</b>: {point.percentage:.1f} %"
+            format: '<b>{point.name}</b>: {point.percentage:.1f} %'
           }
         },
         series: {
@@ -268,23 +268,23 @@ export default {
       },
       series: [
         {
-          name: "Membership",
+          name: 'Membership',
           colorByPoint: true,
           data: [
             {
-              name: "Business",
+              name: 'Business',
               y: 80,
               sliced: true,
               selected: true
             },
             {
-              name: "Premium",
+              name: 'Premium',
               y: 56,
               sliced: false,
               selected: false
             },
             {
-              name: "Other",
+              name: 'Other',
               y: 230,
               sliced: false,
               selected: false
@@ -296,115 +296,116 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["getIsMobile", "getUserId"]),
+    ...mapGetters([
+      'getIsMobile',
+      'getUserId',
+    ]),
 
     getAnnonceClickBusinesss() {
       return this.dataAnnonceClicks.data.filter(
         a => a.user && (a.user.type === 1 || a.user.type === 4)
-      );
+      )
     },
 
     getAnnonceClickPremiums() {
       return this.dataAnnonceClicks.data.filter(
         a => a.user && a.user.type === 2
-      );
+      )
     },
 
     getAnnonceClickOthers() {
-      return this.dataAnnonceClicks.data.filter(a => !a.user);
+      return this.dataAnnonceClicks.data.filter(a => !a.user)
     },
 
     getAnnonceClicks() {
       if (!this.dataAnnonceClicks.data) {
-        return null;
+        return null
       }
-      let annonceClicks = null;
-      if (this.membership === "Business") {
-        annonceClicks = this.getAnnonceClickBusinesss;
-      } else if (this.membership === "Premium") {
-        annonceClicks = this.getAnnonceClickPremiums;
+      let annonceClicks = null
+      if (this.membership === 'Business') {
+        annonceClicks = this.getAnnonceClickBusinesss
+      } else if (this.membership === 'Premium') {
+        annonceClicks = this.getAnnonceClickPremiums
       } else {
-        annonceClicks = this.getAnnonceClickOthers;
+        annonceClicks = this.getAnnonceClickOthers
       }
-      return annonceClicks;
+      return annonceClicks
     }
   },
 
-  mounted() {},
-
   methods: {
     show(annonceId) {
-      this.membership = "Other";
-      this.isShowDialog = true;
-      this.dataAnnonceClicks.loading = null;
-      this.dataAnnonceClicks.data = null;
-      this.annonceId = annonceId;
-      let months = [];
+      this.membership = 'Other'
+      this.isShowDialog = true
+      this.dataAnnonceClicks.loading = null
+      this.dataAnnonceClicks.data = null
+      this.annonceId = annonceId
+      let months = []
       for (let i = 0; i < 6; i++) {
         months.push(
           moment()
-            .subtract(i, "month")
-            .format("MMMM")
-        );
+            .subtract(i, 'month')
+            .format('MMMM')
+        )
       }
-      months.reverse();
-      this.chart1.xAxis.categories = months;
-      this.chart1.colors = this.colors;
-      this.chart2.colors = this.colors;
-      this.chart2.chart.animation = true;
-      this.chart2.plotOptions.series.animation = true;
+      months.reverse()
+      this.chart1.xAxis.categories = months
+      this.chart1.colors = this.colors
+      this.chart2.colors = this.colors
+      this.chart2.chart.animation = true
+      this.chart2.plotOptions.series.animation = true
       this.chart2.plotOptions.series.events = {
         click: event => {
-          this.membership = event.point.name;
-          this.changeMembership();
+          this.membership = event.point.name
+          this.changeMembership()
         }
-      };
-      for (let data of this.chart2.series[0].data) {
-        data.y = 0;
       }
-      this.changeMembership();
-      this.loadAnnonceClicks(annonceId);
+      for (let data of this.chart2.series[0].data) {
+        data.y = 0
+      }
+      this.changeMembership()
+      this.loadAnnonceClicks(annonceId)
     },
 
     async loadAnnonceClicks() {
       try {
-        this.dataAnnonceClicks.loading = 0;
-        const res = await this.$api.post("/Annonce/AnnonceClickList", {
+        this.dataAnnonceClicks.loading = 0
+        const res = await this.$api.post('/Annonce/AnnonceClickList', {
           filter: {
             annonceId: this.annonceId
           }
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.dataAnnonceClicks.data = res.data;
-        this.dataAnnonceClicks.loading = 1;
-        this.chart2.series[0].data[0].y = this.getAnnonceClickBusinesss.length;
-        this.chart2.series[0].data[1].y = this.getAnnonceClickPremiums.length;
-        this.chart2.series[0].data[2].y = this.getAnnonceClickOthers.length;
-        this.membership = "Business";
-        this.changeMembership();
+        this.dataAnnonceClicks.data = res.data
+        this.dataAnnonceClicks.loading = 1
+        this.chart2.series[0].data[0].y = this.getAnnonceClickBusinesss.length
+        this.chart2.series[0].data[1].y = this.getAnnonceClickPremiums.length
+        this.chart2.series[0].data[2].y = this.getAnnonceClickOthers.length
+        this.membership = 'Business'
+        this.changeMembership()
       } catch (err) {
-        this.dataAnnonceClicks.loading = -1;
-        this.$api.error(err, this);
+        this.dataAnnonceClicks.loading = -1
+        this.$api.error(err, this)
       }
     },
 
     changeMembership() {
-      this.chart2.chart.animation = false;
-      this.chart2.plotOptions.series.animation = false;
+      this.chart2.chart.animation = false
+      this.chart2.plotOptions.series.animation = false
       for (let data of this.chart2.series[0].data) {
         if (this.membership === data.name) {
-          data.sliced = true;
-          data.selected = true;
+          data.sliced = true
+          data.selected = true
         } else {
-          data.sliced = false;
-          data.selected = false;
+          data.sliced = false
+          data.selected = false
         }
       }
     }
   }
-};
+}
 </script>
 
 <style scope>

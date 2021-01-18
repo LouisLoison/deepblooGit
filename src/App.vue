@@ -47,10 +47,6 @@ export default {
     InsufficientRightDialog,
   },
 
-  data: () => ({
-    //
-  }),
-
   computed: {
     ...mapGetters([
       'isHeaderShow',
@@ -79,7 +75,7 @@ export default {
       } else {
         this.initIsMobile(false)
       }
-    }
+    },
   },
 }
 </script>

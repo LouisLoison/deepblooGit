@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: "Error",
+  name: 'Error',
 }
 </script>
 

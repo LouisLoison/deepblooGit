@@ -1,16 +1,34 @@
 <template>
   <v-card>
-    <div v-if="!tender" class="text-center pa-5">
+    <div v-if="tenderLoading === null" class="text-center pa-5">
       <v-progress-circular
         :size="50"
         color="blue-grey lighten-4"
         indeterminate
       />
     </div>
+    <div
+      v-else-if="tenderLoading === -1"
+      class="text-center pa-5 red--text"
+    >
+      <v-icon
+        color="red"
+        size="18"
+        class="pb-1"
+      >
+        fa-exclamation-triangle
+      </v-icon>
+      <span class="title">
+        Error
+      </span>
+      <div class="caption pa-3 red lighten-5">
+        {{ tenderError }}
+      </div>
+    </div>
     <div v-else>
       <div>
         <div
-          v-if="hasReadRight && getDataGroups && getDataGroups.loading === 1"
+          v-if="hasReadRight && getDataTenderGroups && getDataTenderGroups.loading === 1"
           style="position: absolute; z-index: 10; right: 166px;"
         >
           <div v-if="!tenderGroups">
@@ -24,7 +42,7 @@
               top
               class="display-1"
               style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
-              title="Add tender to a group"
+              title="Add tender to a business pipeline"
             >
               <v-icon style="font-size: 18px; color: #ffffff !important;">
                 fa-circle
@@ -110,7 +128,7 @@
           class="display-1"
           style="position: absolute; z-index: 10; right: 70px; background-color: rgba(255, 255, 255, 0.4);"
           title="Open the tender in a new tab"
-          :to="{ name: 'Tenders', query: { tenderId: tender.id } }"
+          :to="{ name: 'tender', query: { tenderUuid: tender.tenderUuid, header: 'show' } }"
           target="_blank"
         >
           <v-icon color="black darken-2" style="font-size: 20px;">
@@ -780,7 +798,7 @@
             <v-card color="grey lighten-5">
               <v-card-text class="pa-3">
                 <div v-if="groups">
-                  <div class="grey--text">Group</div>
+                  <div class="grey--text">Business pipeline</div>
                   <div>
                     <v-menu :nudge-width="200" offset-y max-height="500">
                       <template v-slot:activator="{ on }">
@@ -1020,7 +1038,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import SentEmailDialog from "@/components/modal/SentEmailDialog"
+import SentEmailDialog from '@/components/modal/SentEmailDialog'
 
 export default {
   name: 'Tender',
@@ -1032,6 +1050,8 @@ export default {
   data: () => ({
     moment,
     tender: null,
+    tenderLoading: null,
+    tenderError: null,
     loadingMembership: false,
     isFreeMembership: false,
     isPremiumMembership: false,
@@ -1209,7 +1229,7 @@ export default {
       'getUsername',
       'getUserType',
       'getDataCpvs',
-      'getDataGroups',
+      'getDataTenderGroups',
     ]),
 
     isFree() {
@@ -1275,13 +1295,13 @@ export default {
       if (
         !this.tenderGroupLinks ||
         !this.tenderGroupLinks.length ||
-        !this.getDataGroups ||
-        this.getDataGroups.loading !== 1 ||
-        !this.getDataGroups.data
+        !this.getDataTenderGroups ||
+        this.getDataTenderGroups.loading !== 1 ||
+        !this.getDataTenderGroups.data
       ) {
         return null
       }
-      const tenderGroups = this.getDataGroups.data.filter(a =>
+      const tenderGroups = this.getDataTenderGroups.data.filter(a =>
         this.tenderGroupLinks.map(a => a.tenderGroupId).includes(a.tenderGroupId)
       )
       if (!tenderGroups || !tenderGroups.length) {
@@ -1295,6 +1315,8 @@ export default {
     async loadTender(tenderId, tenderUuid) {
       try {
         this.tender = null
+        this.tenderLoading = null
+        this.tenderError = null
         this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
           id: tenderId,
@@ -1306,8 +1328,11 @@ export default {
         res.data.cpvs = res.data.cpvs.split(',').map(Number)
         res.data.cpvDescriptions = res.data.cpvDescriptions.split(',')
         this.tender = res.data
+        this.tenderLoading = 1
         this.initData()
       } catch (err) {
+        this.tenderLoading = -1
+        this.tenderError = err
         this.$api.error(err, this)
       }
     },

@@ -29,6 +29,7 @@ export default new Vuex.Store({
     username: null,
     password: null,
     userPhoto: null,
+    userBusinessPipeline: null,
     token: null,
     userMembership: {
       loading: false,
@@ -44,16 +45,15 @@ export default new Vuex.Store({
       data: null,
       error: null
     },
-    dataGroups: {
-      loading: null,
-      data: null,
-      error: null
-    },
     dataOpportunity: {
       loading: null,
       data: null
     },
     dataUserNotifys: {
+      loading: null,
+      data: null
+    },
+    dataTenderGroups: {
       loading: null,
       data: null
     },
@@ -68,6 +68,7 @@ export default new Vuex.Store({
     },
     AppSearchUrl: 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/',
   },
+
   getters: {
     getApiUrl(state) {
       return state.ApiUrl
@@ -105,6 +106,10 @@ export default new Vuex.Store({
       return state.userPhoto
     },
 
+    getUserBusinessPipeline(state) {
+      return state.userBusinessPipeline
+    },
+
     isUserLoggedIn(state) {
       return state.token && state.token !== ""
     },
@@ -129,16 +134,16 @@ export default new Vuex.Store({
       return state.dataCpvs
     },
 
-    getDataGroups(state) {
-      return state.dataGroups
-    },
-
     getDataOpportunity(state) {
       return state.dataOpportunity
     },
 
     getDataUserNotifys(state) {
       return state.dataUserNotifys
+    },
+
+    getDataTenderGroups(state) {
+      return state.dataTenderGroups
     },
 
     getCpvsLogoFromLabel: state => cpvs => {
@@ -205,6 +210,7 @@ export default new Vuex.Store({
       return state.userMembership.isBusiness || state.type === 1
     },
   },
+
   mutations: {
     UPDATE_APIURL(state, ApiUrl) {
       state.ApiUrl = ApiUrl
@@ -226,6 +232,19 @@ export default new Vuex.Store({
       state.userPhoto =
         payload.photo !== undefined ? payload.photo : state.photo
       state.token = payload.token !== undefined ? payload.token : state.token
+    },
+
+    UPDATE_TenderGroup(state, payload) {
+      const tenderGroup = state.dataTenderGroups.data.find(a => a.tenderGroupId === payload.tenderGroupId)
+      if (tenderGroup) {
+        Object.assign(tenderGroup, payload)
+      } else {
+        state.dataTenderGroups.data.push(payload)
+      }
+    },
+
+    UPDATE_USER_BusinessPipeline(state, value) {
+      state.userBusinessPipeline = value
     },
 
     UPDATE_SCREEN_TENDERS(state, payload) {
@@ -269,6 +288,7 @@ export default new Vuex.Store({
       state.insufficientRightDialog = value
     },
   },
+
   actions: {
     initIsMobile({ commit }, value) {
       commit("UPDATE_IsMobile", value)
@@ -339,7 +359,7 @@ export default new Vuex.Store({
       state.userMembership.isFree = false
       state.userMembership.isPremium = false
       state.userMembership.isBusiness = false
-      state.dataGroups.data = []
+      state.dataTenderGroups.data = []
     },
 
     async loadUserMemberships({ state }) {
@@ -362,6 +382,47 @@ export default new Vuex.Store({
         state.userMembership.loading = 1
       } catch (err) {
         state.userMembership.loading = -1
+        Vue.api.error(err, this)
+      }
+    },
+
+    async loadBusinessPipeline({ commit, state }) {
+      try {
+        if (!state.userId) {
+          return
+        }
+        const res = await Vue.api.post("/User/User", {
+          userId: state.userId
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        if (
+          res.Utilisateur
+          && res.Utilisateur.businessPipeline
+        ) {
+          commit('UPDATE_USER_BusinessPipeline', JSON.parse(res.Utilisateur.businessPipeline))
+        } else {
+          commit('UPDATE_USER_BusinessPipeline', null)
+        }
+      } catch (err) {
+        Vue.api.error(err, this)
+      }
+    },
+
+    async updateBusinessPipeline({ commit, state }, businessPipeline) {
+      try {
+        if (!state.userId) {
+          return
+        }
+        const user = { userId: state.userId }
+        user.businessPipeline = JSON.stringify(businessPipeline)
+        const res = await Vue.api.post("/User/AddUpdate", { user })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        commit("UPDATE_USER_BusinessPipeline", businessPipeline)
+      } catch (err) {
         Vue.api.error(err, this)
       }
     },
@@ -396,31 +457,8 @@ export default new Vuex.Store({
         state.dataCpvs.data = res.data
         state.dataCpvs.loading = 1
       } catch (err) {
-        console.log('-- err')
         console.log(err)
         state.dataCpvs.loading = -1
-        Vue.api.error(err, this)
-      }
-    },
-
-    async loadGroups({ state }) {
-      try {
-        state.dataGroups.loading = 0
-        if (!state.userId) {
-          state.dataGroups.data = []
-          state.dataGroups.loading = 1
-          return
-        }
-        const res = await Vue.api.post("/Tender/TenderGroupList", {
-          userId: state.userId
-        })
-        if (!res.success) {
-          throw new Error(res.Error)
-        }
-        state.dataGroups.data = res.data
-        state.dataGroups.loading = 1
-      } catch (err) {
-        state.dataGroups.loading = -1
         Vue.api.error(err, this)
       }
     },
@@ -474,6 +512,40 @@ export default new Vuex.Store({
         state.dataUserNotifys.loading = 1
       } catch (err) {
         state.dataUserNotifys.loading = -1
+        Vue.api.error(err, this)
+      }
+    },
+
+    async loadTenderGroups({ state }) {
+      try {
+        state.dataTenderGroups.loading = 0
+        if (!state.userId) {
+          state.dataTenderGroups.data = []
+          state.dataTenderGroups.loading = 1
+          return
+        }
+        const res = await Vue.api.post("/Tender/TenderGroupList", {
+          userId: state.userId
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        state.dataTenderGroups.data = res.data
+        state.dataTenderGroups.loading = 1
+      } catch (err) {
+        state.dataTenderGroups.loading = -1
+        Vue.api.error(err, this)
+      }
+    },
+
+    async updateTenderGroup({ commit }, tenderGroup) {
+      try {
+        const res = await Vue.api.post("/Tender/TenderGroupAddUpdate", { tenderGroup })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        commit("UPDATE_TenderGroup", tenderGroup)
+      } catch (err) {
         Vue.api.error(err, this)
       }
     },

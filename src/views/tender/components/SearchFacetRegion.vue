@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import constRegions from "@/assets/constants/regions.json"
+import constRegions from '@/assets/constants/regions.json'
 
 export default {
   name: 'SearchFacetRegion',

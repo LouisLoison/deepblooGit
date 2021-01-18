@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from 'axios'
 
 export default {
   name: 'SearchHeader',
@@ -28,7 +28,7 @@ export default {
   props: {
     value: {
       required: true,
-      type: String
+      type: String,
     }
   },
 

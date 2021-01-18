@@ -118,6 +118,6 @@
 
 <script>
 export default {
-  name: "TenderInfo"
+  name: 'TenderInfo'
 }
 </script>

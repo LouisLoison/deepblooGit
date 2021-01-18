@@ -212,12 +212,12 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import moment from "moment";
-import Fuse from "fuse.js";
+import { mapGetters } from 'vuex'
+import moment from 'moment'
+import Fuse from 'fuse.js'
 
 export default {
-  name: "SentEmailDialog",
+  name: 'SentEmailDialog',
 
   data: () => ({
     moment,
@@ -226,15 +226,15 @@ export default {
     userTabs: null,
     users: null,
     userAlls: null,
-    userSearch: "",
-    subject: "",
-    body: "",
-    footerHtml: "",
+    userSearch: '',
+    subject: '',
+    body: '',
+    footerHtml: '',
     emails: [],
-    email: "",
+    email: '',
     tenderId: null,
     dialogInsufficientRight: false,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
@@ -259,7 +259,7 @@ export default {
 
     getUsers() {
       this.users;
-      if (!this.userSearch || this.userSearch.trim() === "") {
+      if (!this.userSearch || this.userSearch.trim() === '') {
         return this.users
       }
       const options = {
@@ -268,7 +268,7 @@ export default {
         distance: 300,
         maxPatternLength: 32,
         findAllMatches: true,
-        keys: ["title", "subtitle"]
+        keys: ['title', 'subtitle']
       }
       const fuse = new Fuse(this.users, options)
       return fuse.search(this.userSearch.trim())
@@ -280,18 +280,18 @@ export default {
       if (this.getColleagues) {
         this.userTab = 1
         this.userTabs = [
-          { id: 1, label: "Colleagues" },
-          { id: 2, label: "Deepbloo members" }
+          { id: 1, label: 'Colleagues' },
+          { id: 2, label: 'Deepbloo members' }
         ]
       } else {
         this.userTab = 2
-        this.userTabs = [{ id: 2, label: "Deepbloo members" }]
+        this.userTabs = [{ id: 2, label: 'Deepbloo members' }]
       }
       this.subject = subject
       this.body = body
       this.footerHtml = footerHtml
       this.emails = []
-      this.email = ""
+      this.email = ''
       this.tenderId = tenderId
       this.isShowDialog = true
       this.initUsers()
@@ -314,7 +314,7 @@ export default {
           }
         } else {
           if (!this.userAlls) {
-            const res = await this.$api.post("/User/List")
+            const res = await this.$api.post('/User/List')
             this.userAlls = res.data
           }
           for (const user of this.userAlls) {
@@ -345,7 +345,7 @@ export default {
       this.isShowDialog = false
       const userIds = this.users.filter(a => a.select).map(a => a.userId)
       try {
-        const res = await this.$api.post("/User/Notify", {
+        const res = await this.$api.post('/User/Notify', {
           userIds: userIds,
           emails: this.emails.length ? this.emails : undefined,
           subject: this.subject,
@@ -356,7 +356,7 @@ export default {
         if (!res.success) {
           throw new Error(res.Error)
         }
-        this.$emit("notifySent")
+        this.$emit('notifySent')
       } catch (err) {
         this.$api.error(err, this)
       }

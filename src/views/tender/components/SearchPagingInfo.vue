@@ -27,7 +27,7 @@ export default {
     searchState: {
       required: true,
       type: Object
-    }
+    },
   },
 
   data: () => ({

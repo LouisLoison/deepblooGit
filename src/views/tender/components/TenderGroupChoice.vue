@@ -2,7 +2,7 @@
   <v-dialog v-model="isShow" max-width="500">
     <v-card class="text-center">
       <v-card-title class="headline">
-        Tender group choice
+        Tender business pipeline choice
       </v-card-title>
 
       <v-card-text>
@@ -19,7 +19,7 @@
           </v-list-item>
           <v-divider class="ma-1" />
           <v-list-item
-            v-for="(group, index) in getDataGroups.data"
+            v-for="(group, index) in getDataTenderGroups.data"
             :key="`group${index}`"
             @click="choice(group)"
           >
@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 
 export default {
-  name: "TenderGroupChoice",
+  name: 'TenderGroupChoice',
 
   data: () => ({
     isShow: false,
@@ -60,7 +60,9 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(["getDataGroups"])
+    ...mapGetters([
+      'getDataTenderGroups',
+    ]),
   },
 
   methods: {
@@ -74,7 +76,7 @@ export default {
     },
 
     choice(group) {
-      this.$emit("choice", {
+      this.$emit('choice', {
         tender: this.tender,
         group
       })

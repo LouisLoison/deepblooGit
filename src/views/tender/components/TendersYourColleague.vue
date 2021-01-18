@@ -17,7 +17,11 @@
         target="_blank"
         style="text-decoration: none; cursor: pointer;"
       >
-        <v-chip outlined style="text-decoration: none; cursor: pointer;">
+        <v-chip
+          outlined
+          class="mt-1 mr-1"
+          style="text-decoration: none; cursor: pointer;"
+        >
           <v-avatar class="pa-1">
             <img :src="user.photo" alt="" />
           </v-avatar>

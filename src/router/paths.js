@@ -1,166 +1,166 @@
 export default [
   {
-    path: "*",
+    path: '*',
     meta: {
       public: true
     },
     redirect: {
-      path: "/404"
+      path: '/404'
     }
   },
   {
-    path: "/login",
+    path: '/login',
     meta: {
       public: true
     },
-    name: "Login",
+    name: 'Login',
     component: () => import(`@/views/Login.vue`)
   },
   {
-    path: "/tender/",
+    path: '/tender',
     meta: {
       public: true
     },
-    name: "tender",
+    name: 'tender',
     component: () => import(`@/views/tender/tender.vue`)
   },
   {
-    path: "/tenders/",
+    path: '/tenders/',
     meta: {
       public: true
     },
-    name: "Tenders",
+    name: 'Tenders',
     component: () => import(`@/views/tender/tenders.vue`)
   },
   {
-    path: "/tender/add",
+    path: '/tender/add',
     meta: {
       public: true
     },
-    name: "TenderAdd",
+    name: 'TenderAdd',
     component: () => import(`@/views/tender/Add.vue`)
   },
   {
-    path: "/tender/info",
+    path: '/tender/info',
     meta: {
       public: true
     },
-    name: "TenderInfo",
+    name: 'TenderInfo',
     component: () => import(`@/views/tender/Info.vue`)
   },
   {
-    path: "/privateDeals",
+    path: '/privateDeals',
     meta: {
       public: true
     },
-    name: "PrivateDeals",
+    name: 'PrivateDeals',
     component: () => import(`@/views/PrivateDeal/PrivateDeals.vue`)
   },
   {
-    path: "/setting",
+    path: '/setting',
     meta: {
       public: true
     },
-    name: "Setting",
+    name: 'Setting',
     component: () => import(`@/views/setting/index.vue`),
     children: [
       {
-        path: "/setting/user",
+        path: '/setting/user',
         meta: {
           public: true
         },
-        name: "SettingUser",
+        name: 'SettingUser',
         props: true,
         component: () => import(`@/views/setting/SettingUser.vue`)
       },
       {
-        path: "/setting/organization",
+        path: '/setting/organization',
         meta: {
           public: true
         },
-        name: "SettingOrganization",
+        name: 'SettingOrganization',
         component: () => import(`@/views/setting/SettingOrganization.vue`)
       },
       {
-        path: "/setting/cpv",
+        path: '/setting/cpv',
         meta: {
           public: true
         },
-        name: "SettingCpv",
+        name: 'SettingCpv',
         component: () => import(`@/views/setting/SettingCpv.vue`)
       },
       {
-        path: "/setting/annonce",
+        path: '/setting/annonce',
         meta: {
           public: true
         },
-        name: "SettingAnnonce",
+        name: 'SettingAnnonce',
         component: () => import(`@/views/setting/SettingAnnonce.vue`)
       },
       {
-        path: "/setting/notify",
+        path: '/setting/notify',
         meta: {
           public: true
         },
-        name: "SettingNotify",
+        name: 'SettingNotify',
         component: () => import(`@/views/setting/SettingNotify.vue`)
       },
       {
-        path: "/setting/import/tender/analytics",
+        path: '/setting/import/tender/analytics',
         meta: {
           public: true
         },
-        name: "SettingAnalytics",
+        name: 'SettingAnalytics',
         component: () => import(`@/views/setting/SettingAnalytics.vue`)
       },
       {
-        path: "/setting/import/tender/statistique",
+        path: '/setting/import/tender/statistique',
         meta: {
           public: true
         },
-        name: "SettingImportStatistique",
+        name: 'SettingImportStatistique',
         component: () => import(`@/views/setting/ImportTender/Statistique.vue`)
       },
       {
-        path: "/setting/import/tender/tenderinfos",
+        path: '/setting/import/tender/tenderinfos',
         meta: {
           public: true
         },
-        name: "SettingImportTenderInfos",
+        name: 'SettingImportTenderInfos',
         component: () => import(`@/views/setting/ImportTender/TenderInfos.vue`)
       },
       {
-        path: "/setting/other",
+        path: '/setting/other',
         meta: {
           public: true
         },
-        name: "SettingOther",
+        name: 'SettingOther',
         component: () => import(`@/views/setting/SettingOther.vue`)
       }
     ]
   },
   {
-    path: "/404",
+    path: '/404',
     meta: {
       public: true
     },
-    name: "NotFound",
+    name: 'NotFound',
     component: () => import(`@/views/NotFound.vue`)
   },
   {
-    path: "/403",
+    path: '/403',
     meta: {
       public: true
     },
-    name: "AccessDenied",
+    name: 'AccessDenied',
     component: () => import(`@/views/Deny.vue`)
   },
   {
-    path: "/500",
+    path: '/500',
     meta: {
       public: true
     },
-    name: "ServerError",
+    name: 'ServerError',
     component: () => import(`@/views/Error.vue`)
   },
-];
+]

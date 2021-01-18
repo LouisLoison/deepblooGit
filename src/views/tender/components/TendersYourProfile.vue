@@ -30,7 +30,7 @@
           v-for="(cpv, index) in getDataOpportunity.data.cpvs"
           :key="index"
           outlined
-          class="pl-1"
+          class="pl-1 mt-1 mr-1"
           :title="cpv.name"
         >
           <v-avatar class="mr-1" size="10">
@@ -54,7 +54,7 @@
           v-for="(region, index) in getDataOpportunity.data.user.regions.split(',')"
           :key="index"
           outlined
-          class="mr-1"
+          class="mt-1 mr-1"
         >
           {{ region }}
         </v-chip>
@@ -99,5 +99,5 @@ export default {
       return cpv.logo
     },
   },
-};
+}
 </script>

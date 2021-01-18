@@ -18,7 +18,10 @@
         class="font-weight-bold display-table-row px-0"
         style="border-bottom: 1px solid #78909c; margin-bottom: 14px; color: #3d4872; background-color: #fafafa; padding-top: 6px;"
       >
-        <div class="display-table-head display-table-cell-option">
+        <div
+          class="display-table-head display-table-cell-option"
+          style="overflow: visible;"
+        >
           <v-menu transition="slide-y-transition" offset-y left>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
@@ -246,8 +249,9 @@
           >
             <div
               class="display-table-cell display-table-cell-option"
+              style="overflow: visible;"
             >
-              <v-menu transition="slide-y-transition" offset-y left>
+              <v-menu transition="slide-y-transition" offset-y right>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -255,7 +259,9 @@
                     class="ma-0 pa-0"
                     @click.stop
                   >
-                    <v-icon size="16">fa-ellipsis-v</v-icon>
+                    <v-icon size="16">
+                      fa-ellipsis-v
+                    </v-icon>
                   </v-btn>
                 </template>
 
@@ -264,10 +270,15 @@
                     @click="openTenderGroupChoice(result)"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa fa-circle</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa fa-circle
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
-                      Assign to group
+                      Assign to business pipeline
                     </v-list-item-title>
                   </v-list-item>
 
@@ -275,7 +286,12 @@
                     @click="openSentEmailDialog(result)"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa-bell</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa-bell
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       Notify
@@ -289,7 +305,12 @@
                     }"
                   >
                     <v-list-item-avatar>
-                      <v-icon text>fa-copy</v-icon>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa-copy
+                      </v-icon>
                     </v-list-item-avatar>
                     <v-list-item-title>
                       Duplicate
@@ -308,7 +329,7 @@
                 style="height: 32px;"
               />
               <div
-                v-if="getDataGroups && getDataGroups.loading === 1"
+                v-if="getDataTenderGroups && getDataTenderGroups.loading === 1"
                 style="display: inline-block; position: absolute; left: 12px; bottom: 0px;"
               >
                 <div v-if="!tenderGroups(result)">
@@ -319,7 +340,7 @@
                     small
                     class="blue-grey--text text--lighten-4"
                     style="height: 16px; width: 16px; margin: 0px; background-color: #ffffff !important;"
-                    title="Add tender to a group"
+                    title="Add tender to a business pipeline"
                   >
                     <v-icon size="14">fa-circle</v-icon>
                   </v-btn>
@@ -668,7 +689,7 @@ export default {
       'getIsBusinessMembership',
       'getScreenTenders',
       'getCpvsLogoFromLabel',
-      'getDataGroups',
+      'getDataTenderGroups',
     ]),
 
     tenderGroups() {
@@ -676,13 +697,13 @@ export default {
         if (
           !result.groups ||
           !result.groups.raw ||
-          !this.getDataGroups ||
-          this.getDataGroups.loading !== 1 ||
-          !this.getDataGroups.data
+          !this.getDataTenderGroups ||
+          this.getDataTenderGroups.loading !== 1 ||
+          !this.getDataTenderGroups.data
         ) {
           return null
         }
-        const tenderGroups = this.getDataGroups.data.filter(a =>
+        const tenderGroups = this.getDataTenderGroups.data.filter(a =>
           result.groups.raw.includes(a.tenderGroupId.toString())
         )
         if (!tenderGroups || !tenderGroups.length) {
@@ -752,7 +773,7 @@ export default {
       this.$emit('openTenderGroupChoice', result)
     },
   },
-};
+}
 </script>
 
 <style>
@@ -793,8 +814,8 @@ export default {
 }
 
 .display-table-cell-option {
-  width: 36px;
-  min-width: 36px;
+  width: 26px;
+  min-width: 26px;
   text-align: center;
 }
 </style>

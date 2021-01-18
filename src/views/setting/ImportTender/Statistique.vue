@@ -144,28 +144,28 @@
 import moment from 'moment'
 
 export default {
-  name: "ImportStatistic",
+  name: 'ImportStatistic',
 
   data: () => ({
     moment,
     dataUsers: {
       loading: null,
       error: null,
-      data: null
+      data: null,
     },
     dayCount: 7,
     dayCounts: [ 5, 7, 10, 15 ],
     dataTenderImportStatistics: {
       loading: null,
       error: null,
-      data: null
+      data: null,
     },
     chartStatistique: {
       chart: {
         type: "column",
         plotBorderWidth: 1,
         zoomType: "xy",
-        height: 300
+        height: 300,
       },
       title: { text: "" },
       credits: { enabled: false },
@@ -176,12 +176,12 @@ export default {
         title: { text: "" },
         stackLabels: {
           enabled: true,
-          style: { fontWeight: "bold", color: "gray" }
+          style: { fontWeight: "bold", color: "gray" },
         }
       },
       tooltip: {
         headerFormat: "<b>{point.x}</b><br/>",
-        pointFormat: "Total: {point.stackTotal}<br/>{series.name}: {point.y}"
+        pointFormat: "Total: {point.stackTotal}<br/>{series.name}: {point.y}",
       },
       plotOptions: {
         column: {
@@ -189,18 +189,18 @@ export default {
           pointPadding: 0.2,
           borderWidth: 0,
           dataLabels: {
-            enabled: true
+            enabled: true,
           },
           stacking: 'normal',
         }
       },
-      series: []
+      series: [],
     },
     chartMerge: {
       chart: {
         plotBackgroundColor: null,
         plotBorderWidth: 0,
-        plotShadow: false
+        plotShadow: false,
       },
       credits: { enabled: false },
       exporting: { enabled: false },
@@ -208,14 +208,14 @@ export default {
         text: '',
         align: 'center',
         verticalAlign: 'middle',
-        y: 60
+        y: 60,
       },
       tooltip: {
-        pointFormat: '<b>{point.y}</b><br>({point.percentage:.1f}%)'
+        pointFormat: '<b>{point.y}</b><br>({point.percentage:.1f}%)',
       },
       accessibility: {
         point: {
-          valueSuffix: '%'
+          valueSuffix: '%',
         }
       },
       plotOptions: {
@@ -225,13 +225,13 @@ export default {
             distance: -50,
             style: {
               fontWeight: 'bold',
-              color: 'white'
+              color: 'white',
             }
           },
           startAngle: -90,
           endAngle: 90,
           center: ['50%', '75%'],
-          size: '110%'
+          size: '110%',
         }
       },
       series: []
@@ -241,19 +241,19 @@ export default {
         plotBackgroundColor: null,
         plotBorderWidth: null,
         plotShadow: false,
-        type: 'pie'
+        type: 'pie',
       },
       credits: { enabled: false },
       exporting: { enabled: false },
       title: {
-        text: ''
+        text: '',
       },
       tooltip: {
-        pointFormat: '<b>{point.y}</b><br>({point.percentage:.1f}%)'
+        pointFormat: '<b>{point.y}</b><br>({point.percentage:.1f}%)',
       },
       accessibility: {
         point: {
-          valueSuffix: '%'
+          valueSuffix: '%',
         }
       },
       plotOptions: {
@@ -261,9 +261,9 @@ export default {
           allowPointSelect: true,
           cursor: 'pointer',
           dataLabels: {
-            enabled: false
+            enabled: false,
           },
-          showInLegend: true
+          showInLegend: true,
         }
       },
       series: [],
@@ -279,7 +279,7 @@ export default {
       try {
         this.dataTenderImportStatistics.loading = 0
         let filter = {}
-        const res = await this.$api.post("/TenderImport/statistics", { filter })
+        const res = await this.$api.post('/TenderImport/statistics', { filter })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -388,10 +388,10 @@ export default {
           name: 'Same id',
           y: sameId,
           sliced: true,
-          selected: true
+          selected: true,
         }, {
           name: 'Same title buyer biddeadline',
-          y: titleBuyerBiddeadline
+          y: titleBuyerBiddeadline,
         }]
       }]
     },
@@ -403,7 +403,6 @@ export default {
   }
 };
 </script>
-
 
 <style>
 @media screen and (max-width: 600px) {

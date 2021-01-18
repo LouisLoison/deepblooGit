@@ -25,7 +25,7 @@ export default {
     totalPages: {
       type: Number,
       required: true
-    }
+    },
   },
 
   methods: {
@@ -46,6 +46,7 @@ export default {
   margin: 0px 3px !important;
   height: 28px;
   min-width: 28px;
+  outline: none;
 }
 
 .pagination .v-pagination__navigation {

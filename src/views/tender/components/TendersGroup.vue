@@ -3,6 +3,24 @@
     <div v-if="!dataTenderGroups.loading" class="text-center pa-5">
       <v-progress-circular :size="50" color="grey" indeterminate />
     </div>
+    <div
+      v-else-if="dataTenderGroups.loading === -1"
+      class="text-center pa-5 red--text"
+    >
+      <v-icon
+        color="red"
+        size="18"
+        class="pb-1"
+      >
+        fa-exclamation-triangle
+      </v-icon>
+      <span class="title">
+        Error
+      </span>
+      <div class="caption pa-3 red lighten-5">
+        {{ dataTenderGroups.error }}
+      </div>
+    </div>
     <div v-else>
       <!-- All tenders -->
       <div>
@@ -39,7 +57,7 @@
 
       <v-divider class="ma-1"></v-divider>
 
-      <!-- Tenders without group -->
+      <!-- Tenders without business pipeline -->
       <div
         class="group-list-grid"
         @click.stop="isWithoutGroupChange()"
@@ -60,7 +78,12 @@
               'border-color': `#c1c9ce !important`
             }"
           >
-            <span class="body-2 headline white--text" />
+            <v-icon
+              size="14"
+              class="white--text"
+            >
+              fa-filter
+            </v-icon>
           </v-avatar>
           <v-avatar v-else size="40" class="mr-3" color="white">
             <span
@@ -73,12 +96,12 @@
           class="cursor-pointer"
           style="display: flex; align-items: center; text-shadow: rgb(255, 255, 255) 1px 0px 10px;"
         >
-          Tenders without group
+          Without business pipeline
         </div>
         <div @click.stop></div>
       </div>
 
-      <!-- Tender group -->
+      <!-- Tender business pipeline -->
       <drop
         v-for="(group, index) of dataTenderGroups.data"
         :key="`group${index}`"
@@ -110,7 +133,17 @@
                 'border-color': `${group.color} !important`
               }"
             >
-              <span class="body-2 headline white--text">
+              <v-icon
+                v-if="group.searchRequest && group.searchRequest !== ''"
+                size="14"
+                class="white--text"
+              >
+                fa-filter
+              </v-icon>
+              <span
+                v-else
+                class="body-2 headline white--text"
+              >
                 {{ group.count > -1 ? group.count : "--" }}
               </span>
             </v-avatar>
@@ -186,13 +219,42 @@
                     Delete
                   </v-list-item-title>
                 </v-list-item>
+
+                <v-divider />
+
+                <v-list-item
+                  @click="saveBusinessPipeline(group)"
+                  avatar
+                  style="height: 20px;"
+                >
+                  <v-list-item-avatar>
+                    <v-icon size="14" text>fa-save</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-title>
+                    Save current search
+                  </v-list-item-title>
+                </v-list-item>
+
+                <v-list-item
+                  @click="eraseBusinessPipeline(group)"
+                  :disabled="!group.searchRequest || group.searchRequest === ''"
+                  avatar
+                  style="height: 20px;"
+                >
+                  <v-list-item-avatar>
+                    <v-icon size="14" text>fa-trash</v-icon>
+                  </v-list-item-avatar>
+                  <v-list-item-title>
+                    Erase search filter
+                  </v-list-item-title>
+                </v-list-item>
               </v-list>
             </v-menu>
           </div>
         </div>
       </drop>
 
-      <!-- Add a group -->
+      <!-- Add a business pipeline -->
       <div
         v-if="getIsBusinessMembership"
         class="group-list-grid"
@@ -204,7 +266,7 @@
           </v-avatar>
         </div>
         <div style="display: flex; align-items: center;">
-          Add a group
+          Add a business pipeline
         </div>
         <div></div>
       </div>
@@ -214,7 +276,7 @@
     <v-dialog v-model="isGroupDialog" max-width="500">
       <v-card class="text-center">
         <v-card-title class="headline">
-          Tender group
+          Tender business pipeline
         </v-card-title>
 
         <v-card-text v-if="groupDialog">
@@ -278,15 +340,15 @@ export default {
   props: {
     tenderCount: {
       type: Number,
-      default: -1
+      default: -1,
     },
     isWithoutGroupProp: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tenderGroupIdProp: {
       type: Number,
-      default: null
+      default: null,
     }
   },
 
@@ -295,12 +357,12 @@ export default {
     dataTenderGroups: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
     dataTenderGroupLinks: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
     isAllTenders: true,
     isMyPipeline: false,
@@ -308,12 +370,12 @@ export default {
     tenderGroupArchive: {
       count: -1,
       select: false,
-      over: false
+      over: false,
     },
     tenderGroupDelete: {
       count: -1,
       select: false,
-      over: false
+      over: false,
     },
     archiveGroupTenders: [],
     archiveSelect: false,
@@ -325,24 +387,24 @@ export default {
     isGroupDialog: false,
     groupValid: false,
     colors: [
-      "#96d232",
-      "#2e84db",
-      "#6a60ff",
-      "#4ac4cf",
-      "#ffb629",
-      "#c969e6",
-      "#af1c09"
+      '#96d232',
+      '#2e84db',
+      '#6a60ff',
+      '#4ac4cf',
+      '#ffb629',
+      '#c969e6',
+      '#af1c09',
     ],
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
     ...mapGetters([
       'getUserId',
-      'getDataGroups',
+      'getDataTenderGroups',
       'getIsFreeMembership',
       'getIsPremiumMembership',
-      'getIsBusinessMembership'
+      'getIsBusinessMembership',
     ])
   },
 
@@ -356,7 +418,7 @@ export default {
   methods: {
     ...mapActions([
       'showConfirmModal',
-      'loadGroups',
+      'loadTenderGroups',
     ]),
 
     async load() {
@@ -366,10 +428,10 @@ export default {
           this.dataTenderGroups.loading = 1
           return
         }
-        this.loadGroups()
+        this.loadTenderGroups()
         this.dataTenderGroups.loading = 0
-        const res = await this.$api.post("/Tender/TenderGroupList", {
-          userId: this.getUserId
+        const res = await this.$api.post('/Tender/TenderGroupList', {
+          userId: this.getUserId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -380,16 +442,18 @@ export default {
             tenderGroupId: tenderGroup.tenderGroupId,
             color: tenderGroup.color,
             label: tenderGroup.label,
+            searchRequest: tenderGroup.searchRequest,
             count: -1,
             tenders: [],
             expand: false,
             select: false,
-            over: false
+            over: false,
           })
         }
         this.dataTenderGroups.loading = 1
       } catch (err) {
         this.dataTenderGroups.loading = -1
+        this.dataTenderGroups.error = err
         this.$api.error(err, this)
       }
     },
@@ -402,8 +466,8 @@ export default {
           return
         }
         this.dataTenderGroupLinks.loading = 0
-        const res = await this.$api.post("/Tender/TenderGroupLinkList", {
-          userId: this.getUserId
+        const res = await this.$api.post('/Tender/TenderGroupLinkList', {
+          userId: this.getUserId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -433,8 +497,8 @@ export default {
       }
       if (!group) {
         group = {
-          label: "",
-          color: "#ffffff"
+          label: '',
+          color: '#ffffff',
         }
       }
       this.groupDialog = JSON.parse(JSON.stringify(group))
@@ -452,10 +516,10 @@ export default {
     async groupTenderMove(tenderGroup, tenders) {
       try {
         for (const tender of tenders) {
-          const res = await this.$api.post("/Tender/TenderGroupMove", {
+          const res = await this.$api.post('/Tender/TenderGroupMove', {
             userId: this.getUserId,
             tenderGroupId: tenderGroup.tenderGroupId,
-            tenderId: tender.id
+            tenderId: tender.id,
           })
           if (!res.success) {
             throw new Error(res.Error)
@@ -473,8 +537,8 @@ export default {
       this.isGroupDialog = false
       try {
         this.groupDialog.userId = this.getUserId
-        const res = await this.$api.post("/Tender/TenderGroupAddUpdate", {
-          tenderGroup: this.groupDialog
+        const res = await this.$api.post('/Tender/TenderGroupAddUpdate', {
+          tenderGroup: this.groupDialog,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -513,8 +577,8 @@ export default {
 
     async deleteTenderGroup(tenderGroup) {
       try {
-        const res = await this.$api.post("/Tender/TenderGroupDelete", {
-          tenderGroupId: tenderGroup.tenderGroupId
+        const res = await this.$api.post('/Tender/TenderGroupDelete', {
+          tenderGroupId: tenderGroup.tenderGroupId,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -529,27 +593,35 @@ export default {
     isAllTendersChange() {
       this.isAllTenders = true
       this.isMyPipeline = false
-      this.$emit("change", {
+      this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
+    },
+
+    saveBusinessPipeline(tenderGroup) {
+      this.$emit('updateBusinessPipelineSearch', tenderGroup)
+    },
+
+    eraseBusinessPipeline(tenderGroup) {
+      this.$emit('eraseBusinessPipelineSearch', tenderGroup)
     },
 
     isMyPipelineChange() {
       if (this.getIsPremiumMembership) {
-        this.$emit("insufficientRight")
+        this.$emit('insufficientRight')
         return
       }
       this.isAllTenders = false
       this.isMyPipeline = true
-      this.$emit("erraseSearchFilter")
-      this.$emit("change", {
+      this.$emit('erraseSearchFilter')
+      this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
     },
 
@@ -558,11 +630,11 @@ export default {
       if (this.tenderGroupId >= 0) {
         this.tenderGroupId = null
       }
-      this.$emit("change", {
+      this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
     },
 
@@ -573,17 +645,17 @@ export default {
       } else {
         this.tenderGroupId = tenderGroupId
       }
-      this.$emit("change", {
+      this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
-        tenderGroupId: this.tenderGroupId
+        tenderGroupId: this.tenderGroupId,
       })
       if (erraseFilter) {
-        this.$emit("erraseFilter")
+        this.$emit('erraseFilter')
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
