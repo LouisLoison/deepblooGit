@@ -42,13 +42,13 @@ exports.BddImport = () => {
         fileParseData.importDgmarkets
       )
       
-      // Search tender by dgmarketId
+      // Search tender by dataSourceId
       query = `
         UPDATE      importDgmarket 
-        INNER JOIN  dgmarket ON 
-                    importDgmarket.dgmarketId = dgmarket.dgmarketId 
-                    AND importDgmarket.dgmarketId != ''
-        SET         importDgmarket.tenderId = dgmarket.id, 
+        INNER JOIN  tenders ON 
+                    importDgmarket.dataSourceId = tenders.dataSourceId 
+                    AND importDgmarket.dataSourceId != ''
+        SET         importDgmarket.tenderId = tenders.id, 
                     importDgmarket.mergeMethod = "DGMARKET_ID", 
                     importDgmarket.status = 5
         WHERE 		  importDgmarket.status = 1
@@ -213,7 +213,7 @@ exports.FileParse = (fileLocation) => {
         
         // importDgmarket
         const importDgmarket = {
-          dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+          dataSourceId: parseInt(tool.getXmlJsonData(notice.id), 10),
           procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
           title: title.substring(0, 450),
           lang: lang,
@@ -322,7 +322,7 @@ exports.convertToTender = (importDgmarket) => {
     try {
       let tender = {
         id: importDgmarket.tenderId,
-        dgmarketId: importDgmarket.dgmarketId,
+        dataSourceId: importDgmarket.dataSourceId,
         procurementId: importDgmarket.procurementId,
         title: importDgmarket.title,
         lang: importDgmarket.lang,
@@ -588,7 +588,7 @@ exports.CpvList = () => {
           }
 
           tenders.push({
-            dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+            dataSourceId: parseInt(tool.getXmlJsonData(notice.id), 10),
             title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 100),
             description: description,
             buyerName: tool.getXmlJsonData(notice.buyerName),
@@ -606,7 +606,7 @@ exports.CpvList = () => {
         })
       }
 
-      let tenderText = `catch;dgmarketId;categories;families;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
+      let tenderText = `catch;dataSourceId;categories;families;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
       for (let tender of tenders) {
         let description = tender.description.substring(0, 1000)
         description = description.split(';').join(',')
@@ -619,7 +619,7 @@ exports.CpvList = () => {
         title = title.split(';').join(',')
         title = title.split('\n').join(' ').trim()
         title = title.trim()
-        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dataSourceId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.csv')
       fs.writeFileSync(tenderListLocation, tenderText)
@@ -721,7 +721,7 @@ exports.ExportUrlFromFile = () => {
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -754,7 +754,7 @@ exports.ExportUrlFromFile = () => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = 0 
       `
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -795,7 +795,7 @@ exports.ExportUrlFromFile = () => {
         }
       }
 
-      let tenderText = `dgmarketId;title;buyerName;domaine;url;type;bidDeadline;publication\n`
+      let tenderText = `dataSourceId;title;buyerName;domaine;url;type;bidDeadline;publication\n`
       for (let tender of tenderUrl) {
         let title = tender.title.substring(0, 1000)
         title = title.split(';').join(',')
@@ -804,7 +804,7 @@ exports.ExportUrlFromFile = () => {
         title = title.split('\n').join(' ').trim()
         title = title.split('\r').join(' ').trim()
         title = title.trim()
-        tenderText += `${tender.dgmarketId};${title};${tender.buyer.name};${tender.urlDomaine};${tender.url};${tender.urlType};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+        tenderText += `${tender.dataSourceId};${title};${tender.buyer.name};${tender.urlDomaine};${tender.url};${tender.urlType};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderUrlList.csv')
       fs.writeFileSync(tenderListLocation, tenderText)
@@ -840,7 +840,7 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       let query = `
         SELECT      SQL_CALC_FOUND_ROWS 
                     importDgmarketId AS "importDgmarketId",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     title AS "title",
                     description AS "description",
@@ -917,7 +917,7 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       for (const record of recordset.results) {
         importDgmarkets.push({
           importDgmarketId: record.importDgmarketId,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           title: record.title,
           description: record.description,

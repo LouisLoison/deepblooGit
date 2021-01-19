@@ -22,9 +22,9 @@ exports.TendersImport = () => {
                     tenderCriterion.status AS "status", 
                     tenderCriterion.creationDate AS "creationDate", 
                     tenderCriterion.updateDate AS "updateDate" 
-        FROM        dgmarket 
-        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
-        WHERE       dgmarket.status = ${tenderStatus} 
+        FROM        tenders 
+        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = tenders.id 
+        WHERE       tenders.status = ${tenderStatus} 
       `
       let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionAlls = []
@@ -46,7 +46,7 @@ exports.TendersImport = () => {
       
       query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -81,7 +81,7 @@ exports.TendersImport = () => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = ${tenderStatus} 
       `
       recordset = await BddTool.QueryExecBdd2(query)
@@ -142,7 +142,7 @@ exports.TendersImport = () => {
 
       for (const tenderId of tenderIdDeletes) {
         await BddTool.QueryExecBdd2(`
-          DELETE FROM dgmarket 
+          DELETE FROM tenders 
           WHERE       id = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} 
         `)
       }
@@ -264,7 +264,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
 
       let tenderNew = {
         objectID: tender.algoliaId ? tender.algoliaId : undefined,
-        dgmarketId: tender.dgmarketId,
+        dataSourceId: tender.dataSourceId,
         tenderId: tender.id,
         procurementId: tender.procurementId,
         tenderUuid: tender.tenderUuid,
@@ -357,7 +357,7 @@ exports.TendersAdd = (tenders, index) => {
       for (let i = 0; i < tenders.length; i++) {
         tenders[i].objectID = content.objectIDs[i]
         await BddTool.QueryExecBdd2(`
-          UPDATE      dgmarket 
+          UPDATE      tenders 
           SET         algoliaId = '${BddTool.ChaineFormater(tenders[i].objectID, BddEnvironnement, BddId)}', 
                       status = 20 
           WHERE       id = ${BddTool.NumericFormater(tenders[i].tenderId, BddEnvironnement, BddId)} 
@@ -402,7 +402,7 @@ exports.tendersObsoleteRemove = () => {
 
       const tenderIds = tenders.map(a => a.id)
       const query = `
-        UPDATE      dgmarket 
+        UPDATE      tenders 
         SET         status = -1 
         WHERE       id IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
       `
@@ -423,7 +423,7 @@ exports.TendersPurge = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       let query = `
         SELECT      algoliaId AS "algoliaId" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = -1 
         LIMIT       300
       `
@@ -470,7 +470,7 @@ exports.TendersRemove = (algoliaIds, index) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < algoliaIds.length; i++) {
         await BddTool.QueryExecBdd2(`
-          UPDATE      dgmarket 
+          UPDATE      tenders 
           SET         status = -2 
           WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
         `)
@@ -672,16 +672,16 @@ exports.TendersSynchro = () => {
           // Search tender in BDD
           let query = `
             SELECT      id AS "id", 
-                        dgmarketId AS "dgmarketId"
-            FROM        dgmarket 
+                        dataSourceId AS "dataSourceId"
+            FROM        tenders 
             WHERE       id = ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)} 
           `
           let recordset = await BddTool.QueryExecBdd2(query)
           if (!recordset || !recordset.length) {
             query = `
-              INSERT INTO dgmarket (
+              INSERT INTO tenders (
                 id,
-                dgmarketId,
+                dataSourceId,
                 procurementId,
                 tenderUuid,
                 title,
@@ -718,7 +718,7 @@ exports.TendersSynchro = () => {
                 updateDate
               ) VALUES (
                 ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)},
-                ${BddTool.NumericFormater(hit.dgmarketId, BddEnvironnement, BddId)},
+                ${BddTool.NumericFormater(hit.dataSourceId, BddEnvironnement, BddId)},
                 '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}',
                 '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}',
                 '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}',
@@ -759,7 +759,7 @@ exports.TendersSynchro = () => {
             tenderAddNbr++
           } else {
             query = `
-              UPDATE      dgmarket 
+              UPDATE      tenders 
               SET         procurementId = '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}', 
                           tenderUuid = '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}', 
                           title = '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}', 

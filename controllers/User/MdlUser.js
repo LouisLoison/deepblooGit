@@ -699,7 +699,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
         //   let userExperienceResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/experiences/${experience.id}`);
         // }
         let organizationDgmarketId = experiences[0].companies_company_id
-        organization = organizationsBdd.find(a => a.dgmarketId === organizationDgmarketId)
+        organization = organizationsBdd.find(a => a.dataSourceId === organizationDgmarketId)
         if (organization) {
           organizationId = organization.organizationId
         }
@@ -1157,28 +1157,28 @@ exports.SendPeriodicDashboard = () => {
 
         // Get tenders
         let query = `
-          SELECT    dgmarket.id, 
-                    dgmarket.description, 
-                    dgmarket.publicationDate, 
-                    dgmarket.bidDeadlineDate, 
-                    dgmarket.country, 
+          SELECT    tenders.id, 
+                    tenders.description, 
+                    tenders.publicationDate, 
+                    tenders.bidDeadlineDate, 
+                    tenders.country, 
                     tenderCriterionCpv.cpvId, 
                     COUNT(*) AS Nbr, 
                     SUM(tenderCriterionCpv.findCount) AS Weight 
-          FROM      dgmarket 
-          LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = dgmarket.id 
-          WHERE     dgmarket.noticeType != 'Contract Award' 
-          AND       dgmarket.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
+          FROM      tenders 
+          LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = tenders.id 
+          WHERE     tenders.noticeType != 'Contract Award' 
+          AND       tenders.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
           AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId), BddEnvironnement, BddId)}) `
         if (countrys && countrys.length) {
           query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) `
         }
         query = query + `
-          GROUP BY  dgmarket.id, 
-                    dgmarket.description, 
-                    dgmarket.publicationDate, 
-                    dgmarket.bidDeadlineDate, 
-                    dgmarket.country, 
+          GROUP BY  tenders.id, 
+                    tenders.description, 
+                    tenders.publicationDate, 
+                    tenders.bidDeadlineDate, 
+                    tenders.country, 
                     tenderCriterionCpv.cpvId 
           ORDER BY  SUM(tenderCriterionCpv.findCount) DESC 
         `
@@ -1386,7 +1386,7 @@ exports.userNotifyList = (filter, userData, tenderData) => {
       }
       if (tenderData) {
         query += `,
-                    dgmarket.title AS "tenderTitle" `
+                    tenders.title AS "tenderTitle" `
       }
       query += `
         FROM      userNotify `
@@ -1395,7 +1395,7 @@ exports.userNotifyList = (filter, userData, tenderData) => {
         query += `LEFT JOIN  user AS recipient ON recipient.userId = userNotify.recipientId \n`
       }
       if (tenderData) {
-        query += `LEFT JOIN  dgmarket ON dgmarket.id = userNotify.tenderId \n`
+        query += `LEFT JOIN  tenders ON tenders.id = userNotify.tenderId \n`
       }
       if (filter) {
         let where = ``

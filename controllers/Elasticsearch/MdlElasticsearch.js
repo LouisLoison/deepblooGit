@@ -151,7 +151,7 @@ exports.tendersFormat = (tenders) => {
         delete tenderNew.sourceUrls
         delete tenderNew.fileSource
         delete tenderNew.origine
-        delete tenderNew.dgmarketId
+        delete tenderNew.dataSourceId
         tenderNews.push(tenderNew)
       }
       resolve(tenderNews)
@@ -182,9 +182,9 @@ exports.tendersImport = (tendersNumberMax = 100) => {
                     tenderCriterion.status AS "status", 
                     tenderCriterion.creationDate AS "creationDate", 
                     tenderCriterion.updateDate AS "updateDate" 
-        FROM        dgmarket 
-        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
-        WHERE       dgmarket.status = 0 
+        FROM        tenders 
+        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = tenders.id 
+        WHERE       tenders.status = 0 
       `
       let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionAlls = []
@@ -206,7 +206,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       
       query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -241,8 +241,8 @@ exports.tendersImport = (tendersNumberMax = 100) => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
-        WHERE       dgmarket.status = 20
+        FROM        tenders 
+        WHERE       tenders.status = 20
         ORDER BY    creationDate DESC 
         LIMIT ${tendersNumberMax}
       `

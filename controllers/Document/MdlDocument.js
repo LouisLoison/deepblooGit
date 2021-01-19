@@ -301,7 +301,7 @@ exports.tenderFileImport = (tenderId) => {
           if (document) {
             continue
           }
-          if (sourceUrl.includes('www2.dgmarket.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
+          if (sourceUrl.includes('www2.tenders.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
             sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
           }
           const fileInfo = await this.fileDownload(sourceUrl)

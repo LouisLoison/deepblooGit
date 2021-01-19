@@ -302,10 +302,10 @@ exports.CompanieSynchro = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       for (let companie of companies) {
-        let organizationBdd = organizationsBdd.find(a => a.dgmarketId === companie.id)
+        let organizationBdd = organizationsBdd.find(a => a.dataSourceId === companie.id)
         if (!organizationBdd) {
           organizationBdd = {
-            dgmarketId: companie.id,
+            dataSourceId: companie.id,
             name: companie.name,
             countrys: companie.country,
             creationDate: new Date(),

@@ -139,7 +139,7 @@ exports.importTender = (tender, CpvList, textParses) => {
         tender.tenderUuid = uuidv4()
       }
 
-      const tenderNew = await BddTool.RecordAddUpdate('dgmarket', tender, 'id')
+      const tenderNew = await BddTool.RecordAddUpdate('tenders', tender, 'id')
 
       // Bulk insert into tenderCriterion table
       if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {

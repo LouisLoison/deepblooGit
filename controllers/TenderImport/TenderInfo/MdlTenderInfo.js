@@ -72,10 +72,10 @@ exports.BddImport = () => {
       // Search tender by procurementId
       query = `
         UPDATE      importTenderInfo 
-        INNER JOIN  dgmarket ON 
-                    importTenderInfo.tender_notice_no = dgmarket.procurementId 
+        INNER JOIN  tenders ON 
+                    importTenderInfo.tender_notice_no = tenders.procurementId 
                     AND importTenderInfo.tender_notice_no != ''
-        SET         importTenderInfo.tenderId = dgmarket.id, 
+        SET         importTenderInfo.tenderId = tenders.id, 
                     importTenderInfo.mergeMethod = "PROCUREMENT_ID", 
                     importTenderInfo.status = 5
         WHERE 		  importTenderInfo.status = 1
@@ -86,12 +86,12 @@ exports.BddImport = () => {
       // Search tender by title, buyer name and bidDeadline date
       query = `
         UPDATE      importTenderInfo 
-        INNER JOIN  dgmarket ON 
-                    importTenderInfo.maj_org = dgmarket.buyerName 
-                    AND importTenderInfo.short_desc = dgmarket.title 
+        INNER JOIN  tenders ON 
+                    importTenderInfo.maj_org = tenders.buyerName 
+                    AND importTenderInfo.short_desc = tenders.title 
                     AND importTenderInfo.short_desc != '' 
-                    AND REPLACE(importTenderInfo.doc_last, '-', '') = dgmarket.bidDeadlineDate 
-        SET         importTenderInfo.tenderId = dgmarket.id, 
+                    AND REPLACE(importTenderInfo.doc_last, '-', '') = tenders.bidDeadlineDate 
+        SET         importTenderInfo.tenderId = tenders.id, 
                     importTenderInfo.mergeMethod = "TITLE_BUYER_BIDDEADLINE", 
                     importTenderInfo.status = 5
         WHERE 		  importTenderInfo.status = 1
@@ -267,7 +267,7 @@ exports.convertToTender = (importTenderInfo, CpvList, textParses) => {
       */
 
       let tender = {
-        dgmarketId: 0,
+        dataSourceId: 0,
         procurementId: importTenderInfo.procurementId,
         title,
         lang: '',

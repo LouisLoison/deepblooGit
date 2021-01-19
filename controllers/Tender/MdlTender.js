@@ -11,7 +11,7 @@ exports.TenderAdd = (tender) => {
       if (tender.algoliaId && tender.algoliaId > 0 && !tender.id) {
         let query = `
           SELECT      id AS "id" 
-          FROM        dgmarket 
+          FROM        tenders 
           WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId, BddEnvironnement, BddId)} 
         `
         let recordset = await BddTool.QueryExecBdd2(query)
@@ -48,12 +48,12 @@ exports.TenderAdd = (tender) => {
       tender.cpvs = cpvFound.cpvsText
       tender.cpvDescriptions = cpvFound.cpvDescriptionsText
 
-      tender.dgmarketId = 0
+      tender.dataSourceId = 0
       tender.userId = config.user.userId
       tender.status = 0
       tender.creationDate = new Date()
       tender.updateDate = tender.creationDate
-      let data = await BddTool.RecordAddUpdate('dgmarket', tender)
+      let data = await BddTool.RecordAddUpdate('tenders', tender)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
       resolve(data)
     } catch (err) {
@@ -69,7 +69,7 @@ exports.tenderAddUpdate = (tender) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderNew = await BddTool.RecordAddUpdate('dgmarket', tender, 'dgmarketid')
+      let tenderNew = await BddTool.RecordAddUpdate('tenders', tender, 'dgmarketid')
       resolve(tenderNew)
     } catch (err) { reject(err) }
   })
@@ -83,7 +83,7 @@ exports.tenderCount = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      let query = `SELECT COUNT(*) AS tenderCount FROM dgmarket `
+      let query = `SELECT COUNT(*) AS tenderCount FROM tenders `
       let recordset = await BddTool.QueryExecBdd2(query, true)
       let count = 0
       for (const record of recordset.results) {
@@ -110,7 +110,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     tenderUuid AS "tenderUuid",
                     title AS "title",
@@ -146,7 +146,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        tenders 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
@@ -173,7 +173,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
       for (var record of recordset) {
         tender = {
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           tenderUuid: record.tenderUuid,
           title: record.title,
@@ -254,62 +254,62 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
 
       let query = `
         SELECT      SQL_CALC_FOUND_ROWS 
-                    dgmarket.id AS "id",
-                    dgmarket.dgmarketId AS "dgmarketId",
-                    dgmarket.procurementId AS "procurementId",
-                    dgmarket.tenderUuid AS "tenderUuid",
-                    dgmarket.title AS "title",
-                    dgmarket.description AS "description",
-                    dgmarket.lang AS "lang",
-                    dgmarket.contactFirstName AS "contactFirstName",
-                    dgmarket.contactLastName AS "contactLastName",
-                    dgmarket.contactAddress AS "contactAddress",
-                    dgmarket.contactCity AS "contactCity",
-                    dgmarket.contactState AS "contactState",
-                    dgmarket.contactCountry AS "contactCountry",
-                    dgmarket.contactEmail AS "contactEmail",
-                    dgmarket.contactPhone AS "contactPhone",
-                    dgmarket.buyerName AS "buyerName",
-                    dgmarket.buyerCountry AS "buyerCountry",
-                    dgmarket.procurementMethod AS "procurementMethod",
-                    dgmarket.noticeType AS "noticeType",
-                    dgmarket.country AS "country",
-                    dgmarket.estimatedCost AS "estimatedCost",
-                    dgmarket.currency AS "currency",
-                    dgmarket.publicationDate AS "publicationDate",
-                    dgmarket.cpvs AS "cpvs",
-                    dgmarket.cpvDescriptions AS "cpvDescriptions",
-                    dgmarket.words AS "words",
-                    dgmarket.bidDeadlineDate AS "bidDeadlineDate",
-                    dgmarket.sourceUrl AS "sourceUrl",
-                    dgmarket.termDate AS "termDate",
-                    dgmarket.fileSource AS "fileSource",
-                    dgmarket.userId AS "userId",
-                    dgmarket.algoliaId AS "algoliaId",
-                    dgmarket.brand AS "brand",
-                    dgmarket.contractType1 AS "contractType1",
-                    dgmarket.status AS "status",
-                    dgmarket.creationDate AS "creationDate",
-                    dgmarket.updateDate AS "updateDate" `
+                    tenders.id AS "id",
+                    tenders.dataSourceId AS "dataSourceId",
+                    tenders.procurementId AS "procurementId",
+                    tenders.tenderUuid AS "tenderUuid",
+                    tenders.title AS "title",
+                    tenders.description AS "description",
+                    tenders.lang AS "lang",
+                    tenders.contactFirstName AS "contactFirstName",
+                    tenders.contactLastName AS "contactLastName",
+                    tenders.contactAddress AS "contactAddress",
+                    tenders.contactCity AS "contactCity",
+                    tenders.contactState AS "contactState",
+                    tenders.contactCountry AS "contactCountry",
+                    tenders.contactEmail AS "contactEmail",
+                    tenders.contactPhone AS "contactPhone",
+                    tenders.buyerName AS "buyerName",
+                    tenders.buyerCountry AS "buyerCountry",
+                    tenders.procurementMethod AS "procurementMethod",
+                    tenders.noticeType AS "noticeType",
+                    tenders.country AS "country",
+                    tenders.estimatedCost AS "estimatedCost",
+                    tenders.currency AS "currency",
+                    tenders.publicationDate AS "publicationDate",
+                    tenders.cpvs AS "cpvs",
+                    tenders.cpvDescriptions AS "cpvDescriptions",
+                    tenders.words AS "words",
+                    tenders.bidDeadlineDate AS "bidDeadlineDate",
+                    tenders.sourceUrl AS "sourceUrl",
+                    tenders.termDate AS "termDate",
+                    tenders.fileSource AS "fileSource",
+                    tenders.userId AS "userId",
+                    tenders.algoliaId AS "algoliaId",
+                    tenders.brand AS "brand",
+                    tenders.contractType1 AS "contractType1",
+                    tenders.status AS "status",
+                    tenders.creationDate AS "creationDate",
+                    tenders.updateDate AS "updateDate" `
       if (filter && filter.textParses) {
         query += `,\n              tenderCriterion.tenderCriterionId AS "tenderCriterionId" `
       }
       if (filter && filter.tenderGroupId && filter.tenderGroupId > 0) {
         query += `,\n              tenderGroupLink.tenderGroupLinkId AS "tenderGroupLinkId" `
       }
-      query += `\nFROM        dgmarket `
+      query += `\nFROM        tenders `
       if (filter && filter.textParses) {
-        query += `\nINNER JOIN tenderCriterion ON tenderCriterion.tenderId = dgmarket.id `
+        query += `\nINNER JOIN tenderCriterion ON tenderCriterion.tenderId = tenders.id `
       }
       if (filter && filter.tenderGroupId && filter.tenderGroupId > -1) {
-        query += `\nINNER JOIN tenderGroupLink ON tenderGroupLink.tenderId = dgmarket.id `
+        query += `\nINNER JOIN tenderGroupLink ON tenderGroupLink.tenderId = tenders.id `
       }
       let where = ``
       if (filter) {
         if (filter.search && filter.search.trim() !== '') {
           if (where !== '') { where += 'AND ' }
           let search = filter.search.replace(/ /g,"%")
-          where += `dgmarket.title LIKE '%${BddTool.ChaineFormater(search, BddEnvironnement, BddId)}%' \n`
+          where += `tenders.title LIKE '%${BddTool.ChaineFormater(search, BddEnvironnement, BddId)}%' \n`
         }
         if (filter.items && filter.items.length) {
           const bidDeadLineItems = filter.items.filter(a => a.other === 'bidDeadLine')
@@ -337,44 +337,44 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const noticeTypeItems = filter.items.filter(a => a.other === 'noticeType')
           if (noticeTypeItems && noticeTypeItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
           }
 
           const useridItems = filter.items.filter(a => a.other === 'userid' && a.value === 'USERID')
           if (useridItems && useridItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.userId > 0 \n`
+            where += `tenders.userId > 0 \n`
           }
 
           const procurementMethodItems = filter.items.filter(a => a.other === 'procurementMethod')
           if (procurementMethodItems && procurementMethodItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
           }
 
           const langItems = filter.items.filter(a => a.other === 'lang')
           if (langItems && langItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
           }
 
           const brandItems = filter.items.filter(a => a.other === 'brand')
           if (brandItems && brandItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
           }
 
           const contractType1Items = filter.items.filter(a => a.other === 'contractType1')
           if (contractType1Items && contractType1Items.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.contractType1 = 1 \n`
+            where += `tenders.contractType1 = 1 \n`
           }
         }
 
         if (filter.tenderGroupId) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderGroupId === -1) {
-            where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = dgmarket.id) \n`
+            where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = tenders.id) \n`
           } else {
             where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId, BddEnvironnement, BddId)} \n`
           }
@@ -388,7 +388,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           let orCondition = ''
           for (let cpvCode of cpvCodes) {
             if (orCondition !== '') { orCondition += 'OR '}
-            orCondition += `dgmarket.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+            orCondition += `tenders.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
           }
           where += `(${orCondition}) `
         }
@@ -396,16 +396,16 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
           if (countrys) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+            where += `tenders.country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
           }
         }
         if (filter.countrys && filter.countrys !== '') {
           if (where !== '') { where += 'AND ' }
-          where += `dgmarket.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
+          where += `tenders.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
         }
         if (filter.noUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `dgmarket.tenderUuid IS NULL \n`
+          where += `tenders.tenderUuid IS NULL \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -492,7 +492,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           }
           tender = {
             id: record.id,
-            dgmarketId: record.dgmarketId,
+            dataSourceId: record.dataSourceId,
             procurementId: record.procurementId,
             tenderUuid: record.tenderUuid,
             title: record.title,
@@ -582,7 +582,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     tenderUuid AS "tenderUuid",
                     title AS "title",
@@ -617,7 +617,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        tenders 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
@@ -770,7 +770,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
 
         tenders.push({
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           tenderUuid: record.tenderUuid,
           title: record.title,
@@ -829,7 +829,7 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       const BddEnvironnement = config.prefixe
 
       let query = `
-        UPDATE      dgmarket 
+        UPDATE      tenders 
         SET         status = -1 
       `
       let where = ``
@@ -852,7 +852,7 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       }
 
       if (permanentlyDelete && where && where.trim() !== '') {
-        query = `DELETE FROM dgmarket WHERE ${where} AND status = -2 `
+        query = `DELETE FROM tenders WHERE ${where} AND status = -2 `
         await BddTool.QueryExecBdd2(query)
       }
 
