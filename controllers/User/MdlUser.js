@@ -41,7 +41,7 @@ exports.Login = (username, password, userToken) => {
                   email AS "email", 
                   username AS "username", 
                   password AS "password" 
-        FROM      user 
+        FROM      "user" 
       `
       if (hivebriteId) {
         query += `
@@ -137,7 +137,7 @@ exports.List = (filter) => {
                   status AS "status",
                   creationDate AS "creationDate",
                   updateDate AS "updateDate"
-        FROM      user 
+        FROM      "user" 
       `
       if (filter) {
         let where = ``
@@ -296,7 +296,7 @@ exports.UserDelete = (userId) => {
       let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
       await BddTool.QueryExecBdd2(query)
 
-      query = `DELETE FROM user WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
+      query = `DELETE FROM "user" WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
       await BddTool.QueryExecBdd2(query)
 
       resolve()
@@ -1376,10 +1376,10 @@ exports.userNotifyList = (filter, userData, tenderData) => {
                   userNotify.updateDate AS "updateDate"`
       if (userData) {
         query += `,
-                    user.username AS "userName",
-                    user.email AS "userEmail",
-                    user.hivebriteId AS "userHivebriteId",
-                    user.photo AS "userPhoto",
+                    "user".username AS "userName",
+                    "user".email AS "userEmail",
+                    "user".hivebriteId AS "userHivebriteId",
+                    "user".photo AS "userPhoto",
                     recipient.username AS "recipientName",
                     recipient.hivebriteId AS "recipientHivebriteId",
                     recipient.photo AS "recipientPhoto" `
@@ -1391,8 +1391,8 @@ exports.userNotifyList = (filter, userData, tenderData) => {
       query += `
         FROM      userNotify `
       if (userData) {
-        query += `LEFT JOIN  user ON user.userId = userNotify.userId \n`
-        query += `LEFT JOIN  user AS recipient ON recipient.userId = userNotify.recipientId \n`
+        query += `LEFT JOIN  "user" ON "user".userId = userNotify.userId \n`
+        query += `LEFT JOIN  "user" AS recipient ON recipient.userId = userNotify.recipientId \n`
       }
       if (tenderData) {
         query += `LEFT JOIN  tenders ON tenders.id = userNotify.tenderId \n`

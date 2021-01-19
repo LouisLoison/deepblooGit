@@ -154,17 +154,17 @@ exports.AnnonceClickList = (filter) => {
                   annonceClick.screen AS "screen", 
                   annonceClick.status AS "status", 
                   annonceClick.creationDate AS "creationDate", 
-                  user.hivebriteId AS "hivebriteId", 
-                  user.type AS "type", 
-                  user.email AS "email", 
-                  user.username AS "username", 
-                  user.membershipFree AS "membershipFree", 
-                  user.organizationId AS "organizationId", 
-                  user.country AS "country", 
-                  user.photo AS "photo" 
+                  "user".hivebriteId AS "hivebriteId", 
+                  "user".type AS "type", 
+                  "user".email AS "email", 
+                  "user".username AS "username", 
+                  "user".membershipFree AS "membershipFree", 
+                  "user".organizationId AS "organizationId", 
+                  "user".country AS "country", 
+                  "user".photo AS "photo" 
         FROM      annonceClick 
       `
-      query += `LEFT JOIN user ON annonceClick.userId = user.userId `
+      query += `LEFT JOIN "user" ON annonceClick.userId = "user".userId `
       if (filter) {
         let where = ``
         if (filter.annonceClickId) {

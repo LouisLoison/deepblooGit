@@ -153,16 +153,16 @@ exports.documentMessageList = (filter, userData) => {
                   documentMessage.updateDate AS "updateDate" `
       if (userData) {
         query += `,
-                    user.username AS "userName",
-                    user.email AS "userEmail",
-                    user.hivebriteId AS "userHivebriteId",
-                    user.photo AS "userPhoto" `
+                    "user".username AS "userName",
+                    "user".email AS "userEmail",
+                    "user".hivebriteId AS "userHivebriteId",
+                    "user".photo AS "userPhoto" `
       }
       query += `
                     FROM      documentMessage 
       `
       if (userData) {
-        query += `LEFT JOIN  user ON user.userId = documentMessage.userId \n`
+        query += `LEFT JOIN  "user" ON "user".userId = documentMessage.userId \n`
       }
       if (filter) {
         let where = ``

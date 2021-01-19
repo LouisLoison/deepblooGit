@@ -12,7 +12,7 @@ exports.List = (filter) => {
         SELECT    organization.organizationId AS "organizationId", 
                   organization.name AS "name", 
                   organization.countrys AS "countrys", 
-                  organization.dataSourceId AS "dataSourceId", 
+                  organization.dgmarketId AS "dgmarketId", 
                   organization.creationDate AS "creationDate", 
                   organization.updateDate AS "updateDate", 
                   organizationCpv.cpvCode AS "cpvCode", 
@@ -37,7 +37,7 @@ exports.List = (filter) => {
         if (!organization || organization.organizationId !== record.organizationId) {
           organization = {
             organizationId: record.organizationId,
-            dataSourceId: record.dataSourceId,
+            dgmarketId: record.dgmarketId,
             name: record.name.trim(),
             countrys: record.countrys,
             cpvs: [],
@@ -158,7 +158,7 @@ exports.ListFromCpvs = (cpvs, country) => {
       let query = `
         SELECT      organization.organizationId AS "organizationId", 
                     organization.name AS "name", 
-                    organization.dataSourceId AS "dataSourceId", 
+                    organization.dgmarketId AS "dgmarketId", 
                     organization.countrys AS "countrys", 
                     organization.creationDate AS "creationDate", 
                     organization.updateDate AS "updateDate", 
@@ -166,22 +166,22 @@ exports.ListFromCpvs = (cpvs, country) => {
                     organizationCpv.cpvName AS "cpvName", 
                     organizationCpv.origineType AS "origineType", 
                     organizationCpv.rating AS "rating", 
-                    user.userId AS "userId", 
-                    user.hivebriteId AS "hivebriteId", 
-                    user.username AS "userName", 
-                    user.email AS "userEmail", 
-                    user.photo AS "userPhoto", 
-                    user.regions AS "userRegions", 
-                    user.country AS "userCountry", 
-                    user.countryCode AS "userCountryCode", 
+                    "user".userId AS "userId", 
+                    "user".hivebriteId AS "hivebriteId", 
+                    "user".username AS "userName", 
+                    "user".email AS "userEmail", 
+                    "user".photo AS "userPhoto", 
+                    "user".regions AS "userRegions", 
+                    "user".country AS "userCountry", 
+                    "user".countryCode AS "userCountryCode", 
                     userCpv.cpvCode AS "userCpvCode", 
                     userCpv.cpvName AS "userCpvName", 
                     userCpv.origineType AS "userOrigineType", 
                     userCpv.rating AS "userRating" 
         FROM        organization 
         INNER JOIN  organizationCpv ON organizationCpv.organizationId = organization.organizationId 
-        LEFT JOIN   user ON user.organizationId = organization.organizationId 
-        LEFT JOIN   userCpv ON userCpv.userId = user.userId 
+        LEFT JOIN   "user" ON "user".organizationId = organization.organizationId 
+        LEFT JOIN   userCpv ON userCpv.userId = "user".userId 
       `
       if (cpvs) {
         let where = ``
@@ -192,7 +192,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         where += `) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }
-      query += '  ORDER BY organization.organizationId, organizationCpv.cpvCode, user.userId, userCpv.cpvCode '
+      query += '  ORDER BY organization.organizationId, organizationCpv.cpvCode, "user".userId, userCpv.cpvCode '
       let recordset = await BddTool.QueryExecBdd2(query)
       let organization = null
       let cpvCode = null
@@ -202,7 +202,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         if (!organization || organization.organizationId !== record.organizationId) {
           organization = {
             organizationId: record.organizationId,
-            dataSourceId: record.dataSourceId,
+            dgmarketId: record.dgmarketId,
             name: record.name ? record.name.trim() : '',
             countrys: record.countrys ? record.countrys.trim().split(',') : [],
             cpvs: [],
