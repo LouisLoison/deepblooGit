@@ -210,12 +210,13 @@ export class ImportsStepsStack extends Stack {
         // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+        EXTRACT_PDF_LINES: "true", // false -> extract by words, true -> extract by lines
       }
     })
 
     const stepHtmlToPdf = new Function(this, 'HtmlToPdf', {
       runtime: Runtime.PYTHON_3_8,
-      code: new AssetCode('../lambda/function/htmltoboundingbox'),
+      code: new AssetCode('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
       reservedConcurrentExecutions: 40,

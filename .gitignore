@@ -8,6 +8,9 @@ node_modules
 .cdk.staging
 cdk.out
 
+# Use for SAM
+template.yaml
+
 # Env folder
 textract-pipeline/lambda/pipenv/
 

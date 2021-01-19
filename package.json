@@ -12,7 +12,8 @@
     "local-stop": "sudo docker-compose -f local/stack.yml down",
     "local-clean": "sudo docker-compose -f local/stack.yml rm -f",
     "deploy-all": "./tools/build-lib.sh && cd cdk && npm run deploy-all",
-    "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy"
+    "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy",
+    "sam": "./tools/start-sam.sh"
   },
   "devDependencies": {},
   "dependencies": {
