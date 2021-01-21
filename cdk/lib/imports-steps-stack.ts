@@ -238,6 +238,18 @@ export class ImportsStepsStack extends Stack {
       }
     })
 
+    const stepTextToSentences = new Function(this, 'textToSentences', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/textToSentences'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+      }
+    })
+
     stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
     stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
@@ -248,6 +260,7 @@ export class ImportsStepsStack extends Stack {
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
+    stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
@@ -260,6 +273,7 @@ export class ImportsStepsStack extends Stack {
     documentsBucket.grantReadWrite(stepPdfToImg)
     documentsBucket.grantReadWrite(stepPdfToBoxes)
     documentsBucket.grantReadWrite(stepZipExtraction)
+    documentsBucket.grantReadWrite(stepTextToSentences)
 
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
@@ -344,6 +358,13 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     })
 
+    const textToSentencesTask = new LambdaInvoke(this, 'Text to Sentences', {
+      lambdaFunction: stepTextToSentences,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
     const processDoc = new Pass(this, 'Doc/docx process')
 
     const processDocx = new Pass(this, 'Docx process')
@@ -351,6 +372,7 @@ export class ImportsStepsStack extends Stack {
     const processPdf = new Parallel(this, 'Pdf process', {})
       .branch(pdfToImgTask)
       .branch(pdfToBoxesTask)
+        .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
 
     const processHtml = htmlToPdfTask
       .next(processPdf)
