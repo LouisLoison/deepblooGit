@@ -316,6 +316,22 @@
                       Duplicate
                     </v-list-item-title>
                   </v-list-item>
+
+                  <v-list-item
+                    @click="sendToSalesforce(result)"
+                  >
+                    <v-list-item-avatar>
+                      <v-icon
+                        color="blue-grey"
+                        text
+                      >
+                        fa-cloud
+                      </v-icon>
+                    </v-list-item-avatar>
+                    <v-list-item-title>
+                      Send to salesforce
+                    </v-list-item-title>
+                  </v-list-item>
                 </v-list>
               </v-menu>
             </div>
@@ -771,6 +787,10 @@ export default {
 
     openTenderGroupChoice(result) {
       this.$emit('openTenderGroupChoice', result)
+    },
+
+    sendToSalesforce(result) {
+      this.$emit('sendToSalesforce', result)
     },
   },
 }

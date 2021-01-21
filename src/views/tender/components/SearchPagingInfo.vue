@@ -4,7 +4,7 @@
       <template v-slot:activator="{ on }">
         <span v-on="on">
           <v-btn text small color="blue-grey" style="font-size: 16px;">
-            {{ $global.formatMillier(searchState.totalResults) }}
+            {{ $global.formatMillier(getTendersCount) }}
           </v-btn>
         </span>
       </template>
@@ -26,7 +26,7 @@ export default {
   props: {
     searchState: {
       required: true,
-      type: Object
+      type: Object,
     },
   },
 
@@ -34,9 +34,41 @@ export default {
     dataTenderCount: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
   }),
+
+  computed: {
+    getTendersCount() {
+      let count = 0
+      if (
+        this.searchState
+        && this.searchState.totalResults
+      ) {
+        count = this.searchState.totalResults
+      }
+      if (
+        this.searchState
+        && this.searchState.facets
+        && this.searchState.facets.bid_deadline_timestamp
+        && this.searchState.facets.bid_deadline_timestamp.length
+      ) {
+        let expiredCount = 0
+        const bid_deadline_timestamp = this.searchState.facets.bid_deadline_timestamp[0]
+        const expired = bid_deadline_timestamp.data.find(a => a.value.name === 'Expired')
+        if (expired) {
+          expiredCount = expired.count
+        }
+        let notExpiredCount = 0
+        const notExpired = bid_deadline_timestamp.data.find(a => a.value.name === 'Not expired')
+        if (notExpired) {
+          notExpiredCount = notExpired.count
+        }
+        count = expiredCount + notExpiredCount
+      }
+      return count
+    },
+  },
 
   mounted() {
     this.loadTenderCount()
@@ -58,5 +90,5 @@ export default {
       }
     },
   },
-};
+}
 </script>

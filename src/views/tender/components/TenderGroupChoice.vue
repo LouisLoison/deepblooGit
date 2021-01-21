@@ -19,7 +19,7 @@
           </v-list-item>
           <v-divider class="ma-1" />
           <v-list-item
-            v-for="(group, index) in getDataTenderGroups.data"
+            v-for="(group, index) in getTenderGroups"
             :key="`group${index}`"
             @click="choice(group)"
           >
@@ -56,13 +56,19 @@ export default {
 
   data: () => ({
     isShow: false,
-    tender: null
+    tender: null,
   }),
 
   computed: {
     ...mapGetters([
       'getDataTenderGroups',
     ]),
+
+    getTenderGroups() {
+      return this.getDataTenderGroups.data.filter(
+        a => !a.searchRequest || a.searchRequest.trim() === ''
+      )
+    },
   },
 
   methods: {
@@ -78,7 +84,7 @@ export default {
     choice(group) {
       this.$emit('choice', {
         tender: this.tender,
-        group
+        group,
       })
       this.isShow = false
     }
