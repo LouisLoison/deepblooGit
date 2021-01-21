@@ -1421,7 +1421,7 @@ export default {
           return;
         }
         this.dataUserNotifys.loading = 0;
-        const res = await this.$api.post("/user/userNotifyList", {
+        const res = await this.$api.post("/User/userNotifyList", {
           filter: {
             userId: this.getUserId,
             tenderId: this.tender.id
