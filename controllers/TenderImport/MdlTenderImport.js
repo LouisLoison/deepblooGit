@@ -209,7 +209,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: cpv.cpvId,
             value: cpv.label,
             word: '',
@@ -228,7 +228,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: tenderCriterionCpvTitle.cpvId,
             value: tenderCriterionCpvTitle.value,
             word: tenderCriterionCpvTitle.word,
@@ -247,7 +247,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: tenderCriterionCpvDescription.cpvId,
             value: tenderCriterionCpvDescription.value,
             word: tenderCriterionCpvDescription.word,
@@ -280,7 +280,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterion) {
           tenderCriterions.push({
-            documentId: 0,
+            documentUuid: 0,
             textParseId: tenderCriterionTitle.textParseId,
             value: tenderCriterionTitle.value,
             word: tenderCriterionTitle.word,
@@ -298,7 +298,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterion) {
           tenderCriterions.push({
-            documentId: 0,
+            documentUuid: 0,
             textParseId: tenderCriterionDescription.textParseId,
             value: tenderCriterionDescription.value,
             word: tenderCriterionDescription.word,

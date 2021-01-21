@@ -13,7 +13,7 @@ exports.TendersImport = () => {
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
-                    tenderCriterion.documentId AS "documentId", 
+                    tenderCriterion.documentUuid AS "documentUuid", 
                     tenderCriterion.textParseId AS "textParseId", 
                     tenderCriterion.value AS "value", 
                     tenderCriterion.word AS "word", 
@@ -32,7 +32,7 @@ exports.TendersImport = () => {
         tenderCriterionAlls.push({
           tenderCriterionId: record.tenderCriterionId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           textParseId: record.textParseId,
           value: record.value,
           word: record.word,

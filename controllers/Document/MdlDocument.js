@@ -1,10 +1,10 @@
-exports.document = (documentId) => {
+exports.document = (documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       let document = null
-      if (documentId) {
+      if (documentUuid) {
         let filter = {
-          documentId
+          documentUuid
         }
         let documents = await this.documentList(filter);
         if (documents && documents.length > 0) {
@@ -29,7 +29,7 @@ exports.documentAddUpdate = (document) => {
   })
 }
 
-exports.documentDelete = (documentId) => {
+exports.documentDelete = (documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -37,11 +37,11 @@ exports.documentDelete = (documentId) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      if (!documentId) {
+      if (!documentUuid) {
         throw new Error("No available id !")
       }
 
-      const document = await this.document(documentId)
+      const document = await this.document(documentUuid)
 
       // Remove document from AWS
       try {
@@ -49,11 +49,11 @@ exports.documentDelete = (documentId) => {
       } catch (err) {}
 
       try {
-        await require(process.cwd() + '/controllers/TextParse/MdlTextParse').tenderCriterionDelete(null, documentId)
+        await require(process.cwd() + '/controllers/TextParse/MdlTextParse').tenderCriterionDelete(null, documentUuid)
       } catch (err) {}
 
       // Remove document from Deepbloo BDD
-      let query = `DELETE FROM document WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
+      let query = `DELETE FROM document WHERE documentUuid = ${BddTool.ChaineFormater(documentUuid)}`
       await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
@@ -73,7 +73,7 @@ exports.documentList = (filter) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let query = `
-        SELECT    document.documentId AS "documentId", 
+        SELECT    document.documentUuid AS "documentUuid", 
                   document.tenderId AS "tenderId", 
                   document.cpvs AS "cpvs", 
                   document.filename AS "filename", 
@@ -91,13 +91,13 @@ exports.documentList = (filter) => {
       `
       if (filter) {
         let where = ``
-        if (filter.documentId) {
+        if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `document.documentId = ${BddTool.NumericFormater(filter.documentId, BddEnvironnement, BddId)} \n`
+          where += `document.documentUuid = ${BddTool.ChaineFormater(filter.documentUuid)} \n`
         }
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `document.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `document.tenderId = ${BddTool.ChaineFormater(filter.tenderId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -105,7 +105,7 @@ exports.documentList = (filter) => {
       let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         documents.push({
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           tenderId: record.tenderId,
           cpvs: record.cpvs,
           filename: record.filename,
@@ -140,7 +140,7 @@ exports.documentMessageList = (filter, userData) => {
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT    documentMessage.documentMessageId AS "documentMessageId", 
-                  documentMessage.documentId AS "documentId", 
+                  documentMessage.documentUuid AS "documentUuid", 
                   documentMessage.organizationId AS "organizationId", 
                   documentMessage.userId AS "userId", 
                   documentMessage.type AS "type", 
@@ -170,9 +170,9 @@ exports.documentMessageList = (filter, userData) => {
           if (where !== '') { where += 'AND ' }
           where += `documentMessage.documentMessageId = ${BddTool.NumericFormater(filter.documentMessageId, BddEnvironnement, BddId)} \n`
         }
-        if (filter.documentId) {
+        if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentId = ${BddTool.NumericFormater(filter.documentId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.documentUuid = ${BddTool.NumericFormater(filter.documentUuid, BddEnvironnement, BddId)} \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
@@ -189,7 +189,7 @@ exports.documentMessageList = (filter, userData) => {
       for (var record of recordset) {
         documentMessages.push({
           documentMessageId: record.documentMessageId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           organizationId: record.organizationId,
           userId: record.userId,
           type: record.type,
@@ -308,7 +308,7 @@ exports.tenderFileImport = (tenderId) => {
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
           const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId, exportAws)
           let documentNew = await this.documentAddUpdate({
-            documentId: document ? document.documentId : undefined,
+            documentUuid: document ? document.documentUuid : undefined,
             tenderId,
             cpvs: textParseResults.cpvs ? textParseResults.cpvs.join(',') : null,
             filename: fileInfo.filename,
@@ -330,7 +330,7 @@ exports.tenderFileImport = (tenderId) => {
             if (!tenderCriterionFind) {
               tenderCriterionFind = {
                 tenderId: documentNew.tenderId,
-                documentId: documentNew.documentId,
+                documentUuid: documentNew.documentUuid,
                 textParseId: tenderCriterion.textParseId,
                 value: tenderCriterion.value,
                 word: tenderCriterion.word,

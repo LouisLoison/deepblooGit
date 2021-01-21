@@ -725,7 +725,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
   })
 }
 
-exports.tenderCriterionDelete = (tenderCriterionId, documentId) => {
+exports.tenderCriterionDelete = (tenderCriterionId, documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -735,8 +735,8 @@ exports.tenderCriterionDelete = (tenderCriterionId, documentId) => {
 
       // Remove document from Deepbloo BDD
       let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId, BddEnvironnement, BddId)}`
-      if (documentId) {
-        query = `DELETE FROM tenderCriterion WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
+      if (documentUuid) {
+        query = `DELETE FROM tenderCriterion WHERE documentUuid = ${BddTool.NumericFormater(documentUuid, BddEnvironnement, BddId)}`
       }
       await BddTool.QueryExecBdd2(query)
       resolve()
