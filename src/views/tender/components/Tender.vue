@@ -1794,7 +1794,7 @@ export default {
     },
 
     documentDeleteDialog(document) {
-      if (!document.documentId) {
+      if (!document.documentUuid) {
         return;
       }
       var message = "Do you really want to delete this document ?<br>";
@@ -1821,7 +1821,7 @@ export default {
     async documentDelete(document) {
       try {
         const res = await this.$api.post("/Document/documentDelete", {
-          documentId: document.documentId
+          documentUuid: document.documentUuid
         });
         if (!res.success) {
           throw new Error(res.Error);
