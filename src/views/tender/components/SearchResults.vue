@@ -37,6 +37,7 @@
       @handleFacetCheckAll="handleFacetCheckAll($event)"
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
+      @sendToSalesforce="sendToSalesforce($event)"
     />
 
     <!-- Dialog -->
@@ -230,6 +231,20 @@ export default {
 
     removeTender(result) {
       this.$emit('removeTender', result)
+    },
+
+    async sendToSalesforce(result) {
+      try {
+        const res = await this.$api.post('/Tender/sendToSalesforce', {
+          userId: this.getUserId,
+          tenderId: parseInt(result.id.raw, 10),
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+      } catch (err) {
+        this.$api.error(err, this)
+      }
     },
   },
 };
