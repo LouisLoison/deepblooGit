@@ -1637,12 +1637,12 @@ export default {
     },
 
     getItemUrl(tender) {
-      if (!tender || !tender.sourceUrl || tender.sourceUrl.trim() === "") {
+      if (!tender || !tender.sourceUrl) {
         return []
       }
       const sourceUrls = []
       if (tender.sourceUrl) {
-        for (const sourceUrl of tender.sourceUrl.split(",")) {
+        for (const sourceUrl of tender.sourceUrl) {
           if (sourceUrl.trim() === "") {
             continue
           }
