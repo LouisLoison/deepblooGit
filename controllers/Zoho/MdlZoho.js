@@ -91,6 +91,7 @@ exports.synchro = () => {
           Full_Name: `${hivebriteUser.firstname} ${hivebriteUser.lastname}`,
           DB_ID: user.hivebriteId,
           DB_Do_not_contact,
+          Email_Opt_Out: DB_Do_not_contact = 'true' ? false : true,
           Mobile: hivebriteUser.mobile_pro || hivebriteUser.mobile_perso,
           Phone: hivebriteUser.landline_pro || hivebriteUser.landline_perso,
           CPV: cpvs,
@@ -104,7 +105,6 @@ exports.synchro = () => {
           DB_Creation_Date: hivebriteUser.created_at ? hivebriteUser.created_at.replace('Z', '+01:00') : null,
           DB_Confirmed_At : hivebriteUser.confirmed_at ? hivebriteUser.confirmed_at.replace('Z', '+01:00') : null,
           Tender_last_connexion_date: user.connexionTender ? moment(user.connexionTender).format() : null,
-          Email_Opt_Out: true,
         }
 
         if (computed.DB_LinkedIn_URL && !computed.DB_LinkedIn_URL.startsWith('http')) {
