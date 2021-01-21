@@ -110,6 +110,10 @@ export default {
     moment,
     items: [
       {
+        title: 'Invite',
+        to: { name: 'invite' },
+      },
+      {
         title: 'Live feed',
         href: 'https://platform.deepbloo.com/',
       },
