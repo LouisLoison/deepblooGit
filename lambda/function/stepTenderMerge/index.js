@@ -8,7 +8,7 @@ exports.handler =  async function(event, ) {
 
   const client = await BddTool.getClient()
 
-  await BddTool.QueryExecPrepared(client, 'BEGIN;');
+  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
 
   const query = `UPDATE tenderimport
   SET  tenderUuid = tenders.tenderuuid,
@@ -36,11 +36,16 @@ exports.handler =  async function(event, ) {
 
   const mergedBuyerBiddeadline = await BddTool.QueryExecPrepared(client, query2, [ uuid ]);
 
-  const fields = 'tenderuuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity, contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate, country, cpvdescriptions, cpvs, cpvsorigine, currency, datasource, datasourceid, description, estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate, sourceurl, title'
   const query3 = `
         update tenderimport set tenderuuid = uuid
         where mergeMethod is null and status = 20 and uuid = $1;`
   await BddTool.QueryExecPrepared(client, query3, [ uuid ]);
+
+  const fields = `tenderuuid, biddeadlinedate, buyercountry, buyername, contactaddress, contactcity,
+    contactcountry, contactemail, contactfirstname, contactlastname, contactphone, contactstate,
+    country, cpvdescriptions, cpvs, cpvsorigine, currency, datasource, datasourceid, description,
+    estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate,
+    sourceurl, title, creationdate, updatedate`
 
   const query4 = `	
         insert into tenders (${fields})
