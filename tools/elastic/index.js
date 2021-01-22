@@ -62,11 +62,6 @@ const processResults = async ({ rows, fields, rowCount }) => {
       ...formated,
       id: result.tenderUuid,
     }
-    if(formated) {
-      elasticDoc.zone0 = formated.regionLvl0[0]
-      elasticDoc.zone1 = formated.regionLvl1[0]
-      elasticDoc.zone2 = formated.regionLvl2[0]
-    }
     delete elasticDoc.tenderUuid
     tranche.push(elasticDoc)
     processed += 1
