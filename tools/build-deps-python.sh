@@ -9,6 +9,8 @@ mkdir bin 2>/dev/null
 
 cp -a $(pipenv --venv)/bin/* bin
 
+rm $(find bin/ -type l) 
+
 for module in `ls -1 $PIPENV |grep -v 'dist-info$'` ; do
     # echo $module
     cp -a $PIPENV/$module python
