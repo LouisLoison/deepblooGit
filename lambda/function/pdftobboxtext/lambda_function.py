@@ -100,7 +100,6 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    print("==> Event: {0}".format(json.dumps(event)))
     aws_env = {
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "objectName": event['objectName'],
@@ -115,7 +114,6 @@ def lambda_handler(event, context):
         "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
         "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
     }
-    print("==> Aws env: {0}".format(json.dumps(aws_env)))
     status = {
         'statusCode': 200,
         'body': 'All right'
@@ -124,7 +122,7 @@ def lambda_handler(event, context):
     textract_only = aws_env['textractOnly']
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
 
-    print("==> event: ", event)
+    print("==> Event: ", event)
     print("==> aws_env: ", aws_env)
     if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
         print("=> Extracting bounding box with pdfplumber")

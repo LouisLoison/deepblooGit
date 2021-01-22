@@ -14,8 +14,8 @@
     "deploy-all": "./tools/build-lib.sh && cd cdk && npm run deploy-all",
     "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy",
     "sam": "./tools/start-sam.sh",
-    "tests_run": "pytest",
-    "cov": "pytest --cov-report term-missing --cov=lambda"
+    "tests_run": "pytest -v",
+    "cov": "pytest -v --cov-report term-missing --cov=lambda"
   },
   "devDependencies": {},
   "dependencies": {
