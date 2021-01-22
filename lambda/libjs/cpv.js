@@ -49,125 +49,126 @@ exports.CpvList = (filter, removeDiacritic) => {
     try {
       if(cpvList) {
         resolve(cpvList)
-      }
-      // Get cpv list
-      var cpvs = []
-      let query = `
-        SELECT    cpv.cpvId AS "cpvId", 
-                  cpv.code AS "code", 
-                  cpv.label AS "label", 
-                  cpv.active AS "active", 
-                  cpv.logo AS "logo", 
-                  cpv.picture AS "picture", 
-                  cpv.category AS "category", 
-                  cpv.status AS "status", 
-                  cpv.creationDate AS "creationDate", 
-                  cpv.updateDate AS "updateDate", 
-                  cpvWord.cpvWordId AS "cpvWordId", 
-                  cpvWord.word AS "cpvWord", 
-                  cpvWord.status AS "cpvWordStatus", 
-                  cpvWord.creationDate AS "cpvWordCreationDate", 
-                  cpvWord.updateDate AS "cpvWordUpdateDate" 
-        FROM      cpv 
-        LEFT JOIN cpvWord ON cpvWord.cpvId = cpv.cpvId 
-      `
-      let where = ``
-      if (filter) {
-        if (filter.cpvId) {
-          if (where !== '') { where += 'AND ' }
-          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpv)} \n`
-        }
-        if (where !== '') { query += 'WHERE ' + where }
-      }
-      query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
-      await BddTool.bddInit()
-      let recordset = await BddTool.QueryExecBdd2(query)
-      let cpv = null
-      for (const record of recordset) {
-        if (!cpv || cpv.cpvId !== record.cpvId) {
-          cpv = {
-            cpvId: record.cpvId,
-            code: record.code,
-            label: record.label,
-            active: record.active,
-            logo: record.logo,
-            picture: record.picture,
-            category: record.category,
-            status: record.status,
-            creationDate: record.creationDate,
-            updateDate: record.updateDate,
-            cpvWords: [],
-            cpvExclusions: [],
+      } else {
+        // Get cpv list
+        var cpvs = []
+        let query = `
+          SELECT    cpv.cpvId AS "cpvId", 
+                    cpv.code AS "code", 
+                    cpv.label AS "label", 
+                    cpv.active AS "active", 
+                    cpv.logo AS "logo", 
+                    cpv.picture AS "picture", 
+                    cpv.category AS "category", 
+                    cpv.status AS "status", 
+                    cpv.creationDate AS "creationDate", 
+                    cpv.updateDate AS "updateDate", 
+                    cpvWord.cpvWordId AS "cpvWordId", 
+                    cpvWord.word AS "cpvWord", 
+                    cpvWord.status AS "cpvWordStatus", 
+                    cpvWord.creationDate AS "cpvWordCreationDate", 
+                    cpvWord.updateDate AS "cpvWordUpdateDate" 
+          FROM      cpv 
+          LEFT JOIN cpvWord ON cpvWord.cpvId = cpv.cpvId 
+        `
+        let where = ``
+        if (filter) {
+          if (filter.cpvId) {
+            if (where !== '') { where += 'AND ' }
+            where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpv)} \n`
           }
-          cpvs.push(cpv)
+          if (where !== '') { query += 'WHERE ' + where }
         }
-        if (record.cpvWordId) {
-          cpv.cpvWords.push({
-            cpvWordId: record.cpvWordId,
-            cpvId: record.cpvId,
-            word: record.cpvWord,
-            status: record.cpvWordStatus,
-            creationDate: record.cpvWordCreationDate,
-            updateDate: record.cpvWordUpdateDate
-          });
-        }
-      }
-      query = `
-        SELECT    cpvExclusion.cpvExclusionId AS "cpvExclusionId", 
-                  cpvExclusion.cpvId AS "cpvId", 
-                  cpvExclusion.word AS "word", 
-                  cpvExclusion.status AS "status", 
-                  cpvExclusion.creationDate AS "creationDate", 
-                  cpvExclusion.updateDate AS "updateDate" 
-        FROM      cpvExclusion 
-      `
-      recordset = await BddTool.QueryExecBdd2(query)
-      for (const record of recordset) {
-        cpv = cpvs.find(a => a.cpvId === record.cpvId)
-        if (cpv) {
-          cpv.cpvExclusions.push({
-            cpvExclusionId: record.cpvExclusionId,
-            cpvId: record.cpvId,
-            word: record.word,
-            status: record.status,
-            creationDate: record.creationDate,
-            updateDate: record.updateDate
-          });
-        }
-      }
-      cpvs.sort((a, b) => {
-        let na = a.priority
-        let nb = b.priority
-        return na < nb ? 1 : na > nb ? -1 : 0
-      })
-
-      if (removeDiacritic) {
-        for (const cpv of cpvs) {
-          const cpvWords = []
-          for (const cpvWord of cpv.cpvWords) {
-            cpvWord.word = removeDiacritics(cpvWord.word).toUpperCase()
-            let isOk = true
-            if (
-              cpvWords.find(a => a.word === cpvWord.word)
-            ) {
-              isOk = false
+        query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
+        await BddTool.bddInit()
+        let recordset = await BddTool.QueryExecBdd2(query)
+        let cpv = null
+        for (const record of recordset) {
+          if (!cpv || cpv.cpvId !== record.cpvId) {
+            cpv = {
+              cpvId: record.cpvId,
+              code: record.code,
+              label: record.label,
+              active: record.active,
+              logo: record.logo,
+              picture: record.picture,
+              category: record.category,
+              status: record.status,
+              creationDate: record.creationDate,
+              updateDate: record.updateDate,
+              cpvWords: [],
+              cpvExclusions: [],
             }
-            if (cpvWord.word.endsWith('S') || cpvWord.word.endsWith('X')) {
+            cpvs.push(cpv)
+          }
+          if (record.cpvWordId) {
+            cpv.cpvWords.push({
+              cpvWordId: record.cpvWordId,
+              cpvId: record.cpvId,
+              word: record.cpvWord,
+              status: record.cpvWordStatus,
+              creationDate: record.cpvWordCreationDate,
+              updateDate: record.cpvWordUpdateDate
+            });
+          }
+        }
+        query = `
+          SELECT    cpvExclusion.cpvExclusionId AS "cpvExclusionId", 
+                    cpvExclusion.cpvId AS "cpvId", 
+                    cpvExclusion.word AS "word", 
+                    cpvExclusion.status AS "status", 
+                    cpvExclusion.creationDate AS "creationDate", 
+                    cpvExclusion.updateDate AS "updateDate" 
+          FROM      cpvExclusion 
+        `
+        recordset = await BddTool.QueryExecBdd2(query)
+        for (const record of recordset) {
+          cpv = cpvs.find(a => a.cpvId === record.cpvId)
+          if (cpv) {
+            cpv.cpvExclusions.push({
+              cpvExclusionId: record.cpvExclusionId,
+              cpvId: record.cpvId,
+              word: record.word,
+              status: record.status,
+              creationDate: record.creationDate,
+              updateDate: record.updateDate
+            });
+          }
+        }
+        cpvs.sort((a, b) => {
+          let na = a.priority
+          let nb = b.priority
+          return na < nb ? 1 : na > nb ? -1 : 0
+        })
+
+        if (removeDiacritic) {
+          for (const cpv of cpvs) {
+            const cpvWords = []
+            for (const cpvWord of cpv.cpvWords) {
+              cpvWord.word = removeDiacritics(cpvWord.word).toUpperCase()
+              let isOk = true
               if (
-                cpvWords.find(a => a.word === cpvWord.word.slice(0, -1))
+                cpvWords.find(a => a.word === cpvWord.word)
               ) {
                 isOk = false
               }
+              if (cpvWord.word.endsWith('S') || cpvWord.word.endsWith('X')) {
+                if (
+                  cpvWords.find(a => a.word === cpvWord.word.slice(0, -1))
+                ) {
+                  isOk = false
+                }
+              }
+              if (isOk) {
+                cpvWords.push(cpvWord)
+              }
             }
-            if (isOk) {
-              cpvWords.push(cpvWord)
-            }
+            cpv.cpvWords = cpvWords
           }
-          cpv.cpvWords = cpvWords
         }
+        cpvList = cpvs
+        resolve(cpvs)
       }
-      cpvList = cpvs
-      resolve(cpvs)
     } catch (err) {
       reject(err)
     }

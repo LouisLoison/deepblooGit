@@ -21,8 +21,6 @@ set -e
 #cp -a lambda/libjs/* lambda/function/stepTenderStore/node_modules/deepbloo/
 
 
-sudo rm $(find lambda/layer/pipenv/bin/ -type l)
-
 ./tools/build-lib.sh
 
 rm -fr lambda/layer/combined/{python,nodejs,bin}

@@ -303,6 +303,7 @@ var Schema = {
       connexionTender: { type: "DateTime" },
       connexionBusiness: { type: "DateTime" },
       dashboardUrl: { type: "String" },
+      businessPipeline: { type: "String" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }

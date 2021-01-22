@@ -49,17 +49,18 @@ const processResults = async ({ rows, fields, rowCount }) => {
   for (let i=0; i < rowCount; i += 1) {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
     delete rows[i]
-    result.title = stripHtml(result.title).result
-    result.description = stripHtml(result.description).result
-    result.contactAddress = stripHtml(result.contactAddress).result
+    try {
+      result.title = stripHtml(result.title).result
+      result.description = stripHtml(result.description).result
+      result.contactAddress = stripHtml(result.contactAddress).result
+    } catch (err) {
+      console.log(err)
+    }
     const formated = await tenderFormat(result, cpvList)
     const elasticDoc = {
       ...result,
       ...formated,
       id: result.tenderUuid,
-      zone0: formated.regionLvl0[0],
-      zone1: formated.regionLvl1[0],
-      zone2: formated.regionLvl2[0],
     }
     delete elasticDoc.tenderUuid
     tranche.push(elasticDoc)
