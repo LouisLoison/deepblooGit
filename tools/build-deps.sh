@@ -27,7 +27,7 @@ sudo rm $(find lambda/layer/pipenv/bin/ -type l)
 
 rm -fr lambda/layer/combined/{python,nodejs,bin}
 mkdir -p lambda/layer/combined/{python,nodejs,bin}
-cp -au lambda/layer/*/python/* lambda/layer/combined/python
-cp -au lambda/layer/*/nodejs/* lambda/layer/combined/nodejs
-cp -au lambda/layer/*/bin/* lambda/layer/combined/bin
+#cp -au lambda/layer/*/python/* lambda/layer/combined/python
+#cp -au lambda/layer/*/nodejs/* lambda/layer/combined/nodejs
+#cp -au lambda/layer/*/bin/* lambda/layer/combined/bin
 
