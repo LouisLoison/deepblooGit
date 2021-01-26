@@ -17,6 +17,14 @@ export default [
     component: () => import(`@/views/Login.vue`)
   },
   {
+    path: '/invite',
+    meta: {
+      public: true
+    },
+    name: 'invite',
+    component: () => import(`@/views/Invite.vue`)
+  },
+  {
     path: '/tender',
     meta: {
       public: true
