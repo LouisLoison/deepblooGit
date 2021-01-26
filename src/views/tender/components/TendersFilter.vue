@@ -267,11 +267,11 @@
     >
       <v-card-text>
         <SearchFacet
-          :checked="filter.origine"
-          :facet="searchState.facets.origine[0]"
-          @change="handleFacetChange($event, 'origine')"
-          @checkAll="handleFacetCheckAll('origine')"
-          @unCheckAll="handleFacetUnCheckAll('origine')"
+          :checked="filter.datasource"
+          :facet="searchState.facets.datasource[0]"
+          @change="handleFacetChange($event, 'datasource')"
+          @checkAll="handleFacetCheckAll('datasource')"
+          @unCheckAll="handleFacetUnCheckAll('datasource')"
         />
       </v-card-text>
     </v-card>
@@ -325,7 +325,7 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
-      origine: [],
+      datasource: [],
       groups: [],
       buyer_name: [],
     },

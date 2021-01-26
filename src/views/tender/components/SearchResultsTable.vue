@@ -396,7 +396,7 @@
                 style="height: 24px; position: absolute; bottom: 2px; right: 2px;"
               />
               <div
-                v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
+                v-if="getUserType === 1 && result.datasource && result.datasource.raw === 'tenderinfo'"
                 style="position: absolute; top: 2px; right: 8px; display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
               >
                 TI

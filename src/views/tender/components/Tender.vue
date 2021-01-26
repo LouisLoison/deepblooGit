@@ -1312,14 +1312,13 @@ export default {
   },
 
   methods: {
-    async loadTender(tenderId, tenderUuid) {
+    async loadTender(tenderUuid) {
       try {
         this.tender = null
         this.tenderLoading = null
         this.tenderError = null
         this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
-          id: tenderId,
           tenderUuid: tenderUuid,
         })
         if (!res.success) {

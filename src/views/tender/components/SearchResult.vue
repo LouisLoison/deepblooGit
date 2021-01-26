@@ -150,7 +150,7 @@
         <v-icon style="font-size: 12px;">fa-trash</v-icon>
       </v-btn>
       <div
-        v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
+        v-if="getUserType === 1 && result.datasource && result.datasource.raw === 'tenderinfo'"
         style="display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
       >
         TI
