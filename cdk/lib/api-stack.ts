@@ -9,6 +9,7 @@ import {
   CfnDataSource,
   Schema
 } from '@aws-cdk/aws-appsync';
+import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 
 import * as iam from '@aws-cdk/aws-iam';
 import { join } from "path";
@@ -17,6 +18,15 @@ import { readFileSync } from "fs";
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const environment = {
+      NODE_ENV: "dev",
+    }
+
+    const hivebriteSecretArn = " arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
+    const hivebriteEnv = {
+      HIVEBRITE_SECRET: hivebriteSecretArn,
+    }
 
     const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
     new cdk.CfnOutput(this, 'db-arn', {
@@ -176,6 +186,34 @@ messageTableServiceRole.addToPolicy(
     })
 
     listEventsResolver.addDependsOn(appsyncDataSource);
+
+
+    const nodeLayer = new LayerVersion(this, 'NodeLib', {
+      code: new AssetCode('../lambda/layer/npm'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Apache-2.0, MIT',
+      description: 'Old backend and dependencies layer.',
+    });
+
+    const deepblooLayer = new LayerVersion(this, 'DeepblooLib', {
+      code: new AssetCode('../lambda/layer/deepbloo'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Private, Unlicensed',
+      description: 'Deepbloo lib layer.',
+    });
+
+    const hivebriteResolver = new Function(this, 'hivebriteResolver', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/hivebriteresolver'),
+      handler: 'index.handler',
+      memorySize: 500,
+      environment: {
+        ...environment,
+        ...hivebriteEnv
+      }
+    });
+
+    hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
 
     /*
     const resolver = new CfnResolver(this, "ListThingsAPI", {
