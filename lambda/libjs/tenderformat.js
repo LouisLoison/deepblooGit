@@ -134,7 +134,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
     // creation_timestamp: publication_timestamp,
     // sourceUrls: sourceUrls,
-    // userId: tender.userId ? tender.userId : 0,
+    userId: tender.userId ? tender.userId : 0,
     scopeOfWorks: [],
     segments: [],
     designs: [],

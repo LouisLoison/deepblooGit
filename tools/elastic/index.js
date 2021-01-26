@@ -54,9 +54,12 @@ const processResults = async ({ rows, fields, rowCount }) => {
     try {
       result.title = stripHtml(result.title).result
       result.description = stripHtml(result.description).result
-      result.contactAddress = stripHtml(result.contactAddress).result
+      if (result.contactAddress) {
+        result.contactAddress = stripHtml(result.contactAddress).result
+      }
     } catch (err) {
       console.log(err)
+      console;log(result.contactAddress)
     }
     const formated = await tenderFormat(result, cpvList)
     const elasticDoc = {
