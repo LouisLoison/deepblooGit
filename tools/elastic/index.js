@@ -75,7 +75,10 @@ const processResults = async ({ rows, fields, rowCount }) => {
     }
     delete appsearchDoc.tenderUuid
     tranche.push(elasticDoc)
-    appTranche.push(appsearchDoc)
+
+    if (result.status === 20) {
+      appTranche.push(appsearchDoc)
+    }
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))

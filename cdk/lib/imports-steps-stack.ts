@@ -384,7 +384,7 @@ export class ImportsStepsStack extends Stack {
     const processPdf = new Parallel(this, 'Pdf process', {})
       .branch(pdfToImgTask)
       .branch(pdfToBoxesTask)
-        .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
+      .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
 
     const processHtml = htmlToPdfTask
       .next(processPdf)
@@ -392,7 +392,7 @@ export class ImportsStepsStack extends Stack {
     const processImg = new Pass(this, 'Img process')
 
     const processZip = new Parallel(this, 'Zip process', {})
-        .branch(zipExtractionTask)
+      .branch(zipExtractionTask)
 
     const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
