@@ -32,6 +32,7 @@ const pgInitPool = () => {
       password: configBdd.password,
       database: configBdd.dbname,
       port: configBdd.port || 5432,
+      max: 2,
     }
     console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
     const { Pool } = require('pg')
