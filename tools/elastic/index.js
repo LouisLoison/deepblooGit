@@ -2,6 +2,7 @@
 const { BddTool } = require('deepbloo')
 const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
+const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { CpvList } = require('deepbloo').cpv
 const stripHtml = require("string-strip-html")
 
@@ -63,6 +64,12 @@ const processResults = async ({ rows, fields, rowCount }) => {
       id: result.tenderUuid,
     }
     delete elasticDoc.tenderUuid
+    const appsearchDoc = {
+      ...formated,
+      id: result.tenderUuid,
+      account_id: 'none',
+    }
+    delete appsearchDoc.tenderUuid
     tranche.push(elasticDoc)
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
@@ -70,6 +77,7 @@ const processResults = async ({ rows, fields, rowCount }) => {
 
     if (tranche.length >= 300) {
       await indexToElasticsearch(tranche, 'newtenders')
+      await indexObjectToAppsearch(tranche, 'deepbloo-dev')
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
       tranche = []
@@ -84,4 +92,4 @@ const processResults = async ({ rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(2000000)// .then(process.exit())
+main(4000000)// .then(process.exit())
