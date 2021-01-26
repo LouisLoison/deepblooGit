@@ -33,7 +33,7 @@ exports.BddImport = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')      
 
       // Bulk insert into Dgmarket import table
-      let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
+      let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0])}' `
       await BddTool.QueryExecBdd2(query)
       await BddTool.bulkInsert(
         BddId,
@@ -877,27 +877,27 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       if (filter) {
         if (filter.fileSources && filter.fileSources.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources)}) \n`
         }
         if (filter.mergeMethods && filter.mergeMethods.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods)}) \n`
         }
         if (filter.tenderId !== null && filter.tenderId !== undefined) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderId === 0) {
             where += `(importDgmarket.tenderId = 0 OR importDgmarket.tenderId IS NULL) \n`
           } else {
-            where += `importDgmarket.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+            where += `importDgmarket.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
           }
         }
         if (filter.status !== null && filter.status !== undefined) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `importDgmarket.status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }

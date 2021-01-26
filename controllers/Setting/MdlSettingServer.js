@@ -13,7 +13,7 @@ exports.ServerAddUpdate = (Server) => {
                 let recordset = await BddTool.QueryExecBdd2(`
                     SELECT     Server.Nom AS "Nom"
                     FROM       Server 
-                    WHERE      Server.ServerID = ${BddTool.NumericFormater(Server.ServerID, BddEnvironnement, BddId)} 
+                    WHERE      Server.ServerID = ${BddTool.NumericFormater(Server.ServerID)} 
                 `)
                 ServerNomOld = null
                 for (let record of recordset) {
@@ -25,40 +25,40 @@ exports.ServerAddUpdate = (Server) => {
                     try {
                         await BddTool.QueryExecBdd2(`
                             UPDATE     Flux
-                            SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
-                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
+                            SET        Server = '${BddTool.ChaineFormater(Server.Nom)}' 
+                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld)}' 
                         `)
                     } catch (err) { }
 
                     try {
                         await BddTool.QueryExecBdd2(`
                             UPDATE     Interface
-                            SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
-                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
+                            SET        Server = '${BddTool.ChaineFormater(Server.Nom)}' 
+                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld)}' 
                         `)
                     } catch (err) { }
 
                     try {
                         await BddTool.QueryExecBdd2(`
                             UPDATE     DeployItem
-                            SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
-                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
+                            SET        Server = '${BddTool.ChaineFormater(Server.Nom)}' 
+                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld)}' 
                         `)
                     } catch (err) { }
 
                     try {
                         await BddTool.QueryExecBdd2(`
                             UPDATE     PlanExec
-                            SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
-                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
+                            SET        Server = '${BddTool.ChaineFormater(Server.Nom)}' 
+                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld)}' 
                         `)
                     } catch (err) { }
 
                     try {
                         await BddTool.QueryExecBdd2(`
                             UPDATE     PlanTache
-                            SET        Server = '${BddTool.ChaineFormater(Server.Nom, BddEnvironnement, BddId)}' 
-                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld, BddEnvironnement, BddId)}' 
+                            SET        Server = '${BddTool.ChaineFormater(Server.Nom)}' 
+                            WHERE      Server = '${BddTool.ChaineFormater(ServerNomOld)}' 
                         `)
                     } catch (err) { }
                 }
@@ -101,7 +101,7 @@ exports.ServerGet = (Nom) => {
             FROM        Server 
         `
         if (Nom && Nom !== '') {
-            Query += `WHERE Nom = '${BddTool.ChaineFormater(Nom, BddEnvironnement, BddId)}' \n`
+            Query += `WHERE Nom = '${BddTool.ChaineFormater(Nom)}' \n`
         }
 
         BddTool.QueryExecBdd(Query, reject, (recordset) => {
@@ -151,7 +151,7 @@ exports.ServerList = (Nom) => {
             FROM        Server 
         `
         if (Nom && Nom !== '') {
-            Query += `WHERE Nom = '${BddTool.ChaineFormater(Nom, BddEnvironnement, BddId)}' \n`
+            Query += `WHERE Nom = '${BddTool.ChaineFormater(Nom)}' \n`
         }
         Query += `ORDER BY   Nom `
 

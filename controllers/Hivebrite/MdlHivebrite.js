@@ -62,7 +62,7 @@ exports.MembershipSynchro = () => {
                         membershipFree AS "membershipFree" 
             FROM        user 
             WHERE       type = 3 
-            AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id, BddEnvironnement, BddId)} 
+            AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id)} 
           `
           let recordset = await BddTool.QueryExecBdd2(query)
           for (let record of recordset) {

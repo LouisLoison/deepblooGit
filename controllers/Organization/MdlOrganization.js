@@ -26,7 +26,7 @@ exports.List = (filter) => {
         let where = ``
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
-          where += `organization.organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+          where += `organization.organizationId = ${BddTool.NumericFormater(filter.organizationId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -187,8 +187,8 @@ exports.ListFromCpvs = (cpvs, country) => {
         let where = ``
         if (where !== '') { where += 'AND ' }
         where += `( \n`
-        // where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) OR \n`
-        where += `userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels, BddEnvironnement, BddId)}) \n`
+        // where += `organizationCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels)}) OR \n`
+        where += `userCpv.cpvName IN (${BddTool.ArrayStringFormat(cpvSearchLabels)}) \n`
         where += `) \n`
         if (where !== '') { query += 'WHERE ' + where }
       }

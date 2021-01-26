@@ -734,9 +734,9 @@ exports.tenderCriterionDelete = (tenderCriterionId, documentUuid) => {
       const BddEnvironnement = config.prefixe
 
       // Remove document from Deepbloo BDD
-      let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId, BddEnvironnement, BddId)}`
+      let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId)}`
       if (documentUuid) {
-        query = `DELETE FROM tenderCriterion WHERE documentUuid = ${BddTool.NumericFormater(documentUuid, BddEnvironnement, BddId)}`
+        query = `DELETE FROM tenderCriterion WHERE documentUuid = ${BddTool.NumericFormater(documentUuid)}`
       }
       await BddTool.QueryExecBdd2(query)
       resolve()

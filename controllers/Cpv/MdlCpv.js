@@ -31,7 +31,7 @@ exports.cpvDelete = (cpvId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `cpvId = ${BddTool.NumericFormater(cpvId, BddEnvironnement, BddId)} \n`
+        where += `cpvId = ${BddTool.NumericFormater(cpvId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
@@ -78,7 +78,7 @@ exports.CpvList = (filter, removeDiacritics) => {
       if (filter) {
         if (filter.cpvId) {
           if (where !== '') { where += 'AND ' }
-          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId, BddEnvironnement, BddId)} \n`
+          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -262,7 +262,7 @@ exports.CpvWordList = (filter) => {
         let where = ``
         if (filter.cpvWordId) {
           if (where !== '') { where += 'AND ' }
-          where += `cpvWord.cpvWordId = ${BddTool.NumericFormater(filter.cpvWordId, BddEnvironnement, BddId)} \n`
+          where += `cpvWord.cpvWordId = ${BddTool.NumericFormater(filter.cpvWordId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -318,7 +318,7 @@ exports.cpvWordDelete = (cpvWordId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `cpvWordId = ${BddTool.NumericFormater(cpvWordId, BddEnvironnement, BddId)} \n`
+        where += `cpvWordId = ${BddTool.NumericFormater(cpvWordId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
@@ -371,7 +371,7 @@ exports.CpvExclusionList = (filter) => {
         let where = ``
         if (filter.cpvExclusionId) {
           if (where !== '') { where += 'AND ' }
-          where += `cpvExclusion.cpvExclusionId = ${BddTool.NumericFormater(filter.cpvExclusionId, BddEnvironnement, BddId)} \n`
+          where += `cpvExclusion.cpvExclusionId = ${BddTool.NumericFormater(filter.cpvExclusionId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -427,7 +427,7 @@ exports.cpvExclusionDelete = (cpvExclusionId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `cpvExclusionId = ${BddTool.NumericFormater(cpvExclusionId, BddEnvironnement, BddId)} \n`
+        where += `cpvExclusionId = ${BddTool.NumericFormater(cpvExclusionId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
@@ -492,7 +492,7 @@ exports.cpvCategories = (filter) => {
         let where = ``
         if (filter.cpvId) {
           if (where !== '') { where += 'AND ' }
-          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId, BddEnvironnement, BddId)} \n`
+          where += `cpv.cpvId = ${BddTool.NumericFormater(filter.cpvId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }

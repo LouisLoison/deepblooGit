@@ -10,7 +10,7 @@ exports.PrivateDealAdd = (privateDeal) => {
         let query = `
           SELECT      privateDealId AS "privateDealId" 
           FROM        privateDeal 
-          WHERE       algoliaId = ${BddTool.NumericFormater(privateDeal.algoliaId, BddEnvironnement, BddId)} 
+          WHERE       algoliaId = ${BddTool.NumericFormater(privateDeal.algoliaId)} 
         `
         let recordset = await BddTool.QueryExecBdd2(query)
         for (var record of recordset) {
@@ -95,13 +95,13 @@ exports.PrivateDealGet = (privateDealId, algoliaId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `privateDealId = ${BddTool.NumericFormater(privateDealId, BddEnvironnement, BddId)} \n`
+        where += `privateDealId = ${BddTool.NumericFormater(privateDealId)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -209,31 +209,31 @@ exports.PrivateDealList = (filter) => {
         let where = ``
         if (filter.privateDealId && filter.privateDealId !== '' && privateDealId > 0) {
           if (where !== '') { where += 'AND ' }
-          where += `privateDealId = ${BddTool.NumericFormater(filter.privateDealId, BddEnvironnement, BddId)} \n`
+          where += `privateDealId = ${BddTool.NumericFormater(filter.privateDealId)} \n`
         }
         if (filter.algoliaId && filter.algoliaId !== '' && filter.algoliaId > 0) {
           if (where !== '') { where += 'AND ' }
-          where += `algoliaId = ${BddTool.NumericFormater(filter.algoliaId, BddEnvironnement, BddId)} \n`
+          where += `algoliaId = ${BddTool.NumericFormater(filter.algoliaId)} \n`
         }
         if (filter.creationDateMin && filter.creationDateMin !== '') {
           if (where !== '') { where += 'AND '}
-          where += `creationDate >= ${BddTool.DateFormater(filter.creationDateMin, BddEnvironnement, BddId)} `
+          where += `creationDate >= ${BddTool.DateFormater(filter.creationDateMin)} `
         }
         if (filter.creationDateMax && filter.creationDateMax !== '') {
           if (where !== '') { where += 'AND '}
-          where += `creationDate <= ${BddTool.DateFormater(filter.creationDateMax, BddEnvironnement, BddId)} `
+          where += `creationDate <= ${BddTool.DateFormater(filter.creationDateMax)} `
         }
         if (filter.termDateMin && filter.termDateMin !== '') {
           if (where !== '') { where += 'AND '}
-          where += `termDate >= ${BddTool.DateFormater(filter.termDateMin, BddEnvironnement, BddId)} `
+          where += `termDate >= ${BddTool.DateFormater(filter.termDateMin)} `
         }
         if (filter.termDateMax && filter.termDateMax !== '') {
           if (where !== '') { where += 'AND '}
-          where += `termDate <= ${BddTool.DateFormater(filter.termDateMax, BddEnvironnement, BddId)} `
+          where += `termDate <= ${BddTool.DateFormater(filter.termDateMax)} `
         }
         if (filter.status !== undefined && filter.status !== null && filter.status !== '') {
           if (where !== '') { where += 'AND ' }
-          where += `status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -311,13 +311,13 @@ exports.PrivateDealRemove = (id, algoliaId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       await BddTool.QueryExecBdd2(query)

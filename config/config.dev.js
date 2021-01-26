@@ -1,7 +1,7 @@
 var config = require('./config.global');
 
 config.env = 'dev';
-config.prefixe = 'devLocal';
+config.prefixe = 'devAws';
 config.hostname = 'dev.example';
 //config.mongo.db = 'example_dev';
 config.WorkSpaceFolder = '~/workspace'

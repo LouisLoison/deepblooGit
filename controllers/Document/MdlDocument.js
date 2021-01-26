@@ -168,19 +168,19 @@ exports.documentMessageList = (filter, userData) => {
         let where = ``
         if (filter.documentMessageId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentMessageId = ${BddTool.NumericFormater(filter.documentMessageId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.documentMessageId = ${BddTool.NumericFormater(filter.documentMessageId)} \n`
         }
         if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentUuid = ${BddTool.NumericFormater(filter.documentUuid, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.documentUuid = ${BddTool.NumericFormater(filter.documentUuid)} \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.organizationId = ${BddTool.NumericFormater(filter.organizationId)} \n`
         }
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -239,7 +239,7 @@ exports.documentMessageDelete = (documentMessageId) => {
       }
 
       // Remove documentMessage from Deepbloo BDD
-      let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId, BddEnvironnement, BddId)}`
+      let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId)}`
       await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
@@ -283,9 +283,9 @@ exports.tenderFileImport = (tenderId) => {
 
 
       // Remove tenderCriterion of this tender
-      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
+      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id)} AND scope = 'DOCUMENT' `
       await BddTool.QueryExecBdd2(query)
-      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
+      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id)} AND scope = 'DOCUMENT' `
       await BddTool.QueryExecBdd2(query)
 
       const documentNews = []

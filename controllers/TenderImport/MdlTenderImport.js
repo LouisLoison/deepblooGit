@@ -27,7 +27,7 @@ exports.statistics = (filter) => {
       if (filter) {
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -59,7 +59,7 @@ exports.statistics = (filter) => {
       if (filter) {
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -131,9 +131,9 @@ exports.importTender = (tender, CpvList, textParses) => {
 
       // Remove tenderCriterion
       if (tender.id) {
-        query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
+        query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id)}`
         await BddTool.QueryExecBdd2(query)
-        query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
+        query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id)}`
         await BddTool.QueryExecBdd2(query)
       } else {
         tender.tenderUuid = uuidv4()

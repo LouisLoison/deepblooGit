@@ -45,12 +45,12 @@ exports.Login = (username, password, userToken) => {
       `
       if (hivebriteId) {
         query += `
-          WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId, BddEnvironnement, BddId)} 
+          WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId)} 
         `
       } else {
         query += `
-          WHERE     email = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
-          AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
+          WHERE     email = '${BddTool.ChaineFormater(username)}' 
+          AND       password = '${BddTool.ChaineFormater(password)}' 
         `
       }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -143,31 +143,31 @@ exports.List = (filter) => {
         let where = ``
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (filter.email) {
           if (where !== '') { where += 'AND ' }
-          where += `email = '${BddTool.ChaineFormater(filter.email, BddEnvironnement, BddId)}' \n`
+          where += `email = '${BddTool.ChaineFormater(filter.email)}' \n`
         }
         if (filter.hivebriteId) {
           if (where !== '') { where += 'AND ' }
-          where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId, BddEnvironnement, BddId)} \n`
+          where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId)} \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
-          where += `organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+          where += `organizationId = ${BddTool.NumericFormater(filter.organizationId)} \n`
         }
         if (filter.type) {
           if (where !== '') { where += 'AND ' }
-          where += `type = ${BddTool.NumericFormater(filter.type, BddEnvironnement, BddId)} \n`
+          where += `type = ${BddTool.NumericFormater(filter.type)} \n`
         }
         if (filter.types) {
           if (where !== '') { where += 'AND ' }
-          where += `type IN (${BddTool.ArrayNumericFormater(filter.types, BddEnvironnement, BddId)}) \n`
+          where += `type IN (${BddTool.ArrayNumericFormater(filter.types)}) \n`
         }
         if (filter.doNotContact) {
           if (where !== '') { where += 'AND ' }
-          where += `doNotContact = ${BddTool.NumericFormater(filter.doNotContact, BddEnvironnement, BddId)} \n`
+          where += `doNotContact = ${BddTool.NumericFormater(filter.doNotContact)} \n`
         }
         if (filter.hasConnexionTender) {
           if (where !== '') { where += 'AND ' }
@@ -179,11 +179,11 @@ exports.List = (filter) => {
         }
         if (filter.notifSend) {
           if (where !== '') { where += 'AND ' }
-          where += `notifSend = ${BddTool.NumericFormater(filter.notifSend, BddEnvironnement, BddId)} \n`
+          where += `notifSend = ${BddTool.NumericFormater(filter.notifSend)} \n`
         }
         if (filter.status) {
           if (where !== '') { where += 'AND ' }
-          where += `status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -293,10 +293,10 @@ exports.UserDelete = (userId) => {
         throw new Error("No available id !")
       }
 
-      let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
+      let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId)} `
       await BddTool.QueryExecBdd2(query)
 
-      query = `DELETE FROM "user" WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
+      query = `DELETE FROM "user" WHERE userId = ${BddTool.NumericFormater(userId)} `
       await BddTool.QueryExecBdd2(query)
 
       resolve()
@@ -1169,9 +1169,9 @@ exports.SendPeriodicDashboard = () => {
           LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = tenders.id 
           WHERE     tenders.noticeType != 'Contract Award' 
           AND       tenders.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
-          AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId), BddEnvironnement, BddId)}) `
+          AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId))}) `
         if (countrys && countrys.length) {
-          query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) `
+          query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys)}) `
         }
         query = query + `
           GROUP BY  tenders.id, 
@@ -1401,15 +1401,15 @@ exports.userNotifyList = (filter, userData, tenderData) => {
         let where = ``
         if (filter.userId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (filter.recipientId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.recipientId = ${BddTool.NumericFormater(filter.recipientId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.recipientId = ${BddTool.NumericFormater(filter.recipientId)} \n`
         }
         if (filter.tenderId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
         if (where !== '') { query += '        WHERE     ' + where }
       }

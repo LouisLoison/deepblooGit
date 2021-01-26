@@ -12,7 +12,7 @@ exports.TenderAdd = (tender) => {
         let query = `
           SELECT      id AS "id" 
           FROM        tenders 
-          WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId, BddEnvironnement, BddId)} 
+          WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId)} 
         `
         let recordset = await BddTool.QueryExecBdd2(query)
         for (var record of recordset) {
@@ -153,19 +153,19 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       }
       if (tenderUuid && tenderUuid !== '') {
         if (where !== '') {
           where += 'AND '
         }
-        where += `tenderUuid = '${BddTool.ChaineFormater(tenderUuid, BddEnvironnement, BddId)}' \n`
+        where += `tenderUuid = '${BddTool.ChaineFormater(tenderUuid)}' \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -309,7 +309,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
         if (filter.search && filter.search.trim() !== '') {
           if (where !== '') { where += 'AND ' }
           let search = filter.search.replace(/ /g,"%")
-          where += `tenders.title LIKE '%${BddTool.ChaineFormater(search, BddEnvironnement, BddId)}%' \n`
+          where += `tenders.title LIKE '%${BddTool.ChaineFormater(search)}%' \n`
         }
         if (filter.items && filter.items.length) {
           const bidDeadLineItems = filter.items.filter(a => a.other === 'bidDeadLine')
@@ -337,7 +337,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const noticeTypeItems = filter.items.filter(a => a.other === 'noticeType')
           if (noticeTypeItems && noticeTypeItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `tenders.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value))}) \n`
           }
 
           const useridItems = filter.items.filter(a => a.other === 'userid' && a.value === 'USERID')
@@ -349,19 +349,19 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const procurementMethodItems = filter.items.filter(a => a.other === 'procurementMethod')
           if (procurementMethodItems && procurementMethodItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `tenders.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value))}) \n`
           }
 
           const langItems = filter.items.filter(a => a.other === 'lang')
           if (langItems && langItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `tenders.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value))}) \n`
           }
 
           const brandItems = filter.items.filter(a => a.other === 'brand')
           if (brandItems && brandItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `tenders.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value))}) \n`
           }
 
           const contractType1Items = filter.items.filter(a => a.other === 'contractType1')
@@ -376,19 +376,19 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           if (filter.tenderGroupId === -1) {
             where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = tenders.id) \n`
           } else {
-            where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId, BddEnvironnement, BddId)} \n`
+            where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId)} \n`
           }
         }
         if (filter && filter.textParses && filter.textParses.length) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterion.textParseId IN (${BddTool.ArrayNumericFormater(filter.textParses.map(a => a.textParseId), BddEnvironnement, BddId)}) \n`
+          where += `tenderCriterion.textParseId IN (${BddTool.ArrayNumericFormater(filter.textParses.map(a => a.textParseId))}) \n`
         }
         if (cpvCodes && cpvCodes.length) {
           if (where !== '') { where += 'AND '}
           let orCondition = ''
           for (let cpvCode of cpvCodes) {
             if (orCondition !== '') { orCondition += 'OR '}
-            orCondition += `tenders.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+            orCondition += `tenders.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode)}%' `
           }
           where += `(${orCondition}) `
         }
@@ -396,12 +396,12 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
           if (countrys) {
             if (where !== '') { where += 'AND ' }
-            where += `tenders.country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+            where += `tenders.country IN (${BddTool.ArrayStringFormat(countrys)}) \n`
           }
         }
         if (filter.countrys && filter.countrys !== '') {
           if (where !== '') { where += 'AND ' }
-          where += `tenders.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
+          where += `tenders.country IN (${BddTool.ArrayStringFormat(filter.countrys)}) \n`
         }
         if (filter.noUuid) {
           if (where !== '') { where += 'AND ' }
@@ -622,11 +622,11 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       let where = ``
       if (id && id !== '' && id > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (hasAlgoliaId) {
         if (where !== '') { where += 'AND ' }
@@ -634,26 +634,26 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       }
       if (creationDateMin && creationDateMin !== '') {
         if (where !== '') { where += 'AND '}
-        where += `creationDate >= ${BddTool.DateFormater(creationDateMin, BddEnvironnement, BddId)} `
+        where += `creationDate >= ${BddTool.DateFormater(creationDateMin)} `
       }
       if (creationDateMax && creationDateMax !== '') {
         if (where !== '') { where += 'AND '}
-        where += `creationDate <= ${BddTool.DateFormater(creationDateMax, BddEnvironnement, BddId)} `
+        where += `creationDate <= ${BddTool.DateFormater(creationDateMax)} `
       }
       if (termDateMin && termDateMin !== '') {
         if (where !== '') { where += 'AND '}
-        where += `termDate >= ${BddTool.DateFormater(termDateMin, BddEnvironnement, BddId)} `
+        where += `termDate >= ${BddTool.DateFormater(termDateMin)} `
       }
       if (termDateMax && termDateMax !== '') {
         if (where !== '') { where += 'AND '}
-        where += `termDate <= ${BddTool.DateFormater(termDateMax, BddEnvironnement, BddId)} `
+        where += `termDate <= ${BddTool.DateFormater(termDateMax)} `
       }
       if (cpvCodes && cpvCodes.length) {
         if (where !== '') { where += 'AND '}
         let orCondition = ''
         for (let cpvCode of cpvCodes) {
           if (orCondition !== '') { orCondition += 'OR '}
-          orCondition += `cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+          orCondition += `cpvs LIKE '%${BddTool.ChaineFormater(cpvCode)}%' `
         }
         where += `(${orCondition}) `
       }
@@ -661,24 +661,24 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
         if (countrys) {
           if (where !== '') { where += 'AND ' }
-          where += `country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+          where += `country IN (${BddTool.ArrayStringFormat(countrys)}) \n`
         }
       }
       if (country && country !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `country = '${BddTool.ChaineFormater(country, BddEnvironnement, BddId)}' \n`
+        where += `country = '${BddTool.ChaineFormater(country)}' \n`
       }
       if (noticeType && noticeType !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `noticeType = '${BddTool.ChaineFormater(noticeType, BddEnvironnement, BddId)}' \n`
+        where += `noticeType = '${BddTool.ChaineFormater(noticeType)}' \n`
       }
       if (noticeTypeExclusion && noticeTypeExclusion !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `noticeType != '${BddTool.ChaineFormater(noticeTypeExclusion, BddEnvironnement, BddId)}' \n`
+        where += `noticeType != '${BddTool.ChaineFormater(noticeTypeExclusion)}' \n`
       }
       if (status && status !== '' && status > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `status = ${BddTool.NumericFormater(status, BddEnvironnement, BddId)} \n`
+        where += `status = ${BddTool.NumericFormater(status)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       // query += ` ORDER BY bidDeadlineDate DESC `
@@ -837,12 +837,12 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       } else if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') {
         query += '  WHERE ' + where
@@ -1312,7 +1312,7 @@ exports.TenderGroupDelete = (tenderGroupId) => {
 
       let query = `
         DELETE FROM   tenderGroup 
-        WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)}
+        WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId)}
       `
       await BddTool.QueryExecBdd2(query)
 
@@ -1344,11 +1344,11 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
       let where = ``
       if (tenderGroupId && tenderGroupId !== '' && tenderGroupId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)} \n`
+        where += `tenderGroupId = ${BddTool.NumericFormater(tenderGroupId)} \n`
       }
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1382,8 +1382,8 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
 
       let query = `
         DELETE FROM   tenderGroupLink 
-        WHERE         tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
-        AND           userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
+        WHERE         tenderId = ${BddTool.NumericFormater(tenderId)}
+        AND           userId = ${BddTool.NumericFormater(userId)}
       `
       await BddTool.QueryExecBdd2(query)
 
@@ -1444,8 +1444,8 @@ exports.TenderArchiveMove = (userId, tenderId) => {
 
       let query = `
         DELETE FROM   tenderGroupLink 
-        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
-        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+        WHERE         userId = ${BddTool.NumericFormater(userId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId)}
       `
       await BddTool.QueryExecBdd2(query)
 
@@ -1481,8 +1481,8 @@ exports.TenderDeleteMove = (userId, tenderId) => {
 
       let query = `
         DELETE FROM   tenderGroupLink 
-        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
-        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+        WHERE         userId = ${BddTool.NumericFormater(userId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId)}
       `
       await BddTool.QueryExecBdd2(query)
 
@@ -1528,11 +1528,11 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       let where = ``
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
       if (tenderId && tenderId !== '' && tenderId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
+        where += `tenderId = ${BddTool.NumericFormater(tenderId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1579,11 +1579,11 @@ exports.TenderDetailList = (userId, tenderId) => {
       let where = ``
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
       if (tenderId && tenderId !== '' && tenderId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
+        where += `tenderId = ${BddTool.NumericFormater(tenderId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1710,7 +1710,7 @@ exports.tenderCriterions = (filter) => {
       if (filter) {
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterion.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `tenderCriterion.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -1772,7 +1772,7 @@ exports.tenderFilterDelete = (tenderFilterId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `tenderFilterId = ${BddTool.NumericFormater(tenderFilterId, BddEnvironnement, BddId)} \n`
+        where += `tenderFilterId = ${BddTool.NumericFormater(tenderFilterId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
@@ -1810,11 +1810,11 @@ exports.tenderFilterList = (filter) => {
         let where = ``
         if (filter.tenderFilterId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderFilter.tenderFilterId = ${BddTool.NumericFormater(filter.tenderFilterId, BddEnvironnement, BddId)} \n`
+          where += `tenderFilter.tenderFilterId = ${BddTool.NumericFormater(filter.tenderFilterId)} \n`
         }
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderFilter.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `tenderFilter.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -2087,7 +2087,7 @@ exports.tenderUserGroupDispatch = (tenders) => {
                       creationDate AS "creationDate",
                       updateDate AS "updateDate"
           FROM        tenderGroupLink 
-          WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+          WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds)}) 
         `
         let recordset = await BddTool.QueryExecBdd2(query)
         for (const record of recordset) {

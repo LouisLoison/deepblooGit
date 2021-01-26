@@ -64,7 +64,7 @@ exports.List = (filter) => {
         let where = ``
         if (filter.annonceId) {
           if (where !== '') { where += 'AND ' }
-          where += `annonce.annonceId = ${BddTool.NumericFormater(filter.annonceId, BddEnvironnement, BddId)} \n`
+          where += `annonce.annonceId = ${BddTool.NumericFormater(filter.annonceId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
@@ -123,7 +123,7 @@ exports.Remove = (annonceId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `annonceId = ${BddTool.NumericFormater(annonceId, BddEnvironnement, BddId)} \n`
+        where += `annonceId = ${BddTool.NumericFormater(annonceId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
@@ -169,11 +169,11 @@ exports.AnnonceClickList = (filter) => {
         let where = ``
         if (filter.annonceClickId) {
           if (where !== '') { where += 'AND ' }
-          where += `annonceClickId = ${BddTool.NumericFormater(filter.annonceClickId, BddEnvironnement, BddId)} \n`
+          where += `annonceClickId = ${BddTool.NumericFormater(filter.annonceClickId)} \n`
         }
         if (filter.annonceId && filter.annonceId !== '' && filter.annonceId > 0) {
           if (where !== '') { where += 'AND ' }
-          where += `annonceId = ${BddTool.NumericFormater(filter.annonceId, BddEnvironnement, BddId)} \n`
+          where += `annonceId = ${BddTool.NumericFormater(filter.annonceId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }

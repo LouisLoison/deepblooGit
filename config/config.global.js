@@ -77,7 +77,7 @@ config.bdd = {
         password: 'taiT6jooy7iza',
         server: 'localhost',
         database: 'deepbloo_dev',
-	      port: 5434,
+        port: 5434,
       }
     },
     test: {
