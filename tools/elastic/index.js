@@ -59,7 +59,7 @@ const processResults = async ({ rows, fields, rowCount }) => {
       }
     } catch (err) {
       console.log(err)
-      console;log(result.contactAddress)
+      console.log(result.contactAddress)
     }
     const formated = await tenderFormat(result, cpvList)
     const elasticDoc = {

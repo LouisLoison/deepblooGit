@@ -298,14 +298,26 @@ export class ImportsStepsStack extends Stack {
       lambdaFunction: stepTenderStore,
       resultPath: '$.storedData',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
     });
+
+
 
     const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
       lambdaFunction: stepTenderMerge,
       // inputPath: '$.storedData',
       resultPath: '$.mergedData',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
     });
+
+
 
     const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
       lambdaFunction: stepTenderIndex,
