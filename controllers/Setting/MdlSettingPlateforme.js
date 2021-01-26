@@ -5,7 +5,7 @@ exports.PlateformeList = () => {
         var PlateformeList = []
         var BddId = 'EtlTool'
         var Environnement = 'PRD'
-        BddTool.QueryExecBdd(BddId, Environnement, `
+        BddTool.QueryExecBdd(`
             SELECT     PlateformeID AS "PlateformeID", 
                        Code AS "Code", 
                        Nom AS "Nom", 
