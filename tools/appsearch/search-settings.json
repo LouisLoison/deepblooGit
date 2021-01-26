@@ -115,7 +115,11 @@
     },
     "designs": {
       "raw": {}
+    },
+    "datasource": {
+      "raw": {}
     }
+
   },
   "boosts": {}
 }

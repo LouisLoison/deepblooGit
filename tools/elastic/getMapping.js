@@ -7,4 +7,4 @@ const main = async (index) => {
   process.exit()
 }
 
-main('newtenders')// .then(process.exit())
+main('tenders')// .then(process.exit())

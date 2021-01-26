@@ -3,7 +3,6 @@
   "contract_types": "text",
   "country": "text",
   "cpvs": "text",
-  "tender_id": "text",
   "description": "text",
   "buyer_name": "text",
   "title": "text",
@@ -30,5 +29,6 @@
   "bid_deadline_timestamp": "number",
   "user_id": "number",
   "designs": "text",
-  "status": "text"
+  "status": "text",
+  "datasource": "text"
 }

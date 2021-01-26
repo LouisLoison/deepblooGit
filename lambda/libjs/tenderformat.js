@@ -90,7 +90,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
   let tenderNew = {
     // objectID: tender.algoliaId ? tender.algoliaId : undefined,
     // dgmarketId: tender.dgmarketId,
-    tenderId: tender.id,
+    // tenderId: tender.id,
     procurementId: tender.procurementId,
     title: tender.title,
     lang: tender.lang,
@@ -142,7 +142,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     brands: [],
     // fileSource: tender.fileSource,
     groups: [],
-    // origine: tender.origine,
+    datasource: tender.datasource,
   }
 
   if (tender.tenderCriterions) {
