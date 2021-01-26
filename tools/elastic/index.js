@@ -45,6 +45,7 @@ const main = async (limit = 9) => {
 
 const processResults = async ({ rows, fields, rowCount }) => {
   let tranche = []
+  let appTranche = []
   let processed = 0
   const cpvList = await CpvList()
   for (let i=0; i < rowCount; i += 1) {
@@ -71,16 +72,19 @@ const processResults = async ({ rows, fields, rowCount }) => {
     }
     delete appsearchDoc.tenderUuid
     tranche.push(elasticDoc)
+    appTranche.push(appsearchDoc)
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (tranche.length >= 300) {
-      await indexToElasticsearch(tranche, 'newtenders')
-      await indexObjectToAppsearch(tranche, 'deepbloo-dev')
+    if (tranche.length >= 50) {
+      await indexToElasticsearch(tranche, 'tenders')
+      await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
+      appTranche.forEach((r, index) => delete appTranche[index])
       tranche = []
+      appTranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
