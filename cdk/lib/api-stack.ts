@@ -10,6 +10,7 @@ import {
   Schema
 } from '@aws-cdk/aws-appsync';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
+import { Secret } from '@aws-cdk/aws-secretsmanager';
 
 import * as iam from '@aws-cdk/aws-iam';
 import { join } from "path";
@@ -23,10 +24,14 @@ export class ApiStack extends cdk.Stack {
       NODE_ENV: "dev",
     }
 
-    const hivebriteSecretArn = " arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
+    const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
       HIVEBRITE_SECRET: hivebriteSecretArn,
     }
+
+    const hivebriteSecret = Secret.fromSecretAttributes(this, 'hivebriteSecret', {
+      secretArn: hivebriteSecretArn,
+    });
 
     const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
     new cdk.CfnOutput(this, 'db-arn', {
@@ -64,130 +69,6 @@ export class ApiStack extends cdk.Stack {
       value: userPoolClient.userPoolClientId
     });
 
-    /*
-const messageTable = new Table(this, 'CDKMessageTable', {
-  billingMode: BillingMode.PAY_PER_REQUEST,
-  partitionKey: {
-    name: 'id',
-    type: AttributeType.STRING,
-  },
-});
-
-const roomTable = new Table(this, 'CDKRoomTable', {
-  billingMode: BillingMode.PAY_PER_REQUEST,
-  partitionKey: {
-    name: 'id',
-    type: AttributeType.STRING,
-  },
-});
-
-messageTable.addGlobalSecondaryIndex({
-  indexName: 'messages-by-room-id',
-  partitionKey: {
-    name: 'roomId',
-    type: AttributeType.STRING
-  },
-  sortKey: {
-    name: 'createdAt',
-    type: AttributeType.STRING
-  }
-})
-
-const messageTableServiceRole = new Role(this, 'MessageTableServiceRole', {
-  assumedBy: new ServicePrincipal('dynamodb.amazonaws.com')
-});
-
-messageTableServiceRole.addToPolicy(
-  new PolicyStatement({
-    effect: Effect.ALLOW,
-    resources: [`${messageTable.tableArn}/index/messages-by-room-id`],
-    actions: [
-      'dymamodb:Query'
-    ]
-  })
-);
- */
-
-    const api = new GraphqlApi(this, 'deepbloo-dev-api', {
-      name: "deepbloo-dev",
-      logConfig: {
-        fieldLogLevel: FieldLogLevel.ALL,
-      },
-      schema: Schema.fromAsset(join(__dirname, '../../appsync/schema.graphql')),
-      authorizationConfig: {
-        defaultAuthorization: {
-          authorizationType: AuthorizationType.USER_POOL,
-          userPoolConfig: {
-            userPool
-          }
-        },
-      },
-    });
-
-
-    new cdk.CfnOutput(this, "GraphQLAPIURL", {
-      value: api.graphqlUrl
-    });
-
-    //   const dbCreds = Secret.fromSecretName(this, 'SecretFromName', 'aurora-creds')
-    const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
-
-    const appsyncServiceRole = new iam.Role(this, `appsync-service-role`, {
-      roleName: `appsync-service-role`,
-      assumedBy: new iam.ServicePrincipal("appsync.amazonaws.com"),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSAppSyncPushToCloudWatchLogs")
-      ],
-      inlinePolicies: {
-        "access-rds": new iam.PolicyDocument({
-          statements: [new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ['rds:*', 'rds-data:*'],
-            resources: [dbArn]
-          }), new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ['secretsmanager:*'],
-            resources: [awsSecretStoreArn]
-          })]
-        })
-      }
-    })
-
-    const appsyncDataSource = new CfnDataSource(this, `appsync-aurora-ds`, {
-      apiId: api.apiId,
-      type: "RELATIONAL_DATABASE",
-      name: `aurora_ds`,
-      relationalDatabaseConfig: {
-        relationalDatabaseSourceType: "RDS_HTTP_ENDPOINT",
-        rdsHttpEndpointConfig: {
-          awsRegion: 'eu-west-1',
-          awsSecretStoreArn,
-          databaseName: 'deepbloo_dev',
-          dbClusterIdentifier: dbArn
-        }
-      },
-      serviceRoleArn: appsyncServiceRole.roleArn
-    })
-
-    const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
-      apiId: api.apiId,
-      fieldName: "getTender",
-      typeName: "Query",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
-        { encoding: "utf8" }
-      ),
-      responseMappingTemplate: `
-            #if($ctx.error)
-                $utils.error($ctx.error.message, $ctx.error.type)
-            #end
-            $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
-      dataSourceName: appsyncDataSource.name
-    })
-
-    listEventsResolver.addDependsOn(appsyncDataSource);
-
-
     const nodeLayer = new LayerVersion(this, 'NodeLib', {
       code: new AssetCode('../lambda/layer/npm'),
       compatibleRuntimes: [Runtime.NODEJS_12_X],
@@ -214,6 +95,115 @@ messageTableServiceRole.addToPolicy(
     });
 
     hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(hivebriteResolver)
+
+    const api = new GraphqlApi(this, 'deepbloo-dev-api', {
+      name: "deepbloo-dev",
+      logConfig: {
+        fieldLogLevel: FieldLogLevel.ALL,
+      },
+      schema: Schema.fromAsset(join(__dirname, '../../appsync/schema.graphql')),
+      authorizationConfig: {
+        defaultAuthorization: {
+          authorizationType: AuthorizationType.USER_POOL,
+          userPoolConfig: {
+            userPool
+          }
+        },
+      },
+    });
+
+    new cdk.CfnOutput(this, "GraphQLAPIURL", {
+      value: api.graphqlUrl
+    });
+
+    //   const dbCreds = Secret.fromSecretName(this, 'SecretFromName', 'aurora-creds')
+    const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+
+    const appsyncServiceRole = new iam.Role(this, `appsync-service-role`, {
+      roleName: `appsync-service-role`,
+      assumedBy: new iam.ServicePrincipal("appsync.amazonaws.com"),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSAppSyncPushToCloudWatchLogs")
+      ],
+      inlinePolicies: {
+        "access-rds": new iam.PolicyDocument({
+          statements: [new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['rds:*', 'rds-data:*'],
+            resources: [dbArn]
+          }), new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [awsSecretStoreArn]
+          }), new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['lambda:invokeFunction'],
+            resources: [hivebriteResolver.functionArn]
+          }),]
+        }),
+
+      }
+    })
+
+    const appsyncDataSource = new CfnDataSource(this, `appsync-aurora-ds`, {
+      apiId: api.apiId,
+      type: "RELATIONAL_DATABASE",
+      name: `aurora_ds`,
+      relationalDatabaseConfig: {
+        relationalDatabaseSourceType: "RDS_HTTP_ENDPOINT",
+        rdsHttpEndpointConfig: {
+          awsRegion: 'eu-west-1',
+          awsSecretStoreArn,
+          databaseName: 'deepbloo_dev',
+          dbClusterIdentifier: dbArn
+        }
+      },
+      serviceRoleArn: appsyncServiceRole.roleArn
+    })
+
+    const hivebriteDataSource = new CfnDataSource(this, `hivebrite-ds`, {
+      apiId: api.apiId,
+      type: "AWS_LAMBDA",
+      name: `hivebrite_ds`,
+      lambdaConfig: {
+        lambdaFunctionArn: hivebriteResolver.functionArn
+      },
+      serviceRoleArn: appsyncServiceRole.roleArn
+    })
+
+    const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
+      apiId: api.apiId,
+      fieldName: "getTender",
+      typeName: "Query",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: `
+            #if($ctx.error)
+                $utils.error($ctx.error.message, $ctx.error.type)
+            #end
+            $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
+      dataSourceName: appsyncDataSource.name
+    })
+    listEventsResolver.addDependsOn(appsyncDataSource);
+
+    const hivebriteUsersResolver = new CfnResolver(this, `hivebriteUsers`, {
+      apiId: api.apiId,
+      fieldName: "hivebriteUsers",
+      typeName: "Query",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.hivebriteUsers.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/lambda_response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: hivebriteDataSource.name
+    })
+    hivebriteUsersResolver.addDependsOn(hivebriteDataSource);
 
     /*
     const resolver = new CfnResolver(this, "ListThingsAPI", {
