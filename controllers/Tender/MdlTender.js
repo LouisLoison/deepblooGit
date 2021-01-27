@@ -1337,6 +1337,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
                     label AS "label",
                     color AS "color",
                     searchRequest AS "searchRequest",
+                    synchroSalesforce AS "synchroSalesforce",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
         FROM        tenderGroup 
@@ -1360,6 +1361,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
           label: record.label,
           color: record.color,
           searchRequest: record.searchRequest,
+          synchroSalesforce: record.synchroSalesforce,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })
@@ -1369,6 +1371,24 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
     } catch (err) {
       reject(err)
     }
+  })
+}
+
+exports.TenderGroup = (tenderGroupId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let tenderGroup = null
+      if (tenderGroupId) {
+        let filter = {
+          tenderGroupId
+        }
+        let tenderGroups = await this.TenderGroupList(filter)
+        if (tenderGroups && tenderGroups.length > 0) {
+          tenderGroup = tenderGroups[0]
+        }
+      }
+      resolve(tenderGroup)
+    } catch (err) { reject(err) }
   })
 }
 
@@ -1422,6 +1442,13 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
         ])
       } catch (err) {
         console.log('Elasticsearch indexObject error')
+      }
+
+      // synchroSalesforce
+      let tenderGroup = this.TenderGroup(tenderGroupId)
+      if (tenderGroup && tenderGroup.synchroSalesforce) {
+        // TODO : move tender to salesforce
+        // await require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
       }
 
       resolve({

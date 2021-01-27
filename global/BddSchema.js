@@ -205,6 +205,18 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    mappingCountry: {
+      mappingCountryId: { type: "Int", key: true },
+      countryId: { type: "String" },
+      countryCode: { type: "String" },
+      countryCode3: { type: "String" },
+      name: { type: "String" },
+      nameShort: { type: "String" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     tenderCriterionCpv: {
       tenderCriterionCpvId: { type: "Int", key: true },
       tenderId: { type: "Int" },
@@ -258,6 +270,7 @@ var Schema = {
       label: { type: "String" },
       color: { type: "String" },
       searchRequest: { type: "String" },
+      synchroSalesforce: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
