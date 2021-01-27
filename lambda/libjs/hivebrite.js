@@ -2,7 +2,7 @@ const axios = require("axios");
 const { getHivebriteSecret } = require('./config')
 let hivebriteToken;
 
-exports.TokenGet = () => {
+exports.TokenGet = async () => {
     const { admin_email, password, client_id, client_secret, redirect_uri, grant_type, scope, hivebriteEndpoint } = await getHivebriteSecret()
 
     return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ exports.TokenGet = () => {
     })
 }
 
-exports.get = (url, param) => {
+exports.get = async (url, param) => {
     const { hivebriteEndpoint } = await getHivebriteSecret()
 
     return new Promise(async (resolve, reject) => {
