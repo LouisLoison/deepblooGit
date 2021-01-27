@@ -439,6 +439,14 @@
                 />
               </v-list>
             </v-menu>
+
+            <v-switch
+              v-if="!groupDialog.searchRequest || groupDialog.searchRequest.trim() === ''"
+              v-model="groupDialog.synchroSalesforce"
+              :label="
+                `Synchro Salesforce: ${groupDialog.synchroSalesforce ? 'Yes' : 'No'}`
+              "
+            />
           </v-form>
         </v-card-text>
 
@@ -671,7 +679,7 @@ export default {
         if (!res.success) {
           throw new Error(res.Error)
         }
-        await this.load();
+        await this.load()
         this.loadTenderGroupLink()
       } catch (err) {
         this.$api.error(err, this)
