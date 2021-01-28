@@ -16,7 +16,7 @@
     "string-strip-html": "^7.0",
     "word-extractor": "^0.3",
     "xml2js": "^0.4",
-    "axios": "^0.18.1"
+    "axios": "^0.18"
   },
   "devDependencies": {
     "aws-sdk": "^2.793.0"
