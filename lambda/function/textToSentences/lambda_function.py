@@ -5,15 +5,20 @@ from helper import S3Helper
 
 
 def get_file_content(aws_env: dict):
-    return S3Helper.readFromS3(aws_env['bucketName'], aws_env['objectName'],
+    name_path_s3, _ = os.path.splitext(aws_env["objectName"])
+    txt_path_s3 = name_path_s3 + ".txt"
+    return S3Helper.readFromS3(aws_env['bucketName'], txt_path_s3,
                         aws_env['awsRegion'])
 
 
 def spacy_sentences_extraction(content: str, aws_env: dict):
     excluded_pipeline = ["tagger", "ner", "textcat", "parser"]
+    model_path = "/opt/python/xx_ent_wiki_sm/xx_ent_wiki_sm-2.3.0"
     sentence_content = ""
 
-    nlp = spacy.load("xx_ent_wiki_sm", disable=excluded_pipeline)
+    if os.path.isdir(model_path) is False:
+        model_path = "xx_ent_wiki_sm"
+    nlp = spacy.load(model_path, disable=excluded_pipeline)
     nlp.add_pipe(nlp.create_pipe('sentencizer'))
     doc = nlp(content)
     print("Pipelines names: ", nlp.pipe_names)

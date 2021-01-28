@@ -1,5 +1,6 @@
 import boto3
 from botocore.client import Config
+from botocore.exceptions import ClientError
 import os
 import csv
 import io
@@ -155,11 +156,30 @@ class S3Helper:
     @staticmethod
     def writeCSVRaw(csvData, bucketName, s3FileName):
         csv_file = io.StringIO()
-        #with open(fileName, 'w') as csv_file:
         writer = csv.writer(csv_file)
         for item in csvData:
             writer.writerow(item)
         S3Helper.writeToS3(csv_file.getvalue(), bucketName, s3FileName)
+
+    @staticmethod
+    def deleteFileS3(bucketName, s3FileName, awsRegion=None) -> None:
+        try:
+            s3 = AwsHelper().getResource('s3', awsRegion)
+            s3.Object(bucketName, s3FileName).delete()
+        except ClientError as _:
+            return
+
+    @staticmethod
+    def isS3FileExists(bucketName, s3FileName, awsRegion=None) -> bool:
+        s3 = AwsHelper().getResource('s3', awsRegion)
+        try:
+            print("=> DEBUG #1")
+            s3.Object(bucketName, s3FileName).load()
+            print("=> DEBUG #2")
+            return True
+        except ClientError as e:
+            print("S3FileExists: {}".format(e.response))
+            return False
 
 
 class FileHelper:

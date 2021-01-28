@@ -6,7 +6,7 @@ from xhtml2pdf import pisa
 from helper import FileHelper, S3Helper, AwsHelper
 
 
-def convert_html_to_pdf(html_str, aws_env) -> None:
+def convert_html_to_pdf(html_str, aws_env):
     aws_region = aws_env['awsRegion']
     output_bucket = aws_env['outputBucket']
     output_file = aws_env['outputName']
@@ -15,9 +15,20 @@ def convert_html_to_pdf(html_str, aws_env) -> None:
     print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
     s3 = AwsHelper().getResource('s3', aws_region)
     s3_obj = s3.Object(output_bucket, output_file)
-    pisa.CreatePDF(html_str, dest=output_content)
-    content = output_content.getvalue().decode("utf-8", errors="ignore")
-    s3_obj.put(Body=content)
+    try:
+        pisa.CreatePDF(html_str, dest=output_content)
+        content = output_content.getvalue().decode("utf-8", errors="ignore")
+        s3_obj.put(Body=content)
+    except ValueError as e:
+        return {
+            "statusCode": 423,
+            "body": "PDF format not supported."
+        }
+    return {
+        "statusCode": 200,
+        "body": "All right"
+    }
+
 
 
 def read_from_s3(aws_env):
@@ -57,10 +68,6 @@ def lambda_handler(event, context):
                                        event['documentUuid'])
     }
     print("==> Aws env: {0}".format(aws_env))
-    status = {
-        'statusCode': 200,
-        'body': 'All right'
-    }
     html_content = read_from_s3(aws_env)
-    convert_html_to_pdf(html_content, aws_env)
+    status = convert_html_to_pdf(html_content, aws_env)
     return { **event, 'status': status, 'objectName': aws_env['outputName'] }

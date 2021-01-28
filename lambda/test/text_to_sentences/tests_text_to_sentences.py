@@ -2,10 +2,10 @@ import os
 import json
 
 
-def test_text_to_senteces_execution():
-    tests_json_base_path = "lambda/function/textToSentences/tests/"
-    test_json_path = "{}/test_event_step.json".format(tests_json_base_path)
-    result_json_path = "{}/result_event_step.json".format(tests_json_base_path)
+def test_text_to_sentences_execution():
+    tests_json_base_path = "lambda/test/text_to_sentences/input_events/"
+    test_json_path = "{}/basic.json".format(tests_json_base_path)
+    result_json_path = "{}/basic.json".format(tests_json_base_path)
 
     with open(test_json_path, "r") as test_file:
         with open(result_json_path) as result_file:

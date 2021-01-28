@@ -3,9 +3,8 @@ import json
 
 
 def test_pdf_to_bbox_execution():
-    tests_json_base_path = "lambda/function/pdftobboxtext/tests/"
-    test_json_path = "{}/test_event_step.json".format(tests_json_base_path)
-    result_json_path = "{}/result_event_step.json".format(tests_json_base_path)
+    test_json_path = "lambda/test/pdf_to_bbox_text/input_events/basic.json"
+    result_json_path = "lambda/test/pdf_to_bbox_text/input_events/basic.json"
     os.environ['TEXTRACT_ONLY'] = "false"
     os.environ['MIN_CHAR_NEEDED'] = "10"
     os.environ['EXTRACT_PDF_LINES'] = "true"
