@@ -1379,10 +1379,7 @@ exports.TenderGroup = (tenderGroupId) => {
     try {
       let tenderGroup = null
       if (tenderGroupId) {
-        let filter = {
-          tenderGroupId
-        }
-        let tenderGroups = await this.TenderGroupList(filter)
+        let tenderGroups = await this.TenderGroupList(tenderGroupId)
         if (tenderGroups && tenderGroups.length > 0) {
           tenderGroup = tenderGroups[0]
         }
@@ -1407,7 +1404,6 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
       `
       await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
 
-      let tenderGroup = null;
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
@@ -1416,7 +1412,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
           creationDate: new Date(),
           updateDate: new Date(),
         }
-        tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
+        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
       }
 
       if (!algoliaId) {
@@ -1445,10 +1441,9 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
       }
 
       // synchroSalesforce
-      let tenderGroup = this.TenderGroup(tenderGroupId)
+      let tenderGroup = await this.TenderGroup(tenderGroupId)
       if (tenderGroup && tenderGroup.synchroSalesforce) {
-        // TODO : move tender to salesforce
-        // await require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
+        await require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
       }
 
       resolve({
