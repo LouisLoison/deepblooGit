@@ -1,5 +1,3 @@
-var Config = require(process.cwd() + '/config')
-
 var Schema = {
   deepbloo: {
     annonce: {
@@ -330,6 +328,7 @@ var Schema = {
       connexionTender: { type: "DateTime" },
       connexionBusiness: { type: "DateTime" },
       dashboardUrl: { type: "String" },
+      businessPipeline: { type: "String" },
       status: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
@@ -374,38 +373,38 @@ exports.getSchema = function() {
   return Schema
 }
 
-exports.getTableConfig = function(Bdd, Environnement, TableName) {
+exports.getTableConfig = function(configBdd, TableName) {
   return new Promise(async (resolve, reject) => {
     try {
-      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddTool = require('./BddTool')
       const TableConfig = { TableName: TableName }
       let Query = ''
-      if (Config.bdd[Bdd][Environnement].config.type === 'MsSql') {
+      if (configBdd.type === 'MsSql') {
         Query = `Exec SP_Columns ${TableName}`
-      } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
-        Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = '${Config.bdd[Bdd][Environnement].config.database}' `
-      } else if (Config.bdd[Bdd][Environnement].config.type === 'PostgreSql') {
+      } else if (configBdd.type === 'MySql') {
+        Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = '${configBdd.database}' `
+      } else if (configBdd.type === 'PostgreSql') {
         Query = `SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '${TableName}' AND TABLE_SCHEMA = 'public' `
-      } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
+      } else if (configBdd.type === 'Oracle') {
         Query = `SELECT * FROM SYS.USER_TAB_COLUMNS WHERE TABLE_NAME= '${TableName.toUpperCase()}'`
       }
-      let recordset = await BddTool.QueryExecBdd2(Bdd, Environnement, Query)
+      let recordset = await BddTool.QueryExecBdd2(Query)
       if (!recordset || recordset.length === 0) {
         TableConfig.Error = 'Table manquante'
       } else {
         TableConfig.ColumnList = []
         TableConfig.Column = []
         for(var Column of recordset) {
-          if (Config.bdd[Bdd][Environnement].config.type === 'MsSql') {
+          if (configBdd.type === 'MsSql') {
             TableConfig.ColumnList.push(Column.COLUMN_NAME)
             TableConfig.Column.push({ name: Column.COLUMN_NAME, type: Column.TYPE_NAME })
-          } else if (Config.bdd[Bdd][Environnement].config.type === 'MySql') {
+          } else if (configBdd.type === 'MySql') {
             TableConfig.ColumnList.push(Column.COLUMN_NAME)
             TableConfig.Column.push({ name: Column.COLUMN_NAME, type: Column.DATA_TYPE })
-          } else if (Config.bdd[Bdd][Environnement].config.type === 'PostgreSql') {
+          } else if (configBdd.type === 'PostgreSql') {
             TableConfig.ColumnList.push(Column.column_name)
             TableConfig.Column.push({ name: Column.column_name, type: Column.data_type })
-          } else if (Config.bdd[Bdd][Environnement].config.type === 'Oracle') {
+          } else if (configBdd.type === 'Oracle') {
             TableConfig.ColumnList.push(Column.COLUMN_NAME)
             TableConfig.Column.push({ name: Column.COLUMN_NAME, type: Column.DATA_TYPE })
           }
