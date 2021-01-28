@@ -4,7 +4,7 @@ const { getDbSecret } = require('../config')
 var Config = require(process.cwd() + '/config')
 
 const BddSchema = require(process.cwd() + '/global/BddSchema')
-const configBdd = Config.bdd.deepbloo[Config.prefixe].config
+let configBdd = Config.bdd.deepbloo[Config.prefixe].config
 //console.log(Config)
 
 let BddId
@@ -241,7 +241,7 @@ exports.QueryExecBdd2 = (Query, rowsCount) => {
 const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = false) => {
   let ColumnList = []
   let Table = Schema[TableName]
-  console.log(TableName, Record)
+  // console.log(TableName, Record)
   for(let ColumnName in Table) {
     let Column = Table[ColumnName]
     if (Column.key && !ColumnKey) {

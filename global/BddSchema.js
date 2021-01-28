@@ -53,7 +53,7 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     document: {
-      documentUuid: { type: "String", key: 'True' },
+      documentUuid: { type: "String", key: true },
       tenderUuid: { type: "String" },
       cpvs: { type: "String" },
       filename: { type: "String" },
