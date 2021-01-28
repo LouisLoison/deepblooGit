@@ -17,6 +17,46 @@ exports.TokenGet = () => {
   })
 }
 
+exports.delete = (url, param) => {
+  return new Promise(async (resolve, reject) => {
+    const config = require(process.cwd() + '/config')
+    await this.TokenGet()
+    const axios = require('axios');
+    axios.defaults.baseURL = config.hivebriteUrl
+    axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
+    axios.delete(url, param).then(response => {
+      resolve(response)
+    }).catch(err => { reject(err) })
+  })
+}
+
+exports.get = (url, param) => {
+  return new Promise(async (resolve, reject) => {
+    const config = require(process.cwd() + '/config')
+    await this.TokenGet()
+    const axios = require('axios');
+    axios.defaults.baseURL = config.hivebriteUrl
+    axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
+    axios.get(url, param).then(response => {
+      resolve(response)
+    }).catch(err => { reject(err) })
+  })
+}
+
+exports.post = (url, param) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      await this.TokenGet()
+      const axios = require('axios');
+      axios.defaults.baseURL = config.hivebriteUrl
+      axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
+      response = await axios.post(url, param)
+      resolve(response)
+    } catch (err) { reject(err) }
+  })
+}
+
 exports.MembershipSynchro = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -155,32 +195,6 @@ exports.MembershipSynchro = () => {
       resolve(userMemberships)
     } catch (err) { reject(err) }
   })
-}
-
-exports.delete = (url, param) => {
-  return new Promise(async (resolve, reject) => {
-    const config = require(process.cwd() + '/config')
-    await this.TokenGet()
-    const axios = require('axios');
-    axios.defaults.baseURL = config.hivebriteUrl
-    axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
-    axios.delete(url, param).then(response => {
-      resolve(response)
-    }).catch(err => { reject(err) })
-  })
-}
-
-exports.get = (url, param) => {
-    return new Promise(async (resolve, reject) => {
-        const config = require(process.cwd() + '/config')
-        await this.TokenGet()
-        const axios = require('axios');
-        axios.defaults.baseURL = config.hivebriteUrl
-        axios.defaults.headers.common = {'Authorization': `bearer ${config.hivebriteToken}`}
-        axios.get(url, param).then(response => {
-            resolve(response)
-        }).catch(err => { reject(err) })
-    })
 }
 
 exports.VenturesGet = () => {
@@ -531,6 +545,30 @@ exports.userSynchro = (pageStart, pageMax, perPage) => {
         // userDeletedCount: userDeletedCount,
         updatedAtMin,
       })
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.sendInvitation = (firstname, lastname, email, message) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await this.TokenGet()
+      await this.post(`api/admin/v1/users`, {
+        user: {
+          firstname,
+          lastname,
+          email,
+          notify_after_create: 'email',
+          sub_network_ids: [8000],
+        }
+      })
+
+      resolve(
+        firstname,
+        lastname,
+        email,
+        message,
+      )
     } catch (err) { reject(err) }
   })
 }

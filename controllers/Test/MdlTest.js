@@ -236,6 +236,43 @@ exports.CountryCreateCsv = () => {
 exports.Test = () => {
   return new Promise(async (resolve, reject) => {
     try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const fs = require('fs')
+
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      const lines = fs.readFileSync('c:/Temp/country.csv', 'utf-8').split(/\r?\n/)
+      
+      for (const line of lines) {
+        const lineArray = line.split(';')
+        const countryId = lineArray[0]
+        const countryCode = lineArray[1]
+        const countryCode3 = lineArray[2]
+        const name = lineArray[3]
+        const nameShort = lineArray[4]
+        const query = `
+          INSERT INTO mappingCountry (
+            countryId,
+            countryCode,
+            countryCode3,
+            name,
+            nameShort,
+            creationDate,
+            updateDate
+          ) VALUES (
+            '${BddTool.ChaineFormater(countryId, BddEnvironnement, BddId)}',
+            '${BddTool.ChaineFormater(countryCode, BddEnvironnement, BddId)}',
+            '${BddTool.ChaineFormater(countryCode3, BddEnvironnement, BddId)}',
+            '${BddTool.ChaineFormater(name, BddEnvironnement, BddId)}',
+            '${BddTool.ChaineFormater(nameShort, BddEnvironnement, BddId)}',
+            ${BddTool.DateNow(BddEnvironnement, BddId)},
+            ${BddTool.DateNow(BddEnvironnement, BddId)}
+          )
+        `
+        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      }
+  
       /*
       let text = '123456789 1288&amp;amp;994 4654 4654 588&amp;amp;994 646846849 7498 79amp8 7 94 98 49 84amp;'
       let html = text.replace(/&amp;amp;/g, '')
@@ -244,6 +281,7 @@ exports.Test = () => {
       html = html
       */
 
+      /*
       const { v4: uuidv4 } = require('uuid')
 
       let count = 0
@@ -258,6 +296,7 @@ exports.Test = () => {
         }
         count += tenderDatas.entries.length
       }
+      */
 
       /*
       const line = 'sgfkhjdfgk dfk fdkjv dfskjvn fdkvjn dfskvjndfsvkjn fdsvkjdnfs vkj dnfs vkdjsfn vkdjnvkdsjnvdfkjvn sdfkjv nddfg'

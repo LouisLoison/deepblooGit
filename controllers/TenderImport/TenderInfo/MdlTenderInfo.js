@@ -53,7 +53,7 @@ exports.BddImport = () => {
       try {
         fileParseData = await this.FileParse(fileLocation)
       } catch (err) {
-        const fileLocationReject = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Reject/', fileSource)
+        const fileLocationReject = path.join(config.WorkSpaceFolder, 'TenderImport/TenderInfo/Reject/', files[0])
         fs.renameSync(fileLocation, fileLocationReject)
         reject(err)
         return

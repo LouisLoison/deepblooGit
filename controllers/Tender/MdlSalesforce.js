@@ -1,11 +1,27 @@
 exports.sendToSalesforce = (userId, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      var FormData = require('form-data')
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const FormData = require('form-data')
 
       const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
       if (!tender) {
         throw new Error(`Unknown tender #${tenderId}`)
+      }
+
+      // Get countryId
+      let countryId = ''
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+      let query = `
+        SELECT      mappingCountry.countryId AS "countryId" 
+        FROM        mappingCountry 
+        WHERE       LOWER(mappingCountry.name) = '${BddTool.ChaineFormater(tender.country.toLowerCase(), BddEnvironnement, BddId)}' 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (let record of recordset) {
+        countryId = record.countryId
       }
 
       const formData = new FormData()
@@ -36,7 +52,7 @@ exports.sendToSalesforce = (userId, tenderId) => {
       let response2 = await require('axios').post(
         `https://sediver--sediveruat.my.salesforce.com/services/data/v50.0/sobjects/Project__c`, {
           Name: tender.title,
-          Country__c: "a0A0Y00000Jjv3vUAB",
+          Country__c: countryId,
           Account_Name_DB__c: "TEST ACCOUNT NAME",
           BDD__c: "2020-12-20T14:23:44",
           Tender_Issue_Date__c: "2020-11-20T14:23:44",

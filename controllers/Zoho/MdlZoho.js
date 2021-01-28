@@ -76,11 +76,6 @@ exports.synchro = () => {
           cpvs = Array.from(new Set(cpvs))
         }
 
-        let DB_Do_not_contact = 'true'
-        if (user.notifEmailingComEmail && !hivebriteUser.do_not_contact) {
-          DB_Do_not_contact = 'false'
-        }
-
         // Computed data
         const computed = {
           Email: hivebriteUser.email,
@@ -90,8 +85,8 @@ exports.synchro = () => {
           Last_Name: hivebriteUser.lastname,
           Full_Name: `${hivebriteUser.firstname} ${hivebriteUser.lastname}`,
           DB_ID: user.hivebriteId,
-          DB_Do_not_contact,
-          Email_Opt_Out: DB_Do_not_contact = 'true' ? false : true,
+          DB_Do_not_contact: hivebriteUser.do_not_contact ? 'true' : 'false',
+          DB_Email_Campaign: user.notifEmailingComEmail ? true : false,
           Mobile: hivebriteUser.mobile_pro || hivebriteUser.mobile_perso,
           Phone: hivebriteUser.landline_pro || hivebriteUser.landline_perso,
           CPV: cpvs,

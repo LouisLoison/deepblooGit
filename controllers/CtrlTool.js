@@ -283,32 +283,38 @@ exports.onError = (err, res) => {
     if (process.env.NODE_ENV=='dev') {
       console.log(err)
     }
-    res.end(JSON.stringify({ success: false, Error: err.message }, null, 3))
+  res.end(
+    JSON.stringify({
+      success: false,
+      Error: err.message,
+      data: err.response && err.response.data ? err.response.data : null
+    }, null, 3)
+  )
 }
 
 var fileSearch = (dir, fileName) => {
-    var fs = require('fs')
-    var path = require('path')
+  var fs = require('fs')
+  var path = require('path')
 
-    var filePath = ''
-    try {
-        fs.readdirSync(dir).forEach(file => {
-            if (filePath != '') { return }
-            if (fs.statSync(path.join(dir, file)).isDirectory()) {
-                filePath = fileSearch(path.join(dir, file), fileName)
-                if (filePath !== '') { return filePath }
-            }
-            else {
-                if (file === fileName) {
-                    filePath  =  dir
-                    return filePath
-                }
-            }
-        })
-    } catch (err) {
-        throw err
-    }
-    return filePath 
+  var filePath = ''
+  try {
+    fs.readdirSync(dir).forEach(file => {
+      if (filePath != '') { return }
+      if (fs.statSync(path.join(dir, file)).isDirectory()) {
+        filePath = fileSearch(path.join(dir, file), fileName)
+        if (filePath !== '') { return filePath }
+      }
+      else {
+        if (file === fileName) {
+          filePath = dir
+          return filePath
+        }
+      }
+    })
+  } catch (err) {
+    throw err
+  }
+  return filePath 
 }
 exports.fileSearch = fileSearch
 
