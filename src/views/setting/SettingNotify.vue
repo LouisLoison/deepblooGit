@@ -89,24 +89,24 @@ export default {
       loading: null,
       data: null
     },
-    filterLabel: "",
-    filterWord: "",
+    filterLabel: '',
+    filterWord: '',
     isUserNotifyDialog: false,
     userNotifyValid: null,
     userNotifyDialog: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required'],
   }),
 
   computed: {
     getUserNotifys() {
       let userNotifys = this.dataUserNotifys.data;
-      if (this.filterLabel && this.filterLabel.trim() !== "") {
+      if (this.filterLabel && this.filterLabel.trim() !== '') {
         userNotifys = userNotifys.filter(a =>
           a.label.toUpperCase().includes(this.filterLabel.toUpperCase())
         )
       }
       return userNotifys
-    }
+    },
   },
 
   mounted() {
@@ -117,10 +117,10 @@ export default {
     async loadUserNotifys() {
       try {
         this.dataUserNotifys.loading = 0
-        const res = await this.$api.post("/User/userNotifyList", {
+        const res = await this.$api.post('/User/userNotifyList', {
           userData: true,
           tenderData: true,
-        });
+        })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -161,7 +161,7 @@ export default {
           if (!res.success) {
             throw new Error(res.Error)
           }
-          this.loadUserNotifys();
+          this.loadUserNotifys()
           this.isUserNotifyDialog = false
         })
         .catch(err => {

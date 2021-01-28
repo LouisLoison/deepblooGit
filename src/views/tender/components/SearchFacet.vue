@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <div
+    ref="facet"
+    :style="this.minHeight ? `min-height: ${this.minHeight}px;` : ''"
+  >
     <div style="position: relative; height: 35px;">
       {{ $global.facetLabel(facet.field) }}
       <div style="position: absolute; right: 0px; top: 0px;">
@@ -139,6 +142,7 @@ export default {
   data: () => ({
     isSearchOpen: false,
     search: '',
+    minHeight: 0,
   }),
 
   computed: {
@@ -196,6 +200,12 @@ export default {
         }
       }
       return items.slice(0, 10)
+    },
+  },
+
+  watch: {
+    'facet.data'() {
+      this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight)
     },
   },
 

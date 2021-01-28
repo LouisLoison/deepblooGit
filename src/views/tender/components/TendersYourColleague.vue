@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="py-2">
     <div v-if="!getDataOpportunity.loading" class="text-center pa-5">
       <v-progress-circular :size="50" color="grey" indeterminate />
     </div>
@@ -15,14 +15,15 @@
         :key="`colleague${index}`"
         :href="`https://platform.deepbloo.com/users/${user.hivebriteId}`"
         target="_blank"
+        class="ma-1"
         style="text-decoration: none; cursor: pointer;"
       >
         <v-chip
           outlined
-          class="mt-1 mr-1"
+          class="mt-1 mr-1 ml-0 pl-1"
           style="text-decoration: none; cursor: pointer;"
         >
-          <v-avatar class="pa-1">
+          <v-avatar class="pa-1 mr-1">
             <img :src="user.photo" alt="" />
           </v-avatar>
           {{ user.username }}

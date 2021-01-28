@@ -116,6 +116,7 @@ export default {
 
   methods: {
     ...mapActions([
+      'showConfirmModal',
       'showInsufficientRightDialog',
       'loadUserNotifys',
     ]),
@@ -240,6 +241,28 @@ export default {
           tenderId: parseInt(result.id.raw, 10),
         })
         if (!res.success) {
+          let message = ''
+          if (
+            res.data
+            && res.data.length
+          ) {
+            for (const data of res.data) {
+              message += `<div class="pa-2">`
+              message += `errorCode: <span class="black--text">${data.errorCode}</span><br>`
+              message += `message: <span class="black--text">${data.message}</span><br>`
+              message += `fields: <span class="black--text">${data.fields.join(', ')}</span>`
+              message += `</div>`
+            }
+          }
+          this.showConfirmModal({
+            headerClass: "white--text darken-4--text red lighten-1",
+            headerIcon: "fa-exclamation-triangle",
+            title: "Error: synchro with Salesforce failed",
+            message: message,
+            buttons: [
+              { libelle: "Close", text: true, class: "" }
+            ]
+          })
           throw new Error(res.Error)
         }
       } catch (err) {

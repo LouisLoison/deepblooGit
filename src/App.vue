@@ -30,6 +30,7 @@
     </v-main>
 
     <!-- Dialog -->
+    <ConfirmDialog />
     <InsufficientRightDialog />
   </v-app>
 </template>
@@ -37,6 +38,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import AppToolbar from '@/components/AppToolbar'
+import ConfirmDialog from '@/components/modal/ConfirmDialog'
 import InsufficientRightDialog from '@/components/modal/InsufficientRightDialog'
 
 export default {
@@ -44,6 +46,7 @@ export default {
 
   components: {
     AppToolbar,
+    ConfirmDialog,
     InsufficientRightDialog,
   },
 

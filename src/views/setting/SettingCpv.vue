@@ -427,9 +427,9 @@ export default {
     },
     page: 1,
     perPage: 25,
-    filterLabel: "",
-    filterWord: "",
-    filterExclusion: "",
+    filterLabel: '',
+    filterWord: '',
+    filterExclusion: '',
     isCpvDialog: false,
     cpvValid: null,
     cpvDialog: null,
@@ -453,7 +453,7 @@ export default {
       data: null
     },
     loadingCsv: false,
-    notEmptyRules: [v => !!v || "Data is required"],
+    notEmptyRules: [v => !!v || 'Data is required'],
   }),
 
   computed: {
@@ -466,12 +466,12 @@ export default {
       if (this.cpvCategories && this.cpvCategories.length) {
         cpvs = cpvs.filter(a => this.cpvCategories.includes(a.category.trim()))
       }
-      if (this.filterLabel && this.filterLabel.trim() !== "") {
+      if (this.filterLabel && this.filterLabel.trim() !== '') {
         cpvs = cpvs.filter(a =>
           a.label.toUpperCase().includes(this.filterLabel.toUpperCase().trim())
         )
       }
-      if (this.filterWord && this.filterWord.trim() !== "") {
+      if (this.filterWord && this.filterWord.trim() !== '') {
         cpvs = cpvs.filter(a =>
           a.cpvWords.find(b =>
             b.word.toUpperCase().includes(this.filterWord.toUpperCase().trim())
@@ -484,13 +484,13 @@ export default {
 
   mounted() {
     this.wordAddRules = [
-      v => !!v || "Data is required",
+      v => !!v || 'Data is required',
       v =>
         (this.cpvDialog.cpvWords &&
           !this.cpvDialog.cpvWords.find(
             a => a && v && a.word.toUpperCase() === v.toUpperCase().trim()
           )) ||
-        "Word already exist"
+        'Word already exist'
     ]
     this.loadCpvs()
     this.loadCpvCategories()
@@ -504,7 +504,7 @@ export default {
     async loadCpvs() {
       try {
         this.dataCpvs.loading = 0
-        const res = await this.$api.post("/Cpv/CpvList")
+        const res = await this.$api.post('/Cpv/CpvList')
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -543,7 +543,7 @@ export default {
           picture: null,
           code: null,
           label: "",
-          words: []
+          words: [],
         }
       }
       this.isCpvDialog = true
