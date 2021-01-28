@@ -173,12 +173,10 @@ class S3Helper:
     def isS3FileExists(bucketName, s3FileName, awsRegion=None) -> bool:
         s3 = AwsHelper().getResource('s3', awsRegion)
         try:
-            print("=> DEBUG #1")
             s3.Object(bucketName, s3FileName).load()
-            print("=> DEBUG #2")
             return True
         except ClientError as e:
-            print("S3FileExists: {}".format(e.response))
+            print("S3FileExists Errors: {}".format(e.response))
             return False
 
 
