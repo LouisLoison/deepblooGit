@@ -10,6 +10,7 @@ const tenderformat = require('./tenderformat')
 const appsearch = require('./appsearch')
 const elastic = require('./elastic')
 const document = require('./document')
+const hivebrite = require('./hivebrite')
 
 module.exports = {
   ...esmRequire('./main.js'),
@@ -21,4 +22,5 @@ module.exports = {
   appsearch,
   document,
   elastic,
+  hivebrite
 }
