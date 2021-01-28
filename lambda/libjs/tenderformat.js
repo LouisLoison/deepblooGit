@@ -2,7 +2,7 @@ const { CpvList } = require('./cpv')
 const { textParseList } = require('./textparse')
 const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
-const stripHtml = require("string-strip-html")
+const { stripHtml } = require("string-strip-html")
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()

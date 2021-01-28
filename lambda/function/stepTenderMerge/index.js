@@ -8,7 +8,7 @@ exports.handler =  async function(event, ) {
 
   const client = await BddTool.getClient()
 
-  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
+  await BddTool.QueryExecPrepared(client, 'START  TRANSACTION ISOLATION LEVEL READ COMMITTED;');
 
   const query = `UPDATE tenderimport
   SET  tenderUuid = tenders.tenderuuid,
