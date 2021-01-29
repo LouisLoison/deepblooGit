@@ -6,6 +6,18 @@ type Tender {
   description: String
 }
 
+type HivebriteUser{
+  id: ID
+  email: String
+  name: String
+}
+
+type HivebriteUserConnection{
+  total: Int
+  users: [HivebriteUser]
+}
+
 type Query {
   getTender(id: ID): Tender
+  hivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
 }

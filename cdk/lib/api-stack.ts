@@ -9,6 +9,8 @@ import {
   CfnDataSource,
   Schema
 } from '@aws-cdk/aws-appsync';
+import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
+import { Secret } from '@aws-cdk/aws-secretsmanager';
 
 import * as iam from '@aws-cdk/aws-iam';
 import { join } from "path";
@@ -17,6 +19,19 @@ import { readFileSync } from "fs";
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const environment = {
+      NODE_ENV: "dev",
+    }
+
+    const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
+    const hivebriteEnv = {
+      HIVEBRITE_SECRET: hivebriteSecretArn,
+    }
+
+    const hivebriteSecret = Secret.fromSecretAttributes(this, 'hivebriteSecret', {
+      secretArn: hivebriteSecretArn,
+    });
 
     const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
     new cdk.CfnOutput(this, 'db-arn', {
@@ -54,49 +69,33 @@ export class ApiStack extends cdk.Stack {
       value: userPoolClient.userPoolClientId
     });
 
-    /*
-const messageTable = new Table(this, 'CDKMessageTable', {
-  billingMode: BillingMode.PAY_PER_REQUEST,
-  partitionKey: {
-    name: 'id',
-    type: AttributeType.STRING,
-  },
-});
+    const nodeLayer = new LayerVersion(this, 'NodeLib', {
+      code: new AssetCode('../lambda/layer/npm'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Apache-2.0, MIT',
+      description: 'Old backend and dependencies layer.',
+    });
 
-const roomTable = new Table(this, 'CDKRoomTable', {
-  billingMode: BillingMode.PAY_PER_REQUEST,
-  partitionKey: {
-    name: 'id',
-    type: AttributeType.STRING,
-  },
-});
+    const deepblooLayer = new LayerVersion(this, 'DeepblooLib', {
+      code: new AssetCode('../lambda/layer/deepbloo'),
+      compatibleRuntimes: [Runtime.NODEJS_12_X],
+      license: 'Private, Unlicensed',
+      description: 'Deepbloo lib layer.',
+    });
 
-messageTable.addGlobalSecondaryIndex({
-  indexName: 'messages-by-room-id',
-  partitionKey: {
-    name: 'roomId',
-    type: AttributeType.STRING
-  },
-  sortKey: {
-    name: 'createdAt',
-    type: AttributeType.STRING
-  }
-})
+    const hivebriteResolver = new Function(this, 'hivebriteResolver', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/hivebriteresolver'),
+      handler: 'index.handler',
+      memorySize: 500,
+      environment: {
+        ...environment,
+        ...hivebriteEnv
+      }
+    });
 
-const messageTableServiceRole = new Role(this, 'MessageTableServiceRole', {
-  assumedBy: new ServicePrincipal('dynamodb.amazonaws.com')
-});
-
-messageTableServiceRole.addToPolicy(
-  new PolicyStatement({
-    effect: Effect.ALLOW,
-    resources: [`${messageTable.tableArn}/index/messages-by-room-id`],
-    actions: [
-      'dymamodb:Query'
-    ]
-  })
-);
- */
+    hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(hivebriteResolver)
 
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
       name: "deepbloo-dev",
@@ -113,7 +112,6 @@ messageTableServiceRole.addToPolicy(
         },
       },
     });
-
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
       value: api.graphqlUrl
@@ -138,8 +136,13 @@ messageTableServiceRole.addToPolicy(
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
             resources: [awsSecretStoreArn]
-          })]
-        })
+          }), new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['lambda:invokeFunction'],
+            resources: [hivebriteResolver.functionArn]
+          }),]
+        }),
+
       }
     })
 
@@ -159,6 +162,16 @@ messageTableServiceRole.addToPolicy(
       serviceRoleArn: appsyncServiceRole.roleArn
     })
 
+    const hivebriteDataSource = new CfnDataSource(this, `hivebrite-ds`, {
+      apiId: api.apiId,
+      type: "AWS_LAMBDA",
+      name: `hivebrite_ds`,
+      lambdaConfig: {
+        lambdaFunctionArn: hivebriteResolver.functionArn
+      },
+      serviceRoleArn: appsyncServiceRole.roleArn
+    })
+
     const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
       apiId: api.apiId,
       fieldName: "getTender",
@@ -174,8 +187,23 @@ messageTableServiceRole.addToPolicy(
             $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
       dataSourceName: appsyncDataSource.name
     })
-
     listEventsResolver.addDependsOn(appsyncDataSource);
+
+    const hivebriteUsersResolver = new CfnResolver(this, `hivebriteUsers`, {
+      apiId: api.apiId,
+      fieldName: "hivebriteUsers",
+      typeName: "Query",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.hivebriteUsers.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/lambda_response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: hivebriteDataSource.name
+    })
+    hivebriteUsersResolver.addDependsOn(hivebriteDataSource);
 
     /*
     const resolver = new CfnResolver(this, "ListThingsAPI", {
