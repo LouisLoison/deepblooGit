@@ -5,6 +5,7 @@ import shutil
 import json
 
 from helper import AwsHelper, S3Helper
+from update_event import update_event, get_new_s3_url
 
 
 def extract_nested_zip(zip_file, output_zip):
@@ -116,9 +117,8 @@ def get_zip_output(object_name: str) -> str:
 def lambda_handler(event, context):
     print("=> Event: {0}".format(json.dumps(event)))
     aws_env = {
+        **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
-        "objectName": event['objectName'],
-        "tenderUuid": event['documentUuid'],
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
         "aws_region": "eu-west-1",
         "outputName": get_zip_output(event['objectName'])
@@ -134,8 +134,6 @@ def lambda_handler(event, context):
                                                               extraction_output))
     extract_nested_zip(zip_tmp, extraction_output)
     write_extracted_zip(aws_env, extraction_output)
-    status = {
-        'statusCode': 200,
-        'body': 'All right'
-    }
-    return {**event, 'status': status, 'objectName': aws_env['outputName']}
+    aws_env["status"] = 0
+    aws_env["errorMessage"] = None
+    return update_event(aws_env, event)
