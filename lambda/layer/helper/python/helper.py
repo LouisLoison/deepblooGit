@@ -179,6 +179,17 @@ class S3Helper:
             print("S3FileExists Errors: {}".format(e.response))
             return False
 
+    @staticmethod
+    def getS3FileSize(bucketName, s3FileName, awsRegion=None):
+        client_s3 = AwsHelper().getClient('s3', awsRegion)
+        try:
+            response = client_s3.head_object(
+                Bucket=bucketName,
+                Key=s3FileName)
+        except ClientError:
+            return None
+        return response.get('ContentLength')
+
 
 class FileHelper:
     @staticmethod

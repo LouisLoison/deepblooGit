@@ -1,9 +1,11 @@
 import json
 import os
-from helper import AwsHelper, S3Helper
-from PdfToBbox import Pdf
 import pdfplumber
 import simplejson
+
+from PdfToBbox import Pdf
+from helper import AwsHelper, S3Helper
+from update_event import update_event, get_new_s3_url
 
 
 def send_message(client, qUrl, json_message) -> None:
@@ -17,7 +19,7 @@ def send_to_textract(aws_env: dict):
     json_message = {
         "bucketName": aws_env["outputBucket"],
         "objectName": aws_env['objectName'],
-        "documentId": aws_env["documentId"],
+        "documentUuid": aws_env["documentUuid"],
         "awsRegion": aws_env["awsRegion"]
     }
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
@@ -101,9 +103,8 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 
 def lambda_handler(event, context):
     aws_env = {
+        **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
-        "objectName": event['objectName'],
-        "documentId": event['documentUuid'],
         "awsRegion": 'eu-west-1',
         "tmpJsonOutput": "/tmp/tmp_result.json",
         "tmpTxtOutput": "/tmp/tmp_result.txt",
@@ -112,17 +113,16 @@ def lambda_handler(event, context):
         "outputNameTxt": get_bbox_filename(event['objectName'], ".txt"),
         "textractOnly": os.environ['TEXTRACT_ONLY'],
         "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
-        "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES']
+        "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES'],
     }
     status = {
-        'statusCode': 200,
-        'body': 'All right'
+        "statusCode": 200,
+        "body": "All right"
     }
     extract_pdf_lines = aws_env['extract_pdf_lines']
     textract_only = aws_env['textractOnly']
     pdf_tmp_path = copy_pdf_to_tmp(aws_env)
 
-    print("==> Event: ", event)
     print("==> aws_env: ", aws_env)
     if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
         print("=> Extracting bounding box with pdfplumber")
@@ -132,13 +132,25 @@ def lambda_handler(event, context):
             pdf.parse_pdf()
             pdf.save_in_json()
             pdf.save_in_txt()
+            write_bbox_to_s3(aws_env)
         else:
             print("=> Extracting pdf words bbox")
             if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
                 print("=> Error while trying to get pdf information")
-                return status
-        write_bbox_to_s3(aws_env)
+                status = {
+                    "statusCode": 423,
+                    "body": "invalid PDF format not supported."
+                }
+            else:
+                write_bbox_to_s3(aws_env)
     else:
         print("Extracting bounding box with textract")
         #send_to_textract(aws_env)
-    return { **event, 'status': status }
+    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
+                                             aws_env['outputNameTxt'],
+                                             aws_env['awsRegion'])
+    aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "txt")
+    aws_env["status"] = status
+    aws_env["contentType"] = "text/txt"
+    aws_env['objectName'] = aws_env['outputNameTxt']
+    return update_event(aws_env, event)

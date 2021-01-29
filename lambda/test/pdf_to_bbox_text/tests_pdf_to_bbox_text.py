@@ -5,7 +5,7 @@ from layer.helper.python.helper import S3Helper
 
 def test_pdf_to_bbox_execution():
     test_json_path = "lambda/test/pdf_to_bbox_text/input_events/basic.json"
-    result_json_path = "lambda/test/pdf_to_bbox_text/input_events/basic.json"
+    result_json_path = "lambda/test/pdf_to_bbox_text/output_events/basic.json"
     os.environ['TEXTRACT_ONLY'] = "false"
     os.environ['MIN_CHAR_NEEDED'] = "10"
     os.environ['EXTRACT_PDF_LINES'] = "true"
