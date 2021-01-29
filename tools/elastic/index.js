@@ -102,4 +102,4 @@ const processResults = async ({ rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(4000000)// .then(process.exit())
+main(4000)// .then(process.exit())

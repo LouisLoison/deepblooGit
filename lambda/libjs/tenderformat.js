@@ -2,6 +2,7 @@ const { CpvList } = require('./cpv')
 const { textParseList } = require('./textparse')
 const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
+const { stripHtml } = require("string-strip-html")
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()
@@ -92,9 +93,9 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     // dgmarketId: tender.dgmarketId,
     // tenderId: tender.id,
     procurementId: tender.procurementId,
-    title: tender.title,
+    title: stripHtml(tender.title).result,
     lang: tender.lang,
-    description: tender.description,
+    description: stripHtml(tender.description).result,
     /*
     contact: {
       firstName: tender.contactFirstName,
@@ -143,6 +144,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     // fileSource: tender.fileSource,
     groups: [],
     datasource: tender.datasource,
+    accountId: 'none',
   }
 
   if (tender.tenderCriterions) {
