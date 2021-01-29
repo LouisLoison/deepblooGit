@@ -292,7 +292,12 @@ export class ImportsStepsStack extends Stack {
       // inputPath: '$.convertedData',
       // resultPath: '$.analyzedData',
       payloadResponseOnly: true,
-    });
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(4),
+      maxAttempts: 4
+    })
+
 
     const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
       lambdaFunction: stepTenderStore,
@@ -300,7 +305,7 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     }).addRetry({
       backoffRate: 3,
-      interval: Duration.seconds(3),
+      interval: Duration.seconds(5),
       maxAttempts: 4
     });
 
@@ -312,7 +317,7 @@ export class ImportsStepsStack extends Stack {
       resultPath: '$.mergedData',
       payloadResponseOnly: true,
     }).addRetry({
-      backoffRate: 3,
+      backoffRate: 4,
       interval: Duration.seconds(3),
       maxAttempts: 4
     });
@@ -324,7 +329,7 @@ export class ImportsStepsStack extends Stack {
       resultPath: '$.appsearchResult',
       payloadResponseOnly: true,
     }).addRetry({
-      backoffRate: 3,
+      backoffRate: 5,
       interval: Duration.seconds(3),
       maxAttempts: 4
     });
