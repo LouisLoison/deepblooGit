@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "index": "bash -c 'NODE_ENV=dev DB_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx ELASTIC_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr AWS_REGION=eu-west-1 node --max-old-space-size=7200 --unhandled-rejections=strict index.js'",
+    "index": "bash -c 'NODE_ENV=dev DB_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx ELASTIC_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr APPSEARCH_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu APPSEARCH_ENDPOINT=https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/ AWS_REGION=eu-west-1 node --max-old-space-size=7200 --unhandled-rejections=strict index.js'",
     "getmapping": "bash -c 'NODE_ENV=dev ELASTIC_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr AWS_REGION=eu-west-1 node --max-old-space-size=7200 --unhandled-rejections=strict getMapping.js'"
   },
   "author": "",

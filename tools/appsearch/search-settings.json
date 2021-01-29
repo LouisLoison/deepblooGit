@@ -3,11 +3,11 @@
     "country": {
       "weight": 1
     },
-    "buyer_name": {
-      "weight": 1
-    },
     "description": {
       "weight": 1.8
+    },
+    "buyer_name": {
+      "weight": 1
     },
     "title": {
       "weight": 3
@@ -17,52 +17,16 @@
     }
   },
   "result_fields": {
-    "country": {
-      "snippet": {
-        "size": 100
-      },
-      "raw": {}
-    },
-    "buyer_name": {
-      "raw": {}
-    },
-    "procurement_method": {
-      "raw": {}
-    },
-    "notice_type": {
-      "raw": {}
-    },
-    "region_lvl2": {
-      "raw": {}
-    },
-    "region_lvl1": {
-      "raw": {}
-    },
-    "region_lvl0": {
-      "raw": {}
-    },
-    "bid_deadline_date": {
-      "raw": {}
-    },
-    "buyer_name": {
-      "snippet": {
-        "size": 100
-      },
-      "raw": {}
-    },
-    "publication_timestamp": {
-      "raw": {}
-    },
-    "bid_deadline_timestamp": {
-      "raw": {}
-    },
-    "designs": {
-      "raw": {}
-    },
     "category_lvl0": {
       "raw": {}
     },
     "contract_types": {
+      "raw": {}
+    },
+    "country": {
+      "snippet": {
+        "size": 100
+      },
       "raw": {}
     },
     "cpvs": {
@@ -74,6 +38,12 @@
       },
       "raw": {}
     },
+    "buyer_name": {
+      "snippet": {
+        "size": 100
+      },
+      "raw": {}
+    },
     "id": {
       "raw": {}
     },
@@ -83,10 +53,28 @@
       },
       "raw": {}
     },
+    "procurement_method": {
+      "raw": {}
+    },
+    "notice_type": {
+      "raw": {}
+    },
     "segments": {
       "raw": {}
     },
+    "region_lvl2": {
+      "raw": {}
+    },
+    "region_lvl1": {
+      "raw": {}
+    },
+    "region_lvl0": {
+      "raw": {}
+    },
     "procurement_id": {
+      "raw": {}
+    },
+    "bid_deadline_date": {
       "raw": {}
     },
     "publication_date": {
@@ -118,7 +106,20 @@
     },
     "families": {
       "raw": {}
+    },
+    "publication_timestamp": {
+      "raw": {}
+    },
+    "bid_deadline_timestamp": {
+      "raw": {}
+    },
+    "designs": {
+      "raw": {}
+    },
+    "datasource": {
+      "raw": {}
     }
+
   },
   "boosts": {}
 }

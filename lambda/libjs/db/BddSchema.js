@@ -51,7 +51,7 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     document: {
-      documentUuid: { type: "String", key: 'True' },
+      documentUuid: { type: "String", key: true },
       tenderUuid: { type: "String" },
       cpvs: { type: "String" },
       filename: { type: "String" },
@@ -86,7 +86,6 @@ var Schema = {
     tenders: {
       id: { type: "Int", key: true },
       tenderUuid: { type: "String" },
-      dgmarketId: { type: "Int" },
       procurementId: { type: "String" },
       title: { type: "String" },
       description: { type: "String" },
@@ -167,6 +166,18 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    mappingCountry: {
+      mappingCountryId: { type: "Int", key: true },
+      countryId: { type: "String" },
+      countryCode: { type: "String" },
+      countryCode3: { type: "String" },
+      name: { type: "String" },
+      nameShort: { type: "String" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     tenderCriterionCpv: {
       tenderUuid: { type: "String" },
       documentUuid: { type: "String" },
@@ -180,6 +191,18 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     tenderCriterion: {
+      tenderCriterionId: { type: "Int", key: true },
+      tenderUuid: { type: "String" },
+      textParseId: { type: "Int" },
+      value: { type: "String" },
+      word: { type: "String" },
+      findCount: { type: "Int" },
+      scope: { type: "String", description: 'TITLE | DESCRIPTION | DOCUMENT' },
+      status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    tenderCriterionDocument: {
       tenderCriterionId: { type: "Int", key: true },
       tenderUuid: { type: "String" },
       documentUuid: { type: "String" },
@@ -218,6 +241,8 @@ var Schema = {
       userId: { type: "Int" },
       label: { type: "String" },
       color: { type: "String" },
+      searchRequest: { type: "String" },
+      synchroSalesforce: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

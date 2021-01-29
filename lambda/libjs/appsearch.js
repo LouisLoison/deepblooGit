@@ -15,8 +15,9 @@ exports.connectToPrivateAppSearch = async () => {
 exports.indexObjectToAppsearch = async (objects, engineName = "deepbloo") => {
   // Init object id
   for (const object of objects) {
-    if (!object.id && object.tenderId) {
-      object.id = object.tenderId
+    if (!object.id && object.tenderUuid) {
+      object.id = object.tenderUuid
+      delete object.tenderUuid
     }
   }
   // App search seemingly prefers snake case

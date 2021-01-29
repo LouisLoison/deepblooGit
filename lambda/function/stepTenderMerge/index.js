@@ -47,11 +47,14 @@ exports.handler =  async function(event, ) {
     estimatedcost, filesource, lang, noticetype, procurementid, procurementmethod, publicationdate,
     sourceurl, title, creationdate, updatedate`
 
+
   const query4 = `	
-        insert into tenders (${fields})
         select ${fields} from tenderimport 
-          where mergeMethod is null and status = 20 and uuid = $1 returning *;` // TODO: upsert
-  await BddTool.QueryExecPrepared(client, query4, [ uuid ])
+          where mergeMethod is null and status = 20 and uuid = $1`
+
+  const [tenderData] = await BddTool.QueryExecPrepared(client, query4, [ uuid ], 'tenderimport')
+
+  await BddTool.RecordAddUpdate('tenders', tenderData, 'tenderuuid', client)
 
   const query5 = `select tenders.*
         from tenders, tenderimport

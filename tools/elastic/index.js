@@ -2,6 +2,7 @@
 const { BddTool } = require('deepbloo')
 const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
+const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { CpvList } = require('deepbloo').cpv
 const stripHtml = require("string-strip-html")
 
@@ -44,6 +45,7 @@ const main = async (limit = 9) => {
 
 const processResults = async ({ rows, fields, rowCount }) => {
   let tranche = []
+  let appTranche = []
   let processed = 0
   const cpvList = await CpvList()
   for (let i=0; i < rowCount; i += 1) {
@@ -52,9 +54,12 @@ const processResults = async ({ rows, fields, rowCount }) => {
     try {
       result.title = stripHtml(result.title).result
       result.description = stripHtml(result.description).result
-      result.contactAddress = stripHtml(result.contactAddress).result
+      if (result.contactAddress) {
+        result.contactAddress = stripHtml(result.contactAddress).result
+      }
     } catch (err) {
       console.log(err)
+      console.log(result.contactAddress)
     }
     const formated = await tenderFormat(result, cpvList)
     const elasticDoc = {
@@ -63,16 +68,29 @@ const processResults = async ({ rows, fields, rowCount }) => {
       id: result.tenderUuid,
     }
     delete elasticDoc.tenderUuid
+    const appsearchDoc = {
+      ...formated,
+      id: result.tenderUuid,
+      account_id: 'none',
+    }
+    delete appsearchDoc.tenderUuid
     tranche.push(elasticDoc)
+
+    if (result.status === 20) {
+      appTranche.push(appsearchDoc)
+    }
     processed += 1
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (tranche.length >= 300) {
-      await indexToElasticsearch(tranche, 'newtenders')
+    if (tranche.length >= 50) {
+      await indexToElasticsearch(tranche, 'tenders')
+      await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
+      appTranche.forEach((r, index) => delete appTranche[index])
       tranche = []
+      appTranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
@@ -84,4 +102,4 @@ const processResults = async ({ rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(2000000)// .then(process.exit())
+main(4000)// .then(process.exit())

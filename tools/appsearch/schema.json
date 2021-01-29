@@ -25,7 +25,10 @@
   "groups": "text",
   "families": "text",
   "publication_timestamp": "number",
+  "account_id": "text",
   "bid_deadline_timestamp": "number",
+  "user_id": "number",
   "designs": "text",
-  "status": "text"
+  "status": "text",
+  "datasource": "text"
 }

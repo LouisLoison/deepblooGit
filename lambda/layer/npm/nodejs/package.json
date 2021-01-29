@@ -13,9 +13,10 @@
     "object-hash": "^2.0",
     "pdfjs-dist": "^2.5",
     "pg": "^8.5",
-    "string-strip-html": "^7.0",
+    "string-strip-html": "^8.0",
     "word-extractor": "^0.3",
-    "xml2js": "^0.4"
+    "xml2js": "^0.4",
+    "axios": "^0.18"
   },
   "devDependencies": {
     "aws-sdk": "^2.793.0"

@@ -12,7 +12,7 @@ const startImportSteps = (data) => {
   return new Promise(async (callback, reject) => {
     const dataSource = data.dataSource.slice(0,10)
     const fileStamp = data.fileSource.split('/').slice(2).join('').slice(-24,-4)
-    const normedObject = `${dataSource}-a-${fileStamp}`.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
+    const normedObject = `${dataSource}-${fileStamp}`.split('').filter(char => /[a-zA-Z0-9-_]/.test(char)).join('')
     const contentHash = objectHash(data, { algorithm: 'sha256' })
     // const contentHash = createHash('sha256').update(JSON.stringify(data)).digest('hex')
     const name = `${normedObject}-${data.fileSourceIndex}-${contentHash}`.substring(0,79)

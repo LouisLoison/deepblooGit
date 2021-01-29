@@ -292,27 +292,44 @@ export class ImportsStepsStack extends Stack {
       // inputPath: '$.convertedData',
       // resultPath: '$.analyzedData',
       payloadResponseOnly: true,
-    });
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(4),
+      maxAttempts: 4
+    })
+
 
     const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
       lambdaFunction: stepTenderStore,
       resultPath: '$.storedData',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 3,
+      interval: Duration.seconds(5),
+      maxAttempts: 4
     });
+
+
 
     const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
       lambdaFunction: stepTenderMerge,
       // inputPath: '$.storedData',
       resultPath: '$.mergedData',
       payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 4,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
     });
+
+
 
     const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
       lambdaFunction: stepTenderIndex,
       resultPath: '$.appsearchResult',
       payloadResponseOnly: true,
     }).addRetry({
-      backoffRate: 3,
+      backoffRate: 5,
       interval: Duration.seconds(3),
       maxAttempts: 4
     });
@@ -372,7 +389,7 @@ export class ImportsStepsStack extends Stack {
     const processPdf = new Parallel(this, 'Pdf process', {})
       .branch(pdfToImgTask)
       .branch(pdfToBoxesTask)
-        .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
+      .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
 
     const processHtml = htmlToPdfTask
       .next(processPdf)
@@ -380,7 +397,7 @@ export class ImportsStepsStack extends Stack {
     const processImg = new Pass(this, 'Img process')
 
     const processZip = new Parallel(this, 'Zip process', {})
-        .branch(zipExtractionTask)
+      .branch(zipExtractionTask)
 
     const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
