@@ -3,10 +3,12 @@ import json
 import chardet
 from io import BytesIO
 from xhtml2pdf import pisa
-from helper import FileHelper, S3Helper, AwsHelper
+
+from helper import S3Helper, AwsHelper
+from update_event import update_event, get_new_s3_url
 
 
-def convert_html_to_pdf(html_str, aws_env) -> None:
+def convert_html_to_pdf(html_str, aws_env):
     aws_region = aws_env['awsRegion']
     output_bucket = aws_env['outputBucket']
     output_file = aws_env['outputName']
@@ -15,9 +17,19 @@ def convert_html_to_pdf(html_str, aws_env) -> None:
     print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
     s3 = AwsHelper().getResource('s3', aws_region)
     s3_obj = s3.Object(output_bucket, output_file)
-    pisa.CreatePDF(html_str, dest=output_content)
-    content = output_content.getvalue().decode("utf-8", errors="ignore")
-    s3_obj.put(Body=content)
+    try:
+        pisa.CreatePDF(html_str, dest=output_content)
+        content = output_content.getvalue().decode("utf-8", errors="ignore")
+        s3_obj.put(Body=content)
+    except ValueError as e:
+        return {
+            "statusCode": -1,
+            "errorMessage": "PDF format not supported."
+        }
+    return {
+        "status": 0,
+        "errorMessage": None
+    }
 
 
 def read_from_s3(aws_env):
@@ -26,15 +38,27 @@ def read_from_s3(aws_env):
     aws_region = aws_env['awsRegion']
     s3 = AwsHelper().getResource('s3', aws_region)
     obj = s3.Object(bucket_name, s3_file_name)
-    content = obj.get()['Body'].read()
+    encoding = "utf-8"
+    try:
+        content = obj.get()['Body'].read()
+    except Exception as e:
+        print(e)
+        return
     try:
         encoding = chardet.detect(content)['encoding']
         print("Trying to decode with {}".format(encoding))
-        content.decode(encoding)
-    except UnicodeDecodeError:
-        print("Failing to decode, return content in bytes")
-        return content
-    return content
+        content_decoded = content.decode(encoding)
+        return content_decoded
+    except UnicodeDecodeError as e:
+        print("Failing to decode with encoding {0}: {1}".format(encoding, e))
+        try:
+            print("Trying by removing the last character")
+            content_without_last_char = content[:-1].decode(encoding)
+            return content_without_last_char
+        except UnicodeDecodeError as e:
+            print("Failing to decode: {}".format(e))
+            print("Returning content in bytes")
+            return content
 
 
 def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
@@ -46,21 +70,29 @@ def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
 
 
 def lambda_handler(event, context):
-    print("==> Event: {0}".format(json.dumps(event)))
     aws_env = {
+        **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
-        "objectName": event['objectName'],
-        "documentUuid": event['documentUuid'],
         "awsRegion": 'eu-west-1',
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
-        "outputName": get_pdf_filename(event['objectName'],
-                                       event['documentUuid'])
+        "outputName": get_pdf_filename(event["objectName"],
+                                       event["documentUuid"]),
     }
-    print("==> Aws env: {0}".format(aws_env))
-    status = {
-        'statusCode': 200,
-        'body': 'All right'
-    }
+
+    print("==> Aws Env: {0}".format(json.dumps(aws_env)))
     html_content = read_from_s3(aws_env)
-    convert_html_to_pdf(html_content, aws_env)
-    return { **event, 'status': status, 'objectName': aws_env['outputName'] }
+    if html_content is None:
+        aws_env["status"] = -1
+        aws_env["errorMessage"] = "PDF format not supported."
+        return update_event(aws_env, event)
+    else:
+        status = convert_html_to_pdf(html_content, aws_env)
+    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
+                                             aws_env['outputName'],
+                                             aws_env['awsRegion'])
+    aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "pdf")
+    aws_env["status"] = status["status"]
+    aws_env["errorMessage"] = status["errorMessage"]
+    aws_env["contentType"] = "text/pdf"
+    aws_env["objectName"] = aws_env["outputName"]
+    return update_event(aws_env, event)
