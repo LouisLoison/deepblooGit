@@ -10,6 +10,7 @@
     "boxFileId": null,
     "parseResult": null,
     "status": null,
+    "errorMessage": null,
     "creationDate": null,
     "updateDate": "2021-01-07T16:55:31.440Z",
     "tenderUuid": "d48adaed-3ddd-49a4-9d16-433acc0209b2",

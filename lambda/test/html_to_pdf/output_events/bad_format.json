@@ -9,10 +9,8 @@
     "boxFolderId": null,
     "boxFileId": null,
     "parseResult": null,
-    "status": {
-            "statusCode": 423,
-            "body": "invalid PDF format not supported."
-        },
+    "status": -1,
+    "errorMessage": "PDF format not supported.",
     "creationDate": null,
     "updateDate": "2021-01-22T08:20:44.315Z",
     "tenderUuid": "7490b3fb-c093-4599-9182-64094ea9fd70",

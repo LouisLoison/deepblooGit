@@ -137,10 +137,8 @@ def lambda_handler(event, context):
             print("=> Extracting pdf words bbox")
             if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
                 print("=> Error while trying to get pdf information")
-                status = {
-                    "statusCode": 423,
-                    "body": "invalid PDF format not supported."
-                }
+                aws_env["status"] = -1
+                aws_env["errorMessage"] = "PDF format not supported."
             else:
                 write_bbox_to_s3(aws_env)
     else:
@@ -151,6 +149,8 @@ def lambda_handler(event, context):
                                              aws_env['awsRegion'])
     aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "txt")
     aws_env["status"] = status
+    aws_env["status"] = 0
+    aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
     return update_event(aws_env, event)
