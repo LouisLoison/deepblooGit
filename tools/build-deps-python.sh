@@ -1,6 +1,9 @@
 mkdir -p lambda/layer/pipenv/python
 cd lambda/layer/pipenv
 
+# To download the model needed by spacy if not installed
+pipenv run python -m spacy download xx_ent_wiki_sm
+
 (pipenv --version || pip3 install pipenv --user || pip install pipenv --user) && ( [ -e Pipfile.lock ] || pipenv lock ) && pipenv sync --bare
 
 PIPENV=$(pipenv --venv)/lib/python3.8/site-packages

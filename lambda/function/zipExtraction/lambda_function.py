@@ -5,6 +5,7 @@ import shutil
 import json
 
 from helper import AwsHelper, S3Helper
+from update_event import update_event, get_new_s3_url
 
 
 def extract_nested_zip(zip_file, output_zip):
@@ -30,14 +31,10 @@ def extract_nested_zip(zip_file, output_zip):
 
 
 def read_bytes_from_s3(bucketName, s3FileName, awsRegion=None):
-    # Serverless tests
     s3 = AwsHelper().getResource('s3', awsRegion)
     obj = s3.Object(bucketName, s3FileName)
     content = obj.get()['Body'].read()
     buffer = BytesIO(content)
-    # Local test of zip extraction
-    # with open('Archive 2.zip', 'rb') as zip_file:
-    #     buffer = BytesIO(zip_file.read())
     return buffer
 
 
@@ -59,7 +56,6 @@ def get_tmp_name(tmp_folder: str, prefix: str="tmp") -> (str, str):
 
 
 def copy_zip_to_tmp(tmp_folder, aws_env: dict) -> str:
-    # pdf_content = S3Helper.readFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
     zip_content = read_bytes_from_s3(aws_env['bucketName'],
                                      aws_env['objectName'],
                                      aws_env['aws_region'])
@@ -121,9 +117,8 @@ def get_zip_output(object_name: str) -> str:
 def lambda_handler(event, context):
     print("=> Event: {0}".format(json.dumps(event)))
     aws_env = {
+        **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
-        "objectName": event['objectName'],
-        "tenderUuid": event['documentUuid'],
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
         "aws_region": "eu-west-1",
         "outputName": get_zip_output(event['objectName'])
@@ -139,8 +134,6 @@ def lambda_handler(event, context):
                                                               extraction_output))
     extract_nested_zip(zip_tmp, extraction_output)
     write_extracted_zip(aws_env, extraction_output)
-    status = {
-        'statusCode': 200,
-        'body': 'All right'
-    }
-    return {**event, 'status': status, 'objectName': aws_env['outputName']}
+    aws_env["status"] = 0
+    aws_env["errorMessage"] = None
+    return update_event(aws_env, event)
