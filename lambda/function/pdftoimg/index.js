@@ -2,6 +2,7 @@ const path = require('path')
 const { createCanvas } = require('canvas')
 const assert = require('assert')
 const pdfjsLib = require('pdfjs-dist')
+const { documentsBucket } = require('deepbloo')
 
 const pdfToImages = async (fileLocation) => {
   function NodeCanvasFactory() {
@@ -37,7 +38,7 @@ const pdfToImages = async (fileLocation) => {
   const pdfDocument = await pdfjsLib.getDocument(fileLocation)
 
   const pageToImg = async (pageNum) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const fs = require('fs')
         const page = await pdfDocument.getPage(pageNum)
@@ -55,7 +56,7 @@ const pdfToImages = async (fileLocation) => {
         await page.render(renderContext)
 
         // convert the canvas to a png stream.
-        const folderTemp = path.join(config.WorkSpaceFolder, '/Temp/')
+        const folderTemp = '/tmp/'
         const fileName = `testPdfToImg-${pageNum}.png`
         const imageLocation = path.join(folderTemp, fileName)
         if (fs.existsSync(imageLocation)) {
@@ -100,9 +101,8 @@ const getFileStream = (bucketName, fileKey) => {
 exports.handler =  async function(event, context) {
   const { objectName } = event
   console.log("EVENT: \n" + JSON.stringify(event, null, 2))
-  const fileStream  = getFileStream(bucketName, fileKey)
+  const fileStream  = getFileStream(documentsBucket, objectName)
   const imageData = await pdfToImages(fileStream)
   console.log(imageData)
- 
   return {...event, pageCount: imageData.length }
 }
