@@ -73,6 +73,9 @@ exports.handler =  async function(event, ) {
       tenderData: row,
       fileSource: objectName,
       fileSourceIndex: tenderCount,
+      startDelay: (tenderCount < 20 ?
+        tenderCount : Math.round(20 + tenderCount * 0.2)), /* Limits step process rates
+                                                              allowing 20 seconds slow-start */
       dataSource,
       //      exclusion: '',
       //      exclusionWord: '',

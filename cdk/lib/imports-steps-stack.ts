@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -424,7 +424,13 @@ export class ImportsStepsStack extends Stack {
 
     const noInterest = new Succeed(this, 'No interest', { comment: "e.g. tender has no CPV match" })
     const fullSucceed = new Succeed(this, 'Completed', { comment: "Tender fully available" })
-    const chain = Chain.start(convertTenderTask)
+
+    const initialWait = new Wait(this, 'Waiting for our turn', {
+      time: WaitTime.secondsPath('$.startDelay')
+    })
+
+    const chain = Chain.start(initialWait)
+      .next(convertTenderTask)
       .next(analyzeTenderTask)
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
@@ -455,9 +461,9 @@ export class ImportsStepsStack extends Stack {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/xmlimport'),
       handler: 'index.handler',
-      memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      memorySize: 1500,
+      reservedConcurrentExecutions: 2,
+      timeout: Duration.seconds(900),
       environment: {
         ...environment,
         TENDER_STATE_MACHINE_ARN: stateMachine.stateMachineArn,
