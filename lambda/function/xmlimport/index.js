@@ -26,7 +26,7 @@ const startImportSteps = (data) => {
     const request = await stepfunctions.startExecution(params);
     // listen for success
     request.on("extractData", res => {
-      log(`startExecution Succeeded:\n`, res);
+      // log(`startExecution Succeeded:\n`, res);
       callback({
         statusCode: 200,
         duplicate: false,
@@ -47,7 +47,7 @@ const startImportSteps = (data) => {
     });
     // send request
     request.send();
-    log('Started stepfunctions', request);
+    // log('Started stepfunctions', request);
   });
 }
 

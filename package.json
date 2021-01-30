@@ -17,9 +17,12 @@
     "tests_run": "pytest -vv",
     "cov": "pytest -v --cov-report term-missing --cov=lambda"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "sam": "0.0.7"
+  },
   "dependencies": {
     "aws-sdk": "^2.793.0",
+    "images": "^3.2.3",
     "moment": "^2.29.1"
   }
 }
