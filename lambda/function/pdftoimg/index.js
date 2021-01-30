@@ -2,7 +2,9 @@ const path = require('path')
 const { createCanvas } = require('canvas')
 const assert = require('assert')
 const pdfjsLib = require('pdfjs-dist/es5/build/pdf.js')
-const { documentsBucket, getFileContent, log } = require('deepbloo')
+const { documentsBucket, getFileContent, putFile, log } = require('deepbloo')
+process.env['FONTCONFIG_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts')
+//process.env['LD_LIBRARY_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts');
 
 const pdfToImages = async (documentsBucket, objectName) => {
   function NodeCanvasFactory() {
@@ -45,10 +47,8 @@ const pdfToImages = async (documentsBucket, objectName) => {
         try {
           const fs = require('fs')
           const page = await pdfDocument.getPage(pageNum)
-          console.log(page)
           // Render the page on a Node canvas with 100% scale.
           const viewport = page.getViewport({ scale: 1.0 })
-          console.log(viewport)
           const canvasFactory = new NodeCanvasFactory()
           const canvasAndContext = canvasFactory.create(viewport.width, viewport.height)
           const renderContext = {
@@ -60,16 +60,26 @@ const pdfToImages = async (documentsBucket, objectName) => {
           await page.render(renderContext)
 
           // convert the canvas to a png stream.
-          const folderTemp = '/tmp/'
-          const fileName = `testPdfToImg-${pageNum}.png`
-          const imageLocation = path.join(folderTemp, fileName)
+          const outputKey = `${objectName}-${pageNum}.png`
+          const imageLocation = `/tmp/out-${pageNum}.png`
           if (fs.existsSync(imageLocation)) {
             fs.unlinkSync(imageLocation)
           }
           const out = fs.createWriteStream(imageLocation)
+
           canvasAndContext.canvas.createPNGStream({ compressionLevel: 9 }).pipe(out)
-          out.on('finish', function () {
-            resolve(imageLocation)
+
+          out.on('finish', async function () {
+            const outputKey = `${objectName}-${pageNum}.png`
+            const pngData = fs.readFileSync(imageLocation)
+            await putFile (documentsBucket, outputKey, pngData)
+            //console.log(pngData)
+            /*
+            putFile (documentsBucket, outputKey, pngData).then( function () {
+              resolve({imageLocation, outputKey})
+            })
+            */
+            resolve({imageLocation, outputKey})
           })
         } catch (err) { reject(err) }
       })
@@ -80,7 +90,7 @@ const pdfToImages = async (documentsBucket, objectName) => {
     console.log(pdfDocument)
     for (let i = 1; i <= pdfDocument.numPages; i++) {
       log(`processing image ${i}`)
-      const imageLocation = await pageToImg(i)
+      const { imageLocation } = await pageToImg(i)
       const imgSizeInfo = images(imageLocation).size()
       imageDatas.push({
         location: imageLocation,
