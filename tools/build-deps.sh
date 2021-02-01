@@ -29,3 +29,4 @@ mkdir -p lambda/layer/combined/{python,nodejs,bin}
 #cp -au lambda/layer/*/nodejs/* lambda/layer/combined/nodejs
 #cp -au lambda/layer/*/bin/* lambda/layer/combined/bin
 
+./tools/gs-layer.sh
