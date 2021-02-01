@@ -94,8 +94,22 @@ export class ApiStack extends cdk.Stack {
       }
     });
 
+    const userAuthorizerL = new Function(this, 'userAuthorizerL', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/userAuthorizer'),
+      handler: 'index.handler',
+      memorySize: 500,
+      environment: {
+        ...environment,
+        ...hivebriteEnv
+      }
+    });
+
     hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
     hivebriteSecret.grantRead(hivebriteResolver)
+
+    userAuthorizerL.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(userAuthorizerL)
 
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
       name: "deepbloo-dev",
@@ -140,7 +154,12 @@ export class ApiStack extends cdk.Stack {
             effect: iam.Effect.ALLOW,
             actions: ['lambda:invokeFunction'],
             resources: [hivebriteResolver.functionArn]
-          }),]
+          }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['lambda:invokeFunction'],
+            resources: [userAuthorizerL.functionArn]
+          })]
         }),
 
       }
@@ -168,6 +187,16 @@ export class ApiStack extends cdk.Stack {
       name: `hivebrite_ds`,
       lambdaConfig: {
         lambdaFunctionArn: hivebriteResolver.functionArn
+      },
+      serviceRoleArn: appsyncServiceRole.roleArn
+    })
+
+    const userAuthorizerDataSource = new CfnDataSource(this, `user-authorizer-ds`, {
+      apiId: api.apiId,
+      type: "AWS_LAMBDA",
+      name: `hivebrite_ds`,
+      lambdaConfig: {
+        lambdaFunctionArn: userAuthorizerL.functionArn
       },
       serviceRoleArn: appsyncServiceRole.roleArn
     })
@@ -204,6 +233,22 @@ export class ApiStack extends cdk.Stack {
       dataSourceName: hivebriteDataSource.name
     })
     hivebriteUsersResolver.addDependsOn(hivebriteDataSource);
+
+    const verifyTokenResolver = new CfnResolver(this, `verifyTokenResolver`, {
+      apiId: api.apiId,
+      fieldName: "verifyToken",
+      typeName: "Query",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.verifyToken.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/lambda_response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: userAuthorizerDataSource.name
+    })
+    verifyTokenResolver.addDependsOn(userAuthorizerDataSource);
 
     /*
     const resolver = new CfnResolver(this, "ListThingsAPI", {

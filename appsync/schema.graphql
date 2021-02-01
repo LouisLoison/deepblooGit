@@ -20,4 +20,5 @@ type HivebriteUserConnection{
 type Query {
   getTender(id: ID): Tender
   hivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
+  verifyToken(token:String!): Boolean
 }
