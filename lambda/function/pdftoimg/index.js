@@ -4,7 +4,7 @@ const assert = require('assert')
 const pdfjsLib = require('pdfjs-dist/es5/build/pdf.js')
 const { documentsBucket, getFileContent, putFile, log } = require('deepbloo')
 process.env['FONTCONFIG_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts')
-//process.env['LD_LIBRARY_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts');
+process.env['LD_LIBRARY_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts');
 
 const pdfToImages = async (documentsBucket, objectName) => {
   function NodeCanvasFactory() {
@@ -40,7 +40,10 @@ const pdfToImages = async (documentsBucket, objectName) => {
   console.log(documentsBucket, objectName)
   console.log(fileData)
   if (fileData) {
-    const pdfDocument = await pdfjsLib.getDocument({ data: fileData }).promise
+    const pdfDocument = await pdfjsLib.getDocument({
+      data: fileData,
+      ignoreErrors: true
+    }).promise
 
     const pageToImg = async (pageNum) => {
       return new Promise(async (resolve, reject) => {
@@ -60,7 +63,6 @@ const pdfToImages = async (documentsBucket, objectName) => {
           await page.render(renderContext)
 
           // convert the canvas to a png stream.
-          const outputKey = `${objectName}-${pageNum}.png`
           const imageLocation = `/tmp/out-${pageNum}.png`
           if (fs.existsSync(imageLocation)) {
             fs.unlinkSync(imageLocation)
@@ -102,18 +104,6 @@ const pdfToImages = async (documentsBucket, objectName) => {
     return (imageDatas)
   }
   return []
-}
-
-const getFileStream = (bucketName, fileKey) => {
-  var AWS = require('aws-sdk');
-  var s3 = new AWS.S3();
-  var options = {
-    Bucket: bucketName,
-    Key: fileKey,
-  };
-
-  var fileStream = s3.getObject(options).createReadStream();
-  return fileStream;
 }
 
 exports.handler = async function (event, context) {

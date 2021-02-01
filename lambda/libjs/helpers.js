@@ -27,7 +27,7 @@ const putFile = async (bucketName, fileKey, fileContent) => {
     Key    : fileKey,
     Body: fileContent,
   };
-  return s3.putObject(options)
+  return s3.putObject(options).promise()
 }
 
 const putStream = (bucketName, fileKey) => {
