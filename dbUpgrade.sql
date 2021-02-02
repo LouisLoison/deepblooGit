@@ -121,3 +121,5 @@ create index tendercriterion_tenderuuid_idx on tendercriterion(tenderuuid);
 
 update tenders set datasource='dgmarket' where origine='DgMarket';
 update tenders set datasource='tenderinfo' where origine='TenderInfo';
+
+update tenders set creationdate = publicationdate where creationdate is null;
