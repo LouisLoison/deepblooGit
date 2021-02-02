@@ -85,12 +85,12 @@ const processResults = async ({ rows, fields, rowCount }) => {
 
     if (tranche.length >= 50) {
       await indexToElasticsearch(tranche, 'tenders')
-      if(appTranche) {
+      if(appTranche.length) {
         await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
+        appTranche.forEach((r, index) => delete appTranche[index])
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
-      appTranche.forEach((r, index) => delete appTranche[index])
       tranche = []
       appTranche = []
     }
@@ -99,7 +99,7 @@ const processResults = async ({ rows, fields, rowCount }) => {
   if (tranche.length) {
     await indexToElasticsearch(tranche, 'tenders')
   }
-  if(appTranche) {
+  if(appTranche.length) {
     await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
   }
   
