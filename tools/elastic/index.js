@@ -4,7 +4,7 @@ const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { CpvList } = require('deepbloo').cpv
-const stripHtml = require("string-strip-html")
+// const { stripHtml } = require("string-strip-html")
 
 const main = async (limit = 9) => {
   const client = await BddTool.getClient()
@@ -95,11 +95,11 @@ const processResults = async ({ rows, fields, rowCount }) => {
     //console.log(formated.title, formated.cpv)
   }
   if (tranche.length) {
-    await indexToElasticsearch(tranche, 'newtenders')
+    await indexToElasticsearch(tranche, 'tenders')
   }
   
   console.log(processed)
   // return result.length
 }
 
-main(4000)// .then(process.exit())
+main(4000000)// .then(process.exit())
