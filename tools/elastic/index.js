@@ -4,7 +4,7 @@ const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { CpvList } = require('deepbloo').cpv
-// const { stripHtml } = require("string-strip-html")
+const { stripHtml } = require("string-strip-html")
 
 const main = async (limit = 9) => {
   const client = await BddTool.getClient()
@@ -52,8 +52,8 @@ const processResults = async ({ rows, fields, rowCount }) => {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
     delete rows[i]
     try {
-      result.title = stripHtml(result.title).result
-      result.description = stripHtml(result.description).result
+      // result.title = stripHtml(result.title).result
+      // result.description = stripHtml(result.description).result
       if (result.contactAddress) {
         result.contactAddress = stripHtml(result.contactAddress).result
       }
