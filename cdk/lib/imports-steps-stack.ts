@@ -57,8 +57,9 @@ export class ImportsStepsStack extends Stack {
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
 
-    const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
+    // const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
+  
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
       availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
@@ -199,7 +200,7 @@ export class ImportsStepsStack extends Stack {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/pdftoimg'),
       handler: 'index.handler',
-      memorySize: 500,
+      memorySize: 1500,
       reservedConcurrentExecutions: 40,
       timeout: Duration.seconds(60),
       environment: {
@@ -265,7 +266,7 @@ export class ImportsStepsStack extends Stack {
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
-    stepPdfToImg.addLayers(ghostscripLayer, imageMagickLayer, nodeLayer, deepblooLayer)
+    stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
