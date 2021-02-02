@@ -7,7 +7,10 @@ import {
   MappingTemplate,
   CfnResolver,
   CfnDataSource,
-  Schema
+  CfnFunctionConfiguration,
+  Schema,
+  AppsyncFunction,
+  Resolver
 } from '@aws-cdk/aws-appsync';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
@@ -23,12 +26,19 @@ export class ApiStack extends cdk.Stack {
     const environment = {
       NODE_ENV: "dev",
     }
+    const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+    const dbEnv = {
+      DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
+      DB_SECRET: awsSecretStoreArn,
+    }
+    const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
+      secretArn: awsSecretStoreArn,
+    });
 
     const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
       HIVEBRITE_SECRET: hivebriteSecretArn,
     }
-
     const hivebriteSecret = Secret.fromSecretAttributes(this, 'hivebriteSecret', {
       secretArn: hivebriteSecretArn,
     });
@@ -69,6 +79,7 @@ export class ApiStack extends cdk.Stack {
       value: userPoolClient.userPoolClientId
     });
 
+    // -------------LAYER DEFINITIONS----------------- //
     const nodeLayer = new LayerVersion(this, 'NodeLib', {
       code: new AssetCode('../lambda/layer/npm'),
       compatibleRuntimes: [Runtime.NODEJS_12_X],
@@ -83,6 +94,7 @@ export class ApiStack extends cdk.Stack {
       description: 'Deepbloo lib layer.',
     });
 
+    // -------------LAMBDA FUNCTION DEFINITIONS----------------- //
     const hivebriteResolver = new Function(this, 'hivebriteResolver', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/hivebriteresolver'),
@@ -93,24 +105,31 @@ export class ApiStack extends cdk.Stack {
         ...hivebriteEnv
       }
     });
+    hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(hivebriteResolver)
 
-    const userAuthorizerL = new Function(this, 'userAuthorizerL', {
+    const userL = new Function(this, 'userL', {
       runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/userAuthorizer'),
+      code: new AssetCode('../lambda/function/user'),
       handler: 'index.handler',
       memorySize: 500,
       environment: {
         ...environment,
-        ...hivebriteEnv
+        ...hivebriteEnv,
+        ...dbEnv
       }
     });
+    userL.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["textract:*"],
+        resources: ["*"]
+      })
+    );
+    userL.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(userL)
+    dbSecret.grantRead(userL)
 
-    hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
-    hivebriteSecret.grantRead(hivebriteResolver)
-
-    userAuthorizerL.addLayers(nodeLayer, deepblooLayer)
-    hivebriteSecret.grantRead(userAuthorizerL)
-
+    // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
       name: "deepbloo-dev",
       logConfig: {
@@ -119,10 +138,7 @@ export class ApiStack extends cdk.Stack {
       schema: Schema.fromAsset(join(__dirname, '../../appsync/schema.graphql')),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: AuthorizationType.USER_POOL,
-          userPoolConfig: {
-            userPool
-          }
+          authorizationType: AuthorizationType.API_KEY
         },
       },
     });
@@ -130,9 +146,6 @@ export class ApiStack extends cdk.Stack {
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
       value: api.graphqlUrl
     });
-
-    //   const dbCreds = Secret.fromSecretName(this, 'SecretFromName', 'aurora-creds')
-    const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
     const appsyncServiceRole = new iam.Role(this, `appsync-service-role`, {
       roleName: `appsync-service-role`,
@@ -150,21 +163,12 @@ export class ApiStack extends cdk.Stack {
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
             resources: [awsSecretStoreArn]
-          }), new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ['lambda:invokeFunction'],
-            resources: [hivebriteResolver.functionArn]
-          }),
-          new iam.PolicyStatement({
-            effect: iam.Effect.ALLOW,
-            actions: ['lambda:invokeFunction'],
-            resources: [userAuthorizerL.functionArn]
           })]
         }),
 
       }
     })
-
+    // ------------- DATASOURCE DEFINITIONS----------------- //
     const appsyncDataSource = new CfnDataSource(this, `appsync-aurora-ds`, {
       apiId: api.apiId,
       type: "RELATIONAL_DATABASE",
@@ -181,29 +185,19 @@ export class ApiStack extends cdk.Stack {
       serviceRoleArn: appsyncServiceRole.roleArn
     })
 
-    const hivebriteDataSource = new CfnDataSource(this, `hivebrite-ds`, {
-      apiId: api.apiId,
-      type: "AWS_LAMBDA",
-      name: `hivebrite_ds`,
-      lambdaConfig: {
-        lambdaFunctionArn: hivebriteResolver.functionArn
-      },
-      serviceRoleArn: appsyncServiceRole.roleArn
-    })
+    const hivebriteDataSource = api.addLambdaDataSource(
+      'hivebriteDataSource',
+      hivebriteResolver
+    )
 
-    const userAuthorizerDataSource = new CfnDataSource(this, `user-authorizer-ds`, {
-      apiId: api.apiId,
-      type: "AWS_LAMBDA",
-      name: `hivebrite_ds`,
-      lambdaConfig: {
-        lambdaFunctionArn: userAuthorizerL.functionArn
-      },
-      serviceRoleArn: appsyncServiceRole.roleArn
-    })
-
+    const userDataSource = api.addLambdaDataSource(
+      'userDataSource',
+      userL
+    )
+    // ------------- RESOLVERS DEFINITIONS----------------- //
     const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
       apiId: api.apiId,
-      fieldName: "getTender",
+      fieldName: "GetTender",
       typeName: "Query",
       requestMappingTemplate: readFileSync(
         `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
@@ -214,57 +208,106 @@ export class ApiStack extends cdk.Stack {
                 $utils.error($ctx.error.message, $ctx.error.type)
             #end
             $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
-      dataSourceName: appsyncDataSource.name
+      dataSourceName: appsyncDataSource.name,
     })
     listEventsResolver.addDependsOn(appsyncDataSource);
 
-    const hivebriteUsersResolver = new CfnResolver(this, `hivebriteUsers`, {
-      apiId: api.apiId,
-      fieldName: "hivebriteUsers",
-      typeName: "Query",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/Query.hivebriteUsers.request.vtl`,
-        { encoding: "utf8" }
+    hivebriteDataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'HivebriteUsers',
+      requestMappingTemplate: MappingTemplate.fromString(
+        `{
+          "version": "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+              "field": "HivebriteUsers",
+              "arguments":  $utils.toJson($context.arguments)
+          }
+      }`),
+      responseMappingTemplate: MappingTemplate.fromString(
+        `
+      #if( $context.result && $context.result.Error )
+        $utils.error($context.result.Error)
+      #else
+        $utils.toJson($context.result.data)
+      #end
+        `,
       ),
-      responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/lambda_response.vtl`,
-        { encoding: "utf8" }
-      ),
-      dataSourceName: hivebriteDataSource.name
     })
-    hivebriteUsersResolver.addDependsOn(hivebriteDataSource);
 
-    const verifyTokenResolver = new CfnResolver(this, `verifyTokenResolver`, {
-      apiId: api.apiId,
-      fieldName: "verifyToken",
-      typeName: "Query",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/Query.verifyToken.request.vtl`,
-        { encoding: "utf8" }
+    const f1 = new AppsyncFunction(this, 'TokenAuthorizer', {
+      api,
+      name: 'TokenAuthorizer',
+      dataSource: userDataSource,
+      requestMappingTemplate: MappingTemplate.fromString(
+        `{
+          "version": "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+              "field": "TokenAuthorizer",
+              "arguments":  $utils.toJson($context.arguments)
+          }
+      }`
       ),
-      responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/lambda_response.vtl`,
-        { encoding: "utf8" }
-      ),
-      dataSourceName: userAuthorizerDataSource.name
-    })
-    verifyTokenResolver.addDependsOn(userAuthorizerDataSource);
-
-    /*
-    const resolver = new CfnResolver(this, "ListThingsAPI", {
-      apiId: api.apiId,
-      dataSourceName: dataSource.dataSourceName,
-      typeName: "Query",
-      fieldName: "getThings",
-      requestMappingTemplate: JSON.stringify({
-        version: "2018-05-29",
-        statements: ["SELECT * FROM mytable"]
-      }),
-      responseMappingTemplate: readFileSync(
-        `${__dirname}/response_mappings/return_list.vtl`,
-        ENC_UTF8
+      responseMappingTemplate: MappingTemplate.fromString(
+        `
+      #if( $context.result && $context.result.Error )
+        $utils.error($context.result.Error)
+      #else
+        $util.qr($context.stash.put("id", $context.result.data.id))
+        $util.qr($context.stash.put("name", $context.result.data.name))
+        $util.qr($context.stash.put("primary_email", $context.result.data.primary_email))
+        $util.qr($context.stash.put("nbf", $context.result.data.nbf))
+        $utils.toJson($context.result.data)
+      #end
+        `,
       )
-    });
-       */
+    })
+
+    const f2 = new AppsyncFunction(this, 'f2', {
+      api,
+      name: 'User',
+      dataSource: userDataSource,
+      requestMappingTemplate: MappingTemplate.fromString(
+        `{
+          "version": "2017-02-28",
+          "operation": "Invoke",
+          "payload": {
+              "field": "User",
+              "arguments":  $utils.toJson($context.arguments),
+              "stash":  $utils.toJson($context.stash),
+          }
+      }`
+      ),
+      responseMappingTemplate: MappingTemplate.fromString(
+        `
+      #if( $context.result && $context.result.Error )
+        $utils.error($context.result.Error)
+      #else
+        $utils.toJson($context.result.data)
+      #end
+        `,
+      )
+    })
+
+    const resolver = new Resolver(this, 'createDataPointPipeline', {
+      api,
+      typeName: 'Query',
+      fieldName: 'User',
+      pipelineConfig: [f1, f2],
+      requestMappingTemplate: MappingTemplate.fromString('{}'),
+      responseMappingTemplate: MappingTemplate.fromString('$util.toJson($ctx.prev.result)'),
+    })
+
+    // userDataSource.createResolver({
+    //   typeName: 'Query',
+    //   fieldName: 'user',
+    //   requestMappingTemplate: MappingTemplate.fromFile(
+    //     `${__dirname}/../../appsync/Query.hivebriteUsers.request.vtl`,
+    //   ),
+    //   responseMappingTemplate: MappingTemplate.fromFile(
+    //     `${__dirname}/../../appsync/lambda.response.vtl`,
+    //   ),
+    // })
   }
 }
