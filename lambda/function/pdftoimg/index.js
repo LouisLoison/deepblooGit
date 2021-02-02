@@ -2,44 +2,92 @@ const path = require('path')
 const { createCanvas } = require('canvas')
 const assert = require('assert')
 const pdfjsLib = require('pdfjs-dist/es5/build/pdf.js')
+const gs = require('node-gs');
+var pdf2img = require('pdf2img-lambda-friendly');
+const fs = require('fs')
 const { documentsBucket, getFileContent, putFile, log } = require('deepbloo')
-process.env['FONTCONFIG_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts')
-process.env['LD_LIBRARY_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts');
+// process.env['FONTCONFIG_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts')
+// process.env['LD_LIBRARY_PATH'] = path.join(process.env['LAMBDA_TASK_ROOT'], 'fonts');
 
 const pdfToImages = async (documentsBucket, objectName) => {
-  function NodeCanvasFactory() {
-  }
+  return new Promise(async (resolve, reject) => {
+    const fileData = await getFileContent(documentsBucket, objectName)
+    fs.writeFileSync('/tmp/file.pdf', fileData)
+    const pdfData = fs.readFileSync('/tmp/file.pdf')
+    //console.log(pdfData)
+    /*
+    pdf2img.setOptions({
+      type: 'jpg',                                // png or jpg, default jpg
+      density: 600,                               // default 600
+      outputdir: '/tmp/output', // output folder, default null (if null given, then it will create folder name same as file name)
+      outputname: 'test',                         // output file name, dafault null (if null given, then it will create image name same as input name)
+    });
 
-  NodeCanvasFactory.prototype = {
-    create: function NodeCanvasFactory_create(width, height) {
-      assert(width > 0 && height > 0, 'Invalid canvas size')
-      let canvas = createCanvas(width, height, 'png')
-      let context = canvas.getContext('2d')
-      return {
-        canvas: canvas,
-        context: context,
+    console.log('Starting conversion')
+    pdf2img.convert('/tmp/file.pdf', function (err, info) {
+      console.log('Converted')
+      if (err) {
+
+        console.log('Got error')
+        // console.log(err)
+        // console.log(info)
+        reject(err)
       }
-    },
+      console.log('Got no error')
+      // console.log(info);
+      const { result, message } =  info
+      if(result === 'success') {
+        message.forEach(async ({ page, path }) => {
+          // console.log(path)
+          const pngData = fs.readFileSync(path)
+          const outputKey = `${objectName}-${page}.png`
+          await putFile (documentsBucket, outputKey, pngData)
+        })
+      }
+      resolve(info)
+    });
+    
+    
+    */
 
-    reset: function NodeCanvasFactory_reset(canvasAndContext, width, height) {
-      assert(canvasAndContext.canvas, 'Canvas is not specified')
-      assert(width > 0 && height > 0, 'Invalid canvas size')
-      canvasAndContext.canvas.width = width
-      canvasAndContext.canvas.height = height
-    },
+    fs.rmdirSync('/tmp/out/', { recursive: true })
+    fs.mkdirSync('/tmp/out/')
+    gs()
+      .batch()
+      .nopause()
+      .device( 'png16m' )
+      .input( '/tmp/file.pdf')
+      .output( '/tmp/out/%d.png' )
+      .executablePath('/opt/bin/gs')
+      .exec( function ( error, stdout, stderr ) {
+        console.log('GS returned')
+        // console.log(error, stderr, stdout)
+        Promise.all(fs.readdirSync('/tmp/out/').map(fileName => {
+          const pngData = fs.readFileSync(`/tmp/out/${fileName}`)
+          const outputKey = `${objectName}-${fileName}`
+          return putFile (documentsBucket, outputKey, pngData)
+        }))
+        .then(a =>
+           resolve(fs.readdirSync('/tmp/out/'))
+        )
+        /*
+        if ( error ) {
+          reject(stderr)
+          // ¯\_(ツ)_/¯
+        } else {
+          resolve(stdout)
+          // ( ͡° ͜ʖ ͡°)
+        }
+        */
+      });
+    
+  })
 
-    destroy: function NodeCanvasFactory_destroy(canvasAndContext) {
-      assert(canvasAndContext.canvas, 'Canvas is not specified')
-      canvasAndContext.canvas.width = 0
-      canvasAndContext.canvas.height = 0
-      canvasAndContext.canvas = null
-      canvasAndContext.context = null
-    },
-  }
-  const fileData = await getFileContent(documentsBucket, objectName)
-  console.log(documentsBucket, objectName)
-  console.log(fileData)
+  // console.log(documentsBucket, objectName)
+  // console.log(fileData)
+  /*
   if (fileData) {
+
     const pdfDocument = await pdfjsLib.getDocument({
       data: fileData,
       ignoreErrors: true
@@ -48,7 +96,7 @@ const pdfToImages = async (documentsBucket, objectName) => {
     const pageToImg = async (pageNum) => {
       return new Promise(async (resolve, reject) => {
         try {
-          const fs = require('fs')
+
           const page = await pdfDocument.getPage(pageNum)
           // Render the page on a Node canvas with 100% scale.
           const viewport = page.getViewport({ scale: 1.0 })
@@ -81,35 +129,37 @@ const pdfToImages = async (documentsBucket, objectName) => {
               resolve({imageLocation, outputKey})
             })
             */
-            resolve({imageLocation, outputKey})
-          })
-        } catch (err) { reject(err) }
-      })
-    }
+  /*
+   resolve({imageLocation, outputKey})
+ })
+} catch (err) { reject(err) }
+})
+}
+ 
+const images = require("images")
+const imageDatas = []
+console.log(pdfDocument)
+for (let i = 1; i <= pdfDocument.numPages; i++) {
+log(`processing image ${i}`)
+const { imageLocation } = await pageToImg(i)
+const imgSizeInfo = images(imageLocation).size()
+imageDatas.push({
+location: imageLocation,
+width: imgSizeInfo.width,
+height: imgSizeInfo.height
+})
+}
 
-    const images = require("images")
-    const imageDatas = []
-    console.log(pdfDocument)
-    for (let i = 1; i <= pdfDocument.numPages; i++) {
-      log(`processing image ${i}`)
-      const { imageLocation } = await pageToImg(i)
-      const imgSizeInfo = images(imageLocation).size()
-      imageDatas.push({
-        location: imageLocation,
-        width: imgSizeInfo.width,
-        height: imgSizeInfo.height
-      })
-    }
-
-    return (imageDatas)
-  }
-  return []
+return (imageDatas)
+}
+return []
+*/
 }
 
 exports.handler = async function (event, context) {
   const { objectName } = event
-  console.log("EVENT: \n" + JSON.stringify(event, null, 2))
+  //console.log("EVENT: \n" + JSON.stringify(event, null, 2))
   const imageData = await pdfToImages(documentsBucket, objectName)
-  console.log(imageData)
+  console.log(JSON.stringify(imageData, null, 2))
   return { ...event, pageCount: imageData.length }
 }

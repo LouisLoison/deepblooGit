@@ -57,7 +57,7 @@ export class ImportsStepsStack extends Stack {
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
 
-    const imageMagicLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
+    const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
@@ -265,7 +265,7 @@ export class ImportsStepsStack extends Stack {
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
-    stepPdfToImg.addLayers(ghostscripLayer, imageMagicLayer, nodeLayer, deepblooLayer)
+    stepPdfToImg.addLayers(ghostscripLayer, imageMagickLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
