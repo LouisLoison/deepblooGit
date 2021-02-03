@@ -242,7 +242,7 @@
       <!-- Tender business pipeline without search -->
       <drop
         v-for="(group, index) of getTenderGroupsWithoutSearch"
-        :key="`group${index}`"
+        :key="`groupWithoutSearch${index}`"
         @drop="tenderDrop(group, $event.tender, $event)"
         @dragenter="group.over = true"
         @dragleave="group.over = false"
@@ -265,25 +265,24 @@
               v-if="!group.select"
               size="40"
               class="mr-3"
-              style="min-width: 40px;"
+              style="min-width: 40px; overflow: visible;"
               :style="{
                 'background-color': `${group.color} !important`,
                 'border-color': `${group.color} !important`
               }"
             >
-              <v-icon
-                v-if="group.searchRequest && group.searchRequest !== ''"
-                size="14"
-                class="white--text"
-              >
-                fa-filter
-              </v-icon>
-              <span
-                v-else
-                class="body-2 headline white--text"
-              >
+              <span class="body-2 headline white--text">
                 {{ group.count > -1 ? group.count : "--" }}
               </span>
+              <v-icon
+                v-if="group.synchroSalesforce"
+                size="14"
+                class="white--text"
+                style="position: absolute; right: -14px; bottom: -10px; text-shadow: 0px 0px 3px black;"
+                title="Salesforce"
+              >
+                fa-cloud
+              </v-icon>
             </v-avatar>
             <v-avatar v-else size="40" class="mr-3" color="white">
               <span
@@ -439,6 +438,14 @@
                 />
               </v-list>
             </v-menu>
+
+            <v-switch
+              v-if="!groupDialog.searchRequest || groupDialog.searchRequest.trim() === ''"
+              v-model="groupDialog.synchroSalesforce"
+              :label="
+                `Synchro Salesforce: ${groupDialog.synchroSalesforce ? 'Yes' : 'No'}`
+              "
+            />
           </v-form>
         </v-card-text>
 
@@ -570,6 +577,7 @@ export default {
             color: tenderGroup.color,
             label: tenderGroup.label,
             searchRequest: tenderGroup.searchRequest,
+            synchroSalesforce: tenderGroup.synchroSalesforce,
             count: -1,
             tenders: [],
             expand: false,
@@ -671,7 +679,7 @@ export default {
         if (!res.success) {
           throw new Error(res.Error)
         }
-        await this.load();
+        await this.load()
         this.loadTenderGroupLink()
       } catch (err) {
         this.$api.error(err, this)
@@ -725,6 +733,7 @@ export default {
       if (this.tenderGroupId >= 0) {
         this.tenderGroupId = null
       }
+      this.$emit('erraseSearchFilter')
       this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,

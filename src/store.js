@@ -16,9 +16,9 @@ export default new Vuex.Store({
       visible: false,
       headerClass: null,
       headerIcon: null,
-      title: "",
-      message: "",
-      buttons: null
+      title: '',
+      message: '',
+      buttons: null,
     },
     insufficientRightDialog: false,
     ApiUrl: null,
@@ -37,34 +37,34 @@ export default new Vuex.Store({
       hasFree: false,
       isFree: false,
       isPremium: false,
-      isBusiness: false
+      isBusiness: false,
     },
     headerShow: false,
     dataCpvs: {
       loading: null,
       data: null,
-      error: null
+      error: null,
     },
     dataOpportunity: {
       loading: null,
-      data: null
+      data: null,
     },
     dataUserNotifys: {
       loading: null,
-      data: null
+      data: null,
     },
     dataTenderGroups: {
       loading: null,
-      data: null
+      data: null,
     },
     screenTenders: {
       displayType: null,
       panels: null,
-      tenderGroupId: null
+      tenderGroupId: null,
     },
     screenBusinessPlus: {
       displayType: null,
-      panels: null
+      panels: null,
     },
     AppSearchUrl: 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/',
   },
@@ -250,14 +250,14 @@ export default new Vuex.Store({
     UPDATE_SCREEN_TENDERS(state, payload) {
       state.screenTenders = {
         ...state.screenTenders,
-        ...payload
+        ...payload,
       }
     },
 
     UPDATE_SCREEN_BUSINESSPLUS(state, payload) {
       state.screenBusinessPlus = {
         ...state.screenBusinessPlus,
-        ...payload
+        ...payload,
       }
     },
 
@@ -310,7 +310,7 @@ export default new Vuex.Store({
           username: res.user.username,
           password: this.password,
           photo: res.user.photo,
-          token: res.token
+          token: res.token,
         })
       } catch (err) {
         Vue.api.error(err, this)

@@ -89,53 +89,53 @@ export default {
       loading: null,
       data: null
     },
-    filterLabel: "",
-    filterWord: "",
+    filterLabel: '',
+    filterWord: '',
     isUserNotifyDialog: false,
     userNotifyValid: null,
     userNotifyDialog: null,
-    notEmptyRules: [v => !!v || "Data is required"]
+    notEmptyRules: [v => !!v || 'Data is required'],
   }),
 
   computed: {
     getUserNotifys() {
       let userNotifys = this.dataUserNotifys.data;
-      if (this.filterLabel && this.filterLabel.trim() !== "") {
+      if (this.filterLabel && this.filterLabel.trim() !== '') {
         userNotifys = userNotifys.filter(a =>
           a.label.toUpperCase().includes(this.filterLabel.toUpperCase())
-        );
+        )
       }
-      return userNotifys;
-    }
+      return userNotifys
+    },
   },
 
   mounted() {
-    this.loadUserNotifys();
+    this.loadUserNotifys()
   },
 
   methods: {
     async loadUserNotifys() {
       try {
-        this.dataUserNotifys.loading = 0;
-        const res = await this.$api.post("/User/userNotifyList", {
+        this.dataUserNotifys.loading = 0
+        const res = await this.$api.post('/User/userNotifyList', {
           userData: true,
-          tenderData: true
-        });
+          tenderData: true,
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.dataUserNotifys.data = res.data;
-        this.dataUserNotifys.loading = 1;
+        this.dataUserNotifys.data = res.data
+        this.dataUserNotifys.loading = 1
       } catch (err) {
-        this.dataUserNotifys.loading = -1;
-        this.$api.error(err, this);
+        this.dataUserNotifys.loading = -1
+        this.$api.error(err, this)
       }
     },
 
     openUserNotifyDialog(userNotify) {
-      this.userNotifyDialog = null;
+      this.userNotifyDialog = null
       if (userNotify) {
-        this.userNotifyDialog = JSON.parse(JSON.stringify(userNotify));
+        this.userNotifyDialog = JSON.parse(JSON.stringify(userNotify))
       } else {
         this.userNotifyDialog = {
           title: ``,
@@ -144,29 +144,29 @@ export default {
           url: ``,
           priority: 0,
           status: 1,
-          creationDate: new Date()
+          creationDate: new Date(),
         };
       }
-      this.isUserNotifyDialog = true;
+      this.isUserNotifyDialog = true
       Vue.nextTick(() => {
-        this.$refs.userNotifyForm.resetValidation();
-      });
+        this.$refs.userNotifyForm.resetValidation()
+      })
     },
 
     deleteUserNotify(userNotify) {
-      this.dataUserNotifys.loading = 0;
+      this.dataUserNotifys.loading = 0
       this.$api
         .post("/UserNotify/Remove", { userNotifyId: userNotify.userNotifyId })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.loadUserNotifys();
-          this.isUserNotifyDialog = false;
+          this.loadUserNotifys()
+          this.isUserNotifyDialog = false
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
     }
   }
 };

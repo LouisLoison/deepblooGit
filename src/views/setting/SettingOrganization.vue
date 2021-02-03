@@ -473,7 +473,7 @@ export default {
     cpvItemsSearch: null,
     organizationCountrys: null,
     countryItems: null,
-    notEmptyRules: [v => !!v || 'Data is required']
+    notEmptyRules: [v => !!v || 'Data is required'],
   }),
 
   computed: {

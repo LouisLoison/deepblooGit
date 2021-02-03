@@ -5,9 +5,7 @@
     :style="
       getIsMobile
         ? 'margin-top: -44px;'
-        : `height: calc(100vh - ${
-            isHeaderShow ? '114' : '40'
-          }px); overflow: auto; margin-top: 0px;`
+        : `height: calc(100vh - ${isHeaderShow ? '114' : '40'}px); overflow: auto; margin-top: 0px;`
     "
   >
     <perfect-scrollbar
@@ -143,6 +141,7 @@
         <div>
           <v-btn
             :to="{ name: 'TenderInfo' }"
+            target='_blank'
             small
             rounded
             dark
