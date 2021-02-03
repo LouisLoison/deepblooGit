@@ -32,9 +32,22 @@ exports.handler =  async function(event, ) {
 
     // importDgmarket
     const bidDeadlineDateText = getXmlJsonData(event.bidDeadlineDate)
-    const bidDeadlineDate = `${bidDeadlineDateText.substring(0, 4)}-${bidDeadlineDateText.substring(4, 6)}-${bidDeadlineDateText.substring(6, 8)}`
+    const bidDeadlineDate = bidDeadlineDateText ?
+      `${
+        bidDeadlineDateText.substring(0, 4)
+      }-${
+        bidDeadlineDateText.substring(4, 6)
+      }-${
+        bidDeadlineDateText.substring(6, 8)
+      }` : bidDeadlineDateText
     const publicationDateText = getXmlJsonData(event.publicationDate)
-    const publicationDate = `${publicationDateText.substring(0, 4)}-${publicationDateText.substring(4, 6)}-${publicationDateText.substring(6, 8)}`
+    const publicationDate = `${
+      publicationDateText.substring(0, 4)
+    }-${
+      publicationDateText.substring(4, 6)
+    }-${
+      publicationDateText.substring(6, 8)
+    }`
 
     const sourceUrl = []
     getXmlJsonArray(event.sourceUrl)
