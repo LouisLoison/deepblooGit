@@ -49,9 +49,10 @@ exports.sendToSalesforce = (userId, tenderId) => {
         throw new Error('No access token !')
       }
 
+      let title = tender.title.substring(0, 70)
       let response2 = await require('axios').post(
         `https://sediver--sediveruat.my.salesforce.com/services/data/v50.0/sobjects/Project__c`, {
-          Name: tender.title,
+          Name: title,
           Country__c: countryId,
           Account_Name_DB__c: "TEST ACCOUNT NAME",
           BDD__c: "2020-12-20T14:23:44",
@@ -71,17 +72,21 @@ exports.sendToSalesforce = (userId, tenderId) => {
           Composite_Share__c: 0,
           Year_1_percent__c: 0,
         }, {
-          headers: { 'Authorization': `bearer ${access_token}` }
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${access_token}`,
+          }
         }
       )
-      if (!response2.success) {
+      if (!response2.data || !response2.data.success) {
         throw new Error(response2.errors)
       }
+      const salesforceId = response2.data.id
 
       resolve({
         userId,
-        tender,
-        access_token,
+        salesforceId,
       })
     } catch (err) {
       reject(err)
