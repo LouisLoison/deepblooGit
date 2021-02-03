@@ -75,9 +75,8 @@ config.bdd = {
         type: 'postgres',
         user: 'deepbloo',
         password: 'taiT6jooy7iza',
-        server: 'localhost',
+        server: 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com',
         database: 'deepbloo_dev',
-        port: 5434,
       }
     },
     test: {
