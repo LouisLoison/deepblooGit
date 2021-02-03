@@ -16,6 +16,7 @@ let dbSecret = false;
 let appsearchSecret = false;
 let elasticSecret = false
 let hivebriteSecret = false;
+let hivebriteSharedSecret = false;
 
 const getSecret = async (SecretId) => {
   const secretsmanager = new AWS.SecretsManager()
@@ -49,6 +50,11 @@ exports.getElasticSecret = async () => {
 exports.getHivebriteSecret = async () => {
   hivebriteSecret = hivebriteSecret || await getSecret(process.env.HIVEBRITE_SECRET)
   return { ...hivebriteSecret }
+}
+
+exports.getHivebriteSharedSecret = async () => {
+  hivebriteSharedSecret = hivebriteSharedSecret || await getSecret(process.env.HIVEBRITE_SECRET)
+  return { ...hivebriteSharedSecret }
 }
 
 /*
