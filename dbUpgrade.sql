@@ -105,7 +105,7 @@ create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tende
 
 create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
 
-alter table documentmessage add column documentuuid;
+alter table documentmessage add column documentuuid uuid;
 update documentmessage set documentuuid=document.documentuuid from document where documentmessage.documentid = document.documentid;
 
 alter table documentmessage drop column documentuuid;
@@ -121,3 +121,5 @@ create index tendercriterion_tenderuuid_idx on tendercriterion(tenderuuid);
 
 update tenders set datasource='dgmarket' where origine='DgMarket';
 update tenders set datasource='tenderinfo' where origine='TenderInfo';
+
+update tenders set creationdate = publicationdate where creationdate is null;

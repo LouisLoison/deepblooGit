@@ -10,6 +10,7 @@ PIPENV=$(pipenv --venv)/lib/python3.8/site-packages
 
 mkdir bin 2>/dev/null
 
+pwd
 cp -a $(pipenv --venv)/bin/* bin
 
 rm $(find bin/ -type l) 

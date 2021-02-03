@@ -12,6 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "deepbloo": "file:../../lambda/libjs",
-    "string-strip-html": "^7.0.3"
+    "string-strip-html": "^8.1"
   }
 }

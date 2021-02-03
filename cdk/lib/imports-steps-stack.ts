@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -56,7 +56,10 @@ export class ImportsStepsStack extends Stack {
     const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
+
+    // const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
+  
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
       availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
@@ -79,6 +82,13 @@ export class ImportsStepsStack extends Stack {
       compatibleRuntimes: [Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Textractor layer.',
+    });
+
+    const ghostscripLayer = new LayerVersion(this, 'GhostScript layer', { 
+      code: new AssetCode('../lambda/layer/gs'),
+      compatibleRuntimes: [Runtime.PYTHON_3_8, Runtime.NODEJS_12_X],
+      license: 'Apache-2.0',
+      description: 'GhostScript layer.',
     });
 
     // Python libs helper layer
@@ -190,7 +200,7 @@ export class ImportsStepsStack extends Stack {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/pdftoimg'),
       handler: 'index.handler',
-      memorySize: 500,
+      memorySize: 1500,
       reservedConcurrentExecutions: 40,
       timeout: Duration.seconds(60),
       environment: {
@@ -256,7 +266,7 @@ export class ImportsStepsStack extends Stack {
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
-    stepPdfToImg.addLayers(nodeLayer, deepblooLayer)
+    stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
@@ -424,7 +434,13 @@ export class ImportsStepsStack extends Stack {
 
     const noInterest = new Succeed(this, 'No interest', { comment: "e.g. tender has no CPV match" })
     const fullSucceed = new Succeed(this, 'Completed', { comment: "Tender fully available" })
-    const chain = Chain.start(convertTenderTask)
+
+    const initialWait = new Wait(this, 'Waiting for our turn', {
+      time: WaitTime.secondsPath('$.startDelay')
+    })
+
+    const chain = Chain.start(initialWait)
+      .next(convertTenderTask)
       .next(analyzeTenderTask)
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
@@ -455,9 +471,9 @@ export class ImportsStepsStack extends Stack {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/xmlimport'),
       handler: 'index.handler',
-      memorySize: 500,
-      //      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      memorySize: 1500,
+      reservedConcurrentExecutions: 2,
+      timeout: Duration.seconds(900),
       environment: {
         ...environment,
         TENDER_STATE_MACHINE_ARN: stateMachine.stateMachineArn,

@@ -50,7 +50,7 @@ exports.handler =  async function(event, ) {
 
   const query4 = `	
         select ${fields} from tenderimport 
-          where mergeMethod is null and status = 20 and uuid = $1`
+          where status = 20 and uuid = $1`
 
   const [tenderData] = await BddTool.QueryExecPrepared(client, query4, [ uuid ], 'tenderimport')
 

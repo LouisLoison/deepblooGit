@@ -22,8 +22,10 @@ textract-pipeline/lambda/pipenv/
 lambda/layer/combined/
 lambda/layer/pipenv/bin
 lambda/layer/pipenv/python
+lambda/layer/gs
 lambda/libjs/*.tgz
 lambda/function/*/config
 lambda/function/*/global
+lambda/build/
 
 .*.swp

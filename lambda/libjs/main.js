@@ -1,6 +1,7 @@
 import {
   getFileContent,
   putFile,
+  putStream,
   getXmlJsonData,
   getXmlJsonArray,
   log,
@@ -10,6 +11,7 @@ import {
 export {
   getFileContent,
   putFile,
+  putStream,
   getXmlJsonData,
   getXmlJsonArray,
   log,
