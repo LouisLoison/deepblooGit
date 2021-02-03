@@ -199,6 +199,7 @@ export class ApiStack extends cdk.Stack {
 
       }
     })
+
     // ------------- DATASOURCE DEFINITIONS----------------- //
     const appsyncDataSource = new CfnDataSource(this, `appsync-aurora-ds`, {
       apiId: api.apiId,
@@ -225,6 +226,7 @@ export class ApiStack extends cdk.Stack {
       'userDataSource',
       userResolver
     )
+
     // ------------- RESOLVERS DEFINITIONS----------------- //
     const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
       apiId: api.apiId,
