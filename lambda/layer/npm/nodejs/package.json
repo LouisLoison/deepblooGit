@@ -7,7 +7,6 @@
   "dependencies": {
     "@elastic/app-search-node": "^7.10",
     "@elastic/elasticsearch": "^7.10",
-    "axios": "^0.18",
     "esm": "^3.2",
     "fs-extra": "^9.0",
     "html-to-text": "^6.0",
@@ -19,7 +18,9 @@
     "pg": "^8.5",
     "string-strip-html": "^8.1",
     "word-extractor": "^0.3",
-    "xml2js": "^0.4"
+    "xml2js": "^0.4",
+    "axios": "^0.18",
+    "jsonwebtoken": "^8.1"
   },
   "devDependencies": {
     "aws-sdk": "^2.793.0"

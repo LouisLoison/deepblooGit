@@ -78,6 +78,19 @@ ${data === undefined ? '' : JSON.stringify(data, null, 2)}`)
   }
 }
 
+const onError = (err, res) => {
+  if (process.env.NODE_ENV == 'dev') {
+    console.log(err)
+  }
+  return (
+    {
+      success: false,
+      Error: err.message,
+      data: err.response && err.response.data ? err.response.data : null
+    }
+  )
+}
+
 export {
   getFileContent,
   putFile,
@@ -85,4 +98,5 @@ export {
   getXmlJsonData,
   getXmlJsonArray,
   log,
+  onError
 }

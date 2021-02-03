@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { getHivebriteSecret } = require('./config')
+const { getHivebriteSecret, getHivebriteSharedSecret } = require('./config')
 let hivebriteToken;
 
 exports.TokenGet = async () => {
@@ -20,6 +20,10 @@ exports.TokenGet = async () => {
             resolve(response.data)
         }).catch(err => { reject(err) })
     })
+}
+
+exports.SharedSecretGet = () => {
+    return getHivebriteSharedSecret()
 }
 
 exports.get = async (url, param) => {
