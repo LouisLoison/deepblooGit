@@ -7,17 +7,18 @@ import {
   MappingTemplate,
   CfnResolver,
   CfnDataSource,
-  CfnFunctionConfiguration,
   Schema,
   AppsyncFunction,
   Resolver
 } from '@aws-cdk/aws-appsync';
+import { Vpc } from '@aws-cdk/aws-ec2';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 
 import * as iam from '@aws-cdk/aws-iam';
 import { join } from "path";
 import { readFileSync } from "fs";
+import { Duration } from '@aws-cdk/core';
 
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -26,14 +27,11 @@ export class ApiStack extends cdk.Stack {
     const environment = {
       NODE_ENV: "dev",
     }
-    const awsSecretStoreArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+    const dbSecretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: awsSecretStoreArn,
+      DB_SECRET: dbSecretArn,
     }
-    const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
-      secretArn: awsSecretStoreArn,
-    });
 
     const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
@@ -94,8 +92,45 @@ export class ApiStack extends cdk.Stack {
       description: 'Deepbloo lib layer.',
     });
 
+    // -------------ROLE DEFINITIONS----------------- //
+    const lambdaBasicDbSecretVpcExecutionRole = new iam.Role(this, `LAMBDA_BASIC_DBSECRET_VPC_EXECUTION_ROLE_${environment.NODE_ENV}`, {
+      assumedBy: new iam.ServicePrincipal('lambda.amazonaws.com'),
+      roleName: `LAMBDA_BASIC_DBSECRET_VPC_EXECUTION_ROLE_${environment.NODE_ENV}`,
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole"),
+        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaVPCAccessExecutionRole"),
+
+      ],
+      inlinePolicies: {
+        "access-secretsmanager": new iam.PolicyDocument({
+          statements: [new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [dbSecretArn]
+          }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [hivebriteSecretArn]
+          }),
+          ]
+        }),
+
+      }
+    });
+
+    // -------------VPC FUNCTION DEFINITIONS----------------- //
+    const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
+      vpcId: 'vpc-f7456f91',
+      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
+      // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
+      // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
+      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+    });
+
     // -------------LAMBDA FUNCTION DEFINITIONS----------------- //
     const hivebriteResolver = new Function(this, 'hivebriteResolver', {
+      functionName: `hivebriteResolver-${environment.NODE_ENV}`,
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/hivebriteresolver'),
       handler: 'index.handler',
@@ -108,26 +143,22 @@ export class ApiStack extends cdk.Stack {
     hivebriteResolver.addLayers(nodeLayer, deepblooLayer)
     hivebriteSecret.grantRead(hivebriteResolver)
 
-    const userL = new Function(this, 'userL', {
+    const userResolver = new Function(this, 'userResolver', {
+      functionName: `userResolver-${environment.NODE_ENV}`,
       runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/user'),
+      code: new AssetCode('../lambda/function/userResolver'),
       handler: 'index.handler',
       memorySize: 500,
+      timeout: Duration.seconds(11),
+      vpc,
       environment: {
         ...environment,
-        ...hivebriteEnv,
-        ...dbEnv
-      }
+        ...dbEnv,
+        ...hivebriteEnv
+      },
+      role: lambdaBasicDbSecretVpcExecutionRole
     });
-    userL.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ["textract:*"],
-        resources: ["*"]
-      })
-    );
-    userL.addLayers(nodeLayer, deepblooLayer)
-    hivebriteSecret.grantRead(userL)
-    dbSecret.grantRead(userL)
+    userResolver.addLayers(nodeLayer, deepblooLayer)
 
     // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
@@ -162,7 +193,7 @@ export class ApiStack extends cdk.Stack {
           }), new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [awsSecretStoreArn]
+            resources: [dbSecretArn]
           })]
         }),
 
@@ -177,7 +208,7 @@ export class ApiStack extends cdk.Stack {
         relationalDatabaseSourceType: "RDS_HTTP_ENDPOINT",
         rdsHttpEndpointConfig: {
           awsRegion: 'eu-west-1',
-          awsSecretStoreArn,
+          awsSecretStoreArn: dbSecretArn,
           databaseName: 'deepbloo_dev',
           dbClusterIdentifier: dbArn
         }
@@ -192,7 +223,7 @@ export class ApiStack extends cdk.Stack {
 
     const userDataSource = api.addLambdaDataSource(
       'userDataSource',
-      userL
+      userResolver
     )
     // ------------- RESOLVERS DEFINITIONS----------------- //
     const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {

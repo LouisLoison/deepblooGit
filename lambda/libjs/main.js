@@ -4,6 +4,7 @@ import {
   getXmlJsonData,
   getXmlJsonArray,
   log,
+  onError
 } from './helpers.js';
 
 export {
@@ -12,4 +13,5 @@ export {
   getXmlJsonData,
   getXmlJsonArray,
   log,
+  onError
 }

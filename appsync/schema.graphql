@@ -24,36 +24,36 @@ type User{
   type: Int
   email: String
   username: String
-  # membershipFree: Int
-  # organizationId: Int
-  # country: String
-  # countryCode: String
-  # regions: String
-  # photo: String
-  # doNotContact: String
-  # notifSend: String
-  # notifCpvs: String
-  # notifRegions: String
-  # notifPostEmail: Int
-  # notifTripEmail: Int
-  # notifEventEmail: Int
-  # notifDigestEmail: Int
-  # notifCommentEmail: Int
-  # notifVentureEmail: Int
-  # notifBusinessRequest: Int
-  # notifCurrentLocationEmail: Int
-  # notifEmailingComEmail: Int
-  # notifForumPostEmail: Int
-  # notifContactByPhone: Int
-  # notifContactBySms: Int
-  # notifContactByPost: Int
-  # connexionTender: AWSDateTime
-  # connexionBusiness: AWSDateTime
-  # dashboardUrl: String
-  # businessPipeline: String
-  # status: Int
-  # creationDate: AWSDateTime
-  # updateDate: AWSDateTime
+  membershipFree: Int
+  organizationId: Int
+  country: String
+  countryCode: String
+  regions: String
+  photo: String
+  doNotContact: String
+  notifSend: String
+  notifCpvs: String
+  notifRegions: String
+  notifPostEmail: Int
+  notifTripEmail: Int
+  notifEventEmail: Int
+  notifDigestEmail: Int
+  notifCommentEmail: Int
+  notifVentureEmail: Int
+  notifBusinessRequest: Int
+  notifCurrentLocationEmail: Int
+  notifEmailingComEmail: Int
+  notifForumPostEmail: Int
+  notifContactByPhone: Int
+  notifContactBySms: Int
+  notifContactByPost: Int
+  connexionTender: AWSDateTime
+  connexionBusiness: AWSDateTime
+  dashboardUrl: String
+  businessPipeline: String
+  status: Int
+  creationDate: AWSDateTime
+  updateDate: AWSDateTime
 }
 
 type Query {
@@ -61,11 +61,3 @@ type Query {
   HivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
   User(userToken:String!): User
 }
-
-# enum UserType{
-#   1
-#   2
-#   3
-#   4
-#   5
-# }
