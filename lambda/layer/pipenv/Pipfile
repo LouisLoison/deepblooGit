@@ -12,6 +12,9 @@ pdfplumber="<0.5.99,>=0.5.24"
 xhtml2pdf="<0.2.99,>=0.2.5"
 simplejson="<3.17.99,>=3.17.2"
 spacy="<2.3.99,>=2.3.5"
+# Metrics value extraction dependencies
+quantulum3 = "<0.7.99,>=0.7.6"
+pint = "<0.16.99,>=0.16.1"
 
 [requires]
 python_version = "3.8"
