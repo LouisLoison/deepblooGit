@@ -18,14 +18,14 @@ tenders_without_metrics = []
 metrics_noise = []
 
 # Destination TSV file
-dest_file = "tests/output_data/extracted_metrics.csv"
+dest_file = "../../test/valueextraction/output_data/extracted_metrics.csv"
 # JSON file
-json_file = "tests/output_data/extracted_metrics.json"
+json_file = "../../test/valueextraction/output_data/extracted_metrics.json"
 
 # Step 1: Read the first 100 lines of the TSV file
 print("Acquiring tenders data...")
-tenders_data = pd.read_csv("export-titres-desc.tsv", sep=";", 
-                           nrows=100)
+tenders_data = pd.read_csv("../../test/valueextraction/export-titres-desc.csv", sep=",",
+                           nrows=200)
 print("Data acquisition completed!")
 # print(tenders_data.head())
 
