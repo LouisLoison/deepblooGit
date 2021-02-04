@@ -1,12 +1,26 @@
 {
   "name": "lambda-node-layer",
   "version": "0.1.0",
+  "scripts": {
+    "postinstall": "node-prune || true"
+  },
   "dependencies": {
-    "@elastic/app-search-node": "^7.8",
-    "canvas": "^2.6",
-    "esm": "^3.2.25",
-    "pdfjs-dist": "^2.4",
-    "xml2js": "^0.4.23"
+    "@elastic/app-search-node": "^7.10",
+    "@elastic/elasticsearch": "^7.10",
+    "esm": "^3.2",
+    "fs-extra": "^9.0",
+    "html-to-text": "^6.0",
+    "images": "^3.2",
+    "mammoth": "^1.4",
+    "moment": "^2.29",
+    "node-gs": "^0.1",
+    "object-hash": "^2.0",
+    "pg": "^8.5",
+    "string-strip-html": "^8.1",
+    "word-extractor": "^0.3",
+    "xml2js": "^0.4",
+    "axios": "^0.18",
+    "jsonwebtoken": "^8.1"
   },
   "devDependencies": {
     "aws-sdk": "^2.793.0"

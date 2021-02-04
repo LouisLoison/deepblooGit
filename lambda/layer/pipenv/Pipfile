@@ -8,10 +8,10 @@ verify_ssl = true
 [packages]
 elasticsearch = "<7.99,>=7.8"
 # HTML to bounding box dependancies
-pdfplumber="0.5.24"
-xhtml2pdf="0.2.5"
-simplejson="3.17.2"
-
+pdfplumber="<0.5.99,>=0.5.24"
+xhtml2pdf="<0.2.99,>=0.2.5"
+simplejson="<3.17.99,>=3.17.2"
+spacy="<2.3.99,>=2.3.5"
 
 [requires]
 python_version = "3.8"

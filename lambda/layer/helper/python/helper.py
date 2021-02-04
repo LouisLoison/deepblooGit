@@ -1,5 +1,6 @@
 import boto3
 from botocore.client import Config
+from botocore.exceptions import ClientError
 import os
 import csv
 import io
@@ -125,6 +126,12 @@ class S3Helper:
         object.put(Body=content)
 
     @staticmethod
+    def readBytesFromS3(bucketName, s3FileName, awsRegion=None):
+        s3 = AwsHelper().getResource('s3', awsRegion)
+        obj = s3.Object(bucketName, s3FileName)
+        return obj.get()['Body'].read()
+
+    @staticmethod
     def readFromS3(bucketName, s3FileName, awsRegion=None):
         s3 = AwsHelper().getResource('s3', awsRegion)
         obj = s3.Object(bucketName, s3FileName)
@@ -149,11 +156,39 @@ class S3Helper:
     @staticmethod
     def writeCSVRaw(csvData, bucketName, s3FileName):
         csv_file = io.StringIO()
-        #with open(fileName, 'w') as csv_file:
         writer = csv.writer(csv_file)
         for item in csvData:
             writer.writerow(item)
         S3Helper.writeToS3(csv_file.getvalue(), bucketName, s3FileName)
+
+    @staticmethod
+    def deleteFileS3(bucketName, s3FileName, awsRegion=None) -> None:
+        try:
+            s3 = AwsHelper().getResource('s3', awsRegion)
+            s3.Object(bucketName, s3FileName).delete()
+        except ClientError as _:
+            return
+
+    @staticmethod
+    def isS3FileExists(bucketName, s3FileName, awsRegion=None) -> bool:
+        s3 = AwsHelper().getResource('s3', awsRegion)
+        try:
+            s3.Object(bucketName, s3FileName).load()
+            return True
+        except ClientError as e:
+            print("S3FileExists Errors: {}".format(e.response))
+            return False
+
+    @staticmethod
+    def getS3FileSize(bucketName, s3FileName, awsRegion=None):
+        client_s3 = AwsHelper().getClient('s3', awsRegion)
+        try:
+            response = client_s3.head_object(
+                Bucket=bucketName,
+                Key=s3FileName)
+        except ClientError:
+            return None
+        return response.get('ContentLength')
 
 
 class FileHelper:
