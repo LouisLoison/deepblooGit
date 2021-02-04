@@ -265,9 +265,11 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     documentProcessor.addLayers(helperLayer)
     //Trigger
+    /*
     documentProcessor.addEventSource(new DynamoEventSource(documentsTable, {
       startingPosition: lambda.StartingPosition.TRIM_HORIZON
     }));
+    */
 
     //Permissions
     documentsTable.grantReadWriteData(documentProcessor)
@@ -297,9 +299,11 @@ export class TextractPipelineStack extends cdk.Stack {
     syncProcessor.addLayers(helperLayer)
     syncProcessor.addLayers(textractorLayer)
     //Trigger
+    /*
     syncProcessor.addEventSource(new SqsEventSource(syncJobsQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     contentBucket.grantReadWrite(syncProcessor)
     existingContentBucket.grantReadWrite(syncProcessor)
@@ -345,10 +349,11 @@ export class TextractPipelineStack extends cdk.Stack {
     // disabled as it seems unusefull
     // asyncProcessor.addEventSource(new SnsEventSource(jobCompletionTopic))
     //
+    /*
     asyncProcessor.addEventSource(new SqsEventSource(asyncJobsQueue, {
       batchSize: 1
     }));
-
+    */
     //Permissions
     contentBucket.grantRead(asyncProcessor)
     existingContentBucket.grantReadWrite(asyncProcessor)
@@ -387,9 +392,11 @@ export class TextractPipelineStack extends cdk.Stack {
     jobResultProcessor.addLayers(helperLayer)
     jobResultProcessor.addLayers(textractorLayer)
     //Triggers
+    /*
     jobResultProcessor.addEventSource(new SqsEventSource(jobResultsQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     outputTable.grantReadWriteData(jobResultProcessor)
     documentsTable.grantReadWriteData(jobResultProcessor)
@@ -426,9 +433,11 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     appsearchIndexer.addLayers(nodeModulesLayer)
     //Triggers
+    /*
     appsearchIndexer.addEventSource(new SqsEventSource(esIndexQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     //outputTable.grantReadWriteData(appsearchIndexer)
     //documentsTable.grantReadWriteData(appsearchIndexer)
@@ -456,10 +465,11 @@ export class TextractPipelineStack extends cdk.Stack {
     // pdfToImg.addLayers(textractorLayer)
     pdfToImg.addLayers(nodeModulesLayer)
     //Triggers
+    /*
     pdfToImg.addEventSource(new SqsEventSource(syncJobsQueue, {
       batchSize: 1
     }));
-
+    */
     /*
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
       events: [ s3.EventType.OBJECT_CREATED ],
@@ -538,9 +548,11 @@ export class TextractPipelineStack extends cdk.Stack {
 
     zipExtraction.addLayers(pythonModulesLayer);
     zipExtraction.addLayers(helperLayer);
+    /*
     zipExtraction.addEventSource(new SqsEventSource(zipExtractionQueue, {
       batchSize: 1
     }));
+    */
     // Permissions
     zipExtractionQueue.grantSendMessages(zipExtraction)
     contentBucket.grantRead(zipExtraction)
@@ -568,10 +580,11 @@ export class TextractPipelineStack extends cdk.Stack {
      //Layer
     pdfToBoundingBox.addLayers(pythonModulesLayer)
     pdfToBoundingBox.addLayers(helperLayer)
-
+    /*
     pdfToBoundingBox.addEventSource(new SqsEventSource(pdfToBoundingBoxAndTextQueue, {
       batchSize: 1
     }));
+    */
 
     // Permissions
     contentBucket.grantRead(pdfToBoundingBox)
