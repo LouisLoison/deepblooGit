@@ -3,6 +3,7 @@ import json
 import chardet
 from io import BytesIO
 from xhtml2pdf import pisa
+from htmllaundry import sanitize
 
 from helper import S3Helper, AwsHelper
 from update_event import update_event, get_new_s3_url
@@ -14,6 +15,11 @@ def convert_html_to_pdf(html_str, aws_env):
     output_file = aws_env['outputName']
     output_content = BytesIO()
 
+    if html_str is None:
+        return {
+            "status": -1,
+            "errorMessage": "PDF is empty"
+        }
     print("Writing s3://%s/%s in %s" % (output_bucket, output_file, aws_region))
     s3 = AwsHelper().getResource('s3', aws_region)
     s3_obj = s3.Object(output_bucket, output_file)
@@ -23,7 +29,7 @@ def convert_html_to_pdf(html_str, aws_env):
         s3_obj.put(Body=content)
     except ValueError as e:
         return {
-            "statusCode": -1,
+            "status": -1,
             "errorMessage": "PDF format not supported."
         }
     return {
@@ -69,6 +75,10 @@ def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
     return output_file
 
 
+def sanitize_html_content(html_str: str) -> str:
+    return sanitize(html_str)
+
+
 def lambda_handler(event, context):
     aws_env = {
         **event,
@@ -81,17 +91,13 @@ def lambda_handler(event, context):
 
     print("==> Aws Env: {0}".format(json.dumps(aws_env)))
     html_content = read_from_s3(aws_env)
-    if html_content is None:
-        aws_env["status"] = -1
-        aws_env["errorMessage"] = "PDF format not supported."
-        return update_event(aws_env, event)
-    else:
-        status = convert_html_to_pdf(html_content, aws_env)
+    sanitized_html_content = sanitize_html_content(html_content)
+    status = convert_html_to_pdf(sanitized_html_content, aws_env)
     aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
                                              aws_env['outputName'],
                                              aws_env['awsRegion'])
     aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "pdf")
-    aws_env["status"] = status["status"]
+    aws_env["status"] = status['status']
     aws_env["errorMessage"] = status["errorMessage"]
     aws_env["contentType"] = "text/pdf"
     aws_env["objectName"] = aws_env["outputName"]

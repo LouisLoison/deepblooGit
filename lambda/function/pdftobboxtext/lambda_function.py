@@ -69,7 +69,7 @@ def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json
 
 
 def is_pdf_has_enough_characters(pdf_path, min_char_required) -> bool:
-    message = "Not enough characters:"
+    message = "PDF content warning:"
     with pdfplumber.open(pdf_path) as pdf_content:
         images = pdf_content.images
         image_nb = len(images)
@@ -85,7 +85,7 @@ def is_pdf_has_enough_characters(pdf_path, min_char_required) -> bool:
 
 
 def copy_pdf_to_tmp(aws_env: dict) -> str:
-    pdf_content = S3Helper.readFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
+    pdf_content = S3Helper.readBytesFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
     tmp_folder = "/tmp"
     pdf_tmp = "tmp_0.pdf"
     index = 0
@@ -95,7 +95,7 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
         pdf_tmp = "tmp_{0}.pdf".format(index)
         index += 1
     pdf_tmp = os.path.join(tmp_folder, pdf_tmp)
-    with open(pdf_tmp, "w") as tmp_file:
+    with open(pdf_tmp, "wb") as tmp_file:
         tmp_file.write(pdf_content)
     print("Copy {0} to {1}".format(aws_env["objectName"], pdf_tmp))
     return pdf_tmp
