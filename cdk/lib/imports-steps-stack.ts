@@ -367,7 +367,7 @@ export class ImportsStepsStack extends Stack {
     const pdfToBoxesTask = new LambdaInvoke(this, 'Pdf to Boxes', {
       lambdaFunction: stepPdfToBoxes,
       inputPath: '$.document',
-      resultPath: '$.pdf2bbox',
+      resultPath: '$.document',
       payloadResponseOnly: true,
     })
 
