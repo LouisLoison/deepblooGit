@@ -7,11 +7,11 @@ verify_ssl = true
 
 [packages]
 elasticsearch = "<7.99,>=7.8"
-# HTML to bounding box dependancies
 pdfplumber="0.5.24"
 xhtml2pdf="0.2.5"
 simplejson="3.17.2"
 spacy="2.3.5"
+htmllaundry="2.2"
 
 
 [requires]
