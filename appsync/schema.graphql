@@ -1,9 +1,40 @@
 type Tender {
-  id: ID!
-  procurementId: String
-  owner: String
-  title: String
-  description: String
+    id: ID
+    datasourceId: ID
+    procurementId: ID
+    title: String
+    description: String
+    lang: String
+    contactFirstName: String
+    contactLastName: String
+    contactAddress: String
+    contactCity: String
+    contactState: String
+    contactCountry: String
+    contactEmail: String
+    contactPhone: String
+    buyerName: String
+    buyerCountry: String
+    procurementMethod: String
+    noticeType: String
+    country: String
+    estimatedCost: String
+    currency: String
+    publicationDate: String
+    cpvs: String
+    cpvDescriptions: String
+    words: String
+    bidDeadlineDate: String
+    sourceUrl: String
+    termDate: String
+    fileSource: String
+    userId: ID,
+    algoliaId: ID
+    contractType1: String
+    brand: String
+    status: Int
+    creationDate: String
+    updateDate: String
 }
 
 type HivebriteUser{
@@ -57,7 +88,7 @@ type User{
 }
 
 type Query {
-  GetTender(id: ID): Tender
+  GetTender(userToken:String!, id: ID): Tender
   HivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
-  User(userToken:String!): User
+  GetUser(userToken:String!): User
 }

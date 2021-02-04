@@ -1,0 +1,9 @@
+ #if( $context.result && $context.result.Error )
+      $utils.error($context.result.Error)
+ #else
+      $util.qr($context.stash.put("id", $context.result.data.id))
+      $util.qr($context.stash.put("name", $context.result.data.name))
+      $util.qr($context.stash.put("primary_email", $context.result.data.primary_email))
+      $util.qr($context.stash.put("nbf", $context.result.data.nbf))
+      $utils.toJson($context.result.data)
+  #end

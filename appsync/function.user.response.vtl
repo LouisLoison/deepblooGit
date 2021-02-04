@@ -1,0 +1,6 @@
+#if( $context.result && $context.result.Error )
+  $utils.error($context.result.Error)
+#else
+  $util.qr($context.stash.put("userType", $context.result.data.type))
+  $utils.toJson($context.result.data)
+#end
