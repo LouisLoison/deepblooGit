@@ -25,7 +25,7 @@ def spacy_sentences_extraction(content: str, aws_env: dict):
     print("Pipelines names: ", nlp.pipe_names)
     for sent in doc.sents:
         sentence = sent.text.replace('\n', ' ')
-        sentence_content += "=> {}\n".format(sentence.strip())
+        sentence_content += "{}\n".format(sentence.strip())
     S3Helper.writeToS3(sentence_content, aws_env['outputBucket'],
                        aws_env['outputNameTxt'], aws_env['awsRegion'])
 
