@@ -140,7 +140,6 @@ class S3Helper:
     @staticmethod
     def writeCSV(fieldNames, csvData, bucketName, s3FileName, awsRegion=None):
         csv_file = io.StringIO()
-        #with open(fileName, 'w') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldNames)
         writer.writeheader()
 
