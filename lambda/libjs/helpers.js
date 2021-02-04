@@ -1,4 +1,5 @@
 const { AWS } = require('./config');
+const stream = require('stream')
 
 const getFileContent = async (bucketName, fileKey) => {
   const s3 = new AWS.S3({apiVersion: '2006-03-01'});
@@ -26,7 +27,23 @@ const putFile = async (bucketName, fileKey, fileContent) => {
     Key    : fileKey,
     Body: fileContent,
   };
-  return await s3.putObject(options)
+  return s3.putObject(options).promise()
+}
+
+const putStream = (bucketName, fileKey) => {
+  console.log(`Uploading stream object s3://${bucketName}/${fileKey}`);
+  const s3 = new AWS.S3({apiVersion: '2006-03-01'});
+  const pass = new stream.PassThrough();
+  const options = {
+    Bucket    : bucketName,
+    Key    : fileKey,
+    Body: pass
+  };
+  s3.upload(options, function(err, data) {
+    console.log(err, data);
+  });
+
+  return pass
 }
 
 const getXmlJsonData = (data) => {
@@ -61,10 +78,25 @@ ${data === undefined ? '' : JSON.stringify(data, null, 2)}`)
   }
 }
 
+const onError = (err, res) => {
+  if (process.env.NODE_ENV == 'dev') {
+    console.log(err)
+  }
+  return (
+    {
+      success: false,
+      Error: err.message,
+      data: err.response && err.response.data ? err.response.data : null
+    }
+  )
+}
+
 export {
   getFileContent,
   putFile,
+  putStream,
   getXmlJsonData,
   getXmlJsonArray,
   log,
+  onError
 }

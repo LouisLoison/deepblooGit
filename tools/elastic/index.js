@@ -4,7 +4,7 @@ const { tenderFormat } = require('deepbloo').tenderformat
 const { indexToElasticsearch } = require('deepbloo').elastic
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { CpvList } = require('deepbloo').cpv
-const stripHtml = require("string-strip-html")
+const { stripHtml } = require("string-strip-html")
 
 const main = async (limit = 9) => {
   const client = await BddTool.getClient()
@@ -52,8 +52,8 @@ const processResults = async ({ rows, fields, rowCount }) => {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
     delete rows[i]
     try {
-      result.title = stripHtml(result.title).result
-      result.description = stripHtml(result.description).result
+      // result.title = stripHtml(result.title).result
+      // result.description = stripHtml(result.description).result
       if (result.contactAddress) {
         result.contactAddress = stripHtml(result.contactAddress).result
       }
@@ -85,21 +85,26 @@ const processResults = async ({ rows, fields, rowCount }) => {
 
     if (tranche.length >= 50) {
       await indexToElasticsearch(tranche, 'tenders')
-      await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
+      if(appTranche.length) {
+        await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
+        appTranche.forEach((r, index) => delete appTranche[index])
+      }
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
-      appTranche.forEach((r, index) => delete appTranche[index])
       tranche = []
       appTranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
   if (tranche.length) {
-    await indexToElasticsearch(tranche, 'newtenders')
+    await indexToElasticsearch(tranche, 'tenders')
+  }
+  if(appTranche.length) {
+    await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
   }
   
   console.log(processed)
   // return result.length
 }
 
-main(4000)// .then(process.exit())
+main(4000000)// .then(process.exit())

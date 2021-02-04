@@ -1,3 +1,4 @@
+#!/bin/bash
 STACK_NAME="$1"
 LAMBDA_NAME="$2"
 EVENT_PATH="../$3"

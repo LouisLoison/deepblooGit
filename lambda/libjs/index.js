@@ -11,6 +11,7 @@ const appsearch = require('./appsearch')
 const elastic = require('./elastic')
 const document = require('./document')
 const hivebrite = require('./hivebrite')
+const { AWS, documentsBucket } = require('./config')
 
 module.exports = {
   ...esmRequire('./main.js'),
@@ -22,5 +23,7 @@ module.exports = {
   appsearch,
   document,
   elastic,
-  hivebrite
+  hivebrite,
+  AWS,
+  documentsBucket,
 }
