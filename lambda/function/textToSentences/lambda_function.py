@@ -49,6 +49,12 @@ def lambda_handler(event, context):
         "outputNameTxt": get_s3_path(event['objectName']),
     }
     content = get_file_content(aws_env)
+    if content is None:
+        aws_env['status'] = -1
+        aws_env['errorMessage'] =\
+            "File {0} not found in s3 {1}".format(aws_env['objectName'],
+                                                  aws_env['bucketName'])
+        return update_event(aws_env, event)
     spacy_sentences_extraction(content, aws_env)
     print("==> Aws env: {0}".format(json.dumps(aws_env)))
     aws_env['status'] = 0

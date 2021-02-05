@@ -88,7 +88,6 @@ def lambda_handler(event, context):
         "outputName": get_pdf_filename(event["objectName"],
                                        event["documentUuid"]),
     }
-
     print("==> Aws Env: {0}".format(json.dumps(aws_env)))
     html_content = read_from_s3(aws_env)
     sanitized_html_content = sanitize_html_content(html_content)
