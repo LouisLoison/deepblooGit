@@ -325,7 +325,7 @@ export class ApiStack extends cdk.Stack {
       requestMappingTemplate: '{}',
       responseMappingTemplate: '$util.toJson($ctx.prev.result)',
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, UserFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId]
       },
     })
 
@@ -338,7 +338,7 @@ export class ApiStack extends cdk.Stack {
       requestMappingTemplate: '{}',
       responseMappingTemplate: '$util.toJson($ctx.prev.result)',
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, UserFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
       },
     })
   }

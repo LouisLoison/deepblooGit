@@ -34,7 +34,9 @@ let TokenAuthorizer = async (event) => {
       let { userToken } = event.arguments;
       let { hivebrite_shared_secret } = await SharedSecretGet();
       let tokenDecoded = jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
-      resolve(tokenDecoded)
+
+      let user = await User({ arguments: { id: tokenDecoded.id } })
+      resolve(user)
     } catch (err) { reject(err) }
   })
 }
@@ -43,7 +45,7 @@ let User = async (event) => {
   log(`EVENT User  --------`, event);
   return new Promise(async (resolve, reject) => {
     try {
-      let { id } = event.stash;
+      let { id } = event.arguments;
       let user = null;
       if (id) {
         let filterExp = {
