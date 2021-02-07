@@ -132,6 +132,10 @@ class Metric:
         metric = self.to_official()
         self.value = metric.value
         self.unit.name = metric.unit.name
+
+    def to_dict(self):
+        """Convert an instance of the class Metric to a dictionary"""
+        return {'value': self.value, 'unit': self.unit.to_dict(), 'surface': self.surface}
         
         
 class Unit:
@@ -184,6 +188,12 @@ class Unit:
         unit_string += "Wikipedia URI: {}\n".format(self.uri)
         
         return unit_string
+
+    def to_dict(self):
+        """Convert an instance of the class Unit to a dictionary"""
+        return {'unit': self.name, 'entity': self.entity, 'ref_unit': self.ref_unit,
+                'uri': self.uri}
+
         
     
     
