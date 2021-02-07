@@ -4,9 +4,7 @@ for the needs of the project
 """
 
 import pandas as pd
-import pint
-from pint.registry import UnitRegistry
-from cmath import nan
+from pint import UnitRegistry
 
 
 unit_references = pd.read_csv("unit_references.csv")
