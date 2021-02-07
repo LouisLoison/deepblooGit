@@ -142,7 +142,9 @@ class Unit:
     Attributes
     ----------
     name: str
-        unit name (eg. kilowatt)
+        unit name (eg. kilowatt, A...)
+    full_name: str
+        unit full name (eg. ampere)
     ref_unit: str
         reference unit (eg. watt for kilowatt)
     entity: str
@@ -163,6 +165,7 @@ class Unit:
             WikiPedia URI
         """
         self.name = name
+        self.full_name = str(ureg(name).units)
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
         # in the reference file 
@@ -218,4 +221,3 @@ if __name__ == "__main__":
     print("Unit:", unit.name)
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
-    

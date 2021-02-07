@@ -8,6 +8,7 @@ class TestClassMetric(unittest.TestCase):
 
     def test_str(self):
         self.assertEqual(str(self.metric), "25.40 kilowatt")
+        # TODO: Assert that units are always written with their full names
 
 
 if __name__ == '__main__':
