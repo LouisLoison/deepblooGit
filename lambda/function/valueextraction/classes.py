@@ -36,7 +36,6 @@ class Metric:
 
     """
 
-    # TODO: Review __init__ docstring
     def __init__(self, value, unit, entity, surface, uri=""):
         """
         Parameters
