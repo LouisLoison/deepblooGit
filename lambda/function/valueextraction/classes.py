@@ -16,6 +16,7 @@ Q_ = ureg.Quantity # Pint Quantity class
 # Add volt-ampere to unit registry
 ureg.define('volt-ampere=VA')
 
+
 class Metric:
     """Class for a quantity (e.g. 2.5 kW)
     
@@ -58,7 +59,7 @@ class Metric:
             WikiPedia URI
         """
         self.value = value
-        self.unit = Unit(unit,entity,uri)
+        self.unit = Unit(unit, entity, uri)
         self.surface = surface
         
     def __repr__(self):
@@ -70,14 +71,14 @@ class Metric:
     def __str__(self):
         return "{:.2f} {}".format(self.value, self.unit.name)
     
-    def to(self,unit):
+    def to(self, unit_name):
         """Converts a metric to another unit
         
         Parameters
         ----------
         self: Metric
             Metric object
-        unit: str
+        unit_name: str
             Name of the unit into which the conversion will be done
         
         Returns
@@ -90,15 +91,15 @@ class Metric:
         # TODO: Not all units can be defined this way. Adapt it
         # so it encompasses all possible definitions
         if self.unit.entity != "currency":
-            quant = Q_("{} {}".format(self.value, self.unit.name))
+            quantity = Q_("{} {}".format(self.value, self.unit.name))
             
             # Step 2: Convert said Quantity to the reference unit
-            quant.ito(unit)
+            quantity.ito(unit_name)
             
             # Step 3: Change the value and the unit of the metric
             metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
-            metric.value = quant.magnitude
-            metric.unit.name = unit
+            metric.value = quantity.magnitude
+            metric.unit.name = unit_name
             
             return metric
         
