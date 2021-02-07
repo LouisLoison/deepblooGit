@@ -33,10 +33,7 @@ class Metric:
         
     uri : str
         WikiPedia URI
-        
-    surface
-    
-    
+
     """
     
     def __init__(self, value, unit, entity, surface, uri=""):
