@@ -8,8 +8,8 @@ from pint import UnitRegistry
 
 
 unit_references = pd.read_csv("unit_references.csv")
-ureg = UnitRegistry() # Pint library unit registry
-Q_ = ureg.Quantity # Pint Quantity class
+ureg = UnitRegistry()  # Pint library unit registry
+Q_ = ureg.Quantity  # Pint Quantity class
 
 # Add volt-ampere to unit registry
 ureg.define('volt-ampere=VA')
@@ -35,14 +35,14 @@ class Metric:
 
     """
 
-    def __init__(self, value, unit, entity, surface, uri=""):
+    def __init__(self, value, unit_name, entity, surface, uri=""):
         """
         Parameters
         ----------
         value : float
             value of the metric
         
-        unit : str
+        unit_name : str
             name of the unit used for that metric
         
         entity : str
@@ -57,7 +57,7 @@ class Metric:
             WikiPedia URI
         """
         self.value = value
-        self.unit = Unit(unit, entity, uri)
+        self.unit = Unit(unit_name, entity, uri)
         self.surface = surface
         
     def __repr__(self):
@@ -95,11 +95,11 @@ class Metric:
             quantity.ito(unit_name)
             
             # Step 3: Change the value and the unit of the metric
-            metric = Metric(self.value, self.unit, self.unit.entity, self.surface)
-            metric.value = quantity.magnitude
-            metric.unit.name = unit_name
+            metric_instance = Metric(self.value, self.unit, self.unit.entity, self.surface)
+            metric_instance.value = quantity.magnitude
+            metric_instance.unit.name = unit_name
             
-            return metric
+            return metric_instance
         
         print("Cannot operate a conversion on this metric unit!")
         return self
@@ -117,9 +117,9 @@ class Metric:
         # applied
         if self.unit.ref_unit:
             print(self.unit.ref_unit)
-            metric = self.to(self.unit.ref_unit)
+            metric_instance = self.to(self.unit.ref_unit)
         
-            return metric
+            return metric_instance
         
         return self
     
@@ -127,9 +127,9 @@ class Metric:
         """Modifies the object so that the metric is converted to the
         reference unit"""
         
-        metric = self.to_official()
-        self.value = metric.value
-        self.unit.name = metric.unit.name
+        metric_instance = self.to_official()
+        self.value = metric_instance.value
+        self.unit.name = metric_instance.unit.name
 
     def to_dict(self):
         """Convert an instance of the class Metric to a dictionary"""
@@ -151,7 +151,7 @@ class Unit:
         WikiPedia URI
     """
     
-    def __init__(self,name,entity,uri=""):
+    def __init__(self, name, entity, uri=""):
         """
         Parameters
         ----------
@@ -177,8 +177,7 @@ class Unit:
         entity_row = unit_references[unit_references.entity == entity]
         if not entity_row.empty:
             self.ref_unit = str(entity_row["unit"].iloc[0])
-        
-        
+
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
         unit_string += "Entity: {}\n".format(self.entity)
@@ -192,9 +191,7 @@ class Unit:
         return {'unit': self.name, 'entity': self.entity, 'ref_unit': self.ref_unit,
                 'uri': self.uri}
 
-        
-    
-    
+
 if __name__ == "__main__":
     print("Test de la classe Unit")
     unit = Unit("kilowatt", "power")
