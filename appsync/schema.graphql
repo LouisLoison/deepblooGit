@@ -6,6 +6,58 @@ type Tender {
   description: String
 }
 
+type HivebriteUser{
+  id: ID
+  email: String
+  name: String
+}
+
+type HivebriteUserConnection{
+  total: Int
+  users: [HivebriteUser]
+}
+
+type User{
+  userId: ID
+  uuid: ID
+  hivebriteId: ID
+  type: Int
+  email: String
+  username: String
+  membershipFree: Int
+  organizationId: Int
+  country: String
+  countryCode: String
+  regions: String
+  photo: String
+  doNotContact: String
+  notifSend: String
+  notifCpvs: String
+  notifRegions: String
+  notifPostEmail: Int
+  notifTripEmail: Int
+  notifEventEmail: Int
+  notifDigestEmail: Int
+  notifCommentEmail: Int
+  notifVentureEmail: Int
+  notifBusinessRequest: Int
+  notifCurrentLocationEmail: Int
+  notifEmailingComEmail: Int
+  notifForumPostEmail: Int
+  notifContactByPhone: Int
+  notifContactBySms: Int
+  notifContactByPost: Int
+  connexionTender: AWSDateTime
+  connexionBusiness: AWSDateTime
+  dashboardUrl: String
+  businessPipeline: String
+  status: Int
+  creationDate: AWSDateTime
+  updateDate: AWSDateTime
+}
+
 type Query {
-  getTender(id: ID): Tender
+  GetTender(id: ID): Tender
+  HivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
+  User(userToken:String!): User
 }

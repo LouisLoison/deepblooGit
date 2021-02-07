@@ -1,0 +1,21 @@
+{
+    "tenderid": null,
+    "cpvs": null,
+    "filename": null,
+    "size": null,
+    "pageCount": null,
+    "sourceUrl": "http://d.infostores.biz/T458075859.html?id=amU4RzR6dUUwJisHVBgXLFswKHoZUGttUAhSYxEU",
+    "s3Url": "https://textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj.s3.eu-west-1.amazonaws.com/tenders/tender%237490b3fb-c093-4599-9182-64094ea9fd70/T458075859.pdf",
+    "boxFolderId": null,
+    "boxFileId": null,
+    "parseResult": null,
+    "status": -1,
+    "errorMessage": "PDF format not supported.",
+    "creationDate": null,
+    "updateDate": "2021-01-22T08:20:44.315Z",
+    "tenderUuid": "7490b3fb-c093-4599-9182-64094ea9fd70",
+    "documentUuid": "cfe77f71-4663-47d4-b01b-8fce9466b9cb",
+    "contentHash": "57163e7a85dfcfc9d5c71c6c063a8917bf435b39596047b4f226cbfa0be4461e",
+    "contentType": "text/pdf",
+    "objectName": "tenders/tender#7490b3fb-c093-4599-9182-64094ea9fd70/T458075859.pdf"
+}

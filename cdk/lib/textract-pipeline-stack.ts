@@ -46,6 +46,8 @@ export class TextractPipelineStack extends cdk.Stack {
     const contentBucket = new s3.Bucket(this, 'DocumentsBucket', { versioned: false});
 
     const outputBucket = new s3.Bucket(this, 'OutputBucket', { versioned: false});
+    new cdk.CfnOutput(this, 'CONTENT_BUCKET', { value: contentBucket.bucketArn });
+    new cdk.CfnOutput(this, 'OUTPUT_BUCKET', { value: outputBucket.bucketArn });
 
     const existingContentBucket = new s3.Bucket(this, 'ExistingDocumentsBucket', { versioned: false});
     existingContentBucket.grantReadWrite(s3BatchOperationsRole)
@@ -134,6 +136,10 @@ export class TextractPipelineStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
+    const zipExtractionQueue = new sqs.Queue(this, 'zipExtractionQueue', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    })
+
 
 
     //Trigger
@@ -205,10 +211,12 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     s3Processor.addLayers(helperLayer)
     //Trigger
+    /*
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
       events: [ s3.EventType.OBJECT_CREATED ],
       filters: [{ prefix: 'tenders/'}]
     }));
+       */
     //Permissions
     documentsTable.grantReadWriteData(s3Processor)
     syncJobsQueue.grantSendMessages(s3Processor)
@@ -268,6 +276,7 @@ export class TextractPipelineStack extends cdk.Stack {
     pdftoimgQueue.grantSendMessages(documentProcessor)
     htmltoboundingboxQueue.grantSendMessages(documentProcessor)
     pdfToBoundingBoxAndTextQueue.grantSendMessages(documentProcessor)
+    zipExtractionQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -469,7 +478,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Job Processor (Start jobs using Async APIs)
     const htmlToBoundingBox = new lambda.Function(this, 'HtmlToBoundingBox', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('../lambda/function/htmltoboundingbox'),
+      code: lambda.Code.asset('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),
@@ -485,9 +494,11 @@ export class TextractPipelineStack extends cdk.Stack {
     htmlToBoundingBox.addLayers(pythonModulesLayer)
     htmlToBoundingBox.addLayers(helperLayer)
 
+    /*
     htmlToBoundingBox.addEventSource(new SqsEventSource(htmltoboundingboxQueue, {
       batchSize: 1
     }));
+    */
 
     //Permissions
     contentBucket.grantRead(htmlToBoundingBox)
@@ -510,6 +521,32 @@ export class TextractPipelineStack extends cdk.Stack {
     pdfGenerator.grantInvoke(asyncProcessor)
     */
 
+    // Zip extraction lambda
+    const zipExtraction = new lambda.Function(this, 'zipExtraction', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('../lambda/function/zipExtraction'),
+      handler: 'lambda_function.lambda_handler',
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 1280,
+      environment: {
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+      }
+    });
+
+    zipExtraction.addLayers(pythonModulesLayer);
+    zipExtraction.addLayers(helperLayer);
+    zipExtraction.addEventSource(new SqsEventSource(zipExtractionQueue, {
+      batchSize: 1
+    }));
+    // Permissions
+    zipExtractionQueue.grantSendMessages(zipExtraction)
+    contentBucket.grantRead(zipExtraction)
+    existingContentBucket.grantReadWrite(zipExtraction)
+    outputBucket.grantReadWrite(zipExtraction)
+
     // Async Job Processor (Start jobs using Async APIs)
     const pdfToBoundingBox = new lambda.Function(this, 'PdfToBboxAndText', {
       runtime: lambda.Runtime.PYTHON_3_8,
@@ -524,6 +561,7 @@ export class TextractPipelineStack extends cdk.Stack {
         ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+        EXTRACT_PDF_LINES: "true",
       }
     });
 

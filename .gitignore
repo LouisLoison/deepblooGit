@@ -3,10 +3,14 @@
 !jest.config.js
 *.d.ts
 node_modules
+__pycache__/
 
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Use for SAM
+template.yaml
 
 # Env folder
 textract-pipeline/lambda/pipenv/
@@ -18,6 +22,10 @@ textract-pipeline/lambda/pipenv/
 lambda/layer/combined/
 lambda/layer/pipenv/bin
 lambda/layer/pipenv/python
+lambda/layer/gs
 lambda/libjs/*.tgz
+lambda/function/*/config
+lambda/function/*/global
+lambda/build/
 
 .*.swp
