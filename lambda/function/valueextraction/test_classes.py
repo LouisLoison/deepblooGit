@@ -4,14 +4,20 @@ from classes import *
 
 class TestClassUnit(unittest.TestCase):
     def setUp(self):
-        self.unit = Unit("kilowatt", "power")
+        self.unit1 = Unit("kilowatt", "power")
+        self.unit2 = Unit("kW", "power")
 
     def test_attributes(self):
         """Test whether the attributes were correctly assigned"""
-        self.assertEqual(self.unit.name, "kilowatt")
-        self.assertEqual(self.unit.entity, "power")
-        self.assertEqual(self.unit.ref_unit, "watt")
-        self.assertEqual(self.unit.uri, "")
+        self.assertEqual(self.unit1.name, "kilowatt")
+        self.assertEqual(self.unit1.entity, "power")
+        self.assertEqual(self.unit1.ref_unit, "watt")
+        self.assertEqual(self.unit1.uri, "")
+
+        self.assertEqual(self.unit2.name, "kW")
+        self.assertEqual(self.unit2.entity, "power")
+        self.assertEqual(self.unit2.ref_unit, "watt")
+        self.assertEqual(self.unit2.uri, "")
 
 
 class TestClassMetric(unittest.TestCase):
