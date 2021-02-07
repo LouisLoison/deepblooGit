@@ -10,7 +10,9 @@ class TestClassUnit(unittest.TestCase):
         """Test whether the attributes were correctly assigned"""
         self.assertEqual(self.unit.name, "kilowatt")
         self.assertEqual(self.unit.entity, "power")
-        self.assertEqual(self.unit.ref_unit, "W")
+        self.assertEqual(self.unit.ref_unit, "watt")
+        self.assertEqual(self.unit.uri, "")
+
 
 class TestClassMetric(unittest.TestCase):
     def setUp(self):
@@ -19,10 +21,6 @@ class TestClassMetric(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.metric), "25.40 kilowatt")
         # TODO: Assert that units are always written with their full names
-
-    def test_to(self):
-        """Test the conversion of a metric from a unit to another unit"""
-
 
 
 if __name__ == '__main__':
