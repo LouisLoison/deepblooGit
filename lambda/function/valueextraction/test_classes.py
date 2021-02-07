@@ -7,7 +7,7 @@ class TestClassMetric(unittest.TestCase):
         self.metric = Metric(25.4, "kilowatt", "power", "25kW")
 
     def test_str(self):
-        self.assertEqual(str(metric), "25.40 kilowatt")
+        self.assertEqual(str(self.metric), "25.40 kilowatt")
 
 
 if __name__ == '__main__':
