@@ -67,7 +67,7 @@ class Metric:
         return unit_string
     
     def __str__(self):
-        return "{:.2f} {}".format(self.value, self.unit.full_name)
+        return "{:.2f} {}".format(self.value, self.unit.name)
     
     def to(self, unit_name):
         """Converts a metric to another unit
@@ -146,7 +146,7 @@ class Unit:
     full_name: str
         unit full name (eg. ampere)
     ref_unit: str
-        reference unit (eg. watt for kilowatt)
+        reference unit full name (eg. watt for kilowatt)
     entity: str
         entity represented by the unit
     uri: str, optional
@@ -165,7 +165,7 @@ class Unit:
             WikiPedia URI
         """
         self.name = name
-        self.full_name = str(ureg(name).units)
+        # TODO: Fill full_name attribute
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
         # in the reference file 
@@ -179,7 +179,8 @@ class Unit:
         # the value of the reference unit using it
         entity_row = unit_references[unit_references.entity == entity]
         if not entity_row.empty:
-            self.ref_unit = str(entity_row["unit"].iloc[0])
+            # self.ref_unit = str(entity_row["unit"].iloc[0])
+            self.ref_unit = str(entity_row["unit_full_name"].iloc[0])
 
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
