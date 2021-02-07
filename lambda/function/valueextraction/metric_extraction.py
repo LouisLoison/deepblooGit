@@ -65,8 +65,6 @@ def extract_metrics(txt, dimensions=["power", "electrical potential",
         noise = list(map(quantulum_to_metric, noise))
         return quants_of_interest, noise
     
-    
-
 
 def quantulum_to_metric(quant):
     """Convert a quantulum Quantity object into a

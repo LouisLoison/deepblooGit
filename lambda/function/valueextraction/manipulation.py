@@ -4,10 +4,6 @@ previously extracted from a text
 """
 
 from pint import UnitRegistry
-from xml.sax.expatreader import AttributesImpl
-from lib2to3.pytree import convert
-from tkinter.test.support import units
-from tkinter.tix import Form
 
 ureg = UnitRegistry()
 Q_ = ureg.Quantity

@@ -25,6 +25,7 @@ print(unit)
 # Convert
 print("Base unit :", manipulation.to_base_unit(value, unit))
 print("Entity :", quants[0].unit.entity)
+print("Compact form :", manipulation.to_compact())
 
 
 ########################

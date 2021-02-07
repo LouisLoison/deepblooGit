@@ -10,6 +10,9 @@ import json
 import pandas as pd
 import utilities
 
+
+# TODO: Place as much code blocks as possible in functions
+
 # List of the values to store in the destination file
 metrics_lines = []
 # List of tenders that supposedly do not have metrics
