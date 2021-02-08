@@ -227,91 +227,93 @@ export class ApiStack extends cdk.Stack {
     )
 
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
-    const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
-      apiId: api.apiId,
-      fieldName: "GetTender",
-      typeName: "Query",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
-        { encoding: "utf8" }
-      ),
-      responseMappingTemplate: `
-            #if($ctx.error)
-                $utils.error($ctx.error.message, $ctx.error.type)
-            #end
-            $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
-      dataSourceName: auroraDataSource.name,
-    })
-    listEventsResolver.addDependsOn(auroraDataSource);
 
-    hivebriteDataSource.createResolver({ //TODO CHANGE IT TO CfnResolver class
-      typeName: 'Query',
-      fieldName: 'HivebriteUsers',
-      requestMappingTemplate: MappingTemplate.fromString(
-        `{
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-              "field": "HivebriteUsers",
-              "arguments":  $utils.toJson($context.arguments)
-          }
-      }`),
-      responseMappingTemplate: MappingTemplate.fromString(
-        `
-      #if( $context.result && $context.result.Error )
-        $utils.error($context.result.Error)
-      #else
-        $utils.toJson($context.result.data)
-      #end
-        `,
-      ),
-    })
+    /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
+       apiId: api.apiId,
+       fieldName: "GetTender",
+       typeName: "Query",
+       requestMappingTemplate: readFileSync(
+         `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
+         { encoding: "utf8" }
+       ),
+       responseMappingTemplate: `
+             #if($ctx.error)
+                 $utils.error($ctx.error.message, $ctx.error.type)
+             #end
+             $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
+       dataSourceName: auroraDataSource.name,
+     })
+     listEventsResolver.addDependsOn(auroraDataSource);
+ 
+     hivebriteDataSource.createResolver({ //TODO CHANGE IT TO CfnResolver class
+       typeName: 'Query',
+       fieldName: 'HivebriteUsers',
+       requestMappingTemplate: MappingTemplate.fromString(
+         `{
+           "version": "2017-02-28",
+           "operation": "Invoke",
+           "payload": {
+               "field": "HivebriteUsers",
+               "arguments":  $utils.toJson($context.arguments)
+           }
+       }`),
+       responseMappingTemplate: MappingTemplate.fromString(
+         `
+       #if( $context.result && $context.result.Error )
+         $utils.error($context.result.Error)
+       #else
+         $utils.toJson($context.result.data)
+       #end
+         `,
+       ),
+     })
+     */
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
-    const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizer', {
+    const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizerFunction', {
       apiId: api.apiId,
-      name: "TokenAuthorizer",
+      name: "TokenAuthorizerFunction",
       functionVersion: "2018-05-29",
       description: "description",
       dataSourceName: userDataSource.name,
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.tokenAuthorizer.request.vtl`,
+        `${__dirname}/../../appsync/function.TokenAuthorizerFunction.request.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.tokenAuthorizer.response.vtl`,
+        `${__dirname}/../../appsync/function.TokenAuthorizerFunction.response.vtl`,
         { encoding: "utf8" }
       )
     })
 
-    const UserFunction = new CfnFunctionConfiguration(this, 'User', {
+    const HivebriteFunction = new CfnFunctionConfiguration(this, 'HivebriteFunction', {
       apiId: api.apiId,
-      name: "User",
+      name: "HivebriteFunction",
       functionVersion: "2018-05-29",
       description: "description",
-      dataSourceName: userDataSource.name,
+      dataSourceName: hivebriteDataSource.name,
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.user.request.vtl`,
+        `${__dirname}/../../appsync/function.HivebriteFunction.request.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.user.response.vtl`,
+        `${__dirname}/../../appsync/function.HivebriteFunction.response.vtl`,
         { encoding: "utf8" }
       )
     })
 
-    const GetTenderFunction = new CfnFunctionConfiguration(this, `GetTender`, {
+    const GetTenderFunction = new CfnFunctionConfiguration(this, `GetTenderFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
       description: "description",
       dataSourceName: auroraDataSource.name,
-      name: "GetTender",
+      name: "GetTenderFunction",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.GetTender.request.vtl`,
+        `${__dirname}/../../appsync/function.GetTenderFunction.request.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.GetTender.response.vtl`,
+        `${__dirname}/../../appsync/function.GetTenderFunction.response.vtl`,
         { encoding: "utf8" }
       ),
     })
@@ -322,8 +324,14 @@ export class ApiStack extends cdk.Stack {
       kind: 'PIPELINE',
       typeName: "Query",
       fieldName: "GetUser",
-      requestMappingTemplate: '{}',
-      responseMappingTemplate: '$util.toJson($ctx.prev.result)',
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/pipeline.before.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/pipeline.after.vtl`,
+        { encoding: "utf8" }
+      ),
       pipelineConfig: {
         functions: [TokenAuthorizerFunction.attrFunctionId]
       },
@@ -335,8 +343,14 @@ export class ApiStack extends cdk.Stack {
       kind: 'PIPELINE',
       typeName: "Query",
       fieldName: "GetTender",
-      requestMappingTemplate: '{}',
-      responseMappingTemplate: '$util.toJson($ctx.prev.result)',
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/pipeline.before.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/pipeline.after.vtl`,
+        { encoding: "utf8" }
+      ),
       pipelineConfig: {
         functions: [TokenAuthorizerFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
       },

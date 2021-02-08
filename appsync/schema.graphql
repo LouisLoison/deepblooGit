@@ -89,6 +89,5 @@ type User{
 
 type Query {
   GetTender(userToken:String!, id: ID): Tender
-  HivebriteUsers(pageStart: Int!, perPage: Int!, pageMax: Int ): HivebriteUserConnection
   GetUser(userToken:String!): User
 }
