@@ -3,6 +3,7 @@
 This module implements functions to extract metrics from text
 """
 
+import csv
 from pint import UnitRegistry
 from quantulum3 import parser
 from classes import Metric
@@ -94,7 +95,7 @@ def extract_metrics_from_csv(csv_path, save_json=True):
         path to the CSV file
     save_json: bool, optional, default=True
         When set to True, the result of the function
-        is saved in a JSON file
+        is saved to a JSON file
 
     Returns
     -------
@@ -106,3 +107,6 @@ def extract_metrics_from_csv(csv_path, save_json=True):
         - the descriptions supposedly without metrics
     """
 
+    # Setup: open the CSV file
+    csv_file = open(csv_path)
+    tenders = csv.DictReader(csv_file)
