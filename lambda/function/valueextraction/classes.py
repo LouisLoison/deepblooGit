@@ -197,8 +197,6 @@ class Unit:
         return {'unit': self.name, 'entity': self.entity, 'ref_unit': self.ref_unit,
                 'uri': self.uri}
 
-    csv_file.close()
-
 
 if __name__ == "__main__":
     print("Test de la classe Unit")
@@ -226,3 +224,5 @@ if __name__ == "__main__":
     print("Unit:", unit.name)
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
+
+csv_file.close()
