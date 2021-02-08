@@ -1,6 +1,6 @@
 # coding: utf-8
 
-"""This script extracts metrics from the database TSV export
+"""This script extracts metrics from the database CSV/TSV export
 and stores them in another
 """
 
@@ -18,12 +18,12 @@ tenders_without_metrics = []
 # List of metrics that are not interesting for us
 metrics_noise = []
 
-# Destination TSV file
+# Destination CSV file
 dest_file = "../../test/valueextraction/output_data/extracted_metrics.csv"
 # JSON file
 json_file = "../../test/valueextraction/output_data/extracted_metrics.json"
 
-# Step 1: Read the first 100 lines of the TSV file
+# Step 1: Read the first 100 lines of the CSV file
 print("Acquiring tenders data...")
 tenders_data = pd.read_csv("export-titres-desc-20210113.csv", sep=",", 
                            nrows=100)
