@@ -180,10 +180,9 @@ class Unit:
         
         # If the entity is referenced in unit_references.csv, define
         # the value of the reference unit using it
-        entity_row = unit_references[unit_references.entity == entity]
-        if not entity_row.empty:
-            # self.ref_unit = str(entity_row["unit"].iloc[0])
-            self.ref_unit = str(entity_row["unit_full_name"].iloc[0])
+        for unit_reference in unit_references:
+            if unit_reference['entity'] == entity:
+                self.ref_unit = unit_reference['unit_full_name']
 
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
@@ -197,6 +196,8 @@ class Unit:
         """Convert an instance of the class Unit to a dictionary"""
         return {'unit': self.name, 'entity': self.entity, 'ref_unit': self.ref_unit,
                 'uri': self.uri}
+
+    csv_file.close()
 
 
 if __name__ == "__main__":
