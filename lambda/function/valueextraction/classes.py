@@ -3,11 +3,14 @@ This module implements a class Quantity designed specifically
 for the needs of the project
 """
 
-import pandas as pd
+import csv
 from pint import UnitRegistry
 
+# SETTING UP THE MODULE
 
-unit_references = pd.read_csv("unit_references.csv")
+# unit_references = pd.read_csv("unit_references.csv")
+csv_file = open('unit_references.csv')
+unit_references = csv.DictReader(csv_file)
 ureg = UnitRegistry()  # Pint library unit registry
 Q_ = ureg.Quantity  # Pint Quantity class
 
