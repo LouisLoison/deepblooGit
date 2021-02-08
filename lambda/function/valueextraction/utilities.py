@@ -2,7 +2,7 @@
 processes"""
 
 import pandas as pd
-import json
+
 
 def csv_to_json(csv_file_path, json_file_path, sep=","):
     """From an input CSV file, this procedure produces a JSON that is 
@@ -20,4 +20,3 @@ def csv_to_json(csv_file_path, json_file_path, sep=","):
     
     csv_file = pd.read_csv(csv_file_path, sep=sep)
     csv_file.to_json(json_file_path, orient="records")
-    
