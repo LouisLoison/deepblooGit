@@ -77,3 +77,32 @@ def quantulum_to_metric(quant):
                     )
     
     return metric
+
+
+# TODO: Decorator to ensure csv_path is a CSV file
+# TODO: Decorator to ensure the CSV file follows the defined structure
+def extract_metrics_from_csv(csv_path, save_json=True):
+    """Extract metrics from a CSV file.
+
+    The CSV file ought to respect the following
+    structure for its fields:
+    tenderuuid, title, description
+
+    Parameters
+    ----------
+    csv_path: str
+        path to the CSV file
+    save_json: bool, optional, default=True
+        When set to True, the result of the function
+        is saved in a JSON file
+
+    Returns
+    -------
+    metrics_dict: dict
+        Dictionary with information on:
+        - the relevant metrics retrieved by the function
+        - the metrics considered as noise
+        - the titles supposedly without metrics
+        - the descriptions supposedly without metrics
+    """
+
