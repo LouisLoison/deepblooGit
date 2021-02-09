@@ -81,10 +81,9 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
         const snakedKey = key.replace(/[\w]([A-Z])/g, (m) => m[0] + "_" + m[1]).toLowerCase()
         acc[snakedKey] = object[key]
         return acc
-      }, {}));
-      // console.log(snakedObjects)
+      }, {}))
       const client = await this.connectToPrivateAppSearch()
-      const response = client.indexDocuments(engineName, snakedObjects)
+      const response = await client.indexDocuments(engineName, snakedObjects)
       resolve(response)
     } catch (err) { reject(err) }
   })
@@ -105,7 +104,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
         const snakedKey = key.replace(/[\w]([A-Z])/g, (m) => m[0] + "_" + m[1]).toLowerCase()
         acc[snakedKey] = object[key]
         return acc
-      }, {}));
+      }, {}))
       const client = await this.connectToPrivateAppSearch()
       const response = client.updateDocuments(engineName, snakedObjects)
       resolve(response)
@@ -139,6 +138,10 @@ exports.tendersFormat = (tenders) => {
   
         tenderNew.description = htmlToText.fromString(tenderNew.description)
 
+        if (tenderNew.bidDeadlineDate == '--') {
+          tenderNew.bidDeadlineDate = null
+        }
+
         tenderNew.buyer_name = ''
         if (tenderNew.buyer && tenderNew.buyer.name) {
           tenderNew.buyer_name = tenderNew.buyer.name
@@ -150,7 +153,6 @@ exports.tendersFormat = (tenders) => {
         delete tenderNew.cpvsOrigine
         delete tenderNew.sourceUrls
         delete tenderNew.fileSource
-        delete tenderNew.origine
         delete tenderNew.dgmarketId
         tenderNews.push(tenderNew)
       }

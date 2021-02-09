@@ -1761,6 +1761,61 @@ exports.tenderCriterions = (filter) => {
   })
 }
 
+exports.tenderCriterionCpvs = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const BddTool = require(process.cwd() + '/global/BddTool')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
+
+      let query = `
+        SELECT      tenderCriterionCpv.tenderCriterionCpvId AS "tenderCriterionCpvId", 
+                    tenderCriterionCpv.tenderId AS "tenderId", 
+                    tenderCriterionCpv.documentId AS "documentId", 
+                    tenderCriterionCpv.cpvId AS "cpvId", 
+                    tenderCriterionCpv.value AS "value", 
+                    tenderCriterionCpv.word AS "word", 
+                    tenderCriterionCpv.findCount AS "findCount", 
+                    tenderCriterionCpv.scope AS "scope", 
+                    tenderCriterionCpv.status AS "status", 
+                    tenderCriterionCpv.creationDate AS "creationDate", 
+                    tenderCriterionCpv.updateDate AS "updateDate" 
+        FROM        tenderCriterionCpv 
+      `
+      let where = ``
+      if (filter) {
+        if (filter.tenderId) {
+          if (where !== '') { where += 'AND ' }
+          where += `tenderCriterionCpv.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+        }
+      }
+      if (where !== '') { query += '\nWHERE ' + where }
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      const tenderCriterionCpvs = []
+      for (let record of recordset) {
+        tenderCriterionCpvs.push({
+          tenderCriterionCpvId: record.tenderCriterionCpvId,
+          tenderId: record.tenderId,
+          documentId: record.documentId,
+          cpvId: record.cpvId,
+          value: record.value,
+          word: record.word,
+          findCount: record.findCount,
+          scope: record.scope,
+          status: record.status,
+          creationDate: record.creationDate,
+          updateDate: record.updateDate,
+        })
+      }
+
+      resolve(tenderCriterionCpvs)
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
 exports.tenderFilterAddUpdate = (tenderFilter) => {
   return new Promise(async (resolve, reject) => {
     try {

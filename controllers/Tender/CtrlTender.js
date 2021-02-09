@@ -52,6 +52,12 @@ exports.tenderCriterions = (req, res) => {
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
+exports.tenderCriterionCpvs = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterionCpvs(req.body.filter).then((data) => {
+    res.end(JSON.stringify({ success: true, data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
 exports.TenderGroupDelete = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupDelete(req.body.tenderGroupId).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
