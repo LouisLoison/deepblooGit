@@ -32,7 +32,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     }
   }
   if (cpvOkCount === 0) {
-    return(null) // To delete
+    return (null) // To delete
   }
 
   // Categories
@@ -167,7 +167,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       }
     }
   }
-  return(JSON.parse(JSON.stringify(tenderNew)))
+  return (JSON.parse(JSON.stringify(tenderNew)))
 }
 
 let cpvList
@@ -178,7 +178,7 @@ exports.analyzeTender = async (tenderSrc) => {
   if (!tender) {
     analyzedData = {
       ...tenderSrc,
-      exclusion:  importOrigine.exclusion,
+      exclusion: importOrigine.exclusion,
       exclusionWord: importOrigine.exclusionWord,
       status: importOrigine.status,
     }
@@ -187,7 +187,7 @@ exports.analyzeTender = async (tenderSrc) => {
   else {
     analyzedData = tender
     formatedData = await this.tenderFormat(tender, cpvList, textParseList)
-    if(!formatedData) {
+    if (!formatedData) {
       formatedData = { status: -1 }
     } else {
       analyzedData.status = 20
@@ -196,3 +196,12 @@ exports.analyzeTender = async (tenderSrc) => {
   }
   return { analyzedData, formatedData }
 }
+
+exports.completeTender = async (tender) {
+  const { analyzedData, formatedData } = await analyzeTender(tender)
+  const elasticDoc = {
+    ...analyzedData,
+    ...formatedData,
+    id: tender.tenderUuid,
+  }
+} 
