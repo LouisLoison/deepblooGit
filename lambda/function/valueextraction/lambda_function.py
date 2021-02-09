@@ -10,5 +10,7 @@ def lambda_handler(event, context):
     title_metrics = metric_extraction.extract_metrics(title)
     description_metrics = metric_extraction.extract_metrics(description)
     
-    return json.dumps({'title_metrics': title_metrics,
-            'description_metrics': description_metrics})
+    return json.dumps({'title_metrics': list(map(lambda m: m.to_dict,
+                                                 title_metrics)),
+                       'description_metrics': list(map(lambda m: m.to_dict,
+                                                       description_metrics))})
