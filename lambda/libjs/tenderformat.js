@@ -197,6 +197,7 @@ exports.analyzeTender = async (tenderSrc) => {
   return { analyzedData, formatedData }
 }
 
+/*
 exports.completeTender = async (tender) => {
   const { analyzedData, formatedData } = await this.analyzeTender(tender)
   return {
@@ -205,3 +206,4 @@ exports.completeTender = async (tender) => {
     id: tender.tenderUuid,
   }
 }
+*/
