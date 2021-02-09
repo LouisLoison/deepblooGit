@@ -9,8 +9,9 @@ from pint import UnitRegistry
 # SETTING UP THE MODULE
 
 # unit_references = pd.read_csv("unit_references.csv")
-csv_file = open('unit_references.csv')
-unit_references = csv.DictReader(csv_file)
+# csv_file = open('unit_references.csv')
+# unit_references = csv.DictReader(csv_file)
+unit_references_path = 'unit_references.csv'
 ureg = UnitRegistry()  # Pint library unit registry
 Q_ = ureg.Quantity  # Pint Quantity class
 
@@ -180,9 +181,11 @@ class Unit:
         
         # If the entity is referenced in unit_references.csv, define
         # the value of the reference unit using it
-        for unit_reference in unit_references:
-            if unit_reference['entity'] == entity:
-                self.ref_unit = unit_reference['unit_full_name']
+        with open(unit_references_path) as csv_file:
+            unit_references = csv.DictReader(csv_file)
+            for unit_reference in unit_references:
+                if unit_reference['entity'] == entity:
+                    self.ref_unit = unit_reference['unit_full_name']
 
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
@@ -217,12 +220,9 @@ if __name__ == "__main__":
     print(metric)
     metric.ito_official()
     print(metric)
-    
-    
+
     print("Defining a unit not referenced in unit_references.csv")
     unit = Unit("Hz", "wavelength")
     print("Unit:", unit.name)
     print("Entity:", unit.entity)
     print("Reference unit:", unit.ref_unit)
-
-csv_file.close()
