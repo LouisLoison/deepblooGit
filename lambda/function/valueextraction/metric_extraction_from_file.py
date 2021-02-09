@@ -46,13 +46,13 @@ print("Completed!")
 # For the sake of seeing more clearly what is written within the titles
 # and descriptions, let's save them in files
 # TODO: handle different character sets
-with open("tests/output_data/titles.txt", "w") as titles_out, open("tests/output_data/descriptions.txt", "w") as desc_out:
-    for i in range(100):
-        try:
-            titles_out.write(tenders_data["title"][i] + ";\n")
-            desc_out.write(tenders_data["description"][i] + ";\n\n")
-        except UnicodeEncodeError:
-            pass
+# with open("tests/output_data/titles.txt", "w") as titles_out, open("tests/output_data/descriptions.txt", "w") as desc_out:
+#     for i in range(100):
+#         try:
+#             titles_out.write(tenders_data["title"][i] + ";\n")
+#             desc_out.write(tenders_data["description"][i] + ";\n\n")
+#         except UnicodeEncodeError:
+#             pass
 
 # Step 3: Apply the extraction function to the titles and descriptions
 print("Metrics extraction...")
