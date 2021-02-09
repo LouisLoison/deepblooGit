@@ -88,6 +88,11 @@ export default {
         link: { name: 'SettingCpv' }
       },
       {
+        ico: 'fa-cogs',
+        label: 'Text parse',
+        link: { name: 'SettingTextParse' }
+      },
+      {
         ico: 'fa-circle',
         label: 'Annonce',
         link: { name: 'SettingAnnonce' }

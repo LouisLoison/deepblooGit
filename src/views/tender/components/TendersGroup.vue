@@ -56,41 +56,34 @@
       </div>
     </div>
     <div v-else>
-      <!-- My pipeline of tenders -->
+      <v-divider />
+
+      <!-- Add a business pipeline with search -->
       <div
-        @click.stop="isMyPipelineChange()"
+        v-if="getIsBusinessMembership"
+        @click="addGroupWithSearch()"
         class="group-list-grid"
-        :style="
-          !isMyPipeline
-            ? ''
-            : `background-color: #c1c9ce !important; border-color: #c1c9ce !important;`
-        "
       >
-        <div class="text-center pa-1" style="pointer-events: none;">
-          <v-avatar
-            size="40"
-            class="mr-3"
-            style="min-width: 40px;"
-            color="blue-grey lighten-3"
-          >
+        <div class="text-center pa-1">
+          <v-avatar size="26" class="ml-2">
             <v-icon
-              size="14"
-              class="white--text"
+              block
+              text
+              class="mr-3"
+              style="font-size: 16px;"
             >
-              fa-filter
+              fa-plus
             </v-icon>
           </v-avatar>
         </div>
         <div
-          class="cursor-pointer"
-          style="display: flex; align-items: center; text-shadow: rgb(255, 255, 255) 1px 0px 10px;"
+          class="grey--text text--darken-1"
+          style="display: flex; align-items: center;"
         >
-          My pipeline of tenders
+          Add an automatic query
         </div>
-        <div @click.stop></div>
+        <div></div>
       </div>
-
-      <v-divider />
 
       <!-- Tender business pipeline with search -->
       <drop
@@ -114,38 +107,17 @@
           "
         >
           <div class="text-center pa-1" style="pointer-events: none;">
-            <v-avatar
-              v-if="!group.select"
-              size="40"
-              class="mr-3"
-              style="min-width: 40px;"
+            <v-icon
+              v-if="group.searchRequest && group.searchRequest !== ''"
+              size="14"
+              class="white--text ma-3"
               :style="{
-                'background-color': `${group.color} !important`,
-                'border-color': `${group.color} !important`
+                'color': `${group.color} !important`,
+                'color': `${group.color} !important`
               }"
             >
-              <v-icon
-                v-if="group.searchRequest && group.searchRequest !== ''"
-                size="14"
-                class="white--text"
-              >
-                fa-filter
-              </v-icon>
-              <span
-                v-else
-                class="body-2 headline white--text"
-              >
-                {{ group.count > -1 ? group.count : "--" }}
-              </span>
-            </v-avatar>
-            <v-avatar v-else size="40" class="mr-3" color="white">
-              <span
-                class="body-2 headline"
-                :style="{ color: `${group.color} !important` }"
-              >
-                {{ group.count > -1 ? group.count : "--" }}
-              </span>
-            </v-avatar>
+              fa-filter
+            </v-icon>
           </div>
           <div
             class="cursor-pointer"
@@ -235,9 +207,34 @@
         </div>
       </drop>
 
-      <v-divider
-        v-if="getTenderGroupsWithSearch && getTenderGroupsWithSearch.length"
-      />
+      <v-divider v-if="getTenderGroupsWithSearch && getTenderGroupsWithSearch.length" />
+
+      <!-- Add a business pipeline without search -->
+      <div
+        v-if="getIsBusinessMembership"
+        @click="openGroupDialog()"
+        class="group-list-grid"
+      >
+        <div class="text-center pa-1">
+          <v-avatar size="26" class="ml-2">
+            <v-icon
+              block
+              text
+              class="mr-3"
+              style="font-size: 16px;"
+            >
+              fa-plus
+            </v-icon>
+          </v-avatar>
+        </div>
+        <div
+          class="grey--text text--darken-1"
+          style="display: flex; align-items: center;"
+        >
+          Add a business pipeline
+        </div>
+        <div></div>
+      </div>
 
       <!-- Tender business pipeline without search -->
       <drop
@@ -366,33 +363,6 @@
           </div>
         </div>
       </drop>
-
-      <!-- Add a business pipeline -->
-      <div
-        v-if="getIsBusinessMembership"
-        @click="openGroupDialog()"
-        class="group-list-grid"
-      >
-        <div class="text-center pa-1">
-          <v-avatar size="40" class="ml-2">
-            <v-icon
-              block
-              text
-              class="mr-3"
-              style="font-size: 16px;"
-            >
-              fa-plus
-            </v-icon>
-          </v-avatar>
-        </div>
-        <div
-          class="grey--text text--darken-1"
-          style="display: flex; align-items: center;"
-        >
-          Add a business pipeline
-        </div>
-        <div></div>
-      </div>
     </div>
 
     <!-- Dialog -->
@@ -733,17 +703,21 @@ export default {
       if (this.tenderGroupId >= 0) {
         this.tenderGroupId = null
       }
-      this.$emit('erraseSearchFilter')
       this.$emit('change', {
         isAllTenders: this.isAllTenders,
         isMyPipeline: this.isMyPipeline,
         isWithoutGroup: this.isWithoutGroup,
         tenderGroupId: this.tenderGroupId,
       })
+      this.$emit('erraseSearchFilter')
     },
 
     saveBusinessPipeline(tenderGroup) {
       this.$emit('updateBusinessPipelineSearch', tenderGroup)
+    },
+
+    addGroupWithSearch() {
+      this.$emit('addBusinessPipelineSearch')
     },
 
     eraseBusinessPipeline(tenderGroup) {
@@ -800,7 +774,7 @@ export default {
         isWithoutGroup: this.isWithoutGroup,
         tenderGroupId: this.tenderGroupId,
       })
-      this.$emit('erraseFilter')
+      // this.$emit('erraseFilter')
     },
   },
 }

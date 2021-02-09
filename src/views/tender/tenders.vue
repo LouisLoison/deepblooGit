@@ -38,6 +38,7 @@
               @erraseFilter="erraseSearchFilter()"
               @updateBusinessPipelineSearch="updateBusinessPipelineSearch($event)"
               @eraseBusinessPipelineSearch="eraseBusinessPipelineSearch($event)"
+              @addBusinessPipelineSearch="addBusinessPipelineSearch()"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -329,8 +330,9 @@ export default {
     config.searchQuery.facets.user_id = {
       type: 'range',
       ranges: [
-        { from: 1, name: 'Tender created by Deepbloo user' },
-        { from: this.getUserId, to: this.getUserId, name: 'Tender created by you' },
+        { from: 0, name: 'Public tenders' },
+        { from: 1, name: 'Opportunities from DB community' },
+        { from: this.getUserId, to: this.getUserId + 1, name: 'My opportunities' },
       ]
     }
 
@@ -572,6 +574,7 @@ export default {
       isMyPipeline,
       isAllTenders
     ) {
+      this.erraseSearchFilter()
       this.isAllTenders = isAllTenders
       this.isWithoutGroup = isWithoutGroup
       this.tenderGroupId = tenderGroupId
@@ -587,6 +590,34 @@ export default {
         this.filter.region_lvl1 = []
       }
       this.isMyPipeline = isMyPipeline
+
+      if (
+        this.filter.groups
+        && this.filter.groups.length
+      ) {
+        const tenderGroups = this.getDataTenderGroups.data
+        for (const tenderGroupId of this.filter.groups) {
+          const tenderGroup = tenderGroups.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
+          if (
+            tenderGroup
+            && tenderGroup.searchRequest
+          ) {
+            const searchRequest = JSON.parse(tenderGroup.searchRequest)
+            this.searchInputValue = searchRequest.searchInputValue
+            // driver.getActions().setSearchTerm(this.searchInputValue)
+            for (const field in searchRequest.filter) {
+              for (const value of searchRequest.filter[field]) {
+                if (!this.filter[field].includes(value)) {
+                  this.filter[field].push(value)
+                }
+              }
+            }
+          } else {
+            // this.driver.addFilter('groups', tenderGroupId, 'any')
+          }
+        }
+      }
+      
       this.setSearchFilter()
     },
 
@@ -662,33 +693,6 @@ export default {
         }
         this.$refs.TendersFilter.updateFilter(this.filter)
       }
-
-      if (
-        this.filter.groups
-        && this.filter.groups.length
-      ) {
-        const tenderGroups = this.getDataTenderGroups.data
-        for (const tenderGroupId of this.filter.groups) {
-          const tenderGroup = tenderGroups.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
-          if (
-            tenderGroup
-            && tenderGroup.searchRequest
-          ) {
-            const searchRequest = JSON.parse(tenderGroup.searchRequest)
-            this.searchInputValue = searchRequest.searchInputValue
-            driver.getActions().setSearchTerm(this.searchInputValue)
-            for (const field in searchRequest.filter) {
-              for (const value of searchRequest.filter[field]) {
-                if (!this.filter[field].includes(value)) {
-                  this.filter[field].push(value)
-                }
-              }
-            }
-          } else {
-            this.driver.addFilter('groups', tenderGroupId, 'any')
-          }
-        }
-      }
       
       for (let facet in this.filter) {
         if (facet !== 'groups') {
@@ -735,6 +739,17 @@ export default {
       }
     },
 
+    addBusinessPipelineSearch() {
+      const tenderGroup = {
+        searchRequest: JSON.stringify({
+          label: '',
+          color: '#aaaaaa',
+          searchInputValue: this.searchInputValue,
+          filter: this.filter,
+        })
+      }
+      this.$refs.TendersGroup.openGroupDialog(tenderGroup)
+    },
   }
 }
 </script>

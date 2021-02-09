@@ -160,10 +160,21 @@
     </v-card>
 
     <v-card
+      @click="
+        getIsPremiumMembership
+          ? showInsufficientRightDialog()
+          : null
+      "
       class="mx-auto mb-3"
       outlined
     >
-      <v-card-text>
+      <v-card-text
+        :style="
+          getIsPremiumMembership
+            ? 'pointer-events: none; opacity: 0.5;'
+            : ''
+        "
+      >
         <SearchFacet
           :checked="filter.scope_of_works"
           :facet="searchState.facets.scope_of_works[0]"
@@ -175,31 +186,27 @@
     </v-card>
 
     <v-card
+      @click="
+        getIsPremiumMembership
+          ? showInsufficientRightDialog()
+          : null
+      "
       class="mx-auto mb-3"
       outlined
     >
-      <v-card-text>
+      <v-card-text
+        :style="
+          getIsPremiumMembership
+            ? 'pointer-events: none; opacity: 0.5;'
+            : ''
+        "
+      >
         <SearchFacet
           :checked="filter.segments"
           :facet="searchState.facets.segments[0]"
           @change="handleFacetChange($event, 'segments')"
           @checkAll="handleFacetCheckAll('segments')"
           @unCheckAll="handleFacetUnCheckAll('segments')"
-        />
-      </v-card-text>
-    </v-card>
-
-    <v-card
-      class="mx-auto mb-3"
-      outlined
-    >
-      <v-card-text>
-        <SearchFacet
-          :checked="filter.designs"
-          :facet="searchState.facets.designs[0]"
-          @change="handleFacetChange($event, 'designs')"
-          @checkAll="handleFacetCheckAll('designs')"
-          @unCheckAll="handleFacetUnCheckAll('designs')"
         />
       </v-card-text>
     </v-card>
@@ -220,10 +227,21 @@
     </v-card>
 
     <v-card
+      @click="
+        getIsPremiumMembership
+          ? showInsufficientRightDialog()
+          : null
+      "
       class="mx-auto mb-3"
       outlined
     >
-      <v-card-text>
+      <v-card-text
+        :style="
+          getIsPremiumMembership
+            ? 'pointer-events: none; opacity: 0.5;'
+            : ''
+        "
+      >
         <SearchFacet
           :checked="filter.brands"
           :facet="searchState.facets.brands[0]"
@@ -261,11 +279,21 @@
     </v-card>
 
     <v-card
-      v-if="getUserType === 1"
+      @click="
+        getIsPremiumMembership
+          ? showInsufficientRightDialog()
+          : null
+      "
       class="mx-auto mb-3"
       outlined
     >
-      <v-card-text>
+      <v-card-text
+        :style="
+          getIsPremiumMembership
+            ? 'pointer-events: none; opacity: 0.5;'
+            : ''
+        "
+      >
         <SearchFacet
           :checked="filter.origine"
           :facet="searchState.facets.origine[0]"
@@ -334,7 +362,9 @@ export default {
   computed: {
     ...mapGetters([
       'getUserType',
+      'getIsFreeMembership',
       'getIsPremiumMembership',
+      'getIsBusinessMembership',
     ]),
   },
 

@@ -29,10 +29,12 @@ const config = {
         size: 200
       },
       country: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       notice_type: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       bid_deadline_timestamp: {
         type: "range",
@@ -72,7 +74,8 @@ const config = {
         type: "value"
       },
       brands: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       origine: {
         type: "value"
@@ -81,7 +84,8 @@ const config = {
         type: "value"
       },
       buyer_name: {
-        type: "value"
+        type: "value",
+        size: 4950
       },
     }
   }

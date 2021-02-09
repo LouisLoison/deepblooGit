@@ -98,6 +98,14 @@ export default [
         component: () => import(`@/views/setting/SettingCpv.vue`)
       },
       {
+        path: '/setting/textparse',
+        meta: {
+          public: true
+        },
+        name: 'SettingTextParse',
+        component: () => import(`@/views/setting/SettingTextParse.vue`)
+      },
+      {
         path: '/setting/annonce',
         meta: {
           public: true
