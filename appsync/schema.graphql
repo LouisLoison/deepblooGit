@@ -5,9 +5,12 @@ schema{
 
 type Tender {
     id: Int
-    datasourceId: Int
+    datasourceId: ID
     procurementId: ID
-    tenderUuid: ID
+    tenderUuid: ID #tenderuuid in db
+    ownerId: ID #owner_id in db
+    algoliaId: ID
+    # userId: ID
     title: String
     description: String
     lang: String
@@ -31,17 +34,14 @@ type Tender {
     cpvDescriptions: String
     words: String
     bidDeadlineDate: String
-    algoliaId: ID
-    userId: ID
     sourceUrl: String
     termDate: String
     fileSource: String
     contractType1: String
     brand: String
     status: Int
-    ownerId: ID
-    creationDate: AWSDateTime
-    updateDate: AWSDateTime
+    creationDate: String
+    updateDate: String
 }
 
 type HivebriteUser{
@@ -85,13 +85,13 @@ type User{
   notifContactByPhone: Int
   notifContactBySms: Int
   notifContactByPost: Int
-  connexionTender: AWSDateTime
-  connexionBusiness: AWSDateTime
+  connexionTender: String
+  connexionBusiness: String
   dashboardUrl: String
   businessPipeline: String
   status: Int
-  creationDate: AWSDateTime
-  updateDate: AWSDateTime
+  creationDate: String
+  updateDate: String
 }
 
 type Query {
@@ -104,9 +104,11 @@ type Mutation {
 }
 
 input CreateTenderInput{
-  datasourceId: Int
-  procurementId: ID
-  algoliaId: ID
+  ownerId: ID! #owner_id in db
+  datasourceId: ID!
+  procurementId: ID!
+  algoliaId: ID!
+  # userId: ID!
   title: String!
   description: String!
   lang: String
@@ -136,6 +138,4 @@ input CreateTenderInput{
   contractType1: String
   brand: String
   status: Int
-  creationDate: AWSDateTime
-  updateDate: AWSDateTime
 }
