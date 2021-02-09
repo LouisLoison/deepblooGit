@@ -81,7 +81,8 @@ let List = async (event) => {
       let { filter } = event.arguments
       var users = []
       let query = `
-        SELECT    userId AS "userId", 
+        SELECT    userId AS "userId",
+                  uuid AS "userUuid", 
                   hivebriteId AS "hivebriteId", 
                   type AS "type", 
                   email AS "email", 
