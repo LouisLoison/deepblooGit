@@ -123,3 +123,5 @@ update tenders set datasource='dgmarket' where origine='DgMarket';
 update tenders set datasource='tenderinfo' where origine='TenderInfo';
 
 update tenders set creationdate = publicationdate where creationdate is null;
+
+alter table tenders add column owner_id uuid default null;
