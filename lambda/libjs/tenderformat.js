@@ -197,11 +197,11 @@ exports.analyzeTender = async (tenderSrc) => {
   return { analyzedData, formatedData }
 }
 
-exports.completeTender = async (tender) {
-  const { analyzedData, formatedData } = await analyzeTender(tender)
-  const elasticDoc = {
+exports.completeTender = async (tender) => {
+  const { analyzedData, formatedData } = await this.analyzeTender(tender)
+  return {
     ...analyzedData,
     ...formatedData,
     id: tender.tenderUuid,
   }
-} 
+}
