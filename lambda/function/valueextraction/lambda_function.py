@@ -4,6 +4,7 @@ from titles and descriptions"""
 import metric_extraction
 import json
 
+
 def lambda_handler(event, context):
     title = event['title']
     description = event['description']
