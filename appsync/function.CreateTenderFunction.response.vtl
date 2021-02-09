@@ -1,0 +1,5 @@
+#if( $context.error )
+  $utils.error($context.error)
+#else
+  $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])
+#end

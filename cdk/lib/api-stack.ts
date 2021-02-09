@@ -268,6 +268,21 @@ export class ApiStack extends cdk.Stack {
        ),
      })
      */
+    const CreateTender = new CfnResolver(this, `CreateTender`, {
+      apiId: api.apiId,
+      fieldName: "CreateTender",
+      typeName: "Mutation",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    CreateTender.addDependsOn(auroraDataSource);
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
     const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizerFunction', {
@@ -317,6 +332,22 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
     })
+
+    // const CreateTenderFunction = new CfnFunctionConfiguration(this, `CreateTenderFunction`, {
+    //   apiId: api.apiId,
+    //   functionVersion: "2018-05-29",
+    //   description: "description",
+    //   dataSourceName: auroraDataSource.name,
+    //   name: "CreateTenderFunction",
+    //   requestMappingTemplate: readFileSync(
+    //     `${__dirname}/../../appsync/function.CreateTenderFunction.request.vtl`,
+    //     { encoding: "utf8" }
+    //   ),
+    //   responseMappingTemplate: readFileSync(
+    //     `${__dirname}/../../appsync/function.CreateTenderFunction.response.vtl`,
+    //     { encoding: "utf8" }
+    //   ),
+    // })
 
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
