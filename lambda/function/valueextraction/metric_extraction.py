@@ -70,7 +70,12 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
 def quantulum_to_metric(quant):
     """Convert a quantulum Quantity object into a
     Metric object (DeepBloo version of Quantity objects)"""
-    
+    # Since pint is the module that later manipulates the metrics,
+    # the quantulum Quantity object is first converted to a pint object
+    ureg = UnitRegistry()
+    Q_ = ureg.Quantity
+    quant_pint_version = Q_(quant.surface)
+
     metric = Metric(quant.value, # value 
                     quant.unit.name, # unit
                     quant.unit.entity.name, # entity
