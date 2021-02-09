@@ -9,10 +9,10 @@ from quantulum3 import parser
 from classes import Metric
 
 
-def extract_metrics(txt, dimensions=["power", "electrical potential",
+def extract_metrics(txt, dimensions=("power", "electrical potential",
                                      "current", "length", "energy",
-                                     "currency"],
-                                     return_noise=False):
+                                     "currency"),
+                    return_noise=False):
     """
     Extract metrics from the input text
     Only metrics representing the input dimensions are selected
@@ -59,7 +59,7 @@ def extract_metrics(txt, dimensions=["power", "electrical potential",
 #               if quant.unit.entity.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
     quants_of_interest = list(map(quantulum_to_metric,
-                                   quants_of_interest))
+                                  quants_of_interest))
     if not return_noise:
         return quants_of_interest
     else:
