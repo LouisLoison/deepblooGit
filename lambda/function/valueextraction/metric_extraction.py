@@ -82,19 +82,17 @@ def quantulum_to_metric(quant, relevant):
     # the quantulum Quantity object is first converted to a pint object
     # Said conversion is done to check whether or not the unit name is
     # consistent with pint
+
     if relevant:
         # Naming units after pint ways eases further
         # processes
         try:
             quant_pint_version = Q_("{} {}".format(quant.value,
                                                    quant.unit.name))
+            unit_name = str(quant_pint_version.units)
         catch pint.errors.DimensionalityError:
+            unit_name =
 
-        unit_name = str(quant_pint_version.units)
-    else:
-        # When the quantities are irrelevant, naming them after quantulum
-        # does not matter
-        unit_name = quant.unit.name
 
     metric = Metric(quant.value,  # value
                     unit_name,  # unit
