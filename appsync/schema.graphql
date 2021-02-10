@@ -8,7 +8,7 @@ type Tender {
     datasourceId: ID
     procurementId: ID
     tenderUuid: ID #tenderuuid in db
-    ownerId: ID #owner_id in db
+    owner_id: ID #owner_id in db
     algoliaId: ID
     # userId: ID
     title: String
@@ -57,7 +57,7 @@ type HivebriteUserConnection{
 
 type User{
   userId: ID
-  userUuid: ID
+  uuid: ID
   hivebriteId: ID
   type: Int
   email: String
@@ -100,11 +100,11 @@ type Query {
 }
 
 type Mutation {
-  CreateTender(input:CreateTenderInput): Tender
+  CreateTender(input:CreateTenderInput!, userToken:String!): Tender
 }
 
 input CreateTenderInput{
-  ownerId: ID! #owner_id in db
+  # owner_id: ID! #owner_id in db
   datasourceId: ID!
   procurementId: ID!
   algoliaId: ID!
