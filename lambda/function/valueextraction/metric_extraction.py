@@ -71,7 +71,7 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
         return quants_of_interest, noise
     
 
-def quantulum_to_metric(quant):
+def quantulum_to_metric(quant, relevant):
     """Convert a quantulum Quantity object into a
     Metric object (DeepBloo version of Quantity objects)"""
     # Since pint is the module that later manipulates the metrics,
