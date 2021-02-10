@@ -141,8 +141,6 @@ class Unit:
     ----------
     name: str
         unit name (eg. kilowatt, A...)
-    full_name: str
-        unit full name (eg. ampere)
     ref_unit: str
         reference unit full name (eg. watt for kilowatt)
     entity: str
@@ -166,12 +164,11 @@ class Unit:
         # TODO: Fill full_name attribute
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
-        # in the reference file 
+        # in the reference file
         self.ref_unit = ""
         self.uri = uri
-        # TODO: continue to fill the unit reference file
-        # TODO: Take in account the fact that the input entity might be
-        # wrong
+        # TODO: continue to fill the unit reference dictionary
+        # TODO: Take in account the fact that the input entity might be wrong
         
         # If the entity is referenced in unit_references, define
         # the value of the reference unit using it
