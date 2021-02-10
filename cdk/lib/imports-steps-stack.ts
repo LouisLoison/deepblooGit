@@ -295,8 +295,8 @@ export class ImportsStepsStack extends Stack {
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
-    stepValueExtraction.addLayers(pythonModulesLayer)
-    stepNamedEntities.addLayers(pythonModulesLayer)
+    stepValueExtraction.addLayers(pythonModulesLayer, helperLayer)
+    stepNamedEntities.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
