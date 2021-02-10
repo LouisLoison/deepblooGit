@@ -3,6 +3,14 @@ processes"""
 
 import pandas as pd
 
+unit_references = [
+    {'entity': 'power', 'unit': 'W', 'unit_full_name': 'watt'},
+    {'entity': 'electrical potential', 'unit': 'V', 'unit_full_name': 'volt'},
+    {'entity': 'current', 'unit': 'A', 'unit_full_name': 'ampere'},
+    {'entity': 'length', 'unit': 'm', 'unit_full_name': 'meter'},
+    {'entity': 'energy', 'unit': 'Wh', 'unit_full_name': 'watt-hour'}
+]
+
 
 def csv_to_json(csv_file_path, json_file_path, sep=","):
     """From an input CSV file, this procedure produces a JSON that is 
