@@ -161,7 +161,6 @@ class Unit:
             WikiPedia URI
         """
         self.name = name
-        # TODO: Fill full_name attribute
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
         # in the reference file
