@@ -61,14 +61,15 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
             
             
 #     quants = [quant for quant in quants 
-#               if quant.unit.entit++y.name in dimensions]
+#               if quant.unit.entity.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
-    quants_of_interest = list(map(quantulum_to_metric,
+    quants_of_interest = list(map(lambda x: quantulum_to_metric(x, True),
                                   quants_of_interest))
     if not return_noise:
         return quants_of_interest
     else:
-        noise = list(map(quantulum_to_metric, noise))
+        noise = list(map(lambda x: quantulum_to_metric(x, False),
+                         noise))
         return quants_of_interest, noise
     
 
