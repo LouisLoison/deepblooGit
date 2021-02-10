@@ -58,7 +58,6 @@ class Metric:
         
     def __repr__(self):
         unit_string = "Metric({}, ({}))".format(self.value, self.unit)
-        #unit_string += "Surface: {}".format(self.surface)
         
         return unit_string
     
