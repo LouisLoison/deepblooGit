@@ -5,13 +5,9 @@ for the needs of the project
 
 import csv
 from pint import UnitRegistry
+from utilities import unit_references
 
 # SETTING UP THE MODULE
-
-# unit_references = pd.read_csv("unit_references.csv")
-# csv_file = open('unit_references.csv')
-# unit_references = csv.DictReader(csv_file)
-unit_references_path = 'unit_references.csv'
 ureg = UnitRegistry()  # Pint library unit registry
 Q_ = ureg.Quantity  # Pint Quantity class
 
