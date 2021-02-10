@@ -4,12 +4,12 @@ This module implements functions to extract metrics from text
 """
 
 import csv
+import pint
 from classes import Metric
-from pint import UnitRegistry
 from quantulum3 import parser
 
 # Setting up pint utilities
-ureg = UnitRegistry()
+ureg = pint.UnitRegistry()
 Q_ = ureg.Quantity
 # quantulum to pint unit representation dictionary
 quantulum_pint_dict = {'volt-ampere': 'volt_ampere'}
@@ -85,8 +85,11 @@ def quantulum_to_metric(quant, relevant):
     if relevant:
         # Naming units after pint ways eases further
         # processes
-        try
-        quant_pint_version =
+        try:
+            quant_pint_version = Q_("{} {}".format(quant.value,
+                                                   quant.unit.name))
+        catch pint.errors.DimensionalityError:
+
         unit_name = str(quant_pint_version.units)
     else:
         # When the quantities are irrelevant, naming them after quantulum
