@@ -4,13 +4,8 @@ This module implements functions to extract metrics from text
 """
 
 import csv
-from pint import UnitRegistry
 from quantulum3 import parser
 from classes import Metric
-
-
-ureg = UnitRegistry()
-Q_ = ureg.Quantity
 
 
 def extract_metrics(txt, dimensions=("power", "electrical potential",
@@ -78,13 +73,11 @@ def quantulum_to_metric(quant, relevant):
     Metric object (DeepBloo version of Quantity objects)"""
     # Since pint is the module that later manipulates the metrics,
     # the quantulum Quantity object is first converted to a pint object
-    unit_name = ""
 
     if relevant:
         # Naming units after pint ways eases further
         # processes
-        quant_pint_version = Q_("{} {}".format(quant.value,
-                                               quant.unit.name))
+        quant_pint_version =
         unit_name = str(quant_pint_version.units)
     else:
         # When the quantities are irrelevant, naming them after quantulum
