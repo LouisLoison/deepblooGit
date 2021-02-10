@@ -3,6 +3,7 @@ const { textParseList } = require('./textparse')
 const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
 const { stripHtml } = require("string-strip-html")
+const { importTender } = require('./tenderimport')
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()
@@ -31,7 +32,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     }
   }
   if (cpvOkCount === 0) {
-    return(null) // To delete
+    return (null) // To delete
   }
 
   // Categories
@@ -166,6 +167,43 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       }
     }
   }
-  return(JSON.parse(JSON.stringify(tenderNew)))
+  return (JSON.parse(JSON.stringify(tenderNew)))
 }
 
+let cpvList
+exports.analyzeTender = async (tenderSrc) => {
+  let analyzedData, formatedData
+  cpvList = cpvList || await CpvList(null, true)
+  const { tender, importOrigine } = await importTender(tenderSrc, cpvList, textParseList)
+  if (!tender) {
+    analyzedData = {
+      ...tenderSrc,
+      exclusion: importOrigine.exclusion,
+      exclusionWord: importOrigine.exclusionWord,
+      status: importOrigine.status,
+    }
+    formatedData = { status: analyzedData.status }
+  }
+  else {
+    analyzedData = tender
+    formatedData = await this.tenderFormat(tender, cpvList, textParseList)
+    if (!formatedData) {
+      formatedData = { status: -1 }
+    } else {
+      analyzedData.status = 20
+      formatedData.status = 20
+    }
+  }
+  return { analyzedData, formatedData }
+}
+
+/*
+exports.completeTender = async (tender) => {
+  const { analyzedData, formatedData } = await this.analyzeTender(tender)
+  return {
+    ...analyzedData,
+    ...formatedData,
+    id: tender.tenderUuid,
+  }
+}
+*/
