@@ -26,8 +26,9 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     import sys
     import json
+    from pprint import pprint
     with open(sys.argv[1]) as json_file:
         event = json.load(json_file)
         result = lambda_handler(event, {})
-        print(result)
-        json = json.dumps(result)
+        pprint(result)
+        json = json.dumps(result, indent=2)
