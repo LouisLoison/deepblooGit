@@ -11,9 +11,6 @@ from utilities import unit_references
 ureg = UnitRegistry()  # Pint library unit registry
 Q_ = ureg.Quantity  # Pint Quantity class
 
-# Add volt-ampere to unit registry
-ureg.define('volt-ampere=VA')
-
 
 class Metric:
     """Class for a quantity (e.g. 2.5 kW)
