@@ -85,7 +85,7 @@ def quantulum_to_metric(quant, relevant):
 
     unit_name = quant.unit.name
 
-    if relevant:
+    if relevant and quant.unit.entity.name != "currency":
         # Naming units after pint ways eases further
         # processes
         try:
