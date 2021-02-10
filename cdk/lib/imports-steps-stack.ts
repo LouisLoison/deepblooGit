@@ -379,7 +379,7 @@ export class ImportsStepsStack extends Stack {
     const pdfToBoxesTask = new LambdaInvoke(this, 'Pdf to Boxes', {
       lambdaFunction: stepPdfToBoxes,
       inputPath: '$.document',
-      resultPath: '$.pdf2bbox',
+      resultPath: '$.document',
       payloadResponseOnly: true,
     })
 
@@ -417,8 +417,9 @@ export class ImportsStepsStack extends Stack {
 
     const processPdf = new Parallel(this, 'Pdf process', {})
       .branch(pdfToImgTask)
-      .branch(pdfToBoxesTask)
-      .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
+      .branch(pdfToBoxesTask
+        .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
+      )
 
     const processHtml = htmlToPdfTask
       .next(processPdf)
