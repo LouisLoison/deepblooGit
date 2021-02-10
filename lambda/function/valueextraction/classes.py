@@ -63,6 +63,9 @@ class Metric:
     
     def __str__(self):
         return "{:.2f} {}".format(self.value, self.unit.name)
+
+    def __copy__(self):
+        return
     
     def to(self, unit_name):
         """Converts a metric to another unit
@@ -90,7 +93,7 @@ class Metric:
             quantity.ito(unit_name)
             
             # Step 3: Change the value and the unit of the metric
-            metric_instance = Metric(self.value, self.unit, self.unit.entity, self.surface)
+            metric_instance = Metric(self.value, self.unit.name, self.unit.entity, self.surface)
             metric_instance.value = quantity.magnitude
             metric_instance.unit.name = unit_name
             
