@@ -9,6 +9,10 @@ from quantulum3 import parser
 from classes import Metric
 
 
+ureg = UnitRegistry()
+Q_ = ureg.Quantity
+
+
 def extract_metrics(txt, dimensions=("power", "electrical potential",
                                      "current", "length", "energy",
                                      "currency"),
@@ -72,14 +76,13 @@ def quantulum_to_metric(quant):
     Metric object (DeepBloo version of Quantity objects)"""
     # Since pint is the module that later manipulates the metrics,
     # the quantulum Quantity object is first converted to a pint object
-    ureg = UnitRegistry()
-    Q_ = ureg.Quantity
-    quant_pint_version = Q_(quant.surface)
 
-    metric = Metric(quant.value, # value 
-                    quant.unit.name, # unit
-                    quant.unit.entity.name, # entity
-                    quant.surface # surface
+    quant_pint_version = Q_("{} {}".format(quant.value, quant.unit.name))
+
+    metric = Metric(quant.value,  # value
+                    str(quant_pint_version.units),  # unit
+                    quant.unit.entity.name,  # entity
+                    quant.surface  # surface
                     )
     
     return metric
