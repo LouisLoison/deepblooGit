@@ -172,13 +172,12 @@ class Unit:
         # TODO: Take in account the fact that the input entity might be
         # wrong
         
-        # If the entity is referenced in unit_references.csv, define
+        # If the entity is referenced in unit_references, define
         # the value of the reference unit using it
-        with open(unit_references_path) as csv_file:
-            unit_references = csv.DictReader(csv_file)
-            for unit_reference in unit_references:
-                if unit_reference['entity'] == entity:
-                    self.ref_unit = unit_reference['unit_full_name']
+        for unit_reference in unit_references:
+            if unit_reference['entity'] == entity:
+                self.ref_unit = unit_reference['unit_full_name']
+                break
 
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)
