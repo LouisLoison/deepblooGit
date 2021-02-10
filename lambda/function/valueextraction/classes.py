@@ -3,7 +3,6 @@ This module implements a class Quantity designed specifically
 for the needs of the project
 """
 
-import csv
 from pint import UnitRegistry
 from utilities import unit_references
 
