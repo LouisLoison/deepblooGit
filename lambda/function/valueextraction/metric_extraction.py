@@ -42,6 +42,7 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
     Returns
     -------
     quants
+
         a list of objects each representing a numerical value
     """
     
@@ -60,7 +61,7 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
             
             
 #     quants = [quant for quant in quants 
-#               if quant.unit.entity.name in dimensions]
+#               if quant.unit.entit++y.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
     quants_of_interest = list(map(quantulum_to_metric,
                                   quants_of_interest))
@@ -76,11 +77,21 @@ def quantulum_to_metric(quant, relevant):
     Metric object (DeepBloo version of Quantity objects)"""
     # Since pint is the module that later manipulates the metrics,
     # the quantulum Quantity object is first converted to a pint object
+    unit_name = ""
 
-    quant_pint_version = Q_("{} {}".format(quant.value, quant.unit.name))
+    if relevant:
+        # Naming units after pint ways eases further
+        # processes
+        quant_pint_version = Q_("{} {}".format(quant.value,
+                                               quant.unit.name))
+        unit_name = str(quant_pint_version.units)
+    else:
+        # When the quantities are irrelevant, naming them after quantulum
+        # does not matter
+        unit_name = quant.unit.name
 
     metric = Metric(quant.value,  # value
-                    str(quant_pint_version.units),  # unit
+                    unit_name,  # unit
                     quant.unit.entity.name,  # entity
                     quant.surface  # surface
                     )
