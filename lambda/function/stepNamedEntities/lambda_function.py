@@ -1,8 +1,8 @@
 """In this file, I create a python lambda handler to extract named entities
 from titles and descriptions"""
 
-import spacy
-nlp = spacy.load("xx_ent_wiki_sm")
+import xx_ent_wiki_sm
+nlp = xx_ent_wiki_sm.load()
 
 def named_entities(text):
     doc = nlp(text)
