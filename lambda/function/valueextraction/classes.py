@@ -172,6 +172,7 @@ class Unit:
             raise TypeError(error_message)
 
         # Guardian 2: Unit name must correspond to an existing unit
+        unit_existence = name in ureg  # bool
 
         self.name = name
         self.entity = entity
