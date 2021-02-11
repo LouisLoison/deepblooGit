@@ -11,6 +11,8 @@ unit_references = [
     {'entity': 'energy', 'unit': 'Wh', 'unit_full_name': 'watt-hour'}
 ]
 
+# TODO: Create a function to check the compatibility between a unit and an entity
+
 
 def csv_to_json(csv_file_path, json_file_path, sep=","):
     """From an input CSV file, this procedure produces a JSON that is 
