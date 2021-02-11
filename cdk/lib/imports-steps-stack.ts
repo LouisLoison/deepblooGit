@@ -173,13 +173,26 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       memorySize: 500,
       reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(60),
+      timeout: Duration.seconds(20),
       environment: {
         ...environment,
         ...appsearchEnv,
+      }
+    });
+
+    const stepTenderElasticIndex = new Function(this, 'stepTenderElasticIndex', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepTenderElasticIndex'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 20,
+      timeout: Duration.seconds(20),
+      environment: {
+        ...environment,
         ELASTIC_SECRET: elasticSecretArn,
       }
     });
+
 
     const stepDocumentDownload = new Function(this, 'downloadDocument', {
       runtime: Runtime.NODEJS_12_X,
@@ -289,6 +302,7 @@ export class ImportsStepsStack extends Stack {
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
+    stepTenderElasticIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
@@ -303,7 +317,7 @@ export class ImportsStepsStack extends Stack {
     dbSecret.grantRead(stepTenderMerge)
     dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
-    elasticSecret.grantRead(stepTenderIndex)
+    elasticSecret.grantRead(stepTenderElasticIndex)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
@@ -345,8 +359,6 @@ export class ImportsStepsStack extends Stack {
       maxAttempts: 4
     });
 
-
-
     const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
       lambdaFunction: stepTenderMerge,
       // inputPath: '$.storedData',
@@ -358,11 +370,19 @@ export class ImportsStepsStack extends Stack {
       maxAttempts: 4
     });
 
-
-
     const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
       lambdaFunction: stepTenderIndex,
       resultPath: '$.appsearchResult',
+      payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 5,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
+    });
+
+    const stepTenderElasticIndexTask = new LambdaInvoke(this, 'Elastic Index Task', {
+      lambdaFunction: stepTenderElasticIndex,
+      resultPath: '$.elasticResult',
       payloadResponseOnly: true,
     }).addRetry({
       backoffRate: 5,
@@ -491,6 +511,7 @@ export class ImportsStepsStack extends Stack {
           .next(storeTenderTask)
           .next(mergeTenderTask)
           .next(stepTenderIndexTask)
+          .next(stepTenderElasticIndexTask)
           .next(new Choice(this, 'Has documents ?')
             .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
               .next(fullSucceed)
