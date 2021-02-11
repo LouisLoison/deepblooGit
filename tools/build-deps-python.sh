@@ -21,6 +21,8 @@ for module in `ls -1 $PIPENV |grep -v 'dist-info$'` ; do
     cp -a $PIPENV/$module python
 done
 
+find python/ -name __pycache__ |xargs rm -fr
+
 (
   cd python && rm -fr setuptools pip pkg_resources wheel easy_install.py boto3 boto __pycache__
 )

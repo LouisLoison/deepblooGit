@@ -59,7 +59,7 @@ export class ImportsStepsStack extends Stack {
 
     // const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
-  
+
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
       availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
@@ -84,7 +84,7 @@ export class ImportsStepsStack extends Stack {
       description: 'Textractor layer.',
     });
 
-    const ghostscripLayer = new LayerVersion(this, 'GhostScript layer', { 
+    const ghostscripLayer = new LayerVersion(this, 'GhostScript layer', {
       code: new AssetCode('../lambda/layer/gs'),
       compatibleRuntimes: [Runtime.PYTHON_3_8, Runtime.NODEJS_12_X],
       license: 'Apache-2.0',
@@ -260,6 +260,30 @@ export class ImportsStepsStack extends Stack {
       }
     })
 
+    const stepValueExtraction = new Function(this, 'ValueExtraction', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/valueextraction'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+      }
+    })
+    
+    const stepNamedEntities = new Function(this, 'NamedEntities', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/stepNamedEntities'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+      }
+    })
+
+
+
     stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
     stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
@@ -271,6 +295,8 @@ export class ImportsStepsStack extends Stack {
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
+    stepValueExtraction.addLayers(pythonModulesLayer, helperLayer)
+    stepNamedEntities.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
@@ -392,6 +418,21 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     })
 
+    const namedEntitiesTask = new LambdaInvoke(this, 'Named Entities', {
+      lambdaFunction: stepNamedEntities,
+      inputPath: '$.formatedData',
+      resultPath: '$.entities',
+      payloadResponseOnly: true,
+    }).addCatch(storeTenderTask)
+
+    const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
+      lambdaFunction: stepValueExtraction,
+      inputPath: '$.formatedData',
+      resultPath: '$.metrics',
+      payloadResponseOnly: true,
+    }).addCatch(namedEntitiesTask)
+
+
     const processDoc = new Pass(this, 'Doc/docx process')
 
     const processDocx = new Pass(this, 'Docx process')
@@ -445,7 +486,9 @@ export class ImportsStepsStack extends Stack {
       .next(analyzeTenderTask)
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
-        .otherwise(storeTenderTask
+        .otherwise(valueExtractionTask
+          .next(namedEntitiesTask)
+          .next(storeTenderTask)
           .next(mergeTenderTask)
           .next(stepTenderIndexTask)
           .next(new Choice(this, 'Has documents ?')
@@ -455,6 +498,7 @@ export class ImportsStepsStack extends Stack {
           )
         )
       )
+
 
 
     const logGroup = new logs.LogGroup(this, 'MyLogGroup');

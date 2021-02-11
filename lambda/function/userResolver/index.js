@@ -33,8 +33,18 @@ let TokenAuthorizer = async (event) => {
     try {
       let { userToken } = event.arguments;
       let { hivebrite_shared_secret } = await SharedSecretGet();
-      let tokenDecoded = jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
-      resolve(tokenDecoded)
+      let { id, name, primary_email, nbf } = jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
+
+      /* let diff = (new Date(nbf * 1000).getTime() - new Date.getTime()) / 1000;
+       diff /= 60;
+ 
+       if (Math.abs(Math.round(diff)) > 120) {
+         throw new Error("Token Expired.")
+       }
+       */
+
+      let user = await User({ arguments: { id } })
+      resolve(user)
     } catch (err) { reject(err) }
   })
 }
@@ -43,7 +53,7 @@ let User = async (event) => {
   log(`EVENT User  --------`, event);
   return new Promise(async (resolve, reject) => {
     try {
-      let { id } = event.stash;
+      let { id } = event.arguments;
       let user = null;
       if (id) {
         let filterExp = {
