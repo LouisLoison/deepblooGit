@@ -10,7 +10,9 @@ exports.handler = async function (event,) {
       id: event.mergedData.data.tenderUuid,
     }
 
-    return await indexToElasticsearch([elasticDoc], 'tenders')
+    const elasticRes = await indexToElasticsearch([elasticDoc], 'tenders')
+    const [{ body }] = elasticRes
+    return body
   }
   return {}
 }
