@@ -27,3 +27,10 @@ find python/ -name __pycache__ |xargs rm -fr
   cd python && rm -fr setuptools pip pkg_resources wheel easy_install.py boto3 boto __pycache__
 )
 
+build_tests_deps () {
+  cd ../../../lambda/test/
+  pipenv install -d
+  pipenv run python -m spacy download xx_ent_wiki_sm
+}
+
+build_tests_deps
