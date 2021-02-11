@@ -84,11 +84,13 @@ def is_pdf_has_enough_characters(pdf_path, min_char_required) -> bool:
     return True
 
 
-def copy_pdf_to_tmp(aws_env: dict) -> str:
+def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
     pdf_content = S3Helper.readBytesFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
-    tmp_folder = "/tmp"
     pdf_tmp = "tmp_0.pdf"
     index = 0
+    if os.path.isdir(tmp_folder) is True:
+        AwsHelper.refreshTmpFolder(tmp_folder)
+    os.makedirs(tmp_folder)
     for _ in os.listdir(tmp_folder):
         if os.path.isfile(os.path.join(tmp_folder, pdf_tmp)) is False:
             break
@@ -104,16 +106,16 @@ def copy_pdf_to_tmp(aws_env: dict) -> str:
 def lambda_handler(event, context):
     aws_env = {
         **event,
-        "bucketName": os.environ['DOCUMENTS_BUCKET'],
+        "bucketName": os.environ.get('DOCUMENTS_BUCKET'),
         "awsRegion": 'eu-west-1',
         "tmpJsonOutput": "/tmp/tmp_result.json",
         "tmpTxtOutput": "/tmp/tmp_result.txt",
-        "outputBucket": os.environ['DOCUMENTS_BUCKET'],
+        "outputBucket": os.environ.get('DOCUMENTS_BUCKET'),
         "outputNameJson": get_bbox_filename(event['objectName'], ".json"),
         "outputNameTxt": get_bbox_filename(event['objectName'], ".txt"),
-        "textractOnly": os.environ['TEXTRACT_ONLY'],
-        "minCharNeeded": int(os.environ['MIN_CHAR_NEEDED']),
-        "extract_pdf_lines": os.environ['EXTRACT_PDF_LINES'],
+        "textractOnly": os.environ.get('TEXTRACT_ONLY'),
+        "minCharNeeded": int(os.environ.get('MIN_CHAR_NEEDED')),
+        "extract_pdf_lines": os.environ.get('EXTRACT_PDF_LINES'),
     }
     status = {
         "statusCode": 200,
@@ -121,7 +123,8 @@ def lambda_handler(event, context):
     }
     extract_pdf_lines = aws_env['extract_pdf_lines']
     textract_only = aws_env['textractOnly']
-    pdf_tmp_path = copy_pdf_to_tmp(aws_env)
+    tmp_folder = "/tmp/pdfToBbox"
+    pdf_tmp_path = copy_pdf_to_tmp(tmp_folder, aws_env)
 
     print("==> aws_env: ", aws_env)
     if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
@@ -153,4 +156,5 @@ def lambda_handler(event, context):
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
+    AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)
