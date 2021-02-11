@@ -165,7 +165,14 @@ class Unit:
         # Guardian 1: All arguments must be of type str
         if all(isinstance(name, str), isinstance(entity, str), isinstance(uri, str)):
             condition_results.append(True)
-            
+        else:
+            error_message = "All units must be of type str. " + "Received {}, {} and {} instead.".format(type(name),
+                                                                                                         type(entity),
+                                                                                                         type(uri))
+            raise TypeError(error_message)
+
+        # Guardian 2: Unit name must correspond to an existing unit
+
         self.name = name
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
