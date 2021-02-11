@@ -283,7 +283,7 @@ export class ImportsStepsStack extends Stack {
       environment: {
       }
     })
-    
+
     const stepNamedEntities = new Function(this, 'NamedEntities', {
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/stepNamedEntities'),
@@ -504,14 +504,14 @@ export class ImportsStepsStack extends Stack {
     const chain = Chain.start(initialWait)
       .next(convertTenderTask)
       .next(analyzeTenderTask)
+      .next(valueExtractionTask)
+      .next(namedEntitiesTask)
+      .next(storeTenderTask)
+      .next(mergeTenderTask)
+      .next(stepTenderElasticIndexTask)
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
-        .otherwise(valueExtractionTask
-          .next(namedEntitiesTask)
-          .next(storeTenderTask)
-          .next(mergeTenderTask)
-          .next(stepTenderIndexTask)
-          .next(stepTenderElasticIndexTask)
+        .otherwise(stepTenderIndexTask
           .next(new Choice(this, 'Has documents ?')
             .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
               .next(fullSucceed)
