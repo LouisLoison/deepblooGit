@@ -161,11 +161,11 @@ class Unit:
             WikiPedia URI
         """
         # GUARDIANS
-        condition_results = []
         # Guardian 1: All arguments must be of type str
-        if all(isinstance(name, str), isinstance(entity, str), isinstance(uri, str)):
-            condition_results.append(True)
-        else:
+        type_condition = all(isinstance(name, str), isinstance(entity, str), isinstance(uri, str))
+
+        if not type_condition:
+            # If the type of the arguments is wrong, then we cannot proceed
             error_message = "All units must be of type str. " + "Received {}, {} and {} instead.".format(type(name),
                                                                                                          type(entity),
                                                                                                          type(uri))
