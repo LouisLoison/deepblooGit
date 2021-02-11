@@ -270,6 +270,19 @@ export class ImportsStepsStack extends Stack {
       environment: {
       }
     })
+    
+    const stepNamedEntities = new Function(this, 'NamedEntities', {
+      runtime: Runtime.PYTHON_3_8,
+      code: new AssetCode('../lambda/function/stepNamedEntities'),
+      handler: 'lambda_function.lambda_handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 40,
+      timeout: Duration.seconds(60),
+      environment: {
+      }
+    })
+
+
 
     stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
     stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
@@ -282,7 +295,8 @@ export class ImportsStepsStack extends Stack {
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
-    stepValueExtraction.addLayers(pythonModulesLayer)
+    stepValueExtraction.addLayers(pythonModulesLayer, helperLayer)
+    stepNamedEntities.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepTenderAnalyze)
     dbSecret.grantRead(stepTenderStore)
@@ -404,12 +418,20 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     })
 
+    const namedEntitiesTask = new LambdaInvoke(this, 'Named Entities', {
+      lambdaFunction: stepNamedEntities,
+      inputPath: '$.formatedData',
+      resultPath: '$.entities',
+      payloadResponseOnly: true,
+    }).addCatch(storeTenderTask)
+
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    }).addCatch(storeTenderTask)
+    }).addCatch(namedEntitiesTask)
+
 
     const processDoc = new Pass(this, 'Doc/docx process')
 
@@ -465,6 +487,7 @@ export class ImportsStepsStack extends Stack {
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
         .otherwise(valueExtractionTask
+          .next(namedEntitiesTask)
           .next(storeTenderTask)
           .next(mergeTenderTask)
           .next(stepTenderIndexTask)

@@ -1,0 +1,47 @@
+{
+    "title": "S'il vous plait, mettez une orange à Bordeaux et une pomme à Montpelliers, là où Deepbloo est implanté.",
+    "description": "Please put one orange in Bordeaux and one apple in Montpeliers, where Deepbloo has implementations." ,
+    "procurementId": "GEM/2021/B/980554",
+    "lang": "en",
+    "buyer_name": "MINISTRY OF STEEL",
+    "procurementMethod": "National",
+    "noticeType": "Invitation for Bids",
+    "country": "India",
+    "regionLvl0": [
+      "India"
+    ],
+    "regionLvl1": [
+      "India > India"
+    ],
+    "regionLvl2": [],
+    "categories": [
+      "Cooling System"
+    ],
+    "families": [
+      "T&D"
+    ],
+    "categoryLvl0": [
+      "Cooling System"
+    ],
+    "categoryLvl1": [
+      "Cooling System > water coolers"
+    ],
+    "currency": "",
+    "publicationDate": "2021-01-29",
+    "publication_timestamp": 1611878400000,
+    "cpvs": [
+      "water coolers"
+    ],
+    "bidDeadlineDate": "2021-02-09",
+    "bidDeadline_timestamp": 1612828800000,
+    "creation_timestamp": 1612374724490,
+    "userId": 0,
+    "scopeOfWorks": [],
+    "segments": [],
+    "designs": [],
+    "contractTypes": [],
+    "brands": [],
+    "groups": [],
+    "accountId": "none",
+    "status": 20
+  }
