@@ -160,6 +160,12 @@ class Unit:
         uri: str, optional
             WikiPedia URI
         """
+        # GUARDIANS
+        condition_results = []
+        # Guardian 1: All arguments must be of type str
+        if all(isinstance(name, str), isinstance(entity, str), isinstance(uri, str)):
+            condition_results.append(True)
+            
         self.name = name
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
