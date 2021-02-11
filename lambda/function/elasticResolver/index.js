@@ -6,7 +6,7 @@ const { indexObjectToAppsearch } = require('deepbloo').appsearch
 
 exports.handler = async function (event,) {
     try {
-        let { tender } = event;
+        let tender = event.arguments.input;
         log(`Tender --`, tender)
         const { analyzedData, formatedData } = await analyzeTender(tender)
         log(`Analyzed Data`, analyzedData)

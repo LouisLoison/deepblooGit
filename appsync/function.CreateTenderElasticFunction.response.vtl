@@ -1,6 +1,6 @@
 #if( $context.result && $context.result.Error )
   $utils.error($context.result.Error)
 #else
-## here merge both stash and current result
-  $utils.toJson($context.result.data)
+## RETURN PREVIOUS PIPLENE FUNCTION AURORA RESULT 
+  $utils.toJson($context.prev.result)
 #end
