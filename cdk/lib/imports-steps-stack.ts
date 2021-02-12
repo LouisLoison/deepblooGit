@@ -118,7 +118,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderConvert'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 15,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -131,7 +131,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 15,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -145,7 +145,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 15,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -159,7 +159,7 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 15,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -172,7 +172,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderIndex'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      reservedConcurrentExecutions: 15,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -186,7 +186,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepDocumentDownload'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       vpc,
       environment: {
@@ -201,7 +201,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/pdftoimg'),
       handler: 'index.handler',
       memorySize: 1500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -213,7 +213,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/pdftobboxtext'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -229,7 +229,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -241,7 +241,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/zipExtraction'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -253,7 +253,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/textToSentences'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -265,7 +265,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/valueextraction'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
       }
@@ -276,7 +276,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/stepNamedEntities'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       environment: {
       }
