@@ -12,7 +12,7 @@ unit_references = [
     {'entity': 'energy', 'unit': 'Wh', 'unit_full_name': 'watt-hour'}
 ]
 # quantulum to pint unit representation dictionary
-quantulum_pint_dict = {'volt-ampere': 'volt_ampere'}
+quantulum_pint_dict = {'volt-ampere': 'volt_ampere', 'percentage': 'dimensionless'}
 
 
 def unit_entity_compatibility(unit_name, entity_name):
