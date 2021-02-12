@@ -328,7 +328,7 @@ export class ImportsStepsStack extends Stack {
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
       inputPath: '$.tenderData',
-      resultPath: '$.convertedData',
+      // resultPath: '$.convertedData',
       // outputPath: '$.Payload',
       payloadResponseOnly: true,
     }).addRetry({
