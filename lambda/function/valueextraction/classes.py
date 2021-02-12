@@ -4,7 +4,7 @@ for the needs of the project
 """
 
 from pint import UnitRegistry
-from utilities import unit_references
+from utilities import unit_references, unit_entity_compatibility
 
 # SETTING UP THE MODULE
 ureg = UnitRegistry()  # Pint library unit registry
@@ -173,6 +173,9 @@ class Unit:
 
         # Guardian 2: Unit name must correspond to an existing unit
         unit_existence = name in ureg  # bool
+
+        # Guardian 3: Unit and entity must be compatible
+        entity_compatibility = unit_entity_compatibility(name, entity)
 
         self.name = name
         self.entity = entity
