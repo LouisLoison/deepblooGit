@@ -3,6 +3,7 @@ This module implements a class Quantity designed specifically
 for the needs of the project
 """
 
+from exceptions import EntityException
 from pint import UnitRegistry
 from utilities import unit_references, unit_entity_compatibility
 
@@ -176,6 +177,8 @@ class Unit:
 
         # Guardian 3: Unit and entity must be compatible
         entity_compatibility = unit_entity_compatibility(name, entity)
+        if not entity_compatibility and entity not in [unit_info['entity'] for unit_info in unit_references]:
+            raise EntityException()
 
         # Evaluate whether or not we can proceed with the unit instantiation
         unit_instantiation_ok = all([type_condition,
