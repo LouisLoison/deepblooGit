@@ -20,7 +20,9 @@ class TestClassUnit(unittest.TestCase):
         self.assertEqual(self.unit2.entity, "power")
         self.assertEqual(self.unit2.ref_unit, "watt")
         self.assertEqual(self.unit2.uri, "")
-        # TODO: Test for inadequate entity
+
+        # Test for inadequate entity
+        self.assertEqual(self.unit3, None)
 
 
 class TestClassMetric(unittest.TestCase):
