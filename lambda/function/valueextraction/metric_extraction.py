@@ -11,8 +11,6 @@ from quantulum3 import parser
 # Setting up pint utilities
 ureg = pint.UnitRegistry()
 Q_ = ureg.Quantity
-# quantulum to pint unit representation dictionary
-quantulum_pint_dict = {'volt-ampere': 'volt_ampere'}
 
 
 def extract_metrics(txt, dimensions=("power", "electrical potential",
