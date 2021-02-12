@@ -177,6 +177,16 @@ class Unit:
         # Guardian 3: Unit and entity must be compatible
         entity_compatibility = unit_entity_compatibility(name, entity)
 
+        # Evaluate whether or not we can proceed with the unit instantiation
+        unit_instantiation_ok = all(type_condition,
+                                    unit_existence,
+                                    (entity_compatibility
+                                     or entity not in [unit_info['entity'] for unit_info in unit_references])
+                                    )
+        if not unit_instantiation_ok:
+            print("ERROR: Unit instantiation impossible due to many failing pre-conditions")
+            return None
+
         self.name = name
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
