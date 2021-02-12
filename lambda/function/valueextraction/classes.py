@@ -174,7 +174,7 @@ class Unit:
 
         # Guardian 2: Unit name must correspond to an existing unit
         unit_existence = name in ureg  # bool
-        if not unit_existence:
+        if not unit_existence and entity != 'dimensionless':
             raise UnitNotFoundException(name)
 
         # Guardian 3: Unit and entity must be compatible
