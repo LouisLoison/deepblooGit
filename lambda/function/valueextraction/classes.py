@@ -173,9 +173,12 @@ class Unit:
             raise TypeError(error_message)
 
         # Guardian 2: Unit name must correspond to an existing unit
-        unit_existence = name in ureg  # bool
-        if not unit_existence and entity != 'dimensionless':
-            raise UnitNotFoundException(name)
+        # We will spend time checking whether the unit is in the registry
+        # if the corresponding entity is not dimensionless
+        if entity != 'dimensionless' and entity in [unit_info['entity'] for unit_info in unit_references]:
+            unit_existence = name in ureg  # bool
+            if not unit_existence:
+                raise UnitNotFoundException(name)
 
         # Guardian 3: Unit and entity must be compatible
         entity_compatibility = unit_entity_compatibility(name, entity)
@@ -183,13 +186,14 @@ class Unit:
             raise EntityException()
 
         # Evaluate whether or not we can proceed with the unit instantiation
-        unit_instantiation_ok = all([type_condition,
-                                    unit_existence,
-                                    (entity_compatibility
-                                     or entity not in [unit_info['entity'] for unit_info in unit_references])]
-                                    )
-        if unit_instantiation_ok:
-            print("Guardians evaluation completed.")
+        # unit_instantiation_ok = all([type_condition,
+        #                             unit_existence,
+        #                             (entity_compatibility
+        #                              or entity not in [unit_info['entity'] for unit_info in unit_references])]
+        #                             )
+        # if unit_instantiation_ok:
+        #     print("Guardians evaluation completed.")
+        print("Instantiating object Unit with name {} and entity {}".format(name, entity))
 
         self.name = name
         self.entity = entity
