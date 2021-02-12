@@ -162,7 +162,7 @@ class Unit:
         """
         # GUARDIANS
         # Guardian 1: All arguments must be of type str
-        type_condition = all(isinstance(name, str), isinstance(entity, str), isinstance(uri, str))
+        type_condition = all([isinstance(name, str), isinstance(entity, str), isinstance(uri, str)])
 
         if not type_condition:
             # If the type of the arguments is wrong, then we cannot proceed
@@ -178,11 +178,11 @@ class Unit:
         entity_compatibility = unit_entity_compatibility(name, entity)
 
         # Evaluate whether or not we can proceed with the unit instantiation
-        unit_instantiation_ok = all(type_condition,
+        unit_instantiation_ok = all([type_condition,
                                     unit_existence,
                                     (entity_compatibility
                                      or entity not in [unit_info['entity'] for unit_info in unit_references])
-                                    )
+                                    ])
         if not unit_instantiation_ok:
             print("ERROR: Unit instantiation impossible due to many failing pre-conditions")
             return None
