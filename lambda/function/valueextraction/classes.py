@@ -184,8 +184,8 @@ class Unit:
         unit_instantiation_ok = all([type_condition,
                                     unit_existence,
                                     (entity_compatibility
-                                     or entity not in [unit_info['entity'] for unit_info in unit_references])
-                                    ])
+                                     or entity not in [unit_info['entity'] for unit_info in unit_references])]
+                                    )
         if unit_instantiation_ok:
             print("Guardians evaluation completed.")
 
