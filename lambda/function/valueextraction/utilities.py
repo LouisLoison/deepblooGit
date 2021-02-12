@@ -47,7 +47,7 @@ def unit_entity_compatibility(unit_name, entity_name):
         print("WARNING: Irrelevant entity name. Compatibility could not be evaluated.")
         return False
 
-    return Unit(unit_name).is_compatible_with(Unit(ref_unit))
+    return Unit(unit_name).is_compatible_with(Unit(ref_unit), Context())
 
 
 # TODO: Redefine this function not using pandas
