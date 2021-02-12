@@ -45,8 +45,10 @@ def unit_entity_compatibility(unit_name, entity_name):
         if unit_info['entity'] == entity_name:
             ref_unit = unit_info['unit_full_name']
 
+    # If the entity is not part of the relevant ones,
+    # return False
     if len(ref_unit) == 0:
-        print("WARNING: Irrelevant entity name. Compatibility could not be evaluated.")
+        print("WARNING: Entity {} is irrelevant.".format(entity_name))
         return False
 
     return Unit(unit_name).is_compatible_with(Unit(ref_unit), Context())
