@@ -7,6 +7,7 @@ import csv
 import pint
 from classes import Metric
 from quantulum3 import parser
+from utilities import quantulum_pint_dict
 
 # Setting up pint utilities
 ureg = pint.UnitRegistry()
