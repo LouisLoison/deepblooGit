@@ -186,9 +186,8 @@ class Unit:
                                     (entity_compatibility
                                      or entity not in [unit_info['entity'] for unit_info in unit_references])
                                     ])
-        if not unit_instantiation_ok:
-            print("ERROR: Unit instantiation impossible due to many failing pre-conditions")
-            return None
+        if unit_instantiation_ok:
+            print("Guardians evaluation completed.")
 
         self.name = name
         self.entity = entity
