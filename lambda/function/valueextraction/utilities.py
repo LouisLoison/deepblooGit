@@ -14,6 +14,7 @@ unit_references = [
 # TODO: Create a function to check the compatibility between a unit and an entity
 
 
+# TODO: Redefine this function not using pandas
 def csv_to_json(csv_file_path, json_file_path, sep=","):
     """From an input CSV file, this procedure produces a JSON that is 
     then output to its own file
