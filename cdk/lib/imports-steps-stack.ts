@@ -173,10 +173,35 @@ export class ImportsStepsStack extends Stack {
       handler: 'index.handler',
       memorySize: 500,
       reservedConcurrentExecutions: 15,
-      timeout: Duration.seconds(60),
+      timeout: Duration.seconds(20),
       environment: {
         ...environment,
         ...appsearchEnv,
+      }
+    });
+
+    const stepTenderElasticIndex = new Function(this, 'stepTenderElasticIndex', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepTenderElasticIndex'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 20,
+      timeout: Duration.seconds(20),
+      environment: {
+        ...environment,
+        ELASTIC_SECRET: elasticSecretArn,
+      }
+    });
+
+    const stepNotifyError = new Function(this, 'stepNotifyError', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepNotifyError'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 20,
+      timeout: Duration.seconds(20),
+      environment: {
+        ...environment,
         ELASTIC_SECRET: elasticSecretArn,
       }
     });
@@ -270,7 +295,7 @@ export class ImportsStepsStack extends Stack {
       environment: {
       }
     })
-    
+
     const stepNamedEntities = new Function(this, 'NamedEntities', {
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/stepNamedEntities'),
@@ -289,6 +314,8 @@ export class ImportsStepsStack extends Stack {
     stepTenderStore.addLayers(nodeLayer, deepblooLayer)
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
+    stepTenderElasticIndex.addLayers(nodeLayer, deepblooLayer)
+    stepNotifyError.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
@@ -303,7 +330,8 @@ export class ImportsStepsStack extends Stack {
     dbSecret.grantRead(stepTenderMerge)
     dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
-    elasticSecret.grantRead(stepTenderIndex)
+    elasticSecret.grantRead(stepTenderElasticIndex)
+    elasticSecret.grantRead(stepNotifyError)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
@@ -311,17 +339,31 @@ export class ImportsStepsStack extends Stack {
     documentsBucket.grantReadWrite(stepZipExtraction)
     documentsBucket.grantReadWrite(stepTextToSentences)
 
+    const processFail = new Fail(this, 'processFail', {
+      error: 'WorkflowFailure',
+      cause: "Download task failed"
+    });
+
+    const notifyErrorTask = new LambdaInvoke(this, 'Notify Error', {
+      lambdaFunction: stepNotifyError,
+      payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 5,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
+    }).next(processFail);
+
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
       inputPath: '$.tenderData',
-      resultPath: '$.convertedData',
+      // resultPath: '$.convertedData',
       // outputPath: '$.Payload',
       payloadResponseOnly: true,
     }).addRetry({
       backoffRate: 3,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    })
+    }).addCatch(notifyErrorTask)
 
     const analyzeTenderTask = new LambdaInvoke(this, 'Tender Analyze Task', {
       lambdaFunction: stepTenderAnalyze,
@@ -332,7 +374,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 3,
       interval: Duration.seconds(4),
       maxAttempts: 4
-    })
+    }).addCatch(notifyErrorTask)
 
 
     const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
@@ -343,9 +385,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 3,
       interval: Duration.seconds(5),
       maxAttempts: 4
-    });
-
-
+    }).addCatch(notifyErrorTask);
 
     const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
       lambdaFunction: stepTenderMerge,
@@ -356,9 +396,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 4,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    });
-
-
+    }).addCatch(notifyErrorTask);
 
     const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
       lambdaFunction: stepTenderIndex,
@@ -368,19 +406,27 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 5,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    });
+    }).addCatch(notifyErrorTask);
 
-    const downloadFail = new Fail(this, 'documentFail', {
-      error: 'WorkflowFailure',
-      cause: "Download task failed"
-    });
+    const stepTenderElasticIndexTask = new LambdaInvoke(this, 'Elastic Index Task', {
+      lambdaFunction: stepTenderElasticIndex,
+      resultPath: '$.elasticResult',
+      payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 5,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
+    }).addCatch(notifyErrorTask);
+
+
+
 
     const downloadTask = new LambdaInvoke(this, 'Download Task', {
       lambdaFunction: stepDocumentDownload,
       // inputPath: '$.convertedData',
       resultPath: '$.document',
       payloadResponseOnly: true,
-    }).addCatch(downloadFail);
+    })
 
 
     const pdfToImgTask = new LambdaInvoke(this, 'Pdf to Image', {
@@ -423,15 +469,14 @@ export class ImportsStepsStack extends Stack {
       inputPath: '$.formatedData',
       resultPath: '$.entities',
       payloadResponseOnly: true,
-    }).addCatch(storeTenderTask)
+    })
 
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    }).addCatch(namedEntitiesTask)
-
+    })
 
     const processDoc = new Pass(this, 'Doc/docx process')
 
@@ -484,13 +529,14 @@ export class ImportsStepsStack extends Stack {
     const chain = Chain.start(initialWait)
       .next(convertTenderTask)
       .next(analyzeTenderTask)
+      .next(valueExtractionTask)
+      .next(namedEntitiesTask)
+      .next(storeTenderTask)
+      .next(mergeTenderTask)
+      .next(stepTenderElasticIndexTask)
       .next(new Choice(this, 'Has interest ?')
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
-        .otherwise(valueExtractionTask
-          .next(namedEntitiesTask)
-          .next(storeTenderTask)
-          .next(mergeTenderTask)
-          .next(stepTenderIndexTask)
+        .otherwise(stepTenderIndexTask
           .next(new Choice(this, 'Has documents ?')
             .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
               .next(fullSucceed)
