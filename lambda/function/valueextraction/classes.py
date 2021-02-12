@@ -158,7 +158,7 @@ class Unit:
         entity: str
             entity represented by the unit (eg. power, current)
         uri: str, optional
-            WikiPedia URI
+            WikiPedia URI. Defaults to "en.m.wikipedia.org/wiki/[name]"
         """
         # GUARDIANS
         # Guardian 1: All arguments must be of type str
@@ -192,7 +192,7 @@ class Unit:
         # Defaulting the reference unit to handle units that are not
         # in the reference file
         self.ref_unit = ""
-        self.uri = uri
+        self.uri = "en.m.wikipedia.org/wiki/{}".format(name)
         # TODO: continue to fill the unit reference dictionary
         # TODO: Take in account the fact that the input entity might be wrong
         
