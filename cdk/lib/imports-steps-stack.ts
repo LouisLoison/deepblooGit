@@ -193,6 +193,18 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
+    const stepNotifyError = new Function(this, 'stepNotifyError', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepNotifyError'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 20,
+      timeout: Duration.seconds(20),
+      environment: {
+        ...environment,
+        ELASTIC_SECRET: elasticSecretArn,
+      }
+    });
 
     const stepDocumentDownload = new Function(this, 'downloadDocument', {
       runtime: Runtime.NODEJS_12_X,
@@ -303,6 +315,7 @@ export class ImportsStepsStack extends Stack {
     stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
     stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepTenderElasticIndex.addLayers(nodeLayer, deepblooLayer)
+    stepNotifyError.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
@@ -318,12 +331,27 @@ export class ImportsStepsStack extends Stack {
     dbSecret.grantRead(stepDocumentDownload)
     appsearchSecret.grantRead(stepTenderIndex)
     elasticSecret.grantRead(stepTenderElasticIndex)
+    elasticSecret.grantRead(stepNotifyError)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
     documentsBucket.grantReadWrite(stepPdfToBoxes)
     documentsBucket.grantReadWrite(stepZipExtraction)
     documentsBucket.grantReadWrite(stepTextToSentences)
+
+    const processFail = new Fail(this, 'processFail', {
+      error: 'WorkflowFailure',
+      cause: "Download task failed"
+    });
+
+    const notifyErrorTask = new LambdaInvoke(this, 'Notify Error', {
+      lambdaFunction: stepNotifyError,
+      payloadResponseOnly: true,
+    }).addRetry({
+      backoffRate: 5,
+      interval: Duration.seconds(3),
+      maxAttempts: 4
+    }).next(processFail);
 
     const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
       lambdaFunction: stepTenderConvert,
@@ -335,7 +363,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 3,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    })
+    }).addCatch(notifyErrorTask)
 
     const analyzeTenderTask = new LambdaInvoke(this, 'Tender Analyze Task', {
       lambdaFunction: stepTenderAnalyze,
@@ -346,7 +374,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 3,
       interval: Duration.seconds(4),
       maxAttempts: 4
-    })
+    }).addCatch(notifyErrorTask)
 
 
     const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
@@ -357,7 +385,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 3,
       interval: Duration.seconds(5),
       maxAttempts: 4
-    });
+    }).addCatch(notifyErrorTask);
 
     const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
       lambdaFunction: stepTenderMerge,
@@ -368,7 +396,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 4,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    });
+    }).addCatch(notifyErrorTask);
 
     const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
       lambdaFunction: stepTenderIndex,
@@ -378,7 +406,7 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 5,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    });
+    }).addCatch(notifyErrorTask);
 
     const stepTenderElasticIndexTask = new LambdaInvoke(this, 'Elastic Index Task', {
       lambdaFunction: stepTenderElasticIndex,
@@ -388,19 +416,17 @@ export class ImportsStepsStack extends Stack {
       backoffRate: 5,
       interval: Duration.seconds(3),
       maxAttempts: 4
-    });
+    }).addCatch(notifyErrorTask);
 
-    const downloadFail = new Fail(this, 'documentFail', {
-      error: 'WorkflowFailure',
-      cause: "Download task failed"
-    });
+
+
 
     const downloadTask = new LambdaInvoke(this, 'Download Task', {
       lambdaFunction: stepDocumentDownload,
       // inputPath: '$.convertedData',
       resultPath: '$.document',
       payloadResponseOnly: true,
-    }).addCatch(downloadFail);
+    })
 
 
     const pdfToImgTask = new LambdaInvoke(this, 'Pdf to Image', {
@@ -443,15 +469,14 @@ export class ImportsStepsStack extends Stack {
       inputPath: '$.formatedData',
       resultPath: '$.entities',
       payloadResponseOnly: true,
-    }).addCatch(storeTenderTask)
+    })
 
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    }).addCatch(namedEntitiesTask)
-
+    })
 
     const processDoc = new Pass(this, 'Doc/docx process')
 
