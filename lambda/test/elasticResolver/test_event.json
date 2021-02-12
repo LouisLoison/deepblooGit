@@ -1,6 +1,6 @@
 {
     "arguments": {
-      "tender": {
+      "input": {
         "owner_id": "e3bb928c-3093-4a08-b5c0-cfce4605d8db",
         "tenderUuid": "0d9096e0-aa2e-45fa-af9c-27b2bbab709f",
         "dataSourceId": 123456789,
@@ -35,7 +35,5 @@
         "creationDate": "2021-02-09T10:27:10.462Z",
         "updateDate": "2021-02-09T10:27:10.462Z"
       }
-    },
-    "key2": "value2",
-    "key3": "value3"
+    }
   }
