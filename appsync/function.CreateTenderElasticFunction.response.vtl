@@ -1,6 +1,6 @@
 #if( $context.result && $context.result.Error )
   $utils.error($context.result.Error)
 #else
-## RETURN PREVIOUS PIPLENE FUNCTION AURORA RESULT 
-  $utils.toJson($context.prev.result)
+## RETURN analyzedData Tender Object In result
+  $utils.toJson($context.result.data)
 #end

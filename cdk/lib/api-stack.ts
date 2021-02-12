@@ -454,13 +454,13 @@ export class ApiStack extends cdk.Stack {
       },
     })
 
-    const CreateTenderPipeline = new CfnResolver(this, `CreateTenderPipeline`, {
+    const CreateTenderPipeline = new CfnResolver(this, `CreateTender`, {
       apiId: api.apiId,
       kind: 'PIPELINE',
       typeName: "Mutation",
       fieldName: "CreateTender",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/pipeline.before.vtl`,
+        `${__dirname}/../../appsync/function.CreateTender.before.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
@@ -468,7 +468,7 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, CreateTenderAuroraFunction.attrFunctionId, CreateTenderElasticFunction.attrFunctionId],
+        functions: [TokenAuthorizerFunction.attrFunctionId, CreateTenderElasticFunction.attrFunctionId, CreateTenderAuroraFunction.attrFunctionId],
       },
     })
 

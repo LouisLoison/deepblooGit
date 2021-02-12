@@ -28,7 +28,7 @@ exports.handler = async function (event,) {
         await indexToElasticsearch([elasticDoc], 'tenders')
         await indexObjectToAppsearch([appsearchDoc], 'deepbloo-dev')
 
-        return { success: true, data: tender }
+        return { success: true, data: analyzedData }
     } catch (error) {
         return onError(error)
     }

@@ -2,6 +2,5 @@
   $utils.error($context.error.message)
 #else
   #set( $result = $utils.rds.toJsonObject($ctx.result)[1][0] )
-  ## REMOVE OLD ARGUMENTS
-$utils.toJson($result)
+  $utils.toJson($result)
 #end
