@@ -2,6 +2,7 @@
 processes"""
 
 import pandas as pd
+from pint import UnitRegistry, Context, Unit
 
 unit_references = [
     {'entity': 'power', 'unit': 'W', 'unit_full_name': 'watt'},
@@ -11,7 +12,42 @@ unit_references = [
     {'entity': 'energy', 'unit': 'Wh', 'unit_full_name': 'watt-hour'}
 ]
 
-# TODO: Create a function to check the compatibility between a unit and an entity
+
+def unit_entity_compatibility(unit_name, entity_name):
+    """
+    Determines a unit and an entity are compatible. Returns True if so,
+    False otherwise
+
+    This function assumes that the entity is among the relevant ones (power, electrical potential,
+    current, length, energy)
+
+    e.g. unit_entity_compatibility('meter', 'length') ---> True
+         unit_entity_compatibility('meter', 'volt') ----> False
+
+    Parameters
+    ----------
+    unit_name: str
+        Unit name (e.g. ampere, volt_ampere...)
+    entity_name: str
+        Entity name (e.g. power, electrical potential, length...)
+
+    Returns
+    -------
+    bool:
+        True if the unit and the entity match, assuming the entity is among the
+        relevant ones. False otherwise or if the entity is irrelevant
+    """
+    # Determine the reference unit for that entity
+    ref_unit = ""
+    for unit_info in unit_references:
+        if unit_info['entity'] == entity_name:
+            ref_unit = unit_info['unit_full_name']
+
+    if len(ref_unit) == 0:
+        print("WARNING: Irrelevant entity name. Compatibility could not be evaluated.")
+        return False
+
+    return Unit(unit_name).is_compatible_with(Unit(ref_unit))
 
 
 # TODO: Redefine this function not using pandas
