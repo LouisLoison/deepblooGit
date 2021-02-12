@@ -6,7 +6,7 @@ from pint import UnitRegistry, Context, Unit
 
 unit_references = [
     {'entity': 'power', 'unit': 'W', 'unit_full_name': 'watt'},
-    {'entity': 'electrical potential', 'unit': 'V', 'unit_full_name': 'volt'},
+    {'entity': 'electric potential', 'unit': 'V', 'unit_full_name': 'volt'},
     {'entity': 'current', 'unit': 'A', 'unit_full_name': 'ampere'},
     {'entity': 'length', 'unit': 'm', 'unit_full_name': 'meter'},
     {'entity': 'energy', 'unit': 'Wh', 'unit_full_name': 'watt-hour'}
