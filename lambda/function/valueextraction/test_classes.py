@@ -6,7 +6,6 @@ class TestClassUnit(unittest.TestCase):
     def setUp(self):
         self.unit1 = Unit("kilowatt", "power")
         self.unit2 = Unit("kW", "power")
-        self.unit3 = Unit("ampere", "time")
 
     def test_attributes(self):
         """Test whether the attributes were correctly assigned"""
@@ -22,7 +21,8 @@ class TestClassUnit(unittest.TestCase):
         self.assertEqual(self.unit2.uri, "en.m.wikipedia.org/wiki/{}".format(self.unit2.name))
 
         # Test for inadequate entity
-        self.assertEqual(self.unit3, None)
+        with self.assertRaises(EntityException):
+            self.unit3 = Unit("ampere", "time")
 
 
 class TestClassMetric(unittest.TestCase):
