@@ -194,7 +194,6 @@ class Unit:
         self.ref_unit = ""
         self.uri = "en.m.wikipedia.org/wiki/{}".format(name)
         # TODO: continue to fill the unit reference dictionary
-        # TODO: Take in account the fact that the input entity might be wrong
         
         # If the entity is referenced in unit_references, define
         # the value of the reference unit using it
