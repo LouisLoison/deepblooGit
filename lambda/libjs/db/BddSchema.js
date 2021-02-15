@@ -123,7 +123,8 @@ var Schema = {
       origine: { type: "String", description: 'Import source data : DgMarket, TenderInfo' },
       status: { type: "Int", description: '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
       creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
+      updateDate: { type: "DateTime" },
+      owner_id: { type: "String"}
     },
     tenderimport: {
       tenderImportId: { type: "Int" },
