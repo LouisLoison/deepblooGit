@@ -1117,7 +1117,7 @@ exports.SendPeriodicDashboard = () => {
       let emailSents = []
       for (const user of users) {
         /*
-        if (user.email.trim() !== 'serge.remy@studer-innotec.com') {
+        if (user.email.trim() !== 'jeancazaux@hotmail.com') {
           continue
         }
         */
@@ -1131,6 +1131,22 @@ exports.SendPeriodicDashboard = () => {
           continue
         }
         let to = user.email.trim()
+
+        // Get Automatic query
+        /*
+        let automaticQuerys = null
+        const tenderGroups = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupList(null, user.userId)
+        if (tenderGroups && tenderGroups.length) {
+          const automaticQuerys = tenderGroups.filter(a => a.notify && a.searchRequest)
+          if (automaticQuerys && automaticQuerys.length) {
+            for (const automaticQuery of automaticQuerys) {
+              const searchRequest = JSON.parse(automaticQuery.searchRequest)
+              const searchResult = await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').search(searchRequest)
+              automaticQuery.tenders = searchResult.results
+            }
+          }
+        }
+        */
 
         // Get CPVs
         let cpvs = []

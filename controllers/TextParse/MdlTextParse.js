@@ -647,58 +647,56 @@ exports.textParseList = (filter) => {
         { textParseId: 74, theme: "Brand", group: "Toshiba", words: "Toshiba", type: "KEYWORD", scopes: 'TITLE', },
 
         // financial
-        /*
-        { textParseId: 102, theme: "Financial Organization", group: "United Kingdom export finance", words: "united kingdom export finance, UK Export Finance", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 103, theme: "Financial Organization", group: "Banque de développement des etats de l’afrique centrale", words: "banque de développement des etats de l’afrique centrale", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 104, theme: "Financial Organization", group: "World bank", words: "world bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 105, theme: "Financial Organization", group: "African developent bank", words: "african developent bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 106, theme: "Financial Organization", group: "Banque ouest africaine de développement", words: "banque ouest africaine de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 102, theme: "Financial Organization", group: "United Kingdom export finance", words: "UK export finance, Export Credits Guarantee Department", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 103, theme: "Financial Organization", group: "Banque de développement des etats de l’afrique centrale", words: "Communauté économique et monétaire de l'Afrique centrale", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 104, theme: "Financial Organization", group: "World bank", words: "Banque internationale pour la reconstruction et le développement,  International Bank for Reconstruction and Development, Association internationale de développement, International Development Association, International Finance Corporation, Multilateral Investment Guarantee Agency, International Centre for Settlement of Investment Disputes", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 105, theme: "Financial Organization", group: "African developent bank", words: "Banque africaine de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 106, theme: "Financial Organization", group: "Banque ouest africaine de développement", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
         { textParseId: 107, theme: "Financial Organization", group: "Ecowas bank for investment and development", words: "ecowas bank for investment and development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 108, theme: "Financial Organization", group: "Asian development bank", words: "asian development bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 109, theme: "Financial Organization", group: "Inter-american development bank", words: "inter-american development bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 110, theme: "Financial Organization", group: "Development bank of latin america", words: "development bank of latin america", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 111, theme: "Financial Organization", group: "Asian infrastructure investment bank", words: "asian infrastructure investment bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 112, theme: "Financial Organization", group: "Agence française de développement", words: "agence française de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 113, theme: "Financial Organization", group: "European investment bank", words: "european investment bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 114, theme: "Financial Organization", group: "European bank for reconstruction and development", words: "european bank for reconstruction and development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 115, theme: "Financial Organization", group: "Kreditanstalt für wiederaufbau", words: "kreditanstalt für wiederaufbau", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 116, theme: "Financial Organization", group: "Deutsche gesellschaft für internationale zusammenarbeit", words: "deutsche gesellschaft für internationale zusammenarbeit", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 117, theme: "Financial Organization", group: "Department for international development of the united kingdom", words: "department for international development of the united kingdom", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 118, theme: "Financial Organization", group: "Japan international cooperation agency", words: "japan international cooperation agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 119, theme: "Financial Organization", group: "United states agency for international development", words: "united states agency for international development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 120, theme: "Financial Organization", group: "Millenium challenge corporation", words: "millenium challenge corporation", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 121, theme: "Financial Organization", group: "Export-import bank of china", words: "export-import bank of china", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 122, theme: "Financial Organization", group: "Export-import bank of india", words: "export-import bank of india", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 123, theme: "Financial Organization", group: "Export-import bank of korea", words: "export-import bank of korea", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 124, theme: "Financial Organization", group: "Spanish agency for international development cooperation", words: "spanish agency for international development cooperation", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 125, theme: "Financial Organization", group: "Cassa depositi e prestiti", words: "cassa depositi e prestiti", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 126, theme: "Financial Organization", group: "Norwegian agency for development cooperation", words: "norwegian agency for development cooperation", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 127, theme: "Financial Organization", group: "Norwegian trust fund", words: "norwegian trust fund", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 128, theme: "Financial Organization", group: "Danish international development agency", words: "danish international development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 129, theme: "Financial Organization", group: "Swedish international development cooperation agency", words: "swedish international development cooperation agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 130, theme: "Financial Organization", group: "Swiss agency for development and cooperation", words: "swiss agency for development and cooperation", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 131, theme: "Financial Organization", group: "Canadian international development agency", words: "canadian international development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 132, theme: "Financial Organization", group: "Luxembourg agency for development cooperation", words: "luxembourg agency for development cooperation", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 133, theme: "Financial Organization", group: "Belgian development agency", words: "belgian development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 134, theme: "Financial Organization", group: "Development bank of south africa", words: "development bank of south africa", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 135, theme: "Financial Organization", group: "Islamic development bank", words: "islamic development bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 136, theme: "Financial Organization", group: "Arab bank for economic development in africa", words: "arab bank for economic development in africa", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 137, theme: "Financial Organization", group: "Abu dhabi fund for development", words: "abu dhabi fund for development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 138, theme: "Financial Organization", group: "Abu dhabi investment authority", words: "abu dhabi investment authority", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 139, theme: "Financial Organization", group: "Saudi fund for development", words: "saudi fund for development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 140, theme: "Financial Organization", group: "Kuwait fund for arab economic development", words: "kuwait fund for arab economic development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 141, theme: "Financial Organization", group: "Opec fund for international development", words: "opec fund for international development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 142, theme: "Financial Organization", group: "Arab fund for economic and social development", words: "arab fund for economic and social development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 143, theme: "Financial Organization", group: "New zealand agency for international development", words: "new zealand agency for international development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 144, theme: "Financial Organization", group: "Brazilian development bank", words: "brazilian development bank", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 145, theme: "Financial Organization", group: "Industrial development bank of turkey", words: "industrial development bank of turkey", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 146, theme: "Financial Organization", group: "Nacional financiera", words: "nacional financiera", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 147, theme: "Financial Organization", group: "Caisse de dépot et de gestion", words: "caisse de dépot et de gestion", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 148, theme: "Financial Organization", group: "International development finance club", words: "international development finance club", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 149, theme: "Financial Organization", group: "International development agency", words: "international development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 150, theme: "Financial Organization", group: "Multilateral investment guarantee agency", words: "multilateral investment guarantee agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        { textParseId: 151, theme: "Financial Organization", group: "Export-import bank of the united states", words: "export-import bank of the united states", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
-        */
+        { textParseId: 108, theme: "Financial Organization", group: "Asian development bank", words: "Banque asiatique de développement, Asian Development Bank Institute", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 109, theme: "Financial Organization", group: "Inter-american development bank", words: "banque interaméricaine de développement, Banco Interamericano de Desenvolvimento, Banco Interamericano de Desarrollo", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 110, theme: "Financial Organization", group: "Development bank of latin america", words: "Corporacion Andina de Fomento, Banco de Desarrollo de América Latina, Corporação Andina de Fomento, Corporation andine de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 111, theme: "Financial Organization", group: "Asian infrastructure investment bank", words: "Banque asiatique d'investissement pour les infrastructures", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 112, theme: "Financial Organization", group: "Agence française de développement", words: "Proparco", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 113, theme: "Financial Organization", group: "European investment bank", words: "Banque européenne d'investissement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 114, theme: "Financial Organization", group: "European bank for reconstruction and development", words: "Banque européenne pour la reconstruction et le développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 115, theme: "Financial Organization", group: "Kreditanstalt für wiederaufbau", words: "Établissement de crédit pour la reconstruction", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 116, theme: "Financial Organization", group: "Deutsche gesellschaft für internationale zusammenarbeit", words: "GIZ, agence de coopération internationale allemande pour le développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 117, theme: "Financial Organization", group: "Department for international development of the united kingdom", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 118, theme: "Financial Organization", group: "Japan international cooperation agency", words: "Agence japonaise de coopération internationale", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 119, theme: "Financial Organization", group: "United states agency for international development", words: "Agence des États‑Unis pour le développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 120, theme: "Financial Organization", group: "Millenium challenge corporation", words: "Millennium Challenge Account", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 121, theme: "Financial Organization", group: "Export-import bank of china", words: "Exim Bank of China, Chexim, China Exim Bank, Avi Funding Co. Ltd., Buttonwood Investment Holding Company Ltd, Industrial and Commercial Bank of China, Asset Management Arm, Export-Import Bank Of China Yunnan Branch, Export-Import Bank Of China Shenzhen Branch", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 122, theme: "Financial Organization", group: "Export-import bank of india", words: "Exim Bank of India, Export-Import Bank of India, Asset Management Arm, Export Import Bank of India, London Branch", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 123, theme: "Financial Organization", group: "Export-import bank of korea", words: "Korea Eximbank, KEXIM ASIA LIMITED, PT Koexim Mandiri Finance, DAE SUN Shipbuilding & Engineering Co., KEXIM Bank UK Limited", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 124, theme: "Financial Organization", group: "Spanish agency for international development cooperation", words: "Agence espagnole pour la coopération internationale au développement,  secrétariat d’État à la Coopération internationale et à l’Amérique latine", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 125, theme: "Financial Organization", group: "Cassa depositi e prestiti", words: "Servizi Assicurativi del Commercio Estero, Fondo Strategico Italiano, Open Fiber", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 126, theme: "Financial Organization", group: "Norwegian agency for development cooperation", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 127, theme: "Financial Organization", group: "Norwegian trust fund", words: "Government Pension Fund-Global, Government Pension Fund of Norway, Government Petroleum Fund", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 128, theme: "Financial Organization", group: "Danish international development agency", words: "Danida", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 129, theme: "Financial Organization", group: "Swedish international development cooperation agency", words: "Agence suédoise de développement et coopération internationale, Swedish International Developpment Authority, Styrelsen för Internationellt Utvecklingssamarbete", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 130, theme: "Financial Organization", group: "Swiss agency for development and cooperation", words: "Direction du développement et de la coopération, Département fédéral des affaires étrangères", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 131, theme: "Financial Organization", group: "Canadian international development agency", words: "Agence canadienne de développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 132, theme: "Financial Organization", group: "Luxembourg agency for development cooperation", words: "Luxdev, Luxembourg Development Cooperation, Lux-Development S.A.", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 133, theme: "Financial Organization", group: "Belgian development agency", words: "Enabel, l’Agence belge de développement, Enabel Belgian development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 134, theme: "Financial Organization", group: "Development bank of south africa", words: "Banque de développement d'Afrique du Sud, Dbsa Development Fund", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 135, theme: "Financial Organization", group: "Islamic development bank", words: "La Banque islamique de développement, Meezan Bank, United Bank of Albania, Tadamun Services Berhad, World Waqf Foundation, OICNetworks Sdn Bhd, Islamic Development Bank Group", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 136, theme: "Financial Organization", group: "Arab bank for economic development in africa", words: "Banque arabe pour le développement économique en Afrique", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 137, theme: "Financial Organization", group: "Abu dhabi fund for development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 138, theme: "Financial Organization", group: "Abu dhabi investment authority", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 139, theme: "Financial Organization", group: "Saudi fund for development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 140, theme: "Financial Organization", group: "Kuwait fund for arab economic development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 141, theme: "Financial Organization", group: "Opec fund for international development", words: "Fonds de l'OPEP pour le développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 142, theme: "Financial Organization", group: "Arab fund for economic and social development", words: "Fonds arabe pour le développement économique et social", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 143, theme: "Financial Organization", group: "New zealand agency for international development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 144, theme: "Financial Organization", group: "Brazilian development bank", words: "Banco Nacional de Desenvolvimento Econômico e Social, Fundacao de Assistencia e Previdencia Social do BNDES, Agencia Especial de Financiamento Industrial FINAME", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 145, theme: "Financial Organization", group: "Industrial development bank of turkey", words: "TSKB Gayrimenkul, Turkiye Sinai Kalkinma Bankasi A.S., Vakifbank, Şişecam", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 146, theme: "Financial Organization", group: "Nacional financiera", words: "nafin, nafinsa", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 147, theme: "Financial Organization", group: "Caisse de dépot et de gestion", words: "CDG Capital, CDG Développement, Société de Développement de Saïdia, Société d'Aménagement et de Promotion de la Station de Taghazout, Société d'aménagement Zenata, Fipar-Holding", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 148, theme: "Financial Organization", group: "International development finance club", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 149, theme: "Financial Organization", group: "International development agency", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 150, theme: "Financial Organization", group: "Multilateral investment guarantee agency", words: "Agence multilatérale de garantie des investissements", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 151, theme: "Financial Organization", group: "Export-import bank of the united states", words: "Exim Bank of The United States", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
 
       ]
 
@@ -745,6 +743,10 @@ exports.cpvParseTreat = (text, CpvList, CpvListFormated, scope) => {
     }
     for (const cpvWord of cpv.cpvWords) {
       const word = cpvWord.word.trim()
+      if (!word || word.trim() !== '') {
+        continue
+      }
+
       let wordTemp = word
       if (!CpvListFormated) {
         wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
@@ -794,6 +796,14 @@ exports.textParseTreat = (text, textParses, scope) => {
       for (const wordCouple of wordCouples) {
         let word1 = wordCouple.split('|')[0].trim()
         let word2 = wordCouple.split('|')[1].trim()
+        if (
+          !word1
+          || word1.trim() !== ''
+          || !word2
+          || word2.trim() !== ''
+        ) {
+          continue
+        }
         const regExWordCouple = new RegExp(`(\\b${word1}\\b(.)*\\b${word2}\\b)|\\b${word2}\\b(.)*\\b${word1}\\b`, 'gi')
         const matchResult = text.match(regExWordCouple)
         if (matchResult) {
@@ -809,7 +819,12 @@ exports.textParseTreat = (text, textParses, scope) => {
       }
     } else {
       const words = textParse.words.split(',')
+      words.push(textParse.group)
       for (const word of words) {
+        if (!word || word.trim() !== '') {
+          continue
+        }
+
         const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
 
         let positions = this.matching_positions(textNew, wordTemp, true, true, true)

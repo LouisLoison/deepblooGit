@@ -1338,6 +1338,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
                     color AS "color",
                     searchRequest AS "searchRequest",
                     synchroSalesforce AS "synchroSalesforce",
+                    notify AS "notify",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
         FROM        tenderGroup 
@@ -1362,6 +1363,7 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
           color: record.color,
           searchRequest: record.searchRequest,
           synchroSalesforce: record.synchroSalesforce,
+          notify: record.notify,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })

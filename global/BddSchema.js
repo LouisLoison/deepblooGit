@@ -281,6 +281,7 @@ var Schema = {
       color: { type: "String" },
       searchRequest: { type: "String" },
       synchroSalesforce: { type: "Int" },
+      notify: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

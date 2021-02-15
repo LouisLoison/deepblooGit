@@ -282,3 +282,62 @@ exports.tendersImport = (tendersNumberMax = 100) => {
     } catch (err) { reject(err) }
   })
 }
+
+// Import tender into elastic search
+exports.search = (searchRequest) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const query = searchRequest.searchInputValue
+      const searchFields = { title: {} }
+      const resultFields = {
+        tender_uuid: { raw: {} },
+        title: { raw: {} },
+        country: { raw: {} },
+        publication_timestamp: { raw: {} },
+        bid_deadline_timestamp: { raw: {} },
+        cpvs: { raw: {} },
+        description: { raw: {} },
+      }
+      const options = {
+        filters: { all: [] },
+        search_fields: searchFields,
+        result_fields: resultFields,
+      }
+      if (searchRequest.filter) {
+        for (const field in searchRequest.filter) {
+          if (searchRequest.filter[field].length) {
+            for (const value of searchRequest.filter[field]) {
+              let option = {}
+              option[field] = value
+              options.filters.all.push({ any: [ option ] })
+            }
+          }
+        }
+      }
+      const result = await client.search(config.elasticEngineName, query, options)
+      resolve(result)
+    } catch (err) { reject(err) }
+  })
+}
+
+// Import tender into elastic search
+exports.searchFacet = (query, facet) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const searchFields = {}
+      searchFields[facet] = {}
+      const resultFields = {}
+      resultFields[facet] = { raw: {} }
+      const options = {
+        filters: { all: [] },
+        search_fields: searchFields,
+        result_fields: resultFields,
+      }
+      const result = await client.search(config.elasticEngineName, query, options)
+      const facetResults = result.results.map(a => a[facet].raw)
+      resolve(facetResults)
+    } catch (err) { reject(err) }
+  })
+}

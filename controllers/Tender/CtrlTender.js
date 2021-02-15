@@ -46,18 +46,6 @@ exports.TenderGroupAddUpdate = (req, res) => {
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
 
-exports.tenderCriterions = (req, res) => {
-  require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions(req.body.filter).then((data) => {
-    res.end(JSON.stringify({ success: true, data }, null, 3))
-  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
-}
-
-exports.tenderCriterionCpvs = (req, res) => {
-  require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterionCpvs(req.body.filter).then((data) => {
-    res.end(JSON.stringify({ success: true, data }, null, 3))
-  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
-}
-
 exports.TenderGroupDelete = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupDelete(req.body.tenderGroupId).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
@@ -132,6 +120,19 @@ exports.tenderFilterList = (req, res) => {
 
 exports.sendToSalesforce = (req, res) => {
   require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(req.body.userId, req.body.tenderId).then((data) => {
+    res.end(JSON.stringify({ success: true, data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+// TenderCriterion
+exports.tenderCriterions = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions(req.body.filter).then((data) => {
+    res.end(JSON.stringify({ success: true, data }, null, 3))
+  }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
+}
+
+exports.tenderCriterionCpvs = (req, res) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterionCpvs(req.body.filter).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

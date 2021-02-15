@@ -4,6 +4,8 @@ exports.sendToSalesforce = (userId, tenderId) => {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const FormData = require('form-data')
+      const BddId = 'deepbloo'
+      const BddEnvironnement = config.prefixe
 
       const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
       if (!tender) {
@@ -11,15 +13,38 @@ exports.sendToSalesforce = (userId, tenderId) => {
       }
 
       // Get countryId
+      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
+      const tenderCriterions = await require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions({ tenderId })
+      let financialOrganizationTextParses = textParses.filter(a => a.theme === 'Financial Organization')
+      let financialOrganizationTenderCriterions = []
+      for (const tenderCriterion of tenderCriterions) {
+        let textParse = financialOrganizationTextParses.find(a => a.textParseId === tenderCriterion.textParseId)
+        if (textParse) {
+          tenderCriterion.textParse = textParse
+          financialOrganizationTenderCriterions.push(tenderCriterion)
+        }
+      }
+      let mappingFinancialNames = financialOrganizationTenderCriterions.map(a => a.textParse.group.toLowerCase())
+      mappingFinancialNames = mappingFinancialNames.filter((v, i, a) => a.indexOf(v) === i)
+      let mappingFinancialId = ''
+      query = `
+        SELECT      mappingFinancial.code AS "code" 
+        FROM        mappingFinancial 
+        WHERE       LOWER(mappingFinancial.name) IN (${BddTool.ArrayStringFormat(mappingFinancialNames, BddEnvironnement, BddId)}) 
+      `
+      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      for (let record of recordset) {
+        mappingFinancialId = record.code
+      }
+
+      // Get countryId
       let countryId = ''
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
-      let query = `
+      query = `
         SELECT      mappingCountry.countryId AS "countryId" 
         FROM        mappingCountry 
         WHERE       LOWER(mappingCountry.name) = '${BddTool.ChaineFormater(tender.country.toLowerCase(), BddEnvironnement, BddId)}' 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
       for (let record of recordset) {
         countryId = record.countryId
       }
@@ -49,9 +74,10 @@ exports.sendToSalesforce = (userId, tenderId) => {
         throw new Error('No access token !')
       }
 
-      let title = tender.title.substring(0, 70)
+      let title = tender.title.substring(0, 50)
       let response2 = await require('axios').post(
         `https://sediver--sediveruat.my.salesforce.com/services/data/v50.0/sobjects/Project__c`, {
+          Tender_UUID__c: tender.tenderUuid,
           Name: title,
           Country__c: countryId,
           Account_Name_DB__c: "TEST ACCOUNT NAME",
@@ -71,6 +97,7 @@ exports.sendToSalesforce = (userId, tenderId) => {
           Porcelain_Share__c: 0,
           Composite_Share__c: 0,
           Year_1_percent__c: 0,
+          Account__c: mappingFinancialId,
         }, {
           headers: {
             'Content-Type': 'application/json',

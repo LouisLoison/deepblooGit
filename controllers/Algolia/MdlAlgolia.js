@@ -313,6 +313,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
         designs: [],
         contractTypes: [],
         brands: [],
+        financials: [],
         fileSource: tender.fileSource,
         groups: [],
         origine: tender.origine,
@@ -334,6 +335,8 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
             tenderNew.contractTypes.push(textParse.group)
           } else if (textParse.theme === "Brand" && !tenderNew.brands.includes(textParse.group)) {
             tenderNew.brands.push(textParse.group)
+          } else if (textParse.theme === "Financial Organization" && !tenderNew.financials.includes(textParse.group)) {
+            tenderNew.financials.push(textParse.group)
           }
         }
       }
