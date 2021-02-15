@@ -639,7 +639,7 @@
                   >
                     <v-progress-circular
                       :size="50"
-                      color="grey"
+                      color="blue-grey lighten-4"
                       indeterminate
                     />
                   </div>
@@ -693,7 +693,7 @@
                   >
                     <v-progress-circular
                       :size="50"
-                      color="grey"
+                      color="blue-grey lighten-4"
                       indeterminate
                     />
                   </div>

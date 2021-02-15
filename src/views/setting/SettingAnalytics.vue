@@ -12,7 +12,7 @@
         Please wait. We are building your interface.
       </div>
       <div class="pa-2 grey--text">This may take a few minutes...</div>
-      <v-progress-circular :size="50" color="grey" indeterminate />
+      <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
     </div>
     <iframe
       v-show="!loading"

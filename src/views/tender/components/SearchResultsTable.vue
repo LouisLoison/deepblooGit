@@ -215,6 +215,15 @@
                 />
 
                 <SearchFacet
+                  v-if="column.property === 'financial'"
+                  :checked="filter.financials"
+                  :facet="searchState.facets.financials[0]"
+                  @change="handleFacetChange($event, 'financials')"
+                  @checkAll="handleFacetCheckAll('financials')"
+                  @unCheckAll="handleFacetUnCheckAll('financials')"
+                />
+
+                <SearchFacet
                   v-if="column.property === 'currency'"
                   :checked="filter.currency"
                   :facet="searchState.facets.currency[0]"
@@ -543,7 +552,18 @@
                   >
                     {{ brand }}
                   </div>
-                </div>                
+                </div>
+              </div>
+              <div v-else-if="column.property === 'financial'">
+                <div v-if="result.financials && result.financials.raw">
+                  <div
+                    v-for="(financial, financialIndex) of result.financials.raw"
+                    :key="`financialIndex${financialIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ financial }}
+                  </div>
+                </div>
               </div>
               <div v-else-if="column.property === 'contract_types'">
                 <div
@@ -674,6 +694,12 @@ export default {
         show: false,
         title: "Brand",
         property: "brand",
+        menu: null
+      },
+      {
+        show: false,
+        title: "Financial Organization",
+        property: "financial",
         menu: null
       },
       {

@@ -1,6 +1,7 @@
 <template>
   <div
     ref="facet"
+    style="max-height: 290px;"
     :style="this.minHeight ? `min-height: ${this.minHeight}px;` : ''"
   >
     <div style="position: relative; height: 35px;">
@@ -43,14 +44,13 @@
         v-model="search"
         solo
         dense
-        clearable
         hide-details
         label="Search"
         color="blue-grey"
         class="search"
         prepend-inner-icon="fa-search"
         append-outer-icon="fa-window-close"
-        @click:append-outer="isSearchOpen = false"
+        @click:append-outer="closeSearch()"
       />
     </div>
     <div v-if="facet.data.length">
@@ -143,6 +143,11 @@ export default {
     isSearchOpen: false,
     search: '',
     minHeight: 0,
+    dataSearchFacets: {
+      loading: null,
+      query: null,
+      data: null,
+    },
   }),
 
   computed: {
@@ -205,7 +210,19 @@ export default {
 
   watch: {
     'facet.data'() {
-      this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight)
+      this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight + 4)
+      if (this.minHeight >= 290) {
+        this.minHeight = 290
+      }
+      this.mergeDatas()
+    },
+
+    search() {
+      this.searchFacet()
+    },
+
+    getUnChecked() {
+      this.searchFacet()
     },
   },
 
@@ -240,6 +257,60 @@ export default {
 
     unCheckAll() {
       this.$emit('unCheckAll')
+    },
+
+    closeSearch() {
+      this.search = ''
+      this.isSearchOpen = false
+    },
+
+    async searchFacet() {
+      try {
+        if (
+          !this.search
+          || this.search === ''
+        ) {
+          this.dataSearchFacets.query = ''
+          this.dataSearchFacets.data = []
+          return
+        }
+        if (
+          this.dataSearchFacets.query === this.search
+          || this.getUnChecked.length > 10
+        ) {
+          return
+        }
+
+        this.dataSearchFacets.loading = 0
+        const res = await this.$api.post("/Elasticsearch/searchFacet", {
+          query: this.search,
+          facet: this.facet.field,
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataSearchFacets.query = this.search
+        this.dataSearchFacets.data = res.data
+        this.mergeDatas()
+        this.dataSearchFacets.loading = 1
+      } catch (err) {
+        this.dataSearchFacets.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    mergeDatas() {
+      if (this.dataSearchFacets.data) {
+        for (const searchFacet of this.dataSearchFacets.data) {
+          if (!this.facet.data.find(a => a.value === searchFacet)) {
+            this.facet.data.push({
+              count: 0,
+              value: searchFacet,
+              checked: false,
+            })
+          }
+        }
+      }
     },
   }
 }

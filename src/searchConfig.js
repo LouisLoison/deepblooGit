@@ -45,7 +45,7 @@ const config = {
       },
       cpvs: {
         type: "value",
-        size: 200
+        size: 400
       },
       user_id: {
         type: "range",
@@ -85,7 +85,11 @@ const config = {
       },
       buyer_name: {
         type: "value",
-        size: 4950
+        size: 300
+      },
+      financials: {
+        type: "value",
+        size: 200
       },
     }
   }

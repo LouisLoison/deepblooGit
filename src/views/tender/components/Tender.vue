@@ -267,7 +267,7 @@
                 Scope of work
               </h3>
               <div v-if="!getScopeOfWork" class="pl-4">
-                <v-progress-circular :size="30" color="grey" indeterminate />
+                <v-progress-circular :size="30" color="blue-grey lighten-4" indeterminate />
               </div>
               <div v-else-if="!getScopeOfWork.length" class="grey--text pl-4">
                 None
@@ -329,7 +329,7 @@
                 Segment
               </h3>
               <div v-if="!getSegment" class="pl-4">
-                <v-progress-circular :size="30" color="grey" indeterminate />
+                <v-progress-circular :size="30" color="blue-grey lighten-4" indeterminate />
               </div>
               <div v-else-if="!getSegment.length" class="grey--text pl-4">
                 None
@@ -676,7 +676,7 @@
                   </v-tooltip>
                 </div>
                 <div v-if="!TenderOrganizations" class="pa-5 text-center">
-                  <v-progress-circular :size="50" color="grey" indeterminate />
+                  <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
                 </div>
                 <div
                   v-else-if="TenderOrganizations.length === 0"
@@ -901,6 +901,64 @@
                                   <tbody>
                                     <tr
                                       v-for="(tenderCriterion, index) in contractType.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
+                    <div class="grey--text pt-3">Financial Organization</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getFinancialOrganization && getFinancialOrganization.length">
+                          <v-menu
+                            v-for="(financialOrganization, index) in getFinancialOrganization"
+                            :key="`financialOrganization${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ financialOrganization.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in financialOrganization.tenderCriterions"
                                       :key="`tenderCriterion${index}`"
                                     >
                                       <td>{{ tenderCriterion.scope }}</td>
@@ -1252,7 +1310,7 @@
             Mapping of identified organizations (on Deepbloo)
           </div>
           <div v-if="!TenderOrganizations" class="pa-5 text-center">
-            <v-progress-circular :size="50" color="grey" indeterminate />
+            <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
           </div>
           <div v-else>
             <v-tooltip top>
@@ -1605,6 +1663,10 @@ export default {
 
     getContractType() {
       return this.searchTextParse("Contract type")
+    },
+
+    getFinancialOrganization() {
+      return this.searchTextParse("Financial Organization")
     },
   },
 

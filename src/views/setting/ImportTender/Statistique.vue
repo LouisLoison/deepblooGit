@@ -66,7 +66,7 @@
           v-if="!dataTenderImportStatistics.loading"
           class="pa-5 text-center"
         >
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <highcharts
           v-else
@@ -83,7 +83,7 @@
           v-if="!dataTenderImportStatistics.loading"
           class="pa-5 text-center"
         >
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <v-simple-table
           v-else
@@ -114,7 +114,7 @@
           v-if="!dataTenderImportStatistics.loading"
           class="pa-5 text-center"
         >
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <highcharts
           v-else
@@ -129,7 +129,7 @@
           v-if="!dataTenderImportStatistics.loading"
           class="pa-5 text-center"
         >
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <highcharts
           v-else

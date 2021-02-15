@@ -18,7 +18,7 @@
           <div class="pa-2 grey--text">
             Please wait...
           </div>
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <div v-else-if="users && users.length">
           <v-list two-line>

@@ -38,7 +38,11 @@
             >
               <div v-if="userTab === 1 && !userAlls" class="py-5 text-center">
                 <div class="grey--text">Loading...</div>
-                <v-progress-circular :size="50" color="grey" indeterminate />
+                <v-progress-circular
+                  :size="50"
+                  color="blue-grey lighten-4"
+                  indeterminate
+                />
               </div>
               <div v-else-if="!getUsers || !getUsers.length" class="py-5 text-center">
                 No users

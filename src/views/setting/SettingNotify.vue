@@ -2,7 +2,7 @@
   <v-container fluid class="pt-0">
     <div v-if="!dataUserNotifys.loading" class="text-center">
       <div class="pa-2 grey--text">Loading...</div>
-      <v-progress-circular :size="50" color="grey" indeterminate />
+      <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
     </div>
     <div v-else style="overflow: auto;">
       <div class="userNotify-grid">
