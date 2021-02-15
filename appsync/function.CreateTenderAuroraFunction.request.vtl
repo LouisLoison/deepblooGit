@@ -45,9 +45,11 @@
     }
 )
 
+
 #set( $sql = "INSERT INTO tenders " )
-#set( $items = $sql + "(" )
-#set( $values = $sql + "VALUES (" )
+
+#set( $items = "(" )
+#set( $values = "VALUES (" )
 
 #foreach( $entry in $tenderSchema.entrySet() )
     #if( $analyzedTender[$entry.key] )
