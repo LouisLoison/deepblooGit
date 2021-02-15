@@ -1,0 +1,7 @@
+## PUT NEW INPUT ARGUMENTS NEED TO CREATE TENDERS
+#set($tenderuuid = $util.autoId())
+#set($timestamp = $util.time.nowISO8601())
+$util.qr($context.args.input.put("tenderUuid", $tenderuuid))
+$util.qr($context.args.input.put("creationDate", $timestamp)) 
+$util.qr($context.args.input.put("updateDate", $timestamp)) 
+{}

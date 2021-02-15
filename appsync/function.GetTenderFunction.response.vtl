@@ -4,7 +4,7 @@
             #end
             #set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
             #set($returnResp = {})
-            #if($ctx.stash.userType == 3)
+            #if($ctx.stash.user_type == 3)
             	$util.qr($returnResp.put('description', $result.description))
             	$util.qr($returnResp.put('title', $result.title))
                 $utils.toJson($returnResp)

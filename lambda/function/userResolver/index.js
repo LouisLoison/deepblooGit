@@ -81,7 +81,8 @@ let List = async (event) => {
       let { filter } = event.arguments
       var users = []
       let query = `
-        SELECT    userId AS "userId", 
+        SELECT    userId AS "userId",
+                  uuid AS "uuid", 
                   hivebriteId AS "hivebriteId", 
                   type AS "type", 
                   email AS "email", 
@@ -205,7 +206,8 @@ let List = async (event) => {
           connexionBusiness: record.connexionBusiness,
           status: record.status,
           creationDate: record.creationDate,
-          updateDate: record.updateDate
+          updateDate: record.updateDate,
+          uuid: record.uuid
         })
       }
       resolve(users);

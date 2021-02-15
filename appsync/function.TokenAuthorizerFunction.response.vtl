@@ -2,10 +2,9 @@
       $utils.error($context.result.Error)
  #else
      ## STASH
-     $util.qr($context.stash.put("userType", $context.result.data.type)) 
-     $util.qr($context.stash.put("userId", $context.result.data)) 
-     ## ARGUMENTS
-     $util.qr($context.arguments.put("hivebriteId", $context.result.data.hivebriteId))
+     $util.qr($context.stash.put("user_type", $context.result.data.type)) 
+     $util.qr($context.stash.put("user_uuid", $context.result.data.uuid)) 
+     $util.qr($context.stash.put("user_hivebriteId", $context.result.data.hivebriteId)) 
      ## RESULT
      $utils.toJson($context.result.data)
   #end

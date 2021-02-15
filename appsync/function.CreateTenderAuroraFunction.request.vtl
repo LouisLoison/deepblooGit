@@ -1,0 +1,96 @@
+#set($analyzedTender = $context.prev.result) ## analyzedTender return from Elastic function.
+#set($tenderSchema = {
+      "id": { "type": "Int"},
+      "tenderUuid": { "type": "String" },
+      "procurementId": { "type": "String" },
+      "title": { "type": "String" },
+      "description": { "type": "String" },
+      "words": { "type": "String" },
+      "lang": { "type": "String" },
+      "contactFirstName": { "type": "String" },
+      "contactLastName": { "type": "String" },
+      "contactAddress": { "type": "String" },
+      "contactCity": { "type": "String" },
+      "contactState": { "type": "String" },
+      "contactCountry": { "type": "String" },
+      "contactEmail": { "type": "String" },
+      "contactPhone": { "type": "String" },
+      "buyerName": { "type": "String" },
+      "buyerCountry": { "type": "String" },
+      "procurementMethod": { "type": "String" },
+      "noticeType": { "type": "String" },
+      "country": { "type": "String" },
+      "estimatedCost": { "type": "String" },
+      "currency": { "type": "String" },
+      "publicationDate": { "type": "String" },
+      'cpvs': { "type": "String" },
+      'cpvDescriptions': { "type": "String" },
+      "cpvsOrigine":  { "type": "String" },
+      'words': { "type": "String" },
+      "bidDeadlineDate": { "type": "String" },
+      "sourceUrl": { "type": "String" },
+      "termDate": { "type": "DateTime" },
+      "fileSource": { "type": "String" },
+      "userId": { "type": "Int" },
+      "algoliaId": { "type": "Int" },
+      "brand": { "type": "String" },
+      "contractType1": { "type": "Int" },
+      "dataSource": { "type": "String" },
+      "dataSourceId": { "type": "String" },
+      "origine": { "type": "String", "description": 'Import source data : DgMarket, TenderInfo' },
+      "status": { "type": "Int", "description": '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
+      "creationDate": { "type": "DateTime" },
+      "updateDate": { "type": "DateTime" },
+      "owner_id": {"type": "String"}
+    }
+)
+
+
+#set( $sql = "INSERT INTO tenders " )
+
+#set( $sql = $sql + "(" )
+#foreach( $entry in $tenderSchema.entrySet() )
+    #if( $analyzedTender[$entry.key] )
+          #set( $sql = $sql + $entry.key.toLowerCase()) 
+      #if( $foreach.hasNext )
+          #set( $sql = $sql + ", ")
+      #else
+          #set( $sql = $sql + ") ")
+      #end
+    #end
+#end
+
+#set( $sql = $sql + "VALUES (" )
+#foreach ( $item in $tenderSchema.entrySet())
+	#if( $analyzedTender[$item.key] )
+    	#if($util.isList($analyzedTender[$item.key]) )
+        	 #set( $words = "" )
+             #foreach( $word in $analyzedTender[$item.key] )
+            	#if( $foreach.hasNext )
+                	#set( $words = $words + $word + ",")
+                #else
+                	#set( $words = $words + $word)
+                #end
+             #end
+             #set( $sql = $sql + "'$words'")
+        #elseif($util.isString($analyzedTender[$item.key]))
+    		#set( $sql = $sql + "'$analyzedTender[$item.key]'")
+        #else
+            #set( $sql = $sql + $analyzedTender[$item.key])
+        #end
+        #if( $foreach.hasNext )
+            #set( $sql = $sql + ", ")
+        #else
+            #set( $sql = $sql + ")")
+        #end
+    #end
+#end
+{
+    "version": "2018-05-29",
+    "statements": [
+        $util.toJson($sql),
+        "select owner_id as \"owner_id\", id as \"id\", title as \"title\",status as \"status\",cpvs as \"cpvs\",brand as \"brand\",currency as \"currency\", description as \"description\", lang as \"lang\", words as \"words\", country as \"country\", procurementid as \"procurementId\",  tenderuuid as \"tenderUuid\", datasourceid as \"datasourceId\", contactemail as \"contactEmail\", contactFirstName as \"contactFirstName\", contactLastName as \"contactLastName\",contactAddress as \"contactAddress\",contactCity as \"contactCity\",contactState as \"contactState\", contactPhone as \"contactPhone\", contactCountry as \"contactCountry\",buyerName as \"buyerName\",buyerCountry as \"buyerCountry\",procurementMethod as \"procurementMethod\",noticeType as \"noticeType\",estimatedCost as \"estimatedCost\", publicationDate as \"publicationDate\", cpvDescriptions as \"cpvDescriptions\", bidDeadlineDate as \"bidDeadlineDate\", sourceUrl as \"sourceUrl\", termDate as \"termDate\", fileSource as \"fileSource\",userId as \"userId\", algoliaId as \"algoliaId\", contractType1 as \"contractType1\", creationDate as \"creationDate\", updateDate as \"updateDate\" FROM tenders WHERE tenderuuid = '$analyzedTender.tenderUuid' "
+    ]
+}
+
+

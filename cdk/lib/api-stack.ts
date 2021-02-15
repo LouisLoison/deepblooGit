@@ -27,10 +27,19 @@ export class ApiStack extends cdk.Stack {
       NODE_ENV: "dev",
     }
     const dbSecretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
       DB_SECRET: dbSecretArn,
     }
+
+    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
+    const appsearchEnv = {
+      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
+      APPSEARCH_SECRET: appsearchSecretArn,
+    }
+
+    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
 
     const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
@@ -45,6 +54,14 @@ export class ApiStack extends cdk.Stack {
       exportName: 'db-arn',
       value: dbArn
     })
+
+    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
+      secretArn: appsearchSecretArn,
+    });
+
+    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
+      secretArn: elasticSecretArn,
+    });
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -112,6 +129,16 @@ export class ApiStack extends cdk.Stack {
             actions: ['secretsmanager:*'],
             resources: [hivebriteSecretArn]
           }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [appsearchSecretArn]
+          }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [elasticSecretArn]
+          })
           ]
         }),
 
@@ -148,7 +175,7 @@ export class ApiStack extends cdk.Stack {
       code: new AssetCode('../lambda/function/userResolver'),
       handler: 'index.handler',
       memorySize: 500,
-      timeout: Duration.seconds(11),
+      timeout: Duration.seconds(10),
       vpc,
       environment: {
         ...environment,
@@ -158,6 +185,24 @@ export class ApiStack extends cdk.Stack {
       role: lambdaBasicDbSecretVpcExecutionRole
     });
     userResolver.addLayers(nodeLayer, deepblooLayer)
+
+    const elasticResolver = new Function(this, 'elasticResolver', {
+      functionName: `elasticResolver-${environment.NODE_ENV}`,
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/elasticResolver'),
+      handler: 'index.handler',
+      memorySize: 500,
+      timeout: Duration.seconds(15),
+      vpc,
+      environment: {
+        ...environment,
+        ...appsearchEnv,
+        ...dbEnv,
+        ELASTIC_SECRET: elasticSecretArn,
+      },
+      role: lambdaBasicDbSecretVpcExecutionRole
+    });
+    elasticResolver.addLayers(nodeLayer, deepblooLayer)
 
     // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
@@ -226,6 +271,11 @@ export class ApiStack extends cdk.Stack {
       userResolver
     )
 
+    const elasticDataSource = api.addLambdaDataSource( //TODO CHANGE IT TO CfnDataSource class
+      'elasticDataSource',
+      elasticResolver
+    )
+
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
 
     /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
@@ -267,7 +317,24 @@ export class ApiStack extends cdk.Stack {
          `,
        ),
      })
+
+         const CreateTender = new CfnResolver(this, `CreateTender`, {
+      apiId: api.apiId,
+      fieldName: "CreateTender",
+      typeName: "Mutation",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    CreateTender.addDependsOn(auroraDataSource);
      */
+
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
     const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizerFunction', {
@@ -318,6 +385,38 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const CreateTenderAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateTenderAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderAuroraFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const CreateTenderElasticFunction = new CfnFunctionConfiguration(this, `CreateTenderElasticFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: elasticDataSource.name,
+      name: "CreateTenderElasticFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderElasticFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderElasticFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -337,7 +436,6 @@ export class ApiStack extends cdk.Stack {
       },
     })
 
-
     const GetTenderPipeline = new CfnResolver(this, `GetTenderPipeline`, {
       apiId: api.apiId,
       kind: 'PIPELINE',
@@ -355,5 +453,24 @@ export class ApiStack extends cdk.Stack {
         functions: [TokenAuthorizerFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
       },
     })
+
+    const CreateTenderPipeline = new CfnResolver(this, `CreateTender`, {
+      apiId: api.apiId,
+      kind: 'PIPELINE',
+      typeName: "Mutation",
+      fieldName: "CreateTender",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTender.before.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/pipeline.after.vtl`,
+        { encoding: "utf8" }
+      ),
+      pipelineConfig: {
+        functions: [TokenAuthorizerFunction.attrFunctionId, CreateTenderElasticFunction.attrFunctionId, CreateTenderAuroraFunction.attrFunctionId],
+      },
+    })
+
   }
 }
