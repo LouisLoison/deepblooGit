@@ -170,20 +170,15 @@
     </v-card>
 
     <v-card
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
       class="mx-auto mb-3"
       outlined
       style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click.stop="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -192,25 +187,25 @@
           @change="handleFacetChange($event, 'scope_of_works')"
           @checkAll="handleFacetCheckAll('scope_of_works')"
           @unCheckAll="handleFacetUnCheckAll('scope_of_works')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
 
     <v-card
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
       class="mx-auto mb-3"
       outlined
       style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -219,6 +214,11 @@
           @change="handleFacetChange($event, 'segments')"
           @checkAll="handleFacetCheckAll('segments')"
           @unCheckAll="handleFacetUnCheckAll('segments')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -240,20 +240,15 @@
     </v-card>
 
     <v-card
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
       class="mx-auto mb-3"
       outlined
       style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -262,25 +257,25 @@
           @change="handleFacetChange($event, 'brands')"
           @checkAll="handleFacetCheckAll('brands')"
           @unCheckAll="handleFacetUnCheckAll('brands')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
 
     <v-card
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
       class="mx-auto mb-3"
       outlined
       style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -289,6 +284,11 @@
           @change="handleFacetChange($event, 'financials')"
           @checkAll="handleFacetCheckAll('financials')"
           @unCheckAll="handleFacetUnCheckAll('financials')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -296,18 +296,13 @@
     <v-card
       class="mx-auto mb-3"
       outlined
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
       style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -316,6 +311,11 @@
           @change="handleFacetChange($event, 'currency')"
           @checkAll="handleFacetCheckAll('currency')"
           @unCheckAll="handleFacetUnCheckAll('currency')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -326,13 +326,7 @@
       outlined
       style="overflow-y: auto;"
     >
-      <v-card-text
-        :style="
-          getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
-        "
-      >
+      <v-card-text>
         <SearchFacet
           :checked="filter.origine"
           :facet="searchState.facets.origine[0]"

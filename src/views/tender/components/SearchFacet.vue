@@ -77,7 +77,10 @@
             </span>
           </div>
           <div class="text-right">
-            <span class="result-count">
+            <span
+              v-if="facetItem.count >= 0"
+              class="result-count"
+            >
               {{ facetItem.count }}
             </span>
           </div>
@@ -109,7 +112,10 @@
           </span>
         </div>
         <div class="text-right">
-          <span class="result-count">
+          <span
+            v-if="facetItem.count >= 0"
+            class="result-count"
+          >
             {{ facetItem.count }}
           </span>
         </div>
@@ -148,6 +154,7 @@ export default {
       query: null,
       data: null,
     },
+    itemCache: [],
   }),
 
   computed: {
@@ -189,19 +196,39 @@ export default {
         items = this.facet.data.filter(
           a => !this.checked || !this.checked.includes(a.value)
         )
-        if (this.search && this.search.trim() !== '') {
+        if (
+          this.search
+          && this.search.trim() !== ''
+        ) {
           items = items.filter(
-            a => a.value.toUpperCase().includes(this.search.toUpperCase())
+            a => a.value && a.value.toUpperCase().includes(this.search.toUpperCase())
           )
         }
       } else {
         items = this.facet.data.filter(
           a => !this.checked || !this.checked.includes(a.value.name)
         )
-        if (this.search && this.search.trim() !== '') {
+        if (
+          this.search
+          && this.search.trim() !== ''
+        ) {
           items = items.filter(
-            a => a.value.name.toUpperCase().includes(this.search.toUpperCase())
+            a => a.value && a.value.name && a.value.name.toUpperCase().includes(this.search.toUpperCase())
           )
+        }
+      }
+
+      if (items.length < 10) {
+        for (const itemValue of this.itemCache) {
+          if (
+            !items.find(a => a.value === itemValue)
+            && !this.getChecked.find(a => a.value === itemValue)
+          ) {
+            items.push({
+              count: -1,
+              value: itemValue,
+            })
+          }
         }
       }
       return items.slice(0, 10)
@@ -210,7 +237,8 @@ export default {
 
   watch: {
     'facet.data'() {
-      this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight + 4)
+      this.itemCache = [...new Set([...this.facet.data.map(a => a.value),...this.itemCache])].slice(0, 10)
+      this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight)
       if (this.minHeight >= 290) {
         this.minHeight = 290
       }
@@ -224,6 +252,13 @@ export default {
     getUnChecked() {
       this.searchFacet()
     },
+  },
+
+  mounted() {
+    this.itemCache = [
+      ...this.facet.data.map(a => a.value),
+      ...this.itemCache,
+    ].slice(0, 10)
   },
 
   methods: {
@@ -304,7 +339,7 @@ export default {
         for (const searchFacet of this.dataSearchFacets.data) {
           if (!this.facet.data.find(a => a.value === searchFacet)) {
             this.facet.data.push({
-              count: 0,
+              count: -1,
               value: searchFacet,
               checked: false,
             })
