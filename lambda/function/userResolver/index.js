@@ -43,8 +43,7 @@ let TokenAuthorizer = async (event) => {
        }
        */
 
-      let user = await User({ arguments: { id } })
-      resolve(user)
+      resolve({ id, name, primary_email, nbf })
     } catch (err) { reject(err) }
   })
 }
