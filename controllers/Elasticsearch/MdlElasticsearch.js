@@ -334,10 +334,27 @@ exports.searchFacet = (query, facet) => {
         filters: { all: [] },
         search_fields: searchFields,
         result_fields: resultFields,
+        page: {size: 500, current: 1}
       }
       const result = await client.search(config.elasticEngineName, query, options)
-      const facetResults = result.results.map(a => a[facet].raw)
+      let facetResults = result.results.map(a => Array.isArray(a[facet].raw) ? a[facet].raw[0] : a[facet].raw)
+      facetResults = [...new Set(facetResults)]
       resolve(facetResults)
-    } catch (err) { reject(err) }
+
+      /*
+      const client = await this.connectToPrivateAppSearch()
+      const options = {
+        size: 3,
+        types: {
+          documents: {
+            fields: [facet]
+          }
+        }
+      }
+      const result = await client.querySuggestion(config.elasticEngineName, query, options)
+      const facetResults = result.results.documents.map(a => a.suggestion)
+      resolve(facetResults)
+      */
+  } catch (err) { reject(err) }
   })
 }
