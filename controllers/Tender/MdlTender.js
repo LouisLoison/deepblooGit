@@ -1774,7 +1774,7 @@ exports.tenderCriterionCpvs = (filter) => {
       let query = `
         SELECT      tenderCriterionCpv.tenderCriterionCpvId AS "tenderCriterionCpvId", 
                     tenderCriterionCpv.tenderId AS "tenderId", 
-                    tenderCriterionCpv.documentId AS "documentId", 
+                    tenderCriterionCpv.documentUuid AS "documentUuid", 
                     tenderCriterionCpv.cpvId AS "cpvId", 
                     tenderCriterionCpv.value AS "value", 
                     tenderCriterionCpv.word AS "word", 
@@ -1789,17 +1789,17 @@ exports.tenderCriterionCpvs = (filter) => {
       if (filter) {
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterionCpv.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `tenderCriterionCpv.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionCpvs = []
       for (let record of recordset) {
         tenderCriterionCpvs.push({
           tenderCriterionCpvId: record.tenderCriterionCpvId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           cpvId: record.cpvId,
           value: record.value,
           word: record.word,

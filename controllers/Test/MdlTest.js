@@ -261,16 +261,16 @@ exports.Test = () => {
             creationDate,
             updateDate
           ) VALUES (
-            '${BddTool.ChaineFormater(countryId, BddEnvironnement, BddId)}',
-            '${BddTool.ChaineFormater(countryCode, BddEnvironnement, BddId)}',
-            '${BddTool.ChaineFormater(countryCode3, BddEnvironnement, BddId)}',
-            '${BddTool.ChaineFormater(name, BddEnvironnement, BddId)}',
-            '${BddTool.ChaineFormater(nameShort, BddEnvironnement, BddId)}',
+            '${BddTool.ChaineFormater(countryId)}',
+            '${BddTool.ChaineFormater(countryCode)}',
+            '${BddTool.ChaineFormater(countryCode3)}',
+            '${BddTool.ChaineFormater(name)}',
+            '${BddTool.ChaineFormater(nameShort)}',
             ${BddTool.DateNow(BddEnvironnement, BddId)},
             ${BddTool.DateNow(BddEnvironnement, BddId)}
           )
         `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
       }
   
       /*

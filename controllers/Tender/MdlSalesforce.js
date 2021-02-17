@@ -30,9 +30,9 @@ exports.sendToSalesforce = (userId, tenderId) => {
       query = `
         SELECT      mappingFinancial.code AS "code" 
         FROM        mappingFinancial 
-        WHERE       LOWER(mappingFinancial.name) IN (${BddTool.ArrayStringFormat(mappingFinancialNames, BddEnvironnement, BddId)}) 
+        WHERE       LOWER(mappingFinancial.name) IN (${BddTool.ArrayStringFormat(mappingFinancialNames)}) 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (let record of recordset) {
         mappingFinancialId = record.code
       }
@@ -42,9 +42,9 @@ exports.sendToSalesforce = (userId, tenderId) => {
       query = `
         SELECT      mappingCountry.countryId AS "countryId" 
         FROM        mappingCountry 
-        WHERE       LOWER(mappingCountry.name) = '${BddTool.ChaineFormater(tender.country.toLowerCase(), BddEnvironnement, BddId)}' 
+        WHERE       LOWER(mappingCountry.name) = '${BddTool.ChaineFormater(tender.country.toLowerCase())}' 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(query)
       for (let record of recordset) {
         countryId = record.countryId
       }
