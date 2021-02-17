@@ -221,8 +221,8 @@ export default {
       if (items.length < 10) {
         for (const itemValue of this.itemCache) {
           if (
-            !items.find(a => a.value === itemValue)
-            && !this.getChecked.find(a => a.value === itemValue)
+            (items && !items.find(a => a.value.constructor === Object ? a.value.name === itemValue.name : a.value === itemValue))
+            && (this.getChecked && !this.getChecked.find(a => a.value.constructor === Object ? a.value.name === itemValue.name : a.value === itemValue))
           ) {
             items.push({
               count: -1,

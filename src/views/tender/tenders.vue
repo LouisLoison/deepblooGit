@@ -598,7 +598,6 @@ export default {
       ) {
         for (const tenderGroupId of this.filter.groups) {
           const tenderGroup = this.getDataTenderGroups.data.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
-          console.log(tenderGroup)
           if (
             tenderGroup
             && tenderGroup.searchRequest
