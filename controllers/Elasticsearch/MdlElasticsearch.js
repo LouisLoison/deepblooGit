@@ -81,10 +81,9 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
         const snakedKey = key.replace(/[\w]([A-Z])/g, (m) => m[0] + "_" + m[1]).toLowerCase()
         acc[snakedKey] = object[key]
         return acc
-      }, {}));
-      // console.log(snakedObjects)
+      }, {}))
       const client = await this.connectToPrivateAppSearch()
-      const response = client.indexDocuments(engineName, snakedObjects)
+      const response = await client.indexDocuments(engineName, snakedObjects)
       resolve(response)
     } catch (err) { reject(err) }
   })
@@ -105,7 +104,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
         const snakedKey = key.replace(/[\w]([A-Z])/g, (m) => m[0] + "_" + m[1]).toLowerCase()
         acc[snakedKey] = object[key]
         return acc
-      }, {}));
+      }, {}))
       const client = await this.connectToPrivateAppSearch()
       const response = client.updateDocuments(engineName, snakedObjects)
       resolve(response)
@@ -138,6 +137,10 @@ exports.tendersFormat = (tenders) => {
         tenderNew.title = tenderNew.title.replace(/amp;/g, '')
   
         tenderNew.description = htmlToText.fromString(tenderNew.description)
+
+        if (tenderNew.bidDeadlineDate == '--') {
+          tenderNew.bidDeadlineDate = null
+        }
 
         tenderNew.buyer_name = ''
         if (tenderNew.buyer && tenderNew.buyer.name) {
@@ -278,5 +281,81 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       
       resolve(tenders.length)
     } catch (err) { reject(err) }
+  })
+}
+
+// Import tender into elastic search
+exports.search = (searchRequest) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const query = searchRequest.searchInputValue
+      const searchFields = { title: {} }
+      const resultFields = {
+        tender_uuid: { raw: {} },
+        title: { raw: {} },
+        country: { raw: {} },
+        publication_timestamp: { raw: {} },
+        bid_deadline_timestamp: { raw: {} },
+        cpvs: { raw: {} },
+        description: { raw: {} },
+      }
+      const options = {
+        filters: { all: [] },
+        search_fields: searchFields,
+        result_fields: resultFields,
+      }
+      if (searchRequest.filter) {
+        for (const field in searchRequest.filter) {
+          if (searchRequest.filter[field].length) {
+            for (const value of searchRequest.filter[field]) {
+              let option = {}
+              option[field] = value
+              options.filters.all.push({ any: [ option ] })
+            }
+          }
+        }
+      }
+      const result = await client.search(config.elasticEngineName, query, options)
+      resolve(result)
+    } catch (err) { reject(err) }
+  })
+}
+
+// Import tender into elastic search
+exports.searchFacet = (query, facet) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const searchFields = {}
+      searchFields[facet] = {}
+      const resultFields = {}
+      resultFields[facet] = { raw: {} }
+      const options = {
+        filters: { all: [] },
+        search_fields: searchFields,
+        result_fields: resultFields,
+        page: {size: 500, current: 1}
+      }
+      const result = await client.search(config.elasticEngineName, query, options)
+      let facetResults = result.results.map(a => Array.isArray(a[facet].raw) ? a[facet].raw[0] : a[facet].raw)
+      facetResults = [...new Set(facetResults)]
+      resolve(facetResults)
+
+      /*
+      const client = await this.connectToPrivateAppSearch()
+      const options = {
+        size: 3,
+        types: {
+          documents: {
+            fields: [facet]
+          }
+        }
+      }
+      const result = await client.querySuggestion(config.elasticEngineName, query, options)
+      const facetResults = result.results.documents.map(a => a.suggestion)
+      resolve(facetResults)
+      */
+  } catch (err) { reject(err) }
   })
 }

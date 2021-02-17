@@ -290,7 +290,7 @@ exports.mergeTender = () => {
     try {
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
-      const dataImportDgmarkets = await this.importDgmarkets({ statuss: [1, 5] }, null, null, 1, 10000)
+      const dataImportDgmarkets = await this.importDgmarkets({ statuss: [1, 5] }, null, null, 1, 1000)
       let tenderKoCount = 0
       for (const importDgmarket of dataImportDgmarkets.entries) {
         const tender = await this.convertToTender(importDgmarket, CpvList, textParses)

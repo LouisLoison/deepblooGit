@@ -122,6 +122,7 @@ var Schema = {
       contractType1: { type: "Int" },
       dataSource: { type: "String" },
       dataSourceId: { type: "String" },
+      financial: { type: "String" },
       origine: { type: "String", description: 'Import source data : DgMarket, TenderInfo' },
       status: { type: "Int", description: '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
       creationDate: { type: "DateTime" },
@@ -175,6 +176,15 @@ var Schema = {
       countryCode3: { type: "String" },
       name: { type: "String" },
       nameShort: { type: "String" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
+    mappingFinancial: {
+      mappingFinancialId: { type: "Int", key: true },
+      name: { type: "String" },
+      code: { type: "String" },
       userId: { type: "Int" },
       organizationId: { type: "Int" },
       creationDate: { type: "DateTime" },
@@ -245,6 +255,7 @@ var Schema = {
       color: { type: "String" },
       searchRequest: { type: "String" },
       synchroSalesforce: { type: "Int" },
+      notify: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },

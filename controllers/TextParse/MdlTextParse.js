@@ -285,7 +285,7 @@ exports.textParseList = (filter) => {
         {
           textParseId: 6,
           theme: "Scope of Work",
-          group: "Construction/Commisioning",
+          group: "Construction/Commissioning",
           words: "Construction, reconstruction, Turnkey, commissioning, extension, EPC, fabrication, realization, civil work, civil works, mise en service, génie civil",
           type: "KEYWORD",
         },
@@ -307,7 +307,7 @@ exports.textParseList = (filter) => {
           textParseId: 9,
           theme: "Scope of Work",
           group: "Consulting/Audit",
-          words: "Consulting, audit, consultant, consultancy, assess, assesment, Assessing, Feasability, pre-feasability, survey, surveying, consultative, consultatory, provision of services, measurement, investigation, study, studies, report, étude, advice, due diligence, evaluation, evaluate, evaluating, évaluation, analysis, analyse",
+          words: "Consulting, audit, consultant, consultancy, assess, assesment, Assessing, Feasability, pre-feasability, survey, surveying, consultative, consultatory, provision of services, measurement, investigation, study, studies, report, étude, advice, due diligence",
           type: "KEYWORD",
         },
         {
@@ -328,21 +328,21 @@ exports.textParseList = (filter) => {
           textParseId: 82,
           theme: "Scope of Work",
           group: "Testing/Measurement/Qualif",
-          words: "Testing, test, measure, measuring, qualification, qualify",
+          words: "Testing, test, measure, measuring, qualification, qualify, experimenting, experimentation, experiment, bench",
           type: "KEYWORD",
         },
         {
           textParseId: 10,
           theme: "Scope of Work",
           group: "Design",
-          words: "engineering, design,  designing, drawing , schemes",
+          words: "engineering, design,  designing, drawing , schemes, concept, conception",
           type: "KEYWORD",
         },
         {
           textParseId: 11,
           theme: "Scope of Work",
           group: "Refurbishment/upgrade",
-          words: "Refurbishment, rehabilitation, upgrade, upgrading, upgradation, restoration, replacement, replace, replacing, reconstruction, retrofit, refurbish, expansion, extension, modernization, renovation",
+          words: "Refurbishment, rehabilitation, upgrade, upgrading, upgradation, restoration, replacement, replace, replacing, reconstruction, retrofit, refurbish, expansion, extension, modernization, renovation, uprate, uprating, reconductoring, refurbishing, restoring, renovating, renovate, restore, renew, revamp, revamping",
           type: "KEYWORD",
         },
         {
@@ -363,7 +363,7 @@ exports.textParseList = (filter) => {
           textParseId: 84,
           theme: "Scope of Work",
           group: "Transport/Logistic",
-          words: "loading, carriage, unloading, transportation, transport",
+          words: "loading, carriage, unloading, transportation, transport, Logistics, logistical services, shipping, freight",
           type: "KEYWORD",
         },
         {
@@ -373,40 +373,49 @@ exports.textParseList = (filter) => {
           words: "manufacture, manufacturing, producing, production, fabrication",
           type: "KEYWORD",
         },
+        /*
+        {
+          textParseId: 87,
+          theme: "Scope of Work",
+          group: "Project Development",
+          words: "development, develop, developping",
+          type: "KEYWORD",
+        },
+        */
         // Segment 85
         {
           textParseId: 85,
           theme: "Segment",
           group: "Agriculture",
-          words: "irrigation, agricultural, fishing, agriculture, fertilzer",
+          words: "irrigation, agricultural, fishing, agriculture, fertilzer, pesticide, seed, aquaculture, farming, agronomic, agronomy, crop, pest, fisheries, fishery, cultivation, harvesting, agronomy, husbandry, horticulture, horticultural, livestock, animal science, Forestry, Forest, Organic",
           type: "KEYWORD",
         },
         {
           textParseId: 14,
           theme: "Segment",
           group: "Mining",
-          words: "mine, mining",
+          words: "mine, mining, excavating, excavate, geology, digging, tunneling, pitting, quarry, shaft, miner, coal, gold, platinum, tubewell, boring, titanium",
           type: "KEYWORD",
         },
         {
           textParseId: 15,
           theme: "Segment",
           group: "Industry",
-          words: "Industry, industrial, factory, plant, manufactory, warehouse",
+          words: "Industry, industrial, factory, plant, manufactory, warehouse, cementry",
           type: "KEYWORD",
         },
         {
           textParseId: 16,
           theme: "Segment",
           group: "Rural",
-          words: "rural, agrarian, remote area, electricity access, access to electricity, energy access, locality, localities, village, undeserved",
+          words: "rural, agrarian, remote area, electricity access, access to electricity, energy access, locality, localities, village, undeserved, pastoral, hamlet, dam",
           type: "KEYWORD",
         },
         {
           textParseId: 17,
           theme: "Segment",
           group: "Public Lighting",
-          words: "Public lighting,  street light, street lighting, street lightings, street lights, streetlight, streetlighting, streetlightings, streetlights",
+          words: "Public lighting,  street light, street lighting, street lightings, street lights, streetlight, streetlighting, streetlightings, streetlights, path lights",
           type: "KEYWORD",
         },
         {
@@ -420,35 +429,93 @@ exports.textParseList = (filter) => {
           textParseId: 19,
           theme: "Segment",
           group: "Buisness",
-          words: "commercial, building, mall, business center, small business, small businesses, business, commerce, office",
+          words: "commercial, building, mall, business center, small business, small businesses, business, commerce, office, trading center, trade center",
           type: "KEYWORD",
         },
         {
           textParseId: 86,
           theme: "Segment",
           group: "O&G",
-          words: "Refinery, gas pipeline, gaz pipeline",
+          words: "Refinery, gas pipeline, gaz pipeline, petroleum, kerosene, fuel, oil, crude oil, pipeline, pipelines, Gasoline , Hydrocarbon, Natural Gas, o&g, oil and gaz, oil and gas, oil & gas, oil & gaz",
           type: "KEYWORD",
         },
         {
           textParseId: 20,
           theme: "Segment",
           group: "Residential",
-          words: "residential, residentiel, homes, house, household, urban, housing",
+          words: "residential, residentiel, homes, house, household, urban, housing, urbanisation, suburban, domestic, habitation, metropolitan",
           type: "KEYWORD",
         },
         {
           textParseId: 21,
           theme: "Segment",
           group: "Railway",
-          words: "Railway, railroad, rail line, train line, subway, metro, monorail",
+          words: "Railway, railroad, rail line, train line, subway, metro, monorail, tram, tramway",
           type: "KEYWORD",
         },
+        /*
         {
           textParseId: 22,
           theme: "Segment",
           group: "services (school, hospital....)",
           words: "sport, training, school, classroom, hospital, hopital, health center, university, medical center, gaming, airport,  ski, tourism, aquatic, stadium, leisure, amusement, restaurant, crematorium, cutlure house , culure center, cultural center, recreation , food center, care center, senior center, cinema, memory house, memorial, arts, libray, swimming pool, shopping, children parks, national parks",
+          type: "KEYWORD",
+        },
+        */
+        {
+          textParseId: 90,
+          theme: "Segment",
+          group: "Health",
+          words: "hospital, hopital, health center, medical center, health program, medical, nursing home, clinic, emergency room, nursing home, surgery, sanatorium, Covid",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 91,
+          theme: "Segment",
+          group: "Education",
+          words: "school, classroom,  university, college, academy, establishment, faculty, educational institution, training institute, professional training",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 92,
+          theme: "Segment",
+          group: "Culture",
+          words: "cutlure house , culure center, cultural center, library, memory house, arts, museum, gallery, exhibition, craft, handicraft,  municipal, civic",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 93,
+          theme: "Segment",
+          group: "Leisure",
+          words: "sport, gaming, ski, tourism, aquatic, stadium, leisure, amusement, restaurant, recreation, cinema, memorial, swimming pool, shopping, children parks, national parks, sanctuary, tourist, aquarium, gymnasium, halls, play, game, arena, zoo",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 94,
+          theme: "Segment",
+          group: "Transport",
+          words: "airport, seaport, shipment, shipping, transit, transportation, carriage, carrier, haul, hauler, hauling, conveyance, freight, cargo",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 95,
+          theme: "Segment",
+          group: "Food",
+          words: "food center, food product, food products, drink, alcohol",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 96,
+          theme: "Segment",
+          group: "Others",
+          words: "care center, senior center, crematorium, shopping",
+          type: "KEYWORD",
+        },
+        {
+          textParseId: 97,
+          theme: "Segment",
+          group: "Nuclear",
+          words: "Containment building, steam generators, steam pipes, uranium, reactor vessel, neutron, Magnox, UNGG, PWR, BWR",
           type: "KEYWORD",
         },
         // Financing
@@ -521,14 +588,30 @@ exports.textParseList = (filter) => {
           type: "WORD_COUPLE",
           scopes: 'TITLE',
         },
+        {
+          textParseId: 100,
+          theme: "Contract type",
+          group: "Long term / Frame Agreement",
+          words: "months Term contract, months contract, months agreement, Blanket agreement, purchase agreement",
+          type: "KEYWORD",
+          scopes: 'TITLE',
+        },
+        {
+          textParseId: 101,
+          theme: "Contract type",
+          group: "PPA / IPP agreement",
+          words: "Power Purchase Agreement, Energy Purchase Agreement, PPA, IPP, Independant Power Producer, Producteur d'électricité indépendant, Producteur d'électricité non-public, non-utility generator, NUG, Producteur d'électricité non public, non utility generator, independent Energy producer, independant Energy producer, local power producer, local energy producer, producteurs indépendents d’électricité, Build, own, operate and transfer, Build, own, operate, Independent Power Producer",
+          type: "KEYWORD",
+          scopes: 'TITLE',
+        },
 
-        { textParseId: 32, theme: "Brand", group: "GE", words: "GE, General Electric", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 32, theme: "Brand", group: "GE", words: "GE make, GE brand, General Electric", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 33, theme: "Brand", group: "Siemens", words: "Siemens", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 34, theme: "Brand", group: "Weidmuller", words: "weidmuller", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 35, theme: "Brand", group: "elgi", words: "elgi", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 36, theme: "Brand", group: "abb", words: "abb", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 37, theme: "Brand", group: "phoenix", words: "phoenix", type: "KEYWORD", scopes: 'TITLE', },
-        { textParseId: 38, theme: "Brand", group: "schneider electric", words: "schneider electric", type: "KEYWORD", scopes: 'TITLE', },
+        { textParseId: 38, theme: "Brand", group: "schneider electric", words: "schneider", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 39, theme: "Brand", group: "rittal", words: "rittal", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 40, theme: "Brand", group: "rexroth", words: "rexroth", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 41, theme: "Brand", group: "bhel", words: "bhel", type: "KEYWORD", scopes: 'TITLE', },
@@ -562,7 +645,61 @@ exports.textParseList = (filter) => {
         { textParseId: 72, theme: "Brand", group: "Schweitzer", words: "Schweitzer", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 73, theme: "Brand", group: "Saft", words: "Saft", type: "KEYWORD", scopes: 'TITLE', },
         { textParseId: 74, theme: "Brand", group: "Toshiba", words: "Toshiba", type: "KEYWORD", scopes: 'TITLE', },
+
+        // financial
+        { textParseId: 102, theme: "Financial Organization", group: "United Kingdom export finance", words: "UK export finance, Export Credits Guarantee Department", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 103, theme: "Financial Organization", group: "Banque de développement des etats de l’afrique centrale", words: "Communauté économique et monétaire de l'Afrique centrale", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 104, theme: "Financial Organization", group: "World bank", words: "Banque internationale pour la reconstruction et le développement,  International Bank for Reconstruction and Development, Association internationale de développement, International Development Association, International Finance Corporation, Multilateral Investment Guarantee Agency, International Centre for Settlement of Investment Disputes", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 105, theme: "Financial Organization", group: "African developent bank", words: "Banque africaine de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 106, theme: "Financial Organization", group: "Banque ouest africaine de développement", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 107, theme: "Financial Organization", group: "Ecowas bank for investment and development", words: "ecowas bank for investment and development", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 108, theme: "Financial Organization", group: "Asian development bank", words: "Banque asiatique de développement, Asian Development Bank Institute", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 109, theme: "Financial Organization", group: "Inter-american development bank", words: "banque interaméricaine de développement, Banco Interamericano de Desenvolvimento, Banco Interamericano de Desarrollo", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 110, theme: "Financial Organization", group: "Development bank of latin america", words: "Corporacion Andina de Fomento, Banco de Desarrollo de América Latina, Corporação Andina de Fomento, Corporation andine de développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 111, theme: "Financial Organization", group: "Asian infrastructure investment bank", words: "Banque asiatique d'investissement pour les infrastructures", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 112, theme: "Financial Organization", group: "Agence française de développement", words: "Proparco", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 113, theme: "Financial Organization", group: "European investment bank", words: "Banque européenne d'investissement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 114, theme: "Financial Organization", group: "European bank for reconstruction and development", words: "Banque européenne pour la reconstruction et le développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 115, theme: "Financial Organization", group: "Kreditanstalt für wiederaufbau", words: "Établissement de crédit pour la reconstruction", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 116, theme: "Financial Organization", group: "Deutsche gesellschaft für internationale zusammenarbeit", words: "GIZ, agence de coopération internationale allemande pour le développement", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 117, theme: "Financial Organization", group: "Department for international development of the united kingdom", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 118, theme: "Financial Organization", group: "Japan international cooperation agency", words: "Agence japonaise de coopération internationale", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 119, theme: "Financial Organization", group: "United states agency for international development", words: "Agence des États‑Unis pour le développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 120, theme: "Financial Organization", group: "Millenium challenge corporation", words: "Millennium Challenge Account", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 121, theme: "Financial Organization", group: "Export-import bank of china", words: "Exim Bank of China, Chexim, China Exim Bank, Avi Funding Co. Ltd., Buttonwood Investment Holding Company Ltd, Industrial and Commercial Bank of China, Asset Management Arm, Export-Import Bank Of China Yunnan Branch, Export-Import Bank Of China Shenzhen Branch", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 122, theme: "Financial Organization", group: "Export-import bank of india", words: "Exim Bank of India, Export-Import Bank of India, Asset Management Arm, Export Import Bank of India, London Branch", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 123, theme: "Financial Organization", group: "Export-import bank of korea", words: "Korea Eximbank, KEXIM ASIA LIMITED, PT Koexim Mandiri Finance, DAE SUN Shipbuilding & Engineering Co., KEXIM Bank UK Limited", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 124, theme: "Financial Organization", group: "Spanish agency for international development cooperation", words: "Agence espagnole pour la coopération internationale au développement,  secrétariat d’État à la Coopération internationale et à l’Amérique latine", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 125, theme: "Financial Organization", group: "Cassa depositi e prestiti", words: "Servizi Assicurativi del Commercio Estero, Fondo Strategico Italiano, Open Fiber", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 126, theme: "Financial Organization", group: "Norwegian agency for development cooperation", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 127, theme: "Financial Organization", group: "Norwegian trust fund", words: "Government Pension Fund-Global, Government Pension Fund of Norway, Government Petroleum Fund", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 128, theme: "Financial Organization", group: "Danish international development agency", words: "Danida", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 129, theme: "Financial Organization", group: "Swedish international development cooperation agency", words: "Agence suédoise de développement et coopération internationale, Swedish International Developpment Authority, Styrelsen för Internationellt Utvecklingssamarbete", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 130, theme: "Financial Organization", group: "Swiss agency for development and cooperation", words: "Direction du développement et de la coopération, Département fédéral des affaires étrangères", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 131, theme: "Financial Organization", group: "Canadian international development agency", words: "Agence canadienne de développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 132, theme: "Financial Organization", group: "Luxembourg agency for development cooperation", words: "Luxdev, Luxembourg Development Cooperation, Lux-Development S.A.", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 133, theme: "Financial Organization", group: "Belgian development agency", words: "Enabel, l’Agence belge de développement, Enabel Belgian development agency", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 134, theme: "Financial Organization", group: "Development bank of south africa", words: "Banque de développement d'Afrique du Sud, Dbsa Development Fund", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 135, theme: "Financial Organization", group: "Islamic development bank", words: "La Banque islamique de développement, Meezan Bank, United Bank of Albania, Tadamun Services Berhad, World Waqf Foundation, OICNetworks Sdn Bhd, Islamic Development Bank Group", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 136, theme: "Financial Organization", group: "Arab bank for economic development in africa", words: "Banque arabe pour le développement économique en Afrique", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 137, theme: "Financial Organization", group: "Abu dhabi fund for development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 138, theme: "Financial Organization", group: "Abu dhabi investment authority", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 139, theme: "Financial Organization", group: "Saudi fund for development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 140, theme: "Financial Organization", group: "Kuwait fund for arab economic development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 141, theme: "Financial Organization", group: "Opec fund for international development", words: "Fonds de l'OPEP pour le développement international", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 142, theme: "Financial Organization", group: "Arab fund for economic and social development", words: "Fonds arabe pour le développement économique et social", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 143, theme: "Financial Organization", group: "New zealand agency for international development", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 144, theme: "Financial Organization", group: "Brazilian development bank", words: "Banco Nacional de Desenvolvimento Econômico e Social, Fundacao de Assistencia e Previdencia Social do BNDES, Agencia Especial de Financiamento Industrial FINAME", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 145, theme: "Financial Organization", group: "Industrial development bank of turkey", words: "TSKB Gayrimenkul, Turkiye Sinai Kalkinma Bankasi A.S., Vakifbank, Şişecam", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 146, theme: "Financial Organization", group: "Nacional financiera", words: "nafin, nafinsa", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 147, theme: "Financial Organization", group: "Caisse de dépot et de gestion", words: "CDG Capital, CDG Développement, Société de Développement de Saïdia, Société d'Aménagement et de Promotion de la Station de Taghazout, Société d'aménagement Zenata, Fipar-Holding", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 148, theme: "Financial Organization", group: "International development finance club", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 149, theme: "Financial Organization", group: "International development agency", words: "", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 150, theme: "Financial Organization", group: "Multilateral investment guarantee agency", words: "Agence multilatérale de garantie des investissements", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+        { textParseId: 151, theme: "Financial Organization", group: "Export-import bank of the united states", words: "Exim Bank of The United States", type: "KEYWORD", scopes: 'TITLE, DESCRIPTION', },
+
       ]
+
       resolve(textParses)
     } catch (err) {
       reject(err)
@@ -606,6 +743,10 @@ exports.cpvParseTreat = (text, CpvList, CpvListFormated, scope) => {
     }
     for (const cpvWord of cpv.cpvWords) {
       const word = cpvWord.word.trim()
+      if (!word || word.trim() !== '') {
+        continue
+      }
+
       let wordTemp = word
       if (!CpvListFormated) {
         wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
@@ -655,6 +796,14 @@ exports.textParseTreat = (text, textParses, scope) => {
       for (const wordCouple of wordCouples) {
         let word1 = wordCouple.split('|')[0].trim()
         let word2 = wordCouple.split('|')[1].trim()
+        if (
+          !word1
+          || word1.trim() !== ''
+          || !word2
+          || word2.trim() !== ''
+        ) {
+          continue
+        }
         const regExWordCouple = new RegExp(`(\\b${word1}\\b(.)*\\b${word2}\\b)|\\b${word2}\\b(.)*\\b${word1}\\b`, 'gi')
         const matchResult = text.match(regExWordCouple)
         if (matchResult) {
@@ -670,7 +819,12 @@ exports.textParseTreat = (text, textParses, scope) => {
       }
     } else {
       const words = textParse.words.split(',')
+      words.push(textParse.group)
       for (const word of words) {
+        if (!word || word.trim() !== '') {
+          continue
+        }
+
         const wordTemp = require(process.cwd() + '/controllers/CtrlTool').removeDiacritics(word).toUpperCase().trim()
 
         let positions = this.matching_positions(textNew, wordTemp, true, true, true)
@@ -755,6 +909,38 @@ exports.tenderCriterionCpvAddUpdate = (tenderCriterionCpv) => {
       const BddEnvironnement = config.prefixe
       let tenderCriterionCpvNew = await BddTool.RecordAddUpdate('tenderCriterionCpv', tenderCriterionCpv)
       resolve(tenderCriterionCpvNew)
+    } catch (err) { reject(err) }
+  })
+}
+
+exports.downloadCsv = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const config = require(process.cwd() + '/config')
+      const fs = require('fs')
+      const path = require('path')
+      const moment = require('moment')
+      const textParses = await this.textParseList()
+
+      let textParseText = `textParseId;theme;group;type;words\n`
+      if (textParses) {
+        for (const textParse of textParses) {
+          const words = textParse.words.split(',').join(';')
+          textParseText += `${textParse.textParseId};${textParse.theme || ''};${textParse.group || ''};${textParse.type || ''};${words}\n`
+        }
+      }
+      const fileName = `textParses_${moment().format("YYYYMMDD_HHmmss")}.csv`
+      const downloadPath = path.join(config.WorkSpaceFolder, 'Download/')
+      if (!fs.existsSync(downloadPath)) {
+        fs.mkdirSync(downloadPath)
+      }
+      const cpvListLocation = path.join(downloadPath, fileName)
+      fs.writeFileSync(cpvListLocation, textParseText)
+
+      resolve({
+        fileName: fileName, 
+        url: `download/${fileName}`,
+      });
     } catch (err) { reject(err) }
   })
 }
