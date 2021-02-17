@@ -1,5 +1,5 @@
 <template>
-  <div class="search-facet-region">
+  <div class="search-facet-region pb-2">
     <div class="pt-3 px-3 pb-1">
       Region
     </div>

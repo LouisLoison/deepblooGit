@@ -22,7 +22,12 @@
           class="display-table-head display-table-cell-option"
           style="overflow: visible;"
         >
-          <v-menu transition="slide-y-transition" offset-y left>
+          <v-menu
+            transition="slide-y-transition"
+            max-height="400"
+            offset-y
+            right
+          >
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on" class="ma-0 pa-0" @click.stop>
                 <v-icon size="16">fa-bars</v-icon>
@@ -210,6 +215,15 @@
                 />
 
                 <SearchFacet
+                  v-if="column.property === 'financial'"
+                  :checked="filter.financials"
+                  :facet="searchState.facets.financials[0]"
+                  @change="handleFacetChange($event, 'financials')"
+                  @checkAll="handleFacetCheckAll('financials')"
+                  @unCheckAll="handleFacetUnCheckAll('financials')"
+                />
+
+                <SearchFacet
                   v-if="column.property === 'currency'"
                   :checked="filter.currency"
                   :facet="searchState.facets.currency[0]"
@@ -340,9 +354,10 @@
               style="position: relative;"
             >
               <img
-                :src="getCpvsLogoFromLabel(result.cpvs.raws)"
+                :src="getCpvsLogoFromLabel(result.cpvs.raw)"
                 alt="avatar"
                 style="height: 32px;"
+                :title="`${result.cpvs.raw} | ${getCpvsLogoFromLabel(result.cpvs.raw)}`"
               />
               <div
                 v-if="getDataTenderGroups && getDataTenderGroups.loading === 1"
@@ -480,10 +495,10 @@
                 v-else-if="column.property === 'region'"
                 class="text-center"
               >
-                <div v-if="result.regionLvl0 && result.regionLvl0.raw">
+                <div v-if="result.region_lvl0 && result.region_lvl0.raw">
                   {{
-                    result.regionLvl0.raw && result.regionLvl0.raw.length
-                      ? result.regionLvl0.raw[0]
+                    result.region_lvl0.raw && result.region_lvl0.raw.length
+                      ? result.region_lvl0.raw[0]
                       : ''
                   }}
                 </div>
@@ -537,11 +552,22 @@
                   >
                     {{ brand }}
                   </div>
-                </div>                
+                </div>
               </div>
-              <div v-else-if="column.property === 'contractType'">
+              <div v-else-if="column.property === 'financial'">
+                <div v-if="result.financials && result.financials.raw">
+                  <div
+                    v-for="(financial, financialIndex) of result.financials.raw"
+                    :key="`financialIndex${financialIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ financial }}
+                  </div>
+                </div>
+              </div>
+              <div v-else-if="column.property === 'contract_types'">
                 <div
-                  v-for="(contractType, contractTypeIndex) of result.contractTypes.raw"
+                  v-for="(contractType, contractTypeIndex) of result.contract_types.raw"
                   :key="`contractTypeIndex${contractTypeIndex}`"
                   style="overflow: hidden; white-space: nowrap;"
                 >
@@ -672,8 +698,14 @@ export default {
       },
       {
         show: false,
+        title: "Financial Organization",
+        property: "financial",
+        menu: null
+      },
+      {
+        show: false,
         title: "Contract Type",
-        property: "contract_type",
+        property: "contract_types",
         menu: null
       },
       {

@@ -1,7 +1,7 @@
 <template>
   <div class="py-2">
     <div v-if="!getDataOpportunity.loading" class="text-center pa-5">
-      <v-progress-circular :size="50" color="grey" indeterminate />
+      <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
     </div>
     <div
       v-else-if="!getColleagues || !getColleagues.length"

@@ -22,7 +22,7 @@
         class="pb-4"
       >
         <v-expansion-panel @click="updateUserScreen()" style="background-color: transparent;">
-          <v-expansion-panel-header>Business Pipeline</v-expansion-panel-header>
+          <v-expansion-panel-header>Pipelines</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersGroup
               ref="TendersGroup"
@@ -38,6 +38,7 @@
               @erraseFilter="erraseSearchFilter()"
               @updateBusinessPipelineSearch="updateBusinessPipelineSearch($event)"
               @eraseBusinessPipelineSearch="eraseBusinessPipelineSearch($event)"
+              @addBusinessPipelineSearch="addBusinessPipelineSearch()"
             />
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -253,6 +254,7 @@ export default {
       datasource: [],
       groups: [],
       buyer_name: [],
+      financials: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',
@@ -329,8 +331,9 @@ export default {
     config.searchQuery.facets.user_id = {
       type: 'range',
       ranges: [
-        { from: 1, name: 'Tender created by Deepbloo user' },
-        { from: this.getUserId, to: this.getUserId, name: 'Tender created by you' },
+        { from: 0, name: 'Public tenders' },
+        { from: 1, name: 'Opportunities from DB community' },
+        { from: this.getUserId, to: this.getUserId + 1, name: 'My opportunities' },
       ]
     }
 
@@ -387,7 +390,7 @@ export default {
       { from: week_3_ago_timestamp, to: now_timestamp, name: '3 weeks ago' },
       { from: month_ago_timestamp, to: now_timestamp, name: 'This month'},
       { from: new Date(year, 0, 1).getTime(), to: now_timestamp, name: year.toString()},
-      { from: new Date(yearPast, 0, 1).getTime(), to: now_timestamp, name: yearPast.toString()},
+      { from: new Date(yearPast, 0, 1).getTime(), to: new Date(year, 0, 1).getTime(), name: yearPast.toString()},
     ]
 
     driver = new SearchDriver(config)
@@ -572,6 +575,7 @@ export default {
       isMyPipeline,
       isAllTenders
     ) {
+      this.erraseSearchFilter()
       this.isAllTenders = isAllTenders
       this.isWithoutGroup = isWithoutGroup
       this.tenderGroupId = tenderGroupId
@@ -587,6 +591,32 @@ export default {
         this.filter.region_lvl1 = []
       }
       this.isMyPipeline = isMyPipeline
+
+      if (
+        this.filter.groups
+        && this.filter.groups.length
+      ) {
+        for (const tenderGroupId of this.filter.groups) {
+          const tenderGroup = this.getDataTenderGroups.data.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
+          if (
+            tenderGroup
+            && tenderGroup.searchRequest
+          ) {
+            const searchRequest = JSON.parse(tenderGroup.searchRequest)
+            this.$refs.searchInputValue.setValue(searchRequest.searchInputValue)
+            for (const field in searchRequest.filter) {
+              for (const value of searchRequest.filter[field]) {
+                if (!this.filter[field].includes(value)) {
+                  this.filter[field].push(value)
+                }
+              }
+            }
+          } else {
+            // this.driver.addFilter('groups', tenderGroupId, 'any')
+          }
+        }
+      }
+      
       this.setSearchFilter()
     },
 
@@ -610,94 +640,33 @@ export default {
     setSearchFilter() {
       driver.clearFilters()
       driver.getActions().setSearchTerm(this.searchInputValue)
-
-      if (
-        this.isMyPipeline 
-      ) {
-        if (this.getUserBusinessPipeline) {
-          this.searchInputValue = this.getUserBusinessPipeline.searchInputValue
-          driver.getActions().setSearchTerm(this.searchInputValue)
-          for (const field in this.getUserBusinessPipeline.filter) {
-            for (const value of this.getUserBusinessPipeline.filter[field]) {
-              if (!this.filter[field].includes(value)) {
-                this.filter[field].push(value)
-              }
-            }
-          }
-        } else if (this.getDataOpportunity.loading) {
-          if (
-            this.getDataOpportunity.data.cpvs
-            && this.getDataOpportunity.data.cpvs.length
-          ) {
-            for (let cpv of this.getDataOpportunity.data.cpvs) {
-              if (!this.filter.cpvs.includes(cpv.name)) {
-                this.filter.cpvs.push(cpv.name)
-              }
-            }
-          }
-
-          let regions = this.getDataOpportunity.data.user.regions.split(',')
-          if (
-            regions.length
-            && !regions.includes('Worldwide')
-          ) {
-            for (let region of regions) {
-              let regionMain = region.split('-')[0].trim()
-              let regionSub = region.split('-')[1].trim()
-              if (!this.filter.region_lvl0.includes(regionMain)) {
-                this.filter.region_lvl0.push(regionMain)
-              }
-              if (
-                regionSub
-                && regionSub !== ''
-                && regionSub !== 'All'
-              ) {
-                let regionSubFilter = `${regionMain} > ${regionSub}`
-                if (!this.filter.region_lvl1.includes(regionSubFilter)) {
-                  this.filter.region_lvl1.push(regionSubFilter)
-                }
-              }
-            }
-          }
-        }
-        this.$refs.TendersFilter.updateFilter(this.filter)
-      }
-
-      if (
-        this.filter.groups
-        && this.filter.groups.length
-      ) {
-        const tenderGroups = this.getDataTenderGroups.data
-        for (const tenderGroupId of this.filter.groups) {
-          const tenderGroup = tenderGroups.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
-          if (
-            tenderGroup
-            && tenderGroup.searchRequest
-          ) {
-            const searchRequest = JSON.parse(tenderGroup.searchRequest)
-            this.searchInputValue = searchRequest.searchInputValue
-            driver.getActions().setSearchTerm(this.searchInputValue)
-            for (const field in searchRequest.filter) {
-              for (const value of searchRequest.filter[field]) {
-                if (!this.filter[field].includes(value)) {
-                  this.filter[field].push(value)
-                }
-              }
-            }
-          } else {
-            this.driver.addFilter('groups', tenderGroupId, 'any')
-          }
-        }
-      }
       
       for (let facet in this.filter) {
-        if (facet !== 'groups') {
-          for (let value of this.filter[facet]) {
-            const facetFromDriver = this.driver.getState().facets[facet][0]
-            const valueforApi =
-              facetFromDriver.type === 'range'
-                ? facetFromDriver.data.find(item => item.value.name === value).value
-                : value
+        for (let value of this.filter[facet]) {
+          const facetFromDriver = this.driver.getState().facets[facet][0]
+          let valueforApi =
+            facetFromDriver.type === 'range'
+              ? facetFromDriver.data.find(item => item.value.name === value).value
+              : value
+          if (facet === 'groups') {
+            valueforApi = []
+            for (const tenderGroupId of this.filter[facet]) {
+              const tenderGroup = this.getDataTenderGroups.data.find(a => a.tenderGroupId === parseInt(tenderGroupId, 10))
+              if (
+                !tenderGroup
+                || !tenderGroup.searchRequest
+              ) {
+                valueforApi.push(tenderGroupId)
+              }
+            }
+          }
+          if (
+            valueforApi
+            && (
+              (facet === 'groups' && valueforApi.length)
+              || facet !== 'groups'
+            )
+          ) {
             this.driver.addFilter(facet, valueforApi, 'any')
           }
         }
@@ -735,6 +704,17 @@ export default {
       }
     },
 
+    addBusinessPipelineSearch() {
+      const tenderGroup = {
+        label: '',
+        color: '#aaaaaa',
+        searchRequest: JSON.stringify({
+          searchInputValue: this.searchInputValue,
+          filter: this.filter,
+        })
+      }
+      this.$refs.TendersGroup.openGroupDialog(tenderGroup)
+    },
   }
 }
 </script>

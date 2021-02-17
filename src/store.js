@@ -147,7 +147,7 @@ export default new Vuex.Store({
     },
 
     getCpvsLogoFromLabel: state => cpvs => {
-      let logo = "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
+      let logo = 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
       let cpvsArray = cpvs
       if (!cpvs) {
         cpvs = ""
@@ -157,9 +157,9 @@ export default new Vuex.Store({
       }
       if (cpvsArray && cpvsArray.length) {
         const cpv = state.dataCpvs.data.find(
-          a => cpvsArray.includes(a.label) && a.active
+          a => cpvsArray.includes(a.label) && a.active && a.logo && a.logo.trim() !== '' && !a.logo.endsWith('default.png')
         )
-        if (cpv && cpv.logo && cpv.logo !== "") {
+        if (cpv) {
           logo = cpv.logo
         }
       }

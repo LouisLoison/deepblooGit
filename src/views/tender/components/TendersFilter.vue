@@ -12,6 +12,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -28,6 +29,7 @@
       v-if="driver"
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text class="pa-0">
         <SearchFacetRegion
@@ -42,6 +44,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -57,6 +60,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -72,6 +76,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -87,6 +92,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -102,6 +108,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -117,6 +124,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -132,6 +140,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -147,6 +156,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -162,14 +172,26 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
-      <v-card-text>
+      <v-card-text
+        @click.stop="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
         <SearchFacet
           :checked="filter.scope_of_works"
           :facet="searchState.facets.scope_of_works[0]"
           @change="handleFacetChange($event, 'scope_of_works')"
           @checkAll="handleFacetCheckAll('scope_of_works')"
           @unCheckAll="handleFacetUnCheckAll('scope_of_works')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -177,14 +199,26 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
-      <v-card-text>
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
         <SearchFacet
           :checked="filter.segments"
           :facet="searchState.facets.segments[0]"
           @change="handleFacetChange($event, 'segments')"
           @checkAll="handleFacetCheckAll('segments')"
           @unCheckAll="handleFacetUnCheckAll('segments')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -192,21 +226,7 @@
     <v-card
       class="mx-auto mb-3"
       outlined
-    >
-      <v-card-text>
-        <SearchFacet
-          :checked="filter.designs"
-          :facet="searchState.facets.designs[0]"
-          @change="handleFacetChange($event, 'designs')"
-          @checkAll="handleFacetCheckAll('designs')"
-          @unCheckAll="handleFacetUnCheckAll('designs')"
-        />
-      </v-card-text>
-    </v-card>
-
-    <v-card
-      class="mx-auto mb-3"
-      outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -222,14 +242,26 @@
     <v-card
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
-      <v-card-text>
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
         <SearchFacet
           :checked="filter.brands"
           :facet="searchState.facets.brands[0]"
           @change="handleFacetChange($event, 'brands')"
           @checkAll="handleFacetCheckAll('brands')"
           @unCheckAll="handleFacetUnCheckAll('brands')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -237,17 +269,40 @@
     <v-card
       class="mx-auto mb-3"
       outlined
-      @click="
-        getIsPremiumMembership
-          ? showInsufficientRightDialog()
-          : null
-      "
+      style="overflow-y: auto;"
     >
       <v-card-text
-        :style="
+        @click="
           getIsPremiumMembership
-            ? 'pointer-events: none; opacity: 0.5;'
-            : ''
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
+        <SearchFacet
+          :checked="filter.financials"
+          :facet="searchState.facets.financials[0]"
+          @change="handleFacetChange($event, 'financials')"
+          @checkAll="handleFacetCheckAll('financials')"
+          @unCheckAll="handleFacetUnCheckAll('financials')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
+      class="mx-auto mb-3"
+      outlined
+      style="overflow-y: auto;"
+    >
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
         "
       >
         <SearchFacet
@@ -256,6 +311,11 @@
           @change="handleFacetChange($event, 'currency')"
           @checkAll="handleFacetCheckAll('currency')"
           @unCheckAll="handleFacetUnCheckAll('currency')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
         />
       </v-card-text>
     </v-card>
@@ -264,6 +324,7 @@
       v-if="getUserType === 1"
       class="mx-auto mb-3"
       outlined
+      style="overflow-y: auto;"
     >
       <v-card-text>
         <SearchFacet
@@ -328,13 +389,16 @@ export default {
       datasource: [],
       groups: [],
       buyer_name: [],
+      financials: [],
     },
   }),
 
   computed: {
     ...mapGetters([
       'getUserType',
+      'getIsFreeMembership',
       'getIsPremiumMembership',
+      'getIsBusinessMembership',
     ]),
   },
 
@@ -365,23 +429,14 @@ export default {
         return
       }
       const { value, checked } = event.target
-      /*
-      const facetFromDriver = this.driver.getState().facets[facet][0]
-      const valueforApi =
-        facetFromDriver.type === 'range'
-          ? facetFromDriver.data.find(item => item.value.name === value).value
-          : value
-      */
 
       if (checked) {
         this.filter[facet].push(value)
-        // this.driver.addFilter(facet, valueforApi, 'any')
       } else {
         const index = this.filter[facet].indexOf(value)
         if (index > -1) {
           this.filter[facet].splice(index, 1)
         }
-        // this.driver.removeFilter(facet, valueforApi, 'any')
         if (facet === 'region_lvl0' || facet === 'region_lvl1') {
           this.$refs.SearchFacetRegion.filterChange(this.filter)
         }
@@ -393,27 +448,18 @@ export default {
       const facetFromDriver = this.driver.getState().facets[facet][0]
       for (const data of facetFromDriver.data) {
         const value = facetFromDriver.type === 'range' ? data.value.name : data.value
-        /*
-        const valueforApi =
-          facetFromDriver.type === 'range'
-            ? facetFromDriver.data.find(a => a.value.name === data.value.name).value
-            : data.value
-        */
         if (this.filter[facet].includes(value)) {
           continue
         }
         this.filter[facet].push(value)
-        // this.driver.addFilter(facet, valueforApi, 'any')
+        if (this.filter[facet].length > 10) {
+          break
+        }
       }
       this.$emit('filterChange', this.filter)
     },
 
     handleFacetUnCheckAll(facet) {
-      /*
-      for (const item of this.filter[facet]) {
-        this.driver.removeFilter(facet, item, 'any')
-      }
-      */
       this.filter[facet] = []
       this.$emit('filterChange', this.filter)
     },

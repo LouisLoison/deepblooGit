@@ -38,7 +38,11 @@
             >
               <div v-if="userTab === 1 && !userAlls" class="py-5 text-center">
                 <div class="grey--text">Loading...</div>
-                <v-progress-circular :size="50" color="grey" indeterminate />
+                <v-progress-circular
+                  :size="50"
+                  color="blue-grey lighten-4"
+                  indeterminate
+                />
               </div>
               <div v-else-if="!getUsers || !getUsers.length" class="py-5 text-center">
                 No users
@@ -66,8 +70,8 @@
                     </v-list-item-action>
 
                     <v-list-item-content class="text-left">
-                      <v-list-item-title v-html="item.title" />
-                      <v-list-item-subtitle v-html="item.subtitle" />
+                      <v-list-item-title v-html="item.username" />
+                      <v-list-item-subtitle v-html="item.email" />
                     </v-list-item-content>
 
                     <v-list-item-avatar>
@@ -258,8 +262,11 @@ export default {
     },
 
     getUsers() {
-      this.users;
-      if (!this.userSearch || this.userSearch.trim() === '') {
+      this.users
+      if (
+        !this.userSearch
+        || this.userSearch.trim() === ''
+      ) {
         return this.users
       }
       const options = {
@@ -268,10 +275,10 @@ export default {
         distance: 300,
         maxPatternLength: 32,
         findAllMatches: true,
-        keys: ['title', 'subtitle']
+        keys: ['email', 'username']
       }
       const fuse = new Fuse(this.users, options)
-      return fuse.search(this.userSearch.trim())
+      return fuse.search(this.userSearch.trim()).map(a => a.item)
     }
   },
 
@@ -306,8 +313,8 @@ export default {
               this.users.push({
                 userId: user.userId,
                 select: false,
-                title: user.username,
-                subtitle: user.email,
+                username: user.username,
+                email: user.email,
                 avatar: user.photo
               })
             }
@@ -321,8 +328,8 @@ export default {
             this.users.push({
               userId: user.userId,
               select: false,
-              title: user.username,
-              subtitle: user.email,
+              username: user.username,
+              email: user.email,
               avatar: user.photo
             })
           }

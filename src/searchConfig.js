@@ -29,10 +29,12 @@ const config = {
         size: 200
       },
       country: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       notice_type: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       bid_deadline_timestamp: {
         type: "range",
@@ -43,7 +45,7 @@ const config = {
       },
       cpvs: {
         type: "value",
-        size: 200
+        size: 400
       },
       user_id: {
         type: "range",
@@ -72,7 +74,8 @@ const config = {
         type: "value"
       },
       brands: {
-        type: "value"
+        type: "value",
+        size: 200
       },
       datasource: {
         type: "value"
@@ -81,7 +84,12 @@ const config = {
         type: "value"
       },
       buyer_name: {
-        type: "value"
+        type: "value",
+        size: 300
+      },
+      financials: {
+        type: "value",
+        size: 200
       },
     }
   }

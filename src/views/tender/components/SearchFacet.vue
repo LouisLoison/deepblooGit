@@ -1,6 +1,7 @@
 <template>
   <div
     ref="facet"
+    style="max-height: 290px;"
     :style="this.minHeight ? `min-height: ${this.minHeight}px;` : ''"
   >
     <div style="position: relative; height: 35px;">
@@ -43,14 +44,13 @@
         v-model="search"
         solo
         dense
-        clearable
         hide-details
         label="Search"
         color="blue-grey"
         class="search"
         prepend-inner-icon="fa-search"
         append-outer-icon="fa-window-close"
-        @click:append-outer="isSearchOpen = false"
+        @click:append-outer="closeSearch()"
       />
     </div>
     <div v-if="facet.data.length">
@@ -77,7 +77,10 @@
             </span>
           </div>
           <div class="text-right">
-            <span class="result-count">
+            <span
+              v-if="facetItem.count >= 0"
+              class="result-count"
+            >
               {{ facetItem.count }}
             </span>
           </div>
@@ -109,7 +112,10 @@
           </span>
         </div>
         <div class="text-right">
-          <span class="result-count">
+          <span
+            v-if="facetItem.count >= 0"
+            class="result-count"
+          >
             {{ facetItem.count }}
           </span>
         </div>
@@ -143,6 +149,12 @@ export default {
     isSearchOpen: false,
     search: '',
     minHeight: 0,
+    dataSearchFacets: {
+      loading: null,
+      query: null,
+      data: null,
+    },
+    itemCache: [],
   }),
 
   computed: {
@@ -184,19 +196,39 @@ export default {
         items = this.facet.data.filter(
           a => !this.checked || !this.checked.includes(a.value)
         )
-        if (this.search && this.search.trim() !== '') {
+        if (
+          this.search
+          && this.search.trim() !== ''
+        ) {
           items = items.filter(
-            a => a.value.toUpperCase().includes(this.search.toUpperCase())
+            a => a.value && a.value.toUpperCase().includes(this.search.toUpperCase())
           )
         }
       } else {
         items = this.facet.data.filter(
           a => !this.checked || !this.checked.includes(a.value.name)
         )
-        if (this.search && this.search.trim() !== '') {
+        if (
+          this.search
+          && this.search.trim() !== ''
+        ) {
           items = items.filter(
-            a => a.value.name.toUpperCase().includes(this.search.toUpperCase())
+            a => a.value && a.value.name && a.value.name.toUpperCase().includes(this.search.toUpperCase())
           )
+        }
+      }
+
+      if (items.length < 10) {
+        for (const itemValue of this.itemCache) {
+          if (
+            (items && !items.find(a => a.value.constructor === Object ? a.value.name === itemValue.name : a.value === itemValue))
+            && (this.getChecked && !this.getChecked.find(a => a.value.constructor === Object ? a.value.name === itemValue.name : a.value === itemValue))
+          ) {
+            items.push({
+              count: -1,
+              value: itemValue,
+            })
+          }
         }
       }
       return items.slice(0, 10)
@@ -205,8 +237,28 @@ export default {
 
   watch: {
     'facet.data'() {
+      this.itemCache = [...new Set([...this.facet.data.map(a => a.value),...this.itemCache])].slice(0, 10)
       this.minHeight = Math.max(this.minHeight, this.$refs.facet.clientHeight)
+      if (this.minHeight >= 290) {
+        this.minHeight = 290
+      }
+      this.mergeDatas()
     },
+
+    search() {
+      this.searchFacet()
+    },
+
+    getUnChecked() {
+      this.searchFacet()
+    },
+  },
+
+  mounted() {
+    this.itemCache = [
+      ...this.facet.data.map(a => a.value),
+      ...this.itemCache,
+    ].slice(0, 10)
   },
 
   methods: {
@@ -240,6 +292,60 @@ export default {
 
     unCheckAll() {
       this.$emit('unCheckAll')
+    },
+
+    closeSearch() {
+      this.search = ''
+      this.isSearchOpen = false
+    },
+
+    async searchFacet() {
+      try {
+        if (
+          !this.search
+          || this.search === ''
+        ) {
+          this.dataSearchFacets.query = ''
+          this.dataSearchFacets.data = []
+          return
+        }
+        if (
+          this.dataSearchFacets.query === this.search
+          || this.getUnChecked.length > 10
+        ) {
+          return
+        }
+
+        this.dataSearchFacets.loading = 0
+        const res = await this.$api.post("/Elasticsearch/searchFacet", {
+          query: this.search,
+          facet: this.facet.field,
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataSearchFacets.query = this.search
+        this.dataSearchFacets.data = res.data
+        this.mergeDatas()
+        this.dataSearchFacets.loading = 1
+      } catch (err) {
+        this.dataSearchFacets.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    mergeDatas() {
+      if (this.dataSearchFacets.data) {
+        for (const searchFacet of this.dataSearchFacets.data) {
+          if (!this.facet.data.find(a => a.value === searchFacet)) {
+            this.facet.data.push({
+              count: -1,
+              value: searchFacet,
+              checked: false,
+            })
+          }
+        }
+      }
     },
   }
 }

@@ -121,7 +121,7 @@
           class="pa-5 text-center"
         >
           <div class="pa-2 grey--text">Loading...</div>
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <div v-else-if="dataUsers.loading === -1" class="pa-5 text-center">
           <v-icon class="red--text">error</v-icon>

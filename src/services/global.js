@@ -42,6 +42,8 @@ export class GlobalService {
       return 'Region'
     } else if (field === 'region_lvl1') {
       return 'Sub region'
+    } else if (field === 'financials') {
+      return 'Financial Organization'
     }
 
     if (field && field.length) {

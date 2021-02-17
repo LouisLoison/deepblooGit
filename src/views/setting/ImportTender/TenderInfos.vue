@@ -27,7 +27,7 @@
           v-if="!dataImportTenderInfoFacets.loading || dataImportTenderInfoFacets.loading === 0"
           class="pa-5 text-center"
         >
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <div v-else>
           <v-card class="pa-3 mb-3">
@@ -109,7 +109,7 @@
           class="pa-5 text-center"
         >
           <div class="pa-2 grey--text">Loading...</div>
-          <v-progress-circular :size="50" color="grey" indeterminate />
+          <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
         </div>
         <div v-else-if="dataImportTenderInfos.loading === -1" class="pa-5 text-center">
           <v-icon class="red--text">error</v-icon>

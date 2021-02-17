@@ -2,7 +2,7 @@
   <v-container fluid class="pt-0">
     <div v-if="!dataCpvs.loading" class="text-center">
       <div class="pa-2 grey--text">Loading...</div>
-      <v-progress-circular :size="50" color="grey" indeterminate />
+      <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
     </div>
     <div v-else>
       <v-card-title v-if="!getIsMobile">
@@ -146,7 +146,7 @@
             outlined
             :color="isNewWord(cpvWord) ? 'red' : 'primary'"
             class="cursor-pointer"
-            :class="!getIsMobile ? '' : 'mx-0'"
+            :class="!getIsMobile ? 'mr-1 mb-1' : 'mx-0'"
             :style="
               filterWord.trim() !== '' &&
               cpvWord.word
@@ -240,7 +240,7 @@
           <v-toolbar-items>
             <v-btn icon light @click="isCpvDialog = false">
               <v-icon color="grey darken-2">
-                close
+                fa-times
               </v-icon>
             </v-btn>
           </v-toolbar-items>
@@ -278,7 +278,16 @@
               clearable
               required
             />
-            <v-text-field v-model="cpvDialog.logo" label="Logo" clearable />
+            <v-text-field
+              v-model="cpvDialog.logo"
+              label="Logo"
+              clearable
+            />
+            <v-text-field
+              v-model="cpvDialog.picture"
+              label="Picture"
+              clearable
+            />
           </v-form>
         </v-card-text>
 
@@ -354,7 +363,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Dialog -->
     <v-dialog v-if="dialogRemove" v-model="dialogRemove" max-width="400">
       <v-card>
         <v-card-title class="headline">

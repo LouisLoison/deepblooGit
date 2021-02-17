@@ -44,7 +44,7 @@
               style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
               title="Add tender to a business pipeline"
             >
-              <v-icon style="font-size: 18px; color: #ffffff !important;">
+              <v-icon style="font-size: 18px; color: #ffffff !important; -webkit-text-stroke-width: 1px; -webkit-text-stroke-color: black;">
                 fa-circle
               </v-icon>
             </v-btn>
@@ -64,7 +64,10 @@
               style="position: absolute; background-color: rgba(255, 255, 255, 0.4);"
               :title="tenderGroup.label"
             >
-              <v-icon :style="`font-size: 18px; color:${tenderGroup.color};`">
+              <v-icon
+                style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color: black;"
+                :style="`font-size: 18px; color:${tenderGroup.color};`"
+              >
                 fa-circle
               </v-icon>
             </v-btn>
@@ -152,7 +155,7 @@
       <div style="background-color: #78909c;">
         <v-img
           v-if="tender"
-          :src="$global.cpvPicture(this.tender.cpvDescriptions, this.getDataCpvs.data)"
+          :src="$global.cpvPicture(tender.cpvDescriptions, getDataCpvs.data)"
           aspect-ratio="2.75"
           :height="getIsMobile ? 100 : 300"
         >
@@ -166,7 +169,7 @@
             >
               <img
                 class="pa-4"
-                :src="$global.cpvLogo(this.tender.cpvDescriptions, this.getDataCpvs.data)"
+                :src="$global.cpvLogo(tender.cpvDescriptions, getDataCpvs.data)"
                 alt=""
               />
             </v-avatar>
@@ -193,6 +196,7 @@
               </v-chip>
             </div>
 
+            <!-- CPV description -->
             <div v-if="tender.cpvs && tender.cpvDescriptions" class="pt-4">
               <div>
                 <h3 class="blue--text text--darken-1">CPV description</h3>
@@ -202,23 +206,186 @@
                   system to facilitate invitation to public tenders)
                 </div>
               </div>
-              <v-chip
+              <v-menu
                 v-for="(cpv, index) in tender.cpvDescriptions"
-                :key="index"
-                outlined
-                class="mr-1 mb-1"
+                :key="`cpv${index}`"
+                :close-on-content-click="false"
+                origin="top left"
+                transition="scale-transition"
+                offset-y
               >
-                <v-avatar class="pa-1">
-                  <img
-                    :src="cpvLogo(cpv)"
-                    alt=""
-                    class="mr-2"
-                  />
-                </v-avatar>
-                {{ cpv }}
-              </v-chip>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-chip
+                    v-bind="attrs"
+                    v-on="getUserType === 1 ? on : null"
+                    outlined
+                    class="mr-1 mb-1 pl-1"
+                  >
+                    <v-avatar class="pa-0 mr-2">
+                      <img
+                        :src="$global.cpvLogo([cpv], getDataCpvs.data)"
+                        alt=""
+                      />
+                    </v-avatar>
+                    {{ cpv }}
+                  </v-chip>
+                </template>
+                <v-card>
+                  <v-simple-table
+                    dense
+                    class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                  >
+                    <template v-slot:default>
+                      <thead>
+                        <tr>
+                          <th class="text-left">
+                            Scope
+                          </th>
+                          <th class="text-left">
+                            Word
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(tenderCriterionCpv, index) in dataTenderCriterionCpvs.data.filter(a => a.value === cpv)"
+                          :key="`tenderCriterionCpv${index}`"
+                        >
+                          <td>{{ tenderCriterionCpv.scope }}</td>
+                          <td>{{ tenderCriterionCpv.word }}</td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table>
+                </v-card>
+              </v-menu>
             </div>
 
+            <!-- Scope of work -->
+            <div :class="getIsMobile ? 'pt-0' : 'pt-4'">
+              <h3 class="blue--text text--darken-1">
+                Scope of work
+              </h3>
+              <div v-if="!getScopeOfWork" class="pl-4">
+                <v-progress-circular :size="30" color="blue-grey lighten-4" indeterminate />
+              </div>
+              <div v-else-if="!getScopeOfWork.length" class="grey--text pl-4">
+                None
+              </div>
+              <div v-else>
+                <v-menu
+                  v-for="(scopeOfWork, index) in getScopeOfWork"
+                  :key="`scopeOfWork${index}`"
+                  :close-on-content-click="false"
+                  origin="top left"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-chip
+                      v-bind="attrs"
+                      v-on="getUserType === 1 ? on : null"
+                      outlined
+                      class="mr-1 mb-1 pl-1"
+                    >
+                      {{ scopeOfWork.group }}
+                    </v-chip>
+                  </template>
+                  <v-card>
+                    <v-simple-table
+                      dense
+                      class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                    >
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-left">
+                              Scope
+                            </th>
+                            <th class="text-left">
+                              Word
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(tenderCriterion, index) in scopeOfWork.tenderCriterions"
+                            :key="`tenderCriterion${index}`"
+                          >
+                            <td>{{ tenderCriterion.scope }}</td>
+                            <td>{{ tenderCriterion.word }}</td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-menu>
+              </div>
+            </div>
+
+            <!-- Segment -->
+            <div :class="getIsMobile ? 'pt-0' : 'pt-4'">
+              <h3 class="blue--text text--darken-1">
+                Segment
+              </h3>
+              <div v-if="!getSegment" class="pl-4">
+                <v-progress-circular :size="30" color="blue-grey lighten-4" indeterminate />
+              </div>
+              <div v-else-if="!getSegment.length" class="grey--text pl-4">
+                None
+              </div>
+              <div v-else>
+                <v-menu
+                  v-for="(segment, index) in getSegment"
+                  :key="`segment${index}`"
+                  :close-on-content-click="false"
+                  origin="top left"
+                  transition="scale-transition"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-chip
+                      v-bind="attrs"
+                      v-on="getUserType === 1 ? on : null"
+                      outlined
+                      class="mr-1 mb-1 pl-1"
+                    >
+                      {{ segment.group }}
+                    </v-chip>
+                  </template>
+                  <v-card>
+                    <v-simple-table
+                      dense
+                      class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                    >
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-left">
+                              Scope
+                            </th>
+                            <th class="text-left">
+                              Word
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr
+                            v-for="(tenderCriterion, index) in segment.tenderCriterions"
+                            :key="`tenderCriterion${index}`"
+                          >
+                            <td>{{ tenderCriterion.scope }}</td>
+                            <td>{{ tenderCriterion.word }}</td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-card>
+                </v-menu>
+              </div>
+            </div>
+
+            <!-- Description -->
             <div :class="getIsMobile ? 'pt-0' : 'pt-4'">
               <h3 class="blue--text text--darken-1">
                 Description
@@ -227,7 +394,7 @@
                 <div v-if="hasReadRight">
                   <div
                     v-if="tender.description && tender.description !== ''"
-                    v-html="$global.htmlText(tender.description)"
+                    v-html="htmlTreat(tender.description)"
                   />
                   <div v-else class="">No description</div>
                 </div>
@@ -259,6 +426,7 @@
                 </div>
               </v-card-text>
             </div>
+
             <div v-if="documents && documents.length" class="pb-5">
               <h3 class="blue--text text--darken-1">
                 Documents
@@ -378,6 +546,7 @@
               </div>
             </div>
           </div>
+
           <div>
             <v-card color="grey lighten-5">
               <v-card-text class="pa-3">
@@ -433,7 +602,9 @@
                       Import into DeepBloo
                     </v-btn>
                   </div>
-                  <div v-else>None</div>
+                  <div v-else>
+                    See below to access to tender documentation
+                  </div>
                 </div>
               </v-card-text>
             </v-card>
@@ -505,7 +676,7 @@
                   </v-tooltip>
                 </div>
                 <div v-if="!TenderOrganizations" class="pa-5 text-center">
-                  <v-progress-circular :size="50" color="grey" indeterminate />
+                  <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
                 </div>
                 <div
                   v-else-if="TenderOrganizations.length === 0"
@@ -636,7 +807,56 @@
                     <div class="grey--text">Brand</div>
                     <div>
                       <span v-if="hasReadRight">
-                        {{ tender.brand }}
+                        <span v-if="getBrand && getBrand.length">
+                          <v-menu
+                            v-for="(brand, index) in getBrand"
+                            :key="`brand${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ brand.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in brand.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
                       </span>
                       <span v-else class="text-blur">
                         data not available
@@ -645,11 +865,114 @@
                     <div class="grey--text pt-3">Contract type</div>
                     <div>
                       <span v-if="hasReadRight">
-                        {{
-                          tender.contractType1
-                            ? "Long term / Frame Agreement"
-                            : "-"
-                        }}
+                        <span v-if="getContractType && getContractType.length">
+                          <v-menu
+                            v-for="(contractType, index) in getContractType"
+                            :key="`contractType${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ contractType.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in contractType.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
+                    <div class="grey--text pt-3">Financial Organization</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getFinancialOrganization && getFinancialOrganization.length">
+                          <v-menu
+                            v-for="(financialOrganization, index) in getFinancialOrganization"
+                            :key="`financialOrganization${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ financialOrganization.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in financialOrganization.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
                       </span>
                       <span v-else class="text-blur">
                         data not available
@@ -987,7 +1310,7 @@
             Mapping of identified organizations (on Deepbloo)
           </div>
           <div v-if="!TenderOrganizations" class="pa-5 text-center">
-            <v-progress-circular :size="50" color="grey" indeterminate />
+            <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
           </div>
           <div v-else>
             <v-tooltip top>
@@ -1032,6 +1355,7 @@
       ref="SentEmailDialog"
       @notifySent="loadUserNotifys()"
     />
+    <DocumentDialog ref="DocumentDialog" />
   </v-card>
 </template>
 
@@ -1039,12 +1363,14 @@
 import { mapGetters } from 'vuex'
 import moment from 'moment'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
+import DocumentDialog from '@/components/modal/DocumentDialog'
 
 export default {
   name: 'Tender',
 
   components: {
     SentEmailDialog,
+    DocumentDialog,
   },
 
   data: () => ({
@@ -1058,6 +1384,18 @@ export default {
     isBusinessMembership: false,
     hasFree: false,
     TenderOrganizations: null,
+    dataTextParses: {
+      loading: null,
+      data: null
+    },
+    dataTenderCriterions: {
+      loading: null,
+      data: null
+    },
+    dataTenderCriterionCpvs: {
+      loading: null,
+      data: null
+    },
     dataUserNotifys: {
       loading: null,
       data: null
@@ -1230,6 +1568,7 @@ export default {
       'getUserType',
       'getDataCpvs',
       'getDataTenderGroups',
+      'getCpvsLogoFromLabel',
     ]),
 
     isFree() {
@@ -1257,9 +1596,9 @@ export default {
         (this.getUserType && this.getUserType === 1) ||
         this.isBusinessMembership
       ) {
-        return true;
+        return true
       }
-      return false;
+      return false
     },
 
     hasReadRight() {
@@ -1309,11 +1648,32 @@ export default {
       }
       return tenderGroups
     },
+
+    getScopeOfWork() {
+      return this.searchTextParse("Scope of Work")
+    },
+
+    getSegment() {
+      return this.searchTextParse("Segment")
+    },
+
+    getBrand() {
+      return this.searchTextParse("Brand")
+    },
+
+    getContractType() {
+      return this.searchTextParse("Contract type")
+    },
+
+    getFinancialOrganization() {
+      return this.searchTextParse("Financial Organization")
+    },
   },
 
   methods: {
     async loadTender(tenderUuid) {
       try {
+        this.getUserMemberships()
         this.tender = null
         this.tenderLoading = null
         this.tenderError = null
@@ -1336,7 +1696,7 @@ export default {
       }
     },
 
-    initData() {
+    async initData() {
       this.tenderGroupLinks = null
       this.tenderDetail = null
       this.dataUserNotifys.loading = null
@@ -1385,13 +1745,16 @@ export default {
       this.loadUserNotifys()
       this.loadCustomData()
       this.documentList()
+      await this.loadTextParses()
+      this.loadTenderCriterions()
+      this.loadTenderCriterionCpvs()
     },
 
     getUserMemberships() {
-      this.loadingMembership = false;
-      this.isFreeMembership = false;
-      this.isPremiumMembership = false;
-      this.isBusinessMembership = false;
+      this.loadingMembership = false
+      this.isFreeMembership = false
+      this.isPremiumMembership = false
+      this.isBusinessMembership = false
       if (!this.getUserId) {
         return;
       }
@@ -1399,41 +1762,94 @@ export default {
         .post("/User/Memberships", { userId: this.getUserId })
         .then(res => {
           if (!res.success) {
-            throw new Error(res.Error);
+            throw new Error(res.Error)
           }
-          this.isFreeMembership = res.data.isFreeMembership;
-          this.isPremiumMembership = res.data.isPremiumMembership;
-          this.isBusinessMembership = res.data.isBusinessMembership;
-          this.hasFree = res.data.hasFree;
-          this.loadingMembership = true;
+          this.isFreeMembership = res.data.isFreeMembership
+          this.isPremiumMembership = res.data.isPremiumMembership
+          this.isBusinessMembership = res.data.isBusinessMembership
+          this.hasFree = res.data.hasFree
+          this.loadingMembership = true
         })
         .catch(err => {
-          this.$api.error(err, this);
-        });
+          this.$api.error(err, this)
+        })
+    },
+
+    async loadTextParses() {
+      try {
+        this.dataTextParses.loading = 0
+        const res = await this.$api.post("/TextParse/textParseList")
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataTextParses.data = res.data
+        this.dataTextParses.loading = 1
+      } catch (err) {
+        this.dataTextParses.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    async loadTenderCriterions() {
+      try {
+        this.dataTenderCriterions.loading = 0
+        const res = await this.$api.post("/Tender/tenderCriterions", {
+          filter: {
+            tenderId: this.tender.id
+          }
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataTenderCriterions.data = res.data
+        this.dataTenderCriterions.loading = 1
+      } catch (err) {
+        this.dataTenderCriterions.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    async loadTenderCriterionCpvs() {
+      try {
+        this.dataTenderCriterionCpvs.loading = 0
+        const res = await this.$api.post("/Tender/tenderCriterionCpvs", {
+          filter: {
+            tenderId: this.tender.id
+          }
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataTenderCriterionCpvs.data = res.data
+        this.dataTenderCriterionCpvs.loading = 1
+      } catch (err) {
+        this.dataTenderCriterionCpvs.loading = -1
+        this.$api.error(err, this)
+      }
     },
 
     async loadUserNotifys() {
       try {
         if (!this.getUserId) {
-          this.dataUserNotifys.data = [];
-          this.dataUserNotifys.loading = 1;
-          return;
+          this.dataUserNotifys.data = []
+          this.dataUserNotifys.loading = 1
+          return
         }
         this.dataUserNotifys.loading = 0;
         const res = await this.$api.post("/User/userNotifyList", {
           filter: {
             userId: this.getUserId,
-            tenderId: this.tender.id
+            tenderId: this.tender.id,
           }
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.dataUserNotifys.data = res.data;
-        this.dataUserNotifys.loading = 1;
+        this.dataUserNotifys.data = res.data
+        this.dataUserNotifys.loading = 1
       } catch (err) {
-        this.dataUserNotifys.loading = -1;
-        this.$api.error(err, this);
+        this.dataUserNotifys.loading = -1
+        this.$api.error(err, this)
       }
     },
 
@@ -1617,21 +2033,21 @@ export default {
         const res = await this.$api.post("/Tender/TenderGroupLinkList", {
           userId: this.getUserId,
           tenderId: this.tender.id
-        });
+        })
         if (!res.success) {
-          throw new Error(res.Error);
+          throw new Error(res.Error)
         }
-        this.tenderGroupLinks = res.data;
+        this.tenderGroupLinks = res.data
         for (const tenderGroupLink of this.tenderGroupLinks) {
           const group = this.groups.find(
             a => a.tenderGroupId === tenderGroupLink.tenderGroupId
-          );
+          )
           if (group) {
-            group.isCheck = true;
+            group.isCheck = true
           }
         }
       } catch (err) {
-        this.$api.error(err, this);
+        this.$api.error(err, this)
       }
     },
 
@@ -1685,21 +2101,6 @@ export default {
       } catch (err) {
         this.$api.error(err, this);
       }
-    },
-
-    cpvLogo(cpvCode) {
-      if (
-        !this.getDataCpvs ||
-        !this.getDataCpvs.data ||
-        !cpvCode
-      ) {
-        return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png";
-      }
-      const cpv = this.getDataCpvs.data.find(a => a.code === cpvCode);
-      if (!cpv || !cpv.logo || cpv.logo === "") {
-        return "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png";
-      }
-      return cpv.logo;
     },
 
     async updateTenderDetail() {
@@ -1851,6 +2252,76 @@ export default {
 
     updateTenderGroup() {
       this.loadTenderGroupLinkList()
+    },
+
+    htmlTreat(html) {
+      html = html.replace(
+        /((<br>|&lt;br \/&gt;)\s*)((<br>|&lt;br \/&gt;)(\s|(\\r\\n)|\\r|\\n)*)+/gm,
+        "<br><br>"
+      )
+
+      var txt = document.createElement("textarea")
+      txt.innerHTML = html
+      txt.value = txt.value.replace(
+        /((<br>|&lt;br \/&gt;)\s*)((<br>|&lt;br \/&gt;)(\s|(\\r\\n)|\\r|\\n)*)+/gm,
+        "<br><br>"
+      )
+      txt.value = txt.value.replace(/<table><br>/gm, "<table>")
+      txt.value = txt.value.replace(/<tbody><br>/gm, "<tbody>")
+      txt.value = txt.value.replace(/<th><br>/gm, "<th>")
+      txt.value = txt.value.replace(/<\/th><br>/gm, "</th>")
+      txt.value = txt.value.replace(/<tr><br>/gm, "<tr>")
+      txt.value = txt.value.replace(/<\/tr><br>/gm, "</tr>")
+      txt.value = txt.value.replace(/<td><br>/gm, "<td>")
+      txt.value = txt.value.replace(/<\/td><br>/gm, "</td>")
+
+      return txt.value
+    },
+
+    searchTextParse(theme) {
+      if (!this.dataTextParses.loading || !this.dataTenderCriterions.loading) {
+        return null
+      }
+      const textParses = this.dataTextParses.data.filter(
+        a => a.theme === theme
+      )
+      const tenderCriterions = []
+      for (const tenderCriterion of this.dataTenderCriterions.data) {
+        const textParse = textParses.find(
+          a => a.textParseId === tenderCriterion.textParseId
+        )
+        if (!textParse) {
+          continue
+        }
+        tenderCriterion.textParse = textParse
+        tenderCriterions.push(tenderCriterion)
+      }
+
+      let textParseFinds = []
+      for (const tenderCriterion of this.dataTenderCriterions.data) {
+        const textParse = textParses.find(
+          a => a.textParseId === tenderCriterion.textParseId
+        )
+        if (!textParse) {
+          continue
+        }
+        const textParseFind = textParseFinds.find(
+          a => a.textParseId === textParse.textParseId
+        )
+        if (!textParseFind) {
+          textParse.tenderCriterions = [tenderCriterion]
+          textParseFinds.push(textParse)
+        } else {
+          textParseFind.tenderCriterions.push(tenderCriterion)
+        }
+      }
+      textParseFinds = textParseFinds.sort((a, b) => {
+        let na = a.tenderCriterions.length
+        let nb = b.tenderCriterions.length
+        return na < nb ? 1 : na > nb ? -1 : 0
+      })
+
+      return textParseFinds
     },
   },
 }
