@@ -176,15 +176,13 @@ export class ApiStack extends cdk.Stack {
       handler: 'index.handler',
       memorySize: 500,
       timeout: Duration.seconds(10),
-      vpc,
       environment: {
         ...environment,
-        ...dbEnv,
         ...hivebriteEnv
       },
-      role: lambdaBasicDbSecretVpcExecutionRole
     });
     userResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(userResolver)
 
     const elasticResolver = new Function(this, 'elasticResolver', {
       functionName: `elasticResolver-${environment.NODE_ENV}`,
