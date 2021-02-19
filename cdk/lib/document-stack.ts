@@ -11,8 +11,8 @@ import logs = require('@aws-cdk/aws-logs');
 
 
 export class DocumentStack extends Stack {
-  public cfnArn: CfnOutput;
-  public cfnName: CfnOutput;
+  cfnArn: CfnOutput;
+  cfnName: CfnOutput;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
@@ -303,9 +303,9 @@ export class DocumentStack extends Stack {
     });
 
      // pass the name of this stack
-     this.cfnName = new CfnOutput(this, "DocumentProcessName", {
-      value: stateMachine.stateMachineName,
-      exportName: "ExportedDocumentProcessName"
+     this.cfnName = new CfnOutput(this, "DocumentProcessId", {
+      value: id,
+      exportName: "ExportedDocumentProcessName",
     });
   }
 }

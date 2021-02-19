@@ -27,7 +27,7 @@ export class TenderStack extends Stack {
 
     const processDocumentArn = Fn.importValue("ExportedDocumentProcessArn")
 
-    const documentProcessName = Fn.importValue("ExportedDocumentProcessName")
+    const documentProcessId = Fn.importValue("ExportedDocumentProcessId")
 
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
@@ -325,7 +325,7 @@ export class TenderStack extends Stack {
     })
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
-      stateMachine: StateMachine.fromStateMachineArn(this, documentProcessName, processDocumentArn),
+      stateMachine: StateMachine.fromStateMachineArn(this, documentProcessId, processDocumentArn),
       inputPath: "$.mergedData",
       resultPath: '$.downloadedData'
     });
