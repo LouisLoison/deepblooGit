@@ -22,6 +22,6 @@ const processStack = new DocumentStack(app, 'DocumentStack', {
 // });
 
 new TenderStack(app, 'TenderStack', {
-  env: { account: "669031476932", region:   "eu-west-1" },
+  env: { account: "669031476932", region: "eu-west-1" },
   //  nodeLayerArn: textractPipelineStack.nodeLayerArn,
 });

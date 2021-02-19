@@ -2,7 +2,7 @@ import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Succeed, Wait, 
 import { LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { Construct, Stack, StackProps, Duration, CfnOutput, Fn } from '@aws-cdk/core';
+import { Construct, Stack, StackProps, Duration, CfnOutput, Fn, Arn } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
@@ -25,17 +25,9 @@ export class TenderStack extends Stack {
 
     const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
-    const vpcArn = Fn.importValue("ExportedDocumentProcessArn").toString()
-    const processDocumentArn = Vpc.fromVpcAttributes(this, "ImportedDocumentStackArn", {
-      vpcId: vpcArn,
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
-    }).toString();
+    const processDocumentArn = Fn.importValue("ExportedDocumentProcessArn")
 
-    const vpcName = Fn.importValue("ExportedDocumentProcessName").toString()
-    const documentProcessName = Vpc.fromVpcAttributes(this, "ImportedDocumentStackName", {
-      vpcId: vpcName,
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
-    }).toString();
+    const documentProcessName = Fn.importValue("ExportedDocumentProcessName")
 
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
