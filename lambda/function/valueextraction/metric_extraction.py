@@ -7,16 +7,19 @@ import csv
 import pint
 from classes import Metric
 from quantulum3 import parser
-from utilities import quantulum_pint_dict
+from utilities import quantulum_pint_dict, unit_references
 
 # Setting up pint utilities
 ureg = pint.UnitRegistry()
 Q_ = ureg.Quantity
 
+# Defining the default supported dimensions
+ref_dimensions = [unit_info["entity"] for unit_info in unit_references]
+ref_dimensions.append("currency")
+print(ref_dimensions)
 
-def extract_metrics(txt, dimensions=("power", "electrical potential",
-                                     "current", "length", "energy",
-                                     "currency"),
+
+def extract_metrics(txt, dimensions=ref_dimensions,
                     return_noise=False):
     """
     Extract metrics from the input text
@@ -32,8 +35,8 @@ def extract_metrics(txt, dimensions=("power", "electrical potential",
         dimensions are selected within text
         
         By default, the supported dimensions are "power" (eg. 25.4 W), 
-        "electrical potential" (eg. 400 kV), "current" (53 A) and 
-        "length" (eg. 100m)
+        "electric potential" (eg. 400 kV), "current" (53 A),
+        "length" (eg. 100m), "energy" (5 Wh) and "currency" (5 $)
         
         All the supported dimensions are referenced in unit_references.csv
     return_noise: bool, optional, default=False
