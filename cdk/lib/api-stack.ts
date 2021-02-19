@@ -176,15 +176,13 @@ export class ApiStack extends cdk.Stack {
       handler: 'index.handler',
       memorySize: 500,
       timeout: Duration.seconds(10),
-      vpc,
       environment: {
         ...environment,
-        ...dbEnv,
         ...hivebriteEnv
       },
-      role: lambdaBasicDbSecretVpcExecutionRole
     });
     userResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(userResolver)
 
     const elasticResolver = new Function(this, 'elasticResolver', {
       functionName: `elasticResolver-${environment.NODE_ENV}`,
@@ -417,6 +415,22 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const GetUserAuroraFunction = new CfnFunctionConfiguration(this, `GetUserAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "GetUserAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetUserAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetUserAuroraFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -432,7 +446,7 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId]
       },
     })
 
@@ -450,7 +464,7 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
       },
     })
 
@@ -468,7 +482,7 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, CreateTenderElasticFunction.attrFunctionId, CreateTenderAuroraFunction.attrFunctionId],
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, CreateTenderElasticFunction.attrFunctionId, CreateTenderAuroraFunction.attrFunctionId],
       },
     })
 
