@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Succeed, Wait, WaitTime} from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, IStateMachine, LogLevel, Succeed, Wait, WaitTime} from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
@@ -9,14 +9,14 @@ import s3 = require('@aws-cdk/aws-s3');
 // import iam = require('@aws-cdk/aws-iam');
 import logs = require('@aws-cdk/aws-logs');
 
-/*
-interface ImportsStepsStackProps extends StackProps {
-  nodeLayerArn: ILayerVersion;
+
+interface TenderStackProps extends StackProps {
+  documentMachine: IStateMachine;
 }
- */
+
 
 export class TenderStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: TenderStackProps) {
     super(scope, id, props);
 
     const environment = {
@@ -25,9 +25,9 @@ export class TenderStack extends Stack {
 
     const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
-    const processDocumentArn = Fn.importValue("ExportedDocumentProcessArn")
+    // const processDocumentArn = Fn.importValue("ExportedDocumentProcessArn")
 
-    const documentProcessName = Fn.importValue("ExportedDocumentProcessName")
+    // const documentProcessName = Fn.importValue("ExportedDocumentProcessName")
 
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
@@ -325,7 +325,8 @@ export class TenderStack extends Stack {
     })
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
-      stateMachine: StateMachine.fromStateMachineArn(this, documentProcessName, processDocumentArn),
+      //stateMachine: StateMachine.fromStateMachineArn(this, documentProcessName, processDocumentArn),
+      stateMachine: props.documentMachine,
       inputPath: "$.mergedData",
       resultPath: '$.downloadedData'
     });

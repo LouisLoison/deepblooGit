@@ -1,4 +1,4 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, IStateMachine,  LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
@@ -11,8 +11,8 @@ import logs = require('@aws-cdk/aws-logs');
 
 
 export class DocumentStack extends Stack {
-  public cfnArn: CfnOutput;
-  public cfnName: CfnOutput;
+  public documentMachine: IStateMachine
+  //  public cfnName: CfnOutput;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
@@ -245,7 +245,7 @@ export class DocumentStack extends Stack {
     const processZip = new Parallel(this, 'Zip process', {})
       .branch(zipExtractionTask)
 
-  const documentIterator = downloadTask
+    const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
         .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
         .when(Condition.or(
@@ -287,7 +287,7 @@ export class DocumentStack extends Stack {
     //   )
     // const logGroup = new logs.LogGroup(this, 'DocumentProcessLogGroup');
 
-    const stateMachine = new StateMachine(this, 'DocumentProcess', {
+    this.documentMachine = new StateMachine(this, 'DocumentProcess', {
       definition: documentMap,
       logs: {
         destination: logGroup,
@@ -297,6 +297,7 @@ export class DocumentStack extends Stack {
     });
 
     // pass the arn of this stack
+    /*
      this.cfnArn = new CfnOutput(this, "DocumentProcessArn", {
       value: stateMachine.stateMachineArn,
       exportName: "ExportedDocumentProcessArn"
@@ -307,5 +308,6 @@ export class DocumentStack extends Stack {
       value: stateMachine.stateMachineName,
       exportName: "ExportedDocumentProcessName"
     });
+     */
   }
 }

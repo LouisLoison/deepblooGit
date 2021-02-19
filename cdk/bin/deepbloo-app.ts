@@ -12,7 +12,7 @@ const apiStack = new ApiStack(app, 'ApiStack', { env: { account: "669031476932",
 
 const textractPipelineStack = new TextractPipelineStack(app, 'TextractPipelineStack', { env: { account: "669031476932", region: "eu-west-1" }});
 
-const processStack = new DocumentStack(app, 'DocumentStack', {
+const documentStack = new DocumentStack(app, 'DocumentStack', {
   env: { account: "669031476932", region:   "eu-west-1" },
 });
 
@@ -23,5 +23,6 @@ const processStack = new DocumentStack(app, 'DocumentStack', {
 
 new TenderStack(app, 'TenderStack', {
   env: { account: "669031476932", region: "eu-west-1" },
+  documentMachine: documentStack.documentMachine,
   //  nodeLayerArn: textractPipelineStack.nodeLayerArn,
 });
