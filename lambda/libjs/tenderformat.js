@@ -89,6 +89,8 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
 
   let bidDeadline_timestamp = new Date(tender.bidDeadlineDate).getTime()
 
+  const bidDeadlineDate = tender.bidDeadlineDate === '--' ? null : tender.bidDeadlineDate
+
   let tenderNew = {
     // objectID: tender.algoliaId ? tender.algoliaId : undefined,
     // dgmarketId: tender.dgmarketId,
@@ -130,7 +132,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     publication_timestamp: publication_timestamp,
     // cpvsOrigine: tender.cpvsOrigine,
     cpvs: cpvs,
-    bidDeadlineDate: tender.bidDeadlineDate,
+    bidDeadlineDate: bidDeadlineDate,
     bidDeadline_timestamp: bidDeadline_timestamp,
     creation_timestamp: new Date().getTime(),
     // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
@@ -142,6 +144,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     designs: [],
     contractTypes: [],
     brands: [],
+    financials: [],
     // fileSource: tender.fileSource,
     groups: [],
     datasource: tender.datasource,
@@ -164,6 +167,8 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
         tenderNew.contractTypes.push(textParse.group)
       } else if (textParse.theme === "Brand" && !tenderNew.brands.includes(textParse.group)) {
         tenderNew.brands.push(textParse.group)
+      } else if (textParse.theme === "Financial Organization" && !tenderNew.financials.includes(textParse.group)) {
+        tenderNew.financials.push(textParse.group)
       }
     }
   }
