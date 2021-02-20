@@ -195,6 +195,8 @@ var Schema = {
       documentUuid: { type: "String" },
       cpvId: { type: "Int" },
       value: { type: "String" },
+      numericValue: { type: "String" },
+      entity: { type: "String" },
       word: { type: "String" },
       findCount: { type: "Int" },
       scope: { type: "String", description: 'TITLE | DESCRIPTION | DOCUMENT' },
