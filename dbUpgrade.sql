@@ -108,7 +108,7 @@ create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid,
 alter table documentmessage add column documentuuid uuid;
 update documentmessage set documentuuid=document.documentuuid from document where documentmessage.documentid = document.documentid;
 
-alter table documentmessage drop column documentuuid;
+alter table documentmessage drop column documentid;
 
 alter table document drop column documentid;
 alter table document add column contenttype varchar;
