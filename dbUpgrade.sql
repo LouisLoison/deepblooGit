@@ -97,6 +97,8 @@ alter table tenderCriterionCpv add column if not exists  documentuuid UUID;
 update tenderCriterionCpv  set documentuuid=document.documentuuid from document where tenderCriterionCpv.documentid = document.documentid;
 alter table tenderCriterionCpv  drop column documentid;
 
+alter table tendercriterion add column entity varchar;
+
 create table tendercriteriondocument as select * from tendercriterion where documentuuid is not null;
 delete from tendercriterion where documentuuid is not null;
 alter table tendercriterion drop column documentuuid;
@@ -106,6 +108,7 @@ create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tende
 create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
 
 alter table documentmessage add column documentuuid uuid;
+
 update documentmessage set documentuuid=document.documentuuid from document where documentmessage.documentid = document.documentid;
 
 alter table documentmessage drop column documentid;
@@ -127,3 +130,22 @@ update tenders set creationdate = publicationdate where creationdate is null;
 alter table tenders add column owner_id uuid default null;
 
 alter table document drop constraint document_contenthash_key;
+create table referenceunit (
+	entity varchar unique not null,
+        unit varchar,
+	name varchar
+);
+
+create table resourceaccesslist (
+	resource_id uuid,
+	grantee_id uuid,
+	role varchar
+);
+
+create table account (
+	account_id uuid default uuid_generate_v4(),
+	organization_id uuid,
+	name varchar,
+	creationdate timestamptz,
+	updatedate timestamptz
+);
