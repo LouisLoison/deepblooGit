@@ -98,6 +98,7 @@ update tenderCriterionCpv  set documentuuid=document.documentuuid from document 
 alter table tenderCriterionCpv  drop column documentid;
 
 alter table tendercriterion add column entity varchar;
+alter table tendercriterion add column numericvalue numeric;
 
 create table tendercriteriondocument as select * from tendercriterion where documentuuid is not null;
 delete from tendercriterion where documentuuid is not null;
@@ -106,12 +107,6 @@ create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tende
 -- create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
 create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
-
-alter table documentmessage add column documentuuid uuid;
-
-update documentmessage set documentuuid=document.documentuuid from document where documentmessage.documentid = document.documentid;
-
-alter table documentmessage drop column documentid;
 
 alter table document drop column documentid;
 alter table document add column contenttype varchar;
@@ -130,21 +125,30 @@ update tenders set creationdate = publicationdate where creationdate is null;
 alter table tenders add column owner_id uuid default null;
 
 alter table document drop constraint document_contenthash_key;
+/*
 create table referenceunit (
 	entity varchar unique not null,
         unit varchar,
 	name varchar
 );
 
+insert into referenceunit values
+	('power','W','watt'),
+	('electric potential','V','volt'),
+	('current','A','ampere'),
+	('length','m','meter')
+	;
+*/
+
 create table resourceaccesslist (
-	resource_id uuid,
-	grantee_id uuid,
+	resourceid uuid,
+	granteeid uuid,
 	role varchar
 );
 
 create table account (
-	account_id uuid default uuid_generate_v4(),
-	organization_id uuid,
+	accountid uuid default uuid_generate_v4(),
+	organizationid uuid,
 	name varchar,
 	creationdate timestamptz,
 	updatedate timestamptz
