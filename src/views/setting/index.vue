@@ -17,7 +17,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-list
         v-for="(menu, index) of menus"
@@ -35,6 +35,12 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <v-divider class="mt-5" />
+
+      <div class="grey--text pa-5 text-center">
+        Version 1.0
+      </div>
     </v-navigation-drawer>
     <div v-else style="position: fixed; top: 58px; right: 0px; z-index: 100;">
       <v-menu offset-y>
