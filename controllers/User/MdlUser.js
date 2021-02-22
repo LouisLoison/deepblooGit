@@ -102,6 +102,7 @@ exports.List = (filter) => {
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT    userId AS "userId", 
+                  uuid AS "uuid", 
                   hivebriteId AS "hivebriteId", 
                   type AS "type", 
                   email AS "email", 
@@ -144,6 +145,12 @@ exports.List = (filter) => {
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
           where += `userId = ${BddTool.NumericFormater(filter.userId)} \n`
+        }
+        if (filter.uuid && filter.uuid !== '') {
+          if (where !== '') {
+            where += 'AND '
+          }
+          where += `uuid = '${BddTool.ChaineFormater(filter.uuid)}' \n`
         }
         if (filter.email) {
           if (where !== '') { where += 'AND ' }
@@ -191,6 +198,7 @@ exports.List = (filter) => {
       for (var record of recordset) {
         users.push({
           userId: record.userId,
+          uuid: record.uuid,
           hivebriteId: record.hivebriteId,
           type: record.type,
           email: record.email,
@@ -241,7 +249,7 @@ exports.User = (userId) => {
         let filter = {
           userId
         }
-        let users = await this.List(filter);
+        let users = await this.List(filter)
         if (users && users.length > 0) {
           user = users[0];
         }
@@ -665,10 +673,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
       }
 
       // Update user bdd list
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let userBdd = usersBdd.find(a => a.userId === userId)
       if (!userBdd) {
@@ -676,8 +681,8 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
       }
 
       if (!user) {
-        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`);
-        user = userExperiencesResponse.data.user;
+        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`)
+        user = userExperiencesResponse.data.user
       }
 
       // Get user organization by user experiences
@@ -1099,15 +1104,12 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
   })
 }
 
-exports.SendPeriodicDashboard = () => {
+exports.SendPeriodicDashboard = (userUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
       const tenderMax = 30
 
@@ -1116,6 +1118,14 @@ exports.SendPeriodicDashboard = () => {
 
       let emailSents = []
       for (const user of users) {
+        if (
+          userUuid
+          && userUuid.trim() !== ''
+          && user.uuid !== userUuid
+        ) {
+          continue
+        }
+
         /*
         if (user.email.trim() !== 'jeancazaux@hotmail.com') {
           continue
