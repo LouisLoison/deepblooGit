@@ -34,6 +34,7 @@ def entity_floor(list_of_metrics, entity="length", lower_bound=100):
     """
 
     # TODO: Make sure list_of_metrics is actually a list of objects Metric
+    # TODO: Implement a unit test with pytest for this function
 
     new_list = []
 
