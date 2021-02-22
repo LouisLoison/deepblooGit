@@ -41,7 +41,14 @@ export default {
       this.isVisible = true
       this.tender = tender
       this.$nextTick(() => {
-        this.$refs.Tender.loadTender(tender.id.raw)
+        let tenderUuid = tender.id.raw
+        if (
+          tender.tender_uuid
+          && tender.tender_uuid.raw
+        ) {
+          tenderUuid = tender.tender_uuid.raw
+        }
+        this.$refs.Tender.loadTender(tenderUuid)
       })
     },
 

@@ -168,6 +168,7 @@
         </div>
       </div>
       <TendersRefinement
+        v-if="displayType !== 'DASHBOARD'"
         :searchInputValue="searchInputValue"
         :filter="filter"
         @searchInputValueRemove="searchInputValueRemove()"

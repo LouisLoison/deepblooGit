@@ -42,6 +42,7 @@
     <Dashboard
       v-else-if="displayType === 'DASHBOARD'"
       inTendersScreen
+      :searchFilter="{ searchInputValue: searchState.searchTerm, facets: filter }"
     />
 
     <!-- Dialog -->

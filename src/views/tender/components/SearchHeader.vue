@@ -52,7 +52,7 @@ export default {
       this.sentValue(value)
     },
   },
-  
+
   methods: {
     setValue(value) {
       if (this.sentValuefunc) {

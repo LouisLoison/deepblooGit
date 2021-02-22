@@ -646,6 +646,12 @@
     <!-- Dialog -->
     <TendersDialog
       ref="TendersDialog"
+      @tenderOpen="openTender($event)"
+    />
+    <TenderDialog
+      ref="TenderDialog"
+      @updateTender="refreshFunction()"
+      @openTenderGroupChoice="openTenderGroupChoice($event)"
     />
   </div>
 </template>
@@ -658,6 +664,7 @@ import constCountrys from '@/assets/constants/countrys.json'
 import constCountryMap from '@/assets/constants/countryMap.json'
 import ItemCard from '@/views/dashboard/components/ItemCard.vue'
 import TendersDialog from '@/views/dashboard/components/TendersDialog.vue'
+import TenderDialog from '@/views/tender/components/TenderDialog'
 
 export default {
   name: 'Dashboard',
@@ -667,11 +674,17 @@ export default {
     GridItem: VueGridLayout.GridItem,
     ItemCard,
     TendersDialog,
+    TenderDialog,
   },
 
   props: {
     inTendersScreen: {
       type: Boolean,
+      required: false
+    },
+
+    searchFilter: {
+      type: Object,
       required: false
     },
   },
@@ -891,11 +904,6 @@ export default {
               },
               series: {
                 animation: true,
-                events: {
-                  click: function(event) {
-                    console.log(event.point.name);
-                  }
-                }
               }
             },
             series: [],
@@ -1003,6 +1011,14 @@ export default {
                 verticalAlign: 'bottom'
               }
             },
+            plotOptions: {
+              mapbubble: {
+                cursor: 'pointer',
+              },
+              series: {
+                animation: true,
+              }
+            },
             series: [{
               name: 'Countries',
               color: '#E0E0E0',
@@ -1049,6 +1065,14 @@ export default {
             },
             colorAxis: {
               min: 0
+            },
+            plotOptions: {
+              map: {
+                cursor: 'pointer',
+              },
+              series: {
+                animation: true,
+              }
             },
             series: [
               {
@@ -1099,6 +1123,12 @@ export default {
     getSelectedItem() {
       return this.dashboard.items.find(a => a.i === this.selectedUuid)
     }
+  },
+
+  watch: {
+    searchFilter() {
+      this.search()
+    },
   },
 
   mounted() {
@@ -1228,6 +1258,15 @@ export default {
                   break
                 }
               }
+              item.chart.series[0].events = {
+                click: event => {
+                  console.log(item)
+                  console.log(event.point)
+                  console.log(event.point.category)
+                  console.log(event.point.series.name)
+                  this.openTendersDialog()
+                }
+              }
             }
           }
         } else if (
@@ -1243,6 +1282,15 @@ export default {
                 code: this.getCoutryCode(data.value),
                 z: data.count,
               })
+            }
+          }
+          item.chart.series[1].events = {
+            click: event => {
+              console.log(item)
+              console.log(event.point)
+              console.log(event.point.category)
+              console.log(event.point.series.name)
+              this.openTendersDialog()
             }
           }
         } else if (
@@ -1267,6 +1315,15 @@ export default {
             }
           }
           item.chart.series[0].data = mapData
+          item.chart.series[0].events = {
+            click: event => {
+              console.log(item)
+              console.log(event.point)
+              console.log(event.point.category)
+              console.log(event.point.series.name)
+              this.openTendersDialog()
+            }
+          }
         } else if (
           item.type === 'TABLE'
           && item.subType === 'TENDER'
@@ -1336,12 +1393,12 @@ export default {
       return ''
     },
 
-    openTender(event) {
-      console.log(event)
+    openTender(result) {
+      this.$refs.TenderDialog.show(result)
     },
 
     openTendersDialog() {
-      this.$refs.TendersDialog.show()
+      this.$refs.TendersDialog.show(this.facets)
     },
   }
 }
