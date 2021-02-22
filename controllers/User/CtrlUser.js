@@ -91,7 +91,7 @@ exports.Notify = (req, res) => {
 }
 
 exports.SendPeriodicDashboard = (req, res) => {
-  require(process.cwd() + '/controllers/User/MdlUser').SendPeriodicDashboard().then((data) => {
+  require(process.cwd() + '/controllers/User/MdlUser').SendPeriodicDashboard(req.body.userUuid).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

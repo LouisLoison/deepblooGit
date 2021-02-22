@@ -1,6 +1,6 @@
 var config = module.exports = {}
 
-config.prefixe = 'prod'
+config.prefixe = 'devLocal'
 config.prefixeDev = 'dev'
 config.prefixeProd = 'prod'
 config.WorkSpaceFolder = 'C:/Temp/Deepbloo/'
@@ -107,7 +107,7 @@ config.awsBucketFtp = 'sftp.deepbloo.com'
 config.elasticEndpoint = 'https://a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io:9243/'
 config.elasticUser = 'elastic'
 config.elasticPassword = 'qIEa2t1kjelVtxLDm0wlnirN'
-config.elasticEngineName = 'deepbloo-dev'
+config.elasticEngineName = 'deepbloo'
 config.appsearchEndpoint = 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/'
 config.appsearchSearchKey = 'search-pg8ft3mtkfkup3occekertmt'
 config.appsearchPrivateKey = 'private-ychdiximphcy4avd3kdtrc51'
