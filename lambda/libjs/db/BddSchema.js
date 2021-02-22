@@ -1,5 +1,12 @@
 var Schema = {
   deepbloo: {
+    account: {
+      accountid: { type: "string", key: true },
+      organizationid: { type: "string"},
+      name: { type: "string"},
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" },
+    },
     annonce: {
       annonceId: { type: "Int", key: true },
       title: { type: "String" },
@@ -380,6 +387,13 @@ var Schema = {
       origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
       rating: { type: "Int" },
     },
+    resourceAccessList: {
+      resourceId: { type: "String" },
+      granteeId: { type: "String" },
+      role: { type: "String" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    }
   }
 }
 

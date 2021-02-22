@@ -143,7 +143,9 @@ insert into referenceunit values
 create table resourceaccesslist (
 	resourceid uuid,
 	granteeid uuid,
-	role varchar
+	role varchar,
+	creationdate timestamptz,
+	updatedate timestamptz
 );
 
 create table account (
