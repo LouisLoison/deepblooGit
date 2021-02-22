@@ -12,7 +12,7 @@ exports.List = (filter) => {
         SELECT    organization.organizationId AS "organizationId", 
                   organization.name AS "name", 
                   organization.countrys AS "countrys", 
-                  organization.dataSourceId AS "dataSourceId", 
+                  organization.dgmarketId AS "dgmarketId", 
                   organization.creationDate AS "creationDate", 
                   organization.updateDate AS "updateDate", 
                   organizationCpv.cpvCode AS "cpvCode", 
@@ -37,7 +37,7 @@ exports.List = (filter) => {
         if (!organization || organization.organizationId !== record.organizationId) {
           organization = {
             organizationId: record.organizationId,
-            dataSourceId: record.dataSourceId,
+            dgmarketId: record.dgmarketId,
             name: record.name.trim(),
             countrys: record.countrys,
             cpvs: [],
@@ -158,7 +158,7 @@ exports.ListFromCpvs = (cpvs, country) => {
       let query = `
         SELECT      organization.organizationId AS "organizationId", 
                     organization.name AS "name", 
-                    organization.dataSourceId AS "dataSourceId", 
+                    organization.dgmarketId AS "dgmarketId", 
                     organization.countrys AS "countrys", 
                     organization.creationDate AS "creationDate", 
                     organization.updateDate AS "updateDate", 
@@ -202,7 +202,7 @@ exports.ListFromCpvs = (cpvs, country) => {
         if (!organization || organization.organizationId !== record.organizationId) {
           organization = {
             organizationId: record.organizationId,
-            dataSourceId: record.dataSourceId,
+            dgmarketId: record.dgmarketId,
             name: record.name ? record.name.trim() : '',
             countrys: record.countrys ? record.countrys.trim().split(',') : [],
             cpvs: [],
