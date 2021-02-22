@@ -39,7 +39,7 @@ const pgInitPool = () => {
       database: configBdd.dbname || configBdd.database,
       port: configBdd.port || 5432,
     }
-    console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
+    // console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
     const { Pool } = require('pg')
     pgPool = new Pool(pgArgs)
   }
@@ -214,7 +214,7 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
 }
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
-  console.log(configBdd)
+  // console.log(configBdd)
   if (configBdd.type === 'MsSql') {
     QueryExecMsSql(onError, onSuccess, Query)
   } else if (configBdd.type === 'MySql') {
