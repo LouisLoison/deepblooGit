@@ -291,7 +291,6 @@ exports.search = (searchRequest) => {
       const query = searchRequest.searchInputValue
       const searchFields = { title: {} }
       const resultFields = {
-        tender_uuid: { raw: {} },
         title: { raw: {} },
         country: { raw: {} },
         publication_timestamp: { raw: {} },
