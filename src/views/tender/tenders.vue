@@ -120,9 +120,20 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
+        <v-btn
+          v-if="!getIsMobile && 1 === 2"
+          @click="displayType = 'DASHBOARD'"
+          icon
+          large
+          :color="displayType === 'DASHBOARD' ? 'blue-grey' : 'grey'"
+          class="mt-2 mb-0 mx-0"
+          title="Dashboard"
+        >
+          <v-icon style="font-size: 24px;">fa-chart-pie</v-icon>
+        </v-btn>
       </div>
       <div
-        v-if="searchState.wasSearched"
+        v-if="searchState.wasSearched && displayType !== 'DASHBOARD'"
         class="hit-header-grid pt-2 pb-2"
       >
         <div>

@@ -26,6 +26,15 @@ export class GlobalService {
     span.innerHTML = span.textContent || span.innerText
     return span.textContent || span.innerText
   }
+
+  formatLabel(text) {
+    let label = text
+    if (label && label.length) {
+      label = label.replace(new RegExp('_'), ' ')
+      label = label.charAt(0).toUpperCase() + label.slice(1)
+    }
+    return label
+  }
   
   facetLabel(field) {
     if (field === 'cpvs') {
@@ -46,10 +55,7 @@ export class GlobalService {
       return 'Financial Organization'
     }
 
-    if (field && field.length) {
-      return field.charAt(0).toUpperCase() + field.slice(1).replace(/_/g, ' ')
-    }
-    return field
+    return this.formatLabel(field)
   }
 
   cpvLogo(cpvs, dataCpvs) {

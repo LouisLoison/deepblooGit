@@ -26,7 +26,7 @@
       </div>
     </div>
     <SearchResultsTable
-      v-else
+      v-else-if="displayType === 'TABLE'"
       ref="SearchResultsTable"
       :results="results"
       :filter="filter"
@@ -38,6 +38,10 @@
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
       @sendToSalesforce="sendToSalesforce($event)"
+    />
+    <Dashboard
+      v-else-if="displayType === 'DASHBOARD'"
+      inTendersScreen
     />
 
     <!-- Dialog -->
@@ -65,6 +69,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import SearchResult from './SearchResult'
 import SearchResultsTable from './SearchResultsTable'
+import Dashboard from '@/views/dashboard/Dashboard'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from '@/views/tender/components/TenderGroupChoice'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
@@ -76,6 +81,7 @@ export default {
   components: {
     SearchResult,
     SearchResultsTable,
+    Dashboard,
     TenderGroupChoice,
     SentEmailDialog,
     TenderDialog,
