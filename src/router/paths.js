@@ -156,6 +156,14 @@ export default [
     ]
   },
   {
+    path: '/dashboards',
+    meta: {
+      public: true
+    },
+    name: 'Dashboards',
+    component: () => import(`@/views/dashboard/Dashboards.vue`)
+  },
+  {
     path: '/dashboard',
     meta: {
       public: true
