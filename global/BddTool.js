@@ -240,6 +240,9 @@ exports.QueryExecBdd2 = (Query, rowsCount) => {
 // Best of all, uses "UPSERT" in postgres style (INSERT .. ON CONFLICT(..) DO UPDATE ..) for atomic ops
 const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = false) => {
   let ColumnList = []
+  if(!Schema) {
+    this.bddInit()
+  }
   let Table = Schema[TableName]
   // console.log(TableName, Record)
   for(let ColumnName in Table) {
