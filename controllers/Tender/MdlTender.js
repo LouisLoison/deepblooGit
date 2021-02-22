@@ -1719,7 +1719,6 @@ exports.tenderCriterions = (filter) => {
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
-                    tenderCriterion.documentUuid AS "documentUuid", 
                     tenderCriterion.textParseId AS "textParseId", 
                     tenderCriterion.value AS "value", 
                     tenderCriterion.word AS "word", 
@@ -1772,8 +1771,7 @@ exports.tenderCriterionCpvs = (filter) => {
       const BddEnvironnement = config.prefixe
 
       let query = `
-        SELECT      tenderCriterionCpv.tenderCriterionCpvId AS "tenderCriterionCpvId", 
-                    tenderCriterionCpv.tenderId AS "tenderId", 
+        SELECT      tenderCriterionCpv.tenderId AS "tenderId", 
                     tenderCriterionCpv.documentUuid AS "documentUuid", 
                     tenderCriterionCpv.cpvId AS "cpvId", 
                     tenderCriterionCpv.value AS "value", 
@@ -1797,7 +1795,6 @@ exports.tenderCriterionCpvs = (filter) => {
       const tenderCriterionCpvs = []
       for (let record of recordset) {
         tenderCriterionCpvs.push({
-          tenderCriterionCpvId: record.tenderCriterionCpvId,
           tenderId: record.tenderId,
           documentUuid: record.documentUuid,
           cpvId: record.cpvId,
