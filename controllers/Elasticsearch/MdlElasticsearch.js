@@ -304,6 +304,7 @@ exports.search = (searchRequest) => {
         filters: { all: [] },
         search_fields: searchFields,
         result_fields: resultFields,
+        facets: searchRequest.facets,
       }
       if (searchRequest.filter) {
         for (const field in searchRequest.filter) {
