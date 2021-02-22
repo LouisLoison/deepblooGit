@@ -250,10 +250,9 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     if (Column.key && !ColumnKey) {
     // if (Column.key) {
       ColumnKey = ColumnName
-    } else {
-      if (ColumnName in Record) {
-        ColumnList.push(ColumnName)
-      }
+    }
+    if (ColumnName in Record) {
+      ColumnList.push(ColumnName)
     }
   }
   let Query = ''
