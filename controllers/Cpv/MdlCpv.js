@@ -83,9 +83,7 @@ exports.CpvList = (filter, removeDiacritics) => {
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY cpv.code, cpv.cpvId, cpvWord.word'
-      // console.log(query)
       let recordset = await BddTool.QueryExecBdd2(query)
-      // console.log(recordset)
       let cpv = null
       for (const record of recordset) {
         if (!cpv || cpv.cpvId !== record.cpvId) {

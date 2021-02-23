@@ -264,7 +264,6 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         tender.id = record.id
         tenders.push(tender)
       }
-      console.log(tenders.length)
       const tranches = []
       let borneMin = 0
       let occurence = 20

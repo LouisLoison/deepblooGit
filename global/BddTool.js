@@ -177,7 +177,6 @@ var QueryExecOracle = async function(onError, onSuccess, Query) {
 var QueryExecpostgres = (onError, onSuccess, Query, rowsCount) => {
   try {
     pgInitPool()
-    console.log(Query)
     pgPool.query(Query, (err, results) => {
       if (err) {
         err.Query = Query
@@ -190,7 +189,7 @@ var QueryExecpostgres = (onError, onSuccess, Query, rowsCount) => {
           total: results.rowCount,
         })
       } else {
-        onSuccess(results.rows);
+        onSuccess(results.rows)
       }
     })
   } catch (err) {
@@ -207,14 +206,12 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
     rowMode: 'array',
   }
 
-  console.log(preparedQuery)
   const { rows, fields, rowCount } = await client.query(preparedQuery)
 
   return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
 }
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
-  // console.log(configBdd)
   if (configBdd.type === 'MsSql') {
     QueryExecMsSql(onError, onSuccess, Query)
   } else if (configBdd.type === 'MySql') {
@@ -243,11 +240,9 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     this.bddInit()
   }
   let Table = Schema[TableName]
-  // console.log(TableName, Record)
   for(let ColumnName in Table) {
     let Column = Table[ColumnName]
     if (Column.key && !ColumnKey) {
-    // if (Column.key) {
       ColumnKey = ColumnName
     }
     if (ColumnName in Record) {
@@ -255,7 +250,6 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     }
   }
   let Query = ''
-  //  if (Record[ColumnKey] && Record[ColumnKey] !== 0 && Record[ColumnKey] !== '') {
   let UpdateColumnsList = []
   let insertColumnList = []
   let insertValuesList = []
@@ -299,10 +293,8 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     values: actualValues,
     rowMode: 'array',
   }
-  console.log(preparedQuery)
 
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
-  // console.log(rows);
   const [ result ] = pgMapResult(rows, fields, TableName)
 
   return result
@@ -315,7 +307,7 @@ const pgMapResult = (rows, fields, TableName) => {
   }, {})
 
   return rows.map(row => {
-    const mapedRow = {};
+    const mapedRow = {}
     fields.forEach(({ name }, index) => {
       if (name in higherCols) {
         mapedRow[higherCols[name]] = row[index]
@@ -496,7 +488,6 @@ exports.bulkInsertpostgres = async (TableName, records, client=false) => {
 
   pgInitPool()
   let errors = 0
-  console.log(Query)
   await values.forEach(async value => {
     Query.values = value
     await (client || pgPool) .query(Query)
@@ -506,7 +497,10 @@ exports.bulkInsertpostgres = async (TableName, records, client=false) => {
         errors += 1
       })
   })
-  return { updated: values.length, errors }
+  return {
+    updated: values.length,
+    errors,
+  }
 }
 
 const bulkInsertGeneric = (TableName, records) => {
@@ -583,12 +577,11 @@ exports.RecordGet = (TableName, RecordId) => {
       ColumnListTexte += `${ColumnName} AS "${ColumnName}"`
     }
 
-    var Query = ''
-    Query = `
-            SELECT ${ColumnListTexte} 
-            FROM ${TableName} 
-            WHERE ${ColumnKey} = ${RecordId} 
-        `
+    var Query = `
+      SELECT ${ColumnListTexte} 
+      FROM ${TableName} 
+      WHERE ${ColumnKey} = ${RecordId} 
+    `
     QueryExecBdd(Query, reject, (recordset) => {
       for (var recordItem of recordset) {
         for(var ColumnName in Table) {
@@ -611,11 +604,10 @@ exports.RecordDelete = (TableName, RecordId) => {
       }
     }
 
-    var Query = ''
-    Query = `
-            DELETE FROM ${TableName} 
-            WHERE ${ColumnKey} = ${RecordId} 
-        `
+    var Query = `
+      DELETE FROM ${TableName} 
+      WHERE ${ColumnKey} = ${RecordId} 
+    `
     QueryExecBdd(Query, reject, () => {
       resolve()
     })

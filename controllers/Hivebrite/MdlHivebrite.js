@@ -210,7 +210,6 @@ exports.VenturesGet = () => {
       let response = await this.get(`api/admin/v2/ventures?page=${pagenum}&per_page=100`)
       if (!pageCount) {
         pageCount = Math.ceil(parseInt(response.headers['x-total'], 10) / parseInt(response.headers['x-per-page'], 10))
-        console.log(`Page count (${pageCount})`)
       }
       for (let venture of response.data.ventures) {
         // venture.pagenum = pagenum
@@ -250,7 +249,7 @@ exports.VenturesGet = () => {
         })
       }
     }
-    console.log(`Venture date null (${ventureDateNull})`)
+    // console.log(`Venture date null (${ventureDateNull})`)
     // Delete duplicate tenders
     /*
     console.log(`Delete duplicate (${ventureDuplicates.length})`)
