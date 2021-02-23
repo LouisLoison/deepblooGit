@@ -1,3 +1,7 @@
+#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
+#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
+#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
+$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
 ## PUTTING owner_id IN INPUT ARGUMENT IN ELASTIC MAPPING BECAUSE OWNER_ID WILL BE AVAILABLE AFTER TOKENAUTHORIZATION FUNCTION WHICH IS FIRST IN PIPELINE.
 $util.qr($context.args.input.put("owner_id", $context.stash.user_uuid)) 
 {

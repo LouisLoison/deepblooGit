@@ -101,6 +101,7 @@ type Query {
 
 type Mutation {
   CreateTender(input:CreateTenderInput!, userToken:String!): Tender
+  testTender(userToken:String!): Tender
 }
 
 input CreateTenderInput{

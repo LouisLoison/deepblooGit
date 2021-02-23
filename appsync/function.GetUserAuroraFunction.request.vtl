@@ -1,3 +1,8 @@
+#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
+#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
+#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
+$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
+
 #set($tokenAuthorizerResult = $context.prev.result) ## {id, name, primary_email, nbf } tokenAuthorizerResult return from TokenAuthorizer function.
 
 {

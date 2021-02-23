@@ -4,4 +4,14 @@
 $util.qr($context.args.input.put("tenderUuid", $tenderuuid))
 $util.qr($context.args.input.put("creationDate", $timestamp)) 
 $util.qr($context.args.input.put("updateDate", $timestamp)) 
+$util.qr($context.stash.put("pipelineFunctions", 
+['TokenAuthorizerFunction',
+'GetUserAuroraFunction',
+'CreateTenderElasticFunction', 
+'CreateTenderAuroraFunction' ,
+'CreateTenderCriterionCpvsAuroraFunction', 
+'CreateTenderCriterionsAuroraFunction'
+]))
+$util.qr($context.stash.put("currentPipelineFunctionIndex", 0)) 
+
 {}
