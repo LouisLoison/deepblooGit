@@ -48,11 +48,6 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       delete from tenderCriterionCpv where tenderUuid = $1;
       `, [result.tenderUuid])
 
-    await BddTool.QueryExecPrepared(client, `
-      delete from tenderCriterion where tenderUuid = $1;
-      `, [result.tenderUuid])
-
-
     if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
       for (const tenderCriterionCpv of tenderCriterionCpvs) {
         tenderCriterionCpv.tenderUuid = result.tenderUuid
@@ -68,6 +63,13 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       }
     }
     if (tenderCriterions && tenderCriterions.length) {
+    console.log('Has criterions')
+    await BddTool.QueryExecPrepared(client, `
+      delete from tenderCriterion where tenderUuid = $1;
+      `, [result.tenderUuid])
+
+
+
       for (const tenderCriterion of tenderCriterions) {
         tenderCriterion.tenderUuid = result.tenderUuid
         tenderCriterion.creationDate = new Date()
