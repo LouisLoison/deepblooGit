@@ -1,7 +1,7 @@
 """In this file, I implement unit tests related to entity filters"""
 
 from classes import Metric
-from filtres import entity_floor
+from filters import entity_floor
 import pytest
 
 
