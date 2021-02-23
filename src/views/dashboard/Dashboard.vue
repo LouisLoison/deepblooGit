@@ -731,6 +731,7 @@
               :dataSearch="dataSearch"
               :searchFilter="searchFilter"
               @updateDisplay="display = $event"
+              @search="search()"
               @openTender="openTender($event)"
               @searchInputValueRemove="searchInputValueRemove()"
               @facetItemRemove="facetItemRemove($event)"
@@ -759,7 +760,7 @@ import moment from 'moment'
 import VueGridLayout from 'vue-grid-layout'
 import constCountrys from '@/assets/constants/countrys.json'
 import constCountryMap from '@/assets/constants/countryMap.json'
-import ItemCard from '@/views/dashboard/components/ItemCard'
+import ItemCard from '@/views/dashboard/components/items/ItemCard'
 import TendersDialog from '@/views/dashboard/components/TendersDialog'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TendersPreview from '@/views/dashboard/components/TendersPreview'
@@ -861,6 +862,7 @@ export default {
           type: 'FILTER',
           facet: 'brands',
           data: {
+            isDataEmpty: true,
             multiple: true,
           }
         },
@@ -877,6 +879,7 @@ export default {
           type: 'FILTER',
           facet: 'country',
           data: {
+            isDataEmpty: true,
             multiple: true,
           }
         },
@@ -893,6 +896,7 @@ export default {
           type: 'FILTER',
           facet: 'financials',
           data: {
+            isDataEmpty: true,
             multiple: true,
           }
         },
@@ -962,6 +966,9 @@ export default {
             },
             series: [],
           },
+          data: {
+            isDataEmpty: true,
+          },
         },
         {
           x: 6,
@@ -1007,6 +1014,9 @@ export default {
             },
             series: [],
           },
+          data: {
+            isDataEmpty: true,
+          },
         },
         {
           x: 0,
@@ -1021,6 +1031,7 @@ export default {
           type: 'TABLE',
           subType: 'TENDER',
           data: {
+            isDataEmpty: true,
             showHeader: true,
             fixedHeader: true,
             showFooter: true,
@@ -1064,6 +1075,7 @@ export default {
           type: 'DATA',
           facet: 'brands',
           data: {
+            isDataEmpty: true,
             value: '',
             field: 'country',
             processType: 'COUNT',
@@ -1085,6 +1097,7 @@ export default {
           colorBackground: 'grey',
           type: 'TEXT',
           data: {
+            isDataEmpty: true,
             value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris turpis magna, sagittis nec molestie quis, porta luctus nulla.',
             textSize: 1,
             alignHorizontal: 'LEFT',
@@ -1104,6 +1117,7 @@ export default {
           type: 'CHART-MAP',
           subType: 'MAP-BUBBLE',
           data: {
+            isDataEmpty: true,
             position: null,
           },
           chart: {
@@ -1162,6 +1176,7 @@ export default {
           subType: 'FACET',
           facet: 'country',
           data: {
+            isDataEmpty: true,
             showHeader: true,
             fixedHeader: true,
             showFooter: false,
@@ -1184,6 +1199,7 @@ export default {
           type: 'CHART-MAP',
           subType: 'MAP-AREA',
           data: {
+            isDataEmpty: true,
             position: {
               min0: 2756.0964594698826,
               max0: 6544.391919986773,
@@ -1285,15 +1301,18 @@ export default {
     async search() {
       try {
         this.dataSearch.loading = 0
-        const res = await this.$api.post('/Elasticsearch/search', {
-          searchRequest: {
-            searchInputValue: 'power',
-            filter: {
-              cpvs: ['Cable'],
-            },
-            facets: this.facets,
-          }
-        })
+        let searchRequest = {
+          searchInputValue: 'power',
+          filter: {
+            cpvs: ['Cable'],
+          },
+          facets: this.facets,
+        }
+        if (this.searchFilter) {
+          searchRequest.searchInputValue = this.searchFilter.searchInputValue
+          searchRequest.filter = this.searchFilter.facets
+        }
+        const res = await this.$api.post('/Elasticsearch/search', { searchRequest })
         if (!res.success) {
           throw new Error(res.Error)
         }
@@ -1363,6 +1382,7 @@ export default {
     },
 
     setSearchDataChart(item) {
+      item.data.isDataEmpty = true
       if (
         item.chart.chart.type === 'column'
         && item.facet
@@ -1391,8 +1411,8 @@ export default {
               this.openTendersDialog()
             }
           }
+          item.data.isDataEmpty = false
         }
-
       }
       if (
         item.chart.chart.type === 'pie'
@@ -1426,11 +1446,13 @@ export default {
               this.openTendersDialog()
             }
           }
+          item.data.isDataEmpty = false
         }
       }
     },
 
     setSearchDataChartMap(item) {
+      item.data.isDataEmpty = true
       if (item.subType === 'MAP-BUBBLE') {
         item.chart.series[1].data = []
         const facet = this.dataSearch.data.facets.country
@@ -1442,6 +1464,7 @@ export default {
               z: data.count,
             })
           }
+          item.data.isDataEmpty = false
         }
         item.chart.series[1].events = {
           click: event => {
@@ -1469,6 +1492,7 @@ export default {
               }
             }
           }
+          item.data.isDataEmpty = false
         }
         item.chart.series[0].data = mapData
         item.chart.series[0].events = {
@@ -1496,6 +1520,7 @@ export default {
 
     setSearchDataTable(item) {
       if (item.subType === 'TENDER') {
+        item.data.isDataEmpty = true
         item.data.datas = []
         for (const result of this.dataSearch.data.results) {
           item.data.datas.push({
@@ -1506,8 +1531,10 @@ export default {
             bidDeadline: moment(result.bid_deadline_timestamp.raw).format("MM/DD/YYYY"),
             publication: moment(result.publication_timestamp.raw).format("MM/DD/YYYY"),
           })
+          item.data.isDataEmpty = false
         }
       } else if (item.subType === 'FACET') {
+        item.data.isDataEmpty = true
         item.data.headers = [
           {
             text: !item.showHeader ? this.$global.facetLabel(item.facet) : '',
@@ -1536,11 +1563,13 @@ export default {
               })
             }
           }
+          item.data.isDataEmpty = false
         }
       }
     },
 
     setSearchDataData(item) {
+      item.data.isDataEmpty = true
       item.data.value = ''
       if (item.facet) {
         const facet = this.dataSearch.data.facets[item.facet]
@@ -1548,15 +1577,18 @@ export default {
           item.data.value = 0
           if (item.data.processType === 'COUNT') {
             item.data.value = facet[0].data.length
+            item.data.isDataEmpty = false
           } else if (item.data.processType === 'SUM') {
             for (const data of facet[0].data) {
               item.data.value = item.data.value + data.count
+              item.data.isDataEmpty = false
             }
           } else if (item.data.processType === 'AVERAGE') {
             for (const data of facet[0].data) {
               item.data.value = item.data.value + data.count
             }
             item.data.value = Math.round(item.data.value / facet[0].data.length)
+            item.data.isDataEmpty = false
           }
         }
       }

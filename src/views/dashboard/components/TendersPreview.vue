@@ -9,6 +9,7 @@
       <v-spacer />
 
       <v-btn
+        v-if="searchFilter"
         @click="showTendersRefinement = !showTendersRefinement"
         small
         icon
@@ -112,6 +113,10 @@ export default {
   methods: {
     updateDisplay(value) {
       this.$emit('updateDisplay', value)
+    },
+
+    search() {
+      this.$emit('search')
     },
 
     openTender(tender) {

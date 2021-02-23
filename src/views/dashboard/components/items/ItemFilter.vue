@@ -1,14 +1,18 @@
 <template>
   <div>
-    <v-menu offset-y max-height="400">
+    <v-menu
+      offset-y
+      max-height="400"
+    >
       <template v-slot:activator="{ on, attrs }">
         <v-btn
-          color="blue-grey"
+          v-bind="attrs"
+          v-on="on"
+          :style="item.data.isDataEmpty ? 'opacity: 0.5;' : ''"
           dark
           block
           outlined
-          v-bind="attrs"
-          v-on="on"
+          color="blue-grey"
         >
           {{ $global.facetLabel(item.facet) }}
         </v-btn>

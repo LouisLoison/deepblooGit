@@ -77,6 +77,9 @@
         >
           <v-progress-circular :size="item.h > 1 ? 50 : 20" color="blue-grey lighten-4" indeterminate />
         </div>
+        <div v-else-if="item.data.isDataEmpty" class="grey--text pa-5 text-center">
+          No data
+        </div>
         <template v-else>
           <highcharts
             v-if="item.type === 'CHART'"
