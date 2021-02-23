@@ -67,6 +67,15 @@ class Metric:
 
     def __copy__(self):
         return
+
+    def __eq__(self, other):
+        if isinstance(other, Metric) and self.unit.entity == other.unit.entity:
+            metric_1_in_official = self.to_official().value
+            metric_2_in_official = other.to_official().value
+
+            return metric_1_in_official == metric_2_in_official
+
+        return NotImplemented
     
     def to(self, unit_name):
         """Converts a metric to another unit
