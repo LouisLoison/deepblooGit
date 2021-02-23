@@ -177,7 +177,7 @@ var QueryExecOracle = async function(onError, onSuccess, Query) {
 var QueryExecpostgres = (onError, onSuccess, Query, rowsCount) => {
   try {
     pgInitPool()
-    // console.log(Query)
+    console.log(Query)
     pgPool.query(Query, (err, results) => {
       if (err) {
         err.Query = Query
@@ -207,7 +207,7 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
     rowMode: 'array',
   }
 
-  // console.log(preparedQuery)
+  console.log(preparedQuery)
   const { rows, fields, rowCount } = await client.query(preparedQuery)
 
   return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
@@ -287,7 +287,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
   }
 
   Query = `
-    INSERT INTO "${TableName}" (${insertColumnList.join(', ')})
+    INSERT INTO "${TableName.toLowerCase()}" (${insertColumnList.join(', ')})
     VALUES (${insertValuesList.join(', ')})
     ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
     RETURNING *
@@ -299,6 +299,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     values: actualValues,
     rowMode: 'array',
   }
+  console.log(preparedQuery)
 
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
   // console.log(rows);
@@ -495,6 +496,7 @@ exports.bulkInsertpostgres = async (TableName, records, client=false) => {
 
   pgInitPool()
   let errors = 0
+  console.log(Query)
   await values.forEach(async value => {
     Query.values = value
     await (client || pgPool) .query(Query)
