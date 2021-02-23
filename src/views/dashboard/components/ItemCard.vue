@@ -87,16 +87,19 @@
             :options="item.chart"
             :constructor-type="'mapChart'"
             class="map"
+            :ref="`ChartMap${item.i}`"
           />
           <v-data-table
             v-else-if="item.type === 'TABLE'"
-            :headers="item.table.headers"
-            :items="item.table.datas"
-            :items-per-page="5"
-            :fixed-header="item.table.fixedHeader"
-            :height="item.table.height"
+            :headers="item.data.headers"
+            :items="item.data.datas"
+            :hide-default-header="!item.data.showHeader"
+            :fixed-header="item.data.fixedHeader"
+            :items-per-page="item.data.itemsPerPage"
+            :hide-default-footer="!item.data.showFooter"
+            :height="item.data.height"
             dense
-            class="elevation-0 mt-2 transparent"
+            class="elevation-0 transparent"
             @click:row="openTender($event)"
           />
           <div

@@ -126,6 +126,7 @@
                 @selectItem="selectItem($event)"
                 @deleteItem="deleteItem($event)"
                 @openTender="openTender($event)"
+                :ref="`ItemCard${item.i}`"
               />
             </grid-item>
           </grid-layout>
@@ -241,15 +242,9 @@
                     </v-list-item>
                   </v-list>
                 </v-menu>
-
-                <div v-if="getSelectedItem.type === 'TABLE'">
-                  <v-switch
-                    v-model="getSelectedItem.table.fixedHeader"
-                    :label="`Fixed header: ${getSelectedItem.table.fixedHeader.toString()}`"
-                  />
-                </div>
+                <!-- FILTER -->
                 <div
-                  v-else-if="getSelectedItem.type === 'FILTER'"
+                  v-if="getSelectedItem.type === 'FILTER'"
                   class="pa-3"
                 >
                   <div>
@@ -281,6 +276,110 @@
                     </v-menu>
                   </div>
                 </div>
+                <!-- TABLE -->
+                <div v-else-if="getSelectedItem.type === 'TABLE'">
+                  <v-divider class="mt-2" />
+                  <div class="pt-3">
+                    <div class="grey--text">Data source</div>
+                    <v-radio-group
+                      v-model="getSelectedItem.subType"
+                      row
+                    >
+                      <v-radio
+                        label="Tender"
+                        value="TENDER"
+                      ></v-radio>
+                      <v-radio
+                        label="Facet"
+                        value="FACET"
+                      ></v-radio>
+                    </v-radio-group>
+                    <div v-if="getSelectedItem.subType === 'TENDER'">
+                      <v-simple-table dense class="grey lighten-4">
+                        <template v-slot:default>
+                          <thead>
+                            <tr class="grey lighten-3">
+                              <th class="text-left">
+                                Field
+                              </th>
+                              <th class="text-left">
+                                Visible
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr
+                              v-for="(facet, index) in Object.keys(facets)"
+                              :key="`facet${index}`"
+                            >
+                              <td>
+                                {{ $global.facetLabel(facet) }}
+                              </td>
+                              <td>
+                                <v-switch
+                                  :input-value="getSelectedItem.data.fields.find(a => a.facet === facet) ? true : false"
+                                  @click="itemTableSwitch(getSelectedItem, facet)"
+                                  dense
+                                  hide-details
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
+                    </div>
+                    <div v-else-if="getSelectedItem.subType === 'FACET'">
+                      <div class="grey--text">Facet</div>
+                      <v-menu offset-y>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            color="blue-grey"
+                            dark
+                            small
+                            block
+                            v-bind="attrs"
+                            v-on="on"
+                          >
+                            {{ !getSelectedItem.facet ? 'none' : $global.facetLabel(getSelectedItem.facet) }}
+                          </v-btn>
+                        </template>
+                        <v-list>
+                          <v-list-item
+                            v-for="(facet, index) in Object.keys(facets)"
+                            :key="`facet${index}`"
+                            @click="getSelectedItem.facet = facet; setSearchDatas()"
+                          >
+                            <v-list-item-title>
+                              {{ $global.facetLabel(facet) }}
+                            </v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
+                    </div>
+                  </div>
+                  <v-divider class="mt-2" />
+                  <v-switch
+                    v-model="getSelectedItem.data.showHeader"
+                    :label="`Table header`"
+                    dense
+                    hide-details
+                  />
+                  <v-switch
+                    v-if="getSelectedItem.data.showHeader"
+                    v-model="getSelectedItem.data.fixedHeader"
+                    :label="`Fixed header`"
+                    dense
+                    hide-details
+                  />
+                  <v-switch
+                    v-model="getSelectedItem.data.showFooter"
+                    :label="`Table footer`"
+                    @change="resizedEvent(getSelectedItem)"
+                    dense
+                    hide-details
+                  />
+                </div>
+                <!-- DATA -->
                 <div
                   v-else-if="getSelectedItem.type === 'DATA'"
                   class="pa-3"
@@ -396,6 +495,7 @@
                     </v-btn-toggle>
                   </div>
                 </div>
+                <!-- TEXT -->
                 <div
                   v-else-if="getSelectedItem.type === 'TEXT'"
                   class="pa-3"
@@ -455,6 +555,7 @@
                     </v-btn-toggle>
                   </div>
                 </div>
+                <!-- CHART -->
                 <div
                   v-else-if="getSelectedItem.type === 'CHART'"
                   class="pa-3"
@@ -509,8 +610,46 @@
                     </div>
                   </div>
                 </div>
+                <!-- CHART-MAP -->
+                <div
+                  v-else-if="getSelectedItem.type === 'CHART-MAP'"
+                  class="pa-3"
+                >
+                  <v-divider class="mt-2" />
 
-                <v-divider />
+                  <v-switch
+                    v-model="getSelectedItem.chart.mapNavigation.enabled"
+                    :label="`Map zoom`"
+                    dense
+                    hide-details
+                  />
+
+                  <div class="pt-3">
+                    <v-btn
+                      @click="cartMapSavePosition(getSelectedItem)"
+                      :class="getSelectedItem.data.position ? 'blue-grey lighten-4' : ''"
+                    >
+                      <v-icon
+                        small
+                        :class="getSelectedItem.data.position ? 'green--text' : 'blue-grey--text'"
+                        class="mr-2"
+                      >
+                        fa-map-marker-alt
+                      </v-icon>
+                      Save position
+                    </v-btn>
+
+                    <v-btn
+                      @click="getSelectedItem.data.position = null"
+                      :disabled="!getSelectedItem.data.position"
+                      title="Reset position"
+                    >
+                      <v-icon color="red">fa-times</v-icon>
+                    </v-btn>
+                  </div>
+                </div>
+
+                <v-divider class="mt-2" />
 
                 <div class="pa-3 grey--text">
                   <div class="grey--text">Position</div>
@@ -586,58 +725,16 @@
             </div>
           </div>
           <div v-else-if="display === 'PREVIEW'">
-            <v-app-bar
-              color="grey lighten-4"
-              dense
-            >
-              <span class="text-h5 font-weight-bold">{{ dashboard.name }}</span>
-
-              <v-spacer />
-
-              <v-btn
-                @click="display = 'EDIT'"
-                icon
-                color="blue-grey"
-                title="Edit"
-              >
-                <v-icon small>fa-edit</v-icon>
-              </v-btn>
-              <v-btn
-                @click="search()"
-                icon
-                color="blue-grey"
-                title="Refresh"
-              >
-                <v-icon small>fa-sync-alt</v-icon>
-              </v-btn>
-            </v-app-bar>
-            <div v-if="!dataSearch.loading" class="text-center pt-5">
-              <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
-            </div>
-            <v-list
-              v-else
-              dense
-              three-line
-            >
-              <template v-for="(result, index) in this.dataSearch.data.results">
-                <v-list-item
-                  :key="`result${index}`"
-                  @click="openTender(result)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-avatar class="mr-1" size="16">
-                        <v-img :src="$global.cpvLogo(result.cpvs.raw)" />
-                      </v-avatar>
-                      {{ $global.htmlText(result.title.raw) }}
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      {{ $global.htmlText(result.description.raw) }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-            </v-list>
+            <TendersPreview
+              :display="display"
+              :dashboard="dashboard"
+              :dataSearch="dataSearch"
+              :searchFilter="searchFilter"
+              @updateDisplay="display = $event"
+              @openTender="openTender($event)"
+              @searchInputValueRemove="searchInputValueRemove()"
+              @facetItemRemove="facetItemRemove($event)"
+            />
           </div>
         </perfect-scrollbar>
       </div>
@@ -662,9 +759,10 @@ import moment from 'moment'
 import VueGridLayout from 'vue-grid-layout'
 import constCountrys from '@/assets/constants/countrys.json'
 import constCountryMap from '@/assets/constants/countryMap.json'
-import ItemCard from '@/views/dashboard/components/ItemCard.vue'
-import TendersDialog from '@/views/dashboard/components/TendersDialog.vue'
+import ItemCard from '@/views/dashboard/components/ItemCard'
+import TendersDialog from '@/views/dashboard/components/TendersDialog'
 import TenderDialog from '@/views/tender/components/TenderDialog'
+import TendersPreview from '@/views/dashboard/components/TendersPreview'
 
 export default {
   name: 'Dashboard',
@@ -675,6 +773,7 @@ export default {
     ItemCard,
     TendersDialog,
     TenderDialog,
+    TendersPreview,
   },
 
   props: {
@@ -921,8 +1020,11 @@ export default {
           colorBackground: 'grey',
           type: 'TABLE',
           subType: 'TENDER',
-          table: {
+          data: {
+            showHeader: true,
             fixedHeader: true,
+            showFooter: true,
+            itemsPerPage: 10,
             height: 270,
             headers: [
               {
@@ -940,6 +1042,13 @@ export default {
               { text: 'Segment', value: 'country' },
             ],
             datas: [],
+            fields: [
+              {
+                facet:"brands"
+              }, {
+                facet:"buyer_name"
+              }
+            ],
           },
         },
         {
@@ -994,6 +1103,9 @@ export default {
           colorBackground: 'grey',
           type: 'CHART-MAP',
           subType: 'MAP-BUBBLE',
+          data: {
+            position: null,
+          },
           chart: {
             chart: {
               map: 'myMapName',
@@ -1039,15 +1151,46 @@ export default {
         {
           x: 0,
           y: 34,
-          w: 10,
-          h: 14,
+          w: 3,
+          h: 10,
+          i: '6315876444',
+          showHeader: false,
+          title: 'Tenders table',
+          colorHeader: 'blue-grey',
+          colorBackground: 'grey',
+          type: 'TABLE',
+          subType: 'FACET',
+          facet: 'country',
+          data: {
+            showHeader: true,
+            fixedHeader: true,
+            showFooter: false,
+            itemsPerPage: -1,
+            height: 270,
+            headers: [],
+            datas: [],
+          },
+        },
+        {
+          x: 3,
+          y: 34,
+          w: 7,
+          h: 10,
           i: '7',
-          showHeader: true,
+          showHeader: false,
           title: '',
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'CHART-MAP',
           subType: 'MAP-AREA',
+          data: {
+            position: {
+              min0: 2756.0964594698826,
+              max0: 6544.391919986773,
+              min1: -8922.811359029376,
+              max1: -7547.168886534403,
+            },
+          },
           chart: {
             chart: {
               map: "myMapName",
@@ -1203,118 +1346,42 @@ export default {
       }
 
       for (const item of this.dashboard.items) {
-        if (item.type === 'CHART') {
-          if (
-            item.chart.chart.type === 'column'
-            && item.facet
-          ) {
-            item.chart.xAxis.categories = []
-            item.chart.series = []
-            const facet = this.dataSearch.data.facets[item.facet]
-            if (facet && facet.length && facet[0].data && facet[0].data.length) {
-              item.chart.series = [{
-                name: item.facet,
-                data: [],
-              }]
-              for (const data of facet[0].data) {
-                item.chart.xAxis.categories.push(data.value)
-                item.chart.series[0].data.push(data.count)
-                if (item.chart.xAxis.categories.length >= item.facetCountMax) {
-                  break
-                }
-              }
-              item.chart.series[0].events = {
-                click: event => {
-                  console.log(item)
-                  console.log(event.point)
-                  console.log(event.point.category)
-                  console.log(event.point.series.name)
-                  this.openTendersDialog()
-                }
-              }
-            }
+        this.setSearchData(item)
+      }
+    },
 
-          }
-          if (
-            item.chart.chart.type === 'pie'
-            && item.facet
-          ) {
-            item.chart.series = []
-            const facet = this.dataSearch.data.facets[item.facet]
-            if (facet && facet.length && facet[0].data && facet[0].data.length) {
-              item.chart.series = [{
-                name: item.facet,
-                colorByPoint: true,
-                data: [],
-              }]
-              for (const data of facet[0].data) {
-                item.chart.series[0].data.push({
-                  name: data.value,
-                  y: data.count,
-                  sliced: false,
-                  selected: false,
-                })
-                if (item.chart.series[0].data.length >= item.facetCountMax) {
-                  break
-                }
-              }
-              item.chart.series[0].events = {
-                click: event => {
-                  console.log(item)
-                  console.log(event.point)
-                  console.log(event.point.category)
-                  console.log(event.point.series.name)
-                  this.openTendersDialog()
-                }
-              }
+    setSearchData(item) {
+      if (item.type === 'CHART') {
+        this.setSearchDataChart(item)
+      } else if (item.type === 'CHART-MAP') {
+        this.setSearchDataChartMap(item)
+      } else if (item.type === 'TABLE') {
+        this.setSearchDataTable(item)
+      } else if (item.type === 'DATA') {
+        this.setSearchDataData(item)
+      }
+    },
+
+    setSearchDataChart(item) {
+      if (
+        item.chart.chart.type === 'column'
+        && item.facet
+      ) {
+        item.chart.xAxis.categories = []
+        item.chart.series = []
+        const facet = this.dataSearch.data.facets[item.facet]
+        if (facet && facet.length && facet[0].data && facet[0].data.length) {
+          item.chart.series = [{
+            name: item.facet,
+            data: [],
+          }]
+          for (const data of facet[0].data) {
+            item.chart.xAxis.categories.push(data.value)
+            item.chart.series[0].data.push(data.count)
+            if (item.chart.xAxis.categories.length >= item.facetCountMax) {
+              break
             }
           }
-        } else if (
-          item.type === 'CHART-MAP'
-          && item.subType === 'MAP-BUBBLE'
-        ) {
-          item.chart.series[1].data = []
-          const facet = this.dataSearch.data.facets.country
-          if (facet && facet.length && facet[0].data && facet[0].data.length) {
-            for (const data of facet[0].data) {
-              item.chart.series[1].data.push({
-                name: data.value,
-                code: this.getCoutryCode(data.value),
-                z: data.count,
-              })
-            }
-          }
-          item.chart.series[1].events = {
-            click: event => {
-              console.log(item)
-              console.log(event.point)
-              console.log(event.point.category)
-              console.log(event.point.series.name)
-              this.openTendersDialog()
-            }
-          }
-        } else if (
-          item.type === 'CHART-MAP'
-          && item.subType === 'MAP-AREA'
-        ) {
-          for (let data of item.chart.series[0].data) {
-            data[1] = 0
-          }
-          item.chart.series[0].data = null
-          const mapData = JSON.parse(JSON.stringify(this.constCountryMap))
-          const facet = this.dataSearch.data.facets.country
-          if (facet && facet.length && facet[0].data && facet[0].data.length) {
-            for (const data of facet[0].data) {
-              const coutryCode = this.getCoutryCode(data.value).toLowerCase()
-              if (coutryCode) {
-                const datafound = mapData.find(a => a[0] === coutryCode)
-                if (datafound) {
-                  datafound[1] = data.count
-                }
-              }
-            }
-          }
-          item.chart.series[0].data = mapData
           item.chart.series[0].events = {
             click: event => {
               console.log(item)
@@ -1324,42 +1391,172 @@ export default {
               this.openTendersDialog()
             }
           }
-        } else if (
-          item.type === 'TABLE'
-          && item.subType === 'TENDER'
-        ) {
-          item.table.datas = []
-          for (const result of this.dataSearch.data.results) {
-            item.table.datas.push({
-              title: result.title.raw.length > 40 ? `${result.title.raw.substr(0, 40)}...` : result.title.raw,
-              country: result.country.raw,
-              cpvs: result.cpvs.raw.join().length > 20 ? `${result.cpvs.raw.join().substr(0, 20)}...` : result.cpvs.raw.join(),
-              description: result.description.raw,
-              bidDeadline: moment(result.bid_deadline_timestamp.raw).format("MM/DD/YYYY"),
-              publication: moment(result.publication_timestamp.raw).format("MM/DD/YYYY"),
+        }
+
+      }
+      if (
+        item.chart.chart.type === 'pie'
+        && item.facet
+      ) {
+        item.chart.series = []
+        const facet = this.dataSearch.data.facets[item.facet]
+        if (facet && facet.length && facet[0].data && facet[0].data.length) {
+          item.chart.series = [{
+            name: item.facet,
+            colorByPoint: true,
+            data: [],
+          }]
+          for (const data of facet[0].data) {
+            item.chart.series[0].data.push({
+              name: data.value,
+              y: data.count,
+              sliced: false,
+              selected: false,
+            })
+            if (item.chart.series[0].data.length >= item.facetCountMax) {
+              break
+            }
+          }
+          item.chart.series[0].events = {
+            click: event => {
+              console.log(item)
+              console.log(event.point)
+              console.log(event.point.category)
+              console.log(event.point.series.name)
+              this.openTendersDialog()
+            }
+          }
+        }
+      }
+    },
+
+    setSearchDataChartMap(item) {
+      if (item.subType === 'MAP-BUBBLE') {
+        item.chart.series[1].data = []
+        const facet = this.dataSearch.data.facets.country
+        if (facet && facet.length && facet[0].data && facet[0].data.length) {
+          for (const data of facet[0].data) {
+            item.chart.series[1].data.push({
+              name: data.value,
+              code: this.getCoutryCode(data.value),
+              z: data.count,
             })
           }
-        } else if (
-          item.type === 'DATA'
-        ) {
-          item.data.value = ''
-          if (item.facet) {
-            const facet = this.dataSearch.data.facets[item.facet]
-            if (facet && facet.length && facet[0].data && facet[0].data.length) {
-              item.data.value = 0
-              if (item.data.processType === 'COUNT') {
-                item.data.value = facet[0].data.length
-              } else if (item.data.processType === 'SUM') {
-                for (const data of facet[0].data) {
-                  item.data.value = item.data.value + data.count
-                }
-              } else if (item.data.processType === 'AVERAGE') {
-                for (const data of facet[0].data) {
-                  item.data.value = item.data.value + data.count
-                }
-                item.data.value = Math.round(item.data.value / facet[0].data.length)
+        }
+        item.chart.series[1].events = {
+          click: event => {
+            console.log(item)
+            console.log(event.point)
+            console.log(event.point.category)
+            console.log(event.point.series.name)
+            this.openTendersDialog()
+          }
+        }
+      } else if (item.subType === 'MAP-AREA') {
+        for (let data of item.chart.series[0].data) {
+          data[1] = 0
+        }
+        item.chart.series[0].data = null
+        const mapData = JSON.parse(JSON.stringify(this.constCountryMap))
+        const facet = this.dataSearch.data.facets.country
+        if (facet && facet.length && facet[0].data && facet[0].data.length) {
+          for (const data of facet[0].data) {
+            const coutryCode = this.getCoutryCode(data.value).toLowerCase()
+            if (coutryCode) {
+              const datafound = mapData.find(a => a[0] === coutryCode)
+              if (datafound) {
+                datafound[1] = data.count
               }
             }
+          }
+        }
+        item.chart.series[0].data = mapData
+        item.chart.series[0].events = {
+          click: event => {
+            console.log(item)
+            console.log(event.point)
+            console.log(event.point.category)
+            console.log(event.point.series.name)
+            this.openTendersDialog()
+          }
+        }
+      }
+      if (item.data.position) {
+        this.$nextTick(() => {
+          const ItemCard = this.$refs[`ItemCard${item.i}`][0]
+          const mapChart = ItemCard.$refs[`ChartMap${item.i}`].chart
+          const extremes0 = mapChart.axes[0].getExtremes()
+          let zoom = (item.data.position.max0 - item.data.position.min0) / (extremes0.dataMax - extremes0.dataMin)
+          mapChart.mapZoom(Math.abs(zoom))
+          mapChart.axes[0].setExtremes(item.data.position.min0, item.data.position.max0)
+          mapChart.axes[1].setExtremes(item.data.position.min1, item.data.position.max1)
+        })
+      }
+    },
+
+    setSearchDataTable(item) {
+      if (item.subType === 'TENDER') {
+        item.data.datas = []
+        for (const result of this.dataSearch.data.results) {
+          item.data.datas.push({
+            title: result.title.raw.length > 40 ? `${result.title.raw.substr(0, 40)}...` : result.title.raw,
+            country: result.country.raw,
+            cpvs: result.cpvs.raw.join().length > 20 ? `${result.cpvs.raw.join().substr(0, 20)}...` : result.cpvs.raw.join(),
+            description: result.description.raw,
+            bidDeadline: moment(result.bid_deadline_timestamp.raw).format("MM/DD/YYYY"),
+            publication: moment(result.publication_timestamp.raw).format("MM/DD/YYYY"),
+          })
+        }
+      } else if (item.subType === 'FACET') {
+        item.data.headers = [
+          {
+            text: !item.showHeader ? this.$global.facetLabel(item.facet) : '',
+            align: 'start',
+            sortable: false,
+            value: 'label',
+          },
+          {
+            text: 'Count',
+            align: 'end',
+            sortable: true,
+            value: 'count',
+          },
+        ]
+        if (!item.data.showFooter) {
+          item.data.itemsPerPage = -1
+        }
+        item.data.datas = []
+        if (item.facet) {
+          const facet = this.dataSearch.data.facets[item.facet]
+          if (facet && facet.length && facet[0].data && facet[0].data.length) {
+            for (const data of facet[0].data) {
+              item.data.datas.push({
+                label: data.value,
+                count: data.count,
+              })
+            }
+          }
+        }
+      }
+    },
+
+    setSearchDataData(item) {
+      item.data.value = ''
+      if (item.facet) {
+        const facet = this.dataSearch.data.facets[item.facet]
+        if (facet && facet.length && facet[0].data && facet[0].data.length) {
+          item.data.value = 0
+          if (item.data.processType === 'COUNT') {
+            item.data.value = facet[0].data.length
+          } else if (item.data.processType === 'SUM') {
+            for (const data of facet[0].data) {
+              item.data.value = item.data.value + data.count
+            }
+          } else if (item.data.processType === 'AVERAGE') {
+            for (const data of facet[0].data) {
+              item.data.value = item.data.value + data.count
+            }
+            item.data.value = Math.round(item.data.value / facet[0].data.length)
           }
         }
       }
@@ -1375,12 +1572,14 @@ export default {
       if (item.subType === 'MAP-BUBBLE') {
         item.chart.chart.height = 35 * item.h + 24 + (item.showHeader ? 0 : 32)
       } else if (item.subType === 'MAP-AREA') {
-        item.chart.chart.height = 35 * item.h + 34 + (item.showHeader ? 0 : 32)
-        console.log(item)
+        item.chart.chart.height = 35 * item.h + 24 + (item.showHeader ? 0 : 32)
       } else if (item.type === 'CHART') {
         item.chart.chart.height = 35 * item.h + (item.showHeader ? 0 : 32)
       } else if (item.type === 'TABLE') {
-        item.table.height = (35 * item.h) - 60 + (item.showHeader ? 0 : 32)
+        item.data.height = (35 * item.h) - 52 + (item.showHeader ? 0 : 32)
+        if (!item.data.showFooter) {
+          item.data.height = item.data.height + 60
+        }
       }
     },
 
@@ -1399,6 +1598,40 @@ export default {
 
     openTendersDialog() {
       this.$refs.TendersDialog.show(this.facets)
+    },
+
+    cartMapSavePosition(item) {
+      item.data.position = {}
+
+      const ItemCard = this.$refs[`ItemCard${item.i}`][0]
+      const mapChart = ItemCard.$refs[`ChartMap${item.i}`].chart
+      const extremes0 = mapChart.axes[0].getExtremes()
+      item.data.position.min0 = extremes0.min
+      item.data.position.max0 = extremes0.max
+      const extremes1 = mapChart.axes[1].getExtremes()
+      item.data.position.min1 = extremes1.min
+      item.data.position.max1 = extremes1.max
+    },
+
+    itemTableSwitch(item, facet) {
+      if (!item.data.fields) {
+        item.data.fields = []
+      }
+      if (!item.data.fields.find(a => a.facet === facet)) {
+        item.data.fields.push({
+          facet,
+        })
+      } else {
+        item.data.fields = item.data.fields.filter(a => a.facet !== facet)
+      }
+    },
+
+    searchInputValueRemove() {
+      this.$emit('searchInputValueRemove')
+    },
+
+    facetItemRemove(event) {
+      this.$emit('facetItemRemove', event)
     },
   }
 }

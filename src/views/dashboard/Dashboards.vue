@@ -191,7 +191,7 @@ export default {
             folder: true,
             children: [{
               id: '77864654',
-              name: 'Bayer total',
+              name: 'Buyer total',
             }],
           },
           {
@@ -210,7 +210,7 @@ export default {
       },
       {
         id: '465465487',
-        name: 'Bayer siemens',
+        name: 'Buyer siemens',
       },
     ],
   }),

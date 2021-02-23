@@ -188,6 +188,8 @@
           @handleFacetUnCheckAll="$refs.TendersFilter.handleFacetUnCheckAll($event)"
           @tenderOpen="tenderOpen($event)"
           @removeTender="removeTender($event)"
+          @searchInputValueRemove="searchInputValueRemove()"
+          @facetItemRemove="facetItemRemove($event.facet, $event.item)"
         />
       </div>
       <div v-if="!searchState.wasSearched" class="text-center pa-5">

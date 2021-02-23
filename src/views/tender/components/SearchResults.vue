@@ -43,6 +43,8 @@
       v-else-if="displayType === 'DASHBOARD'"
       inTendersScreen
       :searchFilter="{ searchInputValue: searchState.searchTerm, facets: filter }"
+      @searchInputValueRemove="searchInputValueRemove()"
+      @facetItemRemove="facetItemRemove($event)"
     />
 
     <!-- Dialog -->
@@ -275,6 +277,14 @@ export default {
       } catch (err) {
         this.$api.error(err, this)
       }
+    },
+
+    searchInputValueRemove() {
+      this.$emit('searchInputValueRemove')
+    },
+
+    facetItemRemove(event) {
+      this.$emit('facetItemRemove', event)
     },
   },
 };
