@@ -307,11 +307,13 @@ exports.search = (searchRequest) => {
       if (searchRequest.filter) {
         for (const field in searchRequest.filter) {
           if (searchRequest.filter[field].length) {
+            let anys = []
             for (const value of searchRequest.filter[field]) {
               let option = {}
               option[field] = value
-              options.filters.all.push({ any: [ option ] })
+              anys.push(option)
             }
+            options.filters.all.push({ any: anys })
           }
         }
       }
