@@ -287,7 +287,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
   }
 
   Query = `
-    INSERT INTO "${TableName}" (${insertColumnList.join(', ')})
+    INSERT INTO "${TableName.toLowerCase()}" (${insertColumnList.join(', ')})
     VALUES (${insertValuesList.join(', ')})
     ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
     RETURNING *
