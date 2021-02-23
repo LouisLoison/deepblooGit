@@ -9,9 +9,9 @@ alter table dgmarket rename to tenders;
 --create table tenders as select * from dgmarket limit 1000;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-create sequence tenders_id_seq;
-alter table tenders alter column id set default nextval('tenders_id_seq');
-select setval('tenders_id_seq',  (SELECT MAX(id) FROM tenders));
+--create sequence tenders_id_seq;
+--alter table tenders alter column id set default nextval('tenders_id_seq');
+--select setval('tenders_id_seq',  (SELECT MAX(id) FROM tenders));
 
 -- alter table tenders rename id to old_id;
 --alter table tenders add column if not exists uuid UUID NOT NULL  DEFAULT uuid_generate_v4();
@@ -40,9 +40,9 @@ alter table importdgmarket rename to tenderimport;
 -- create table tenderimport as select * from importdgmarket limit 0;
 
 alter table tenderimport rename importdgmarketid to tenderimportid;
-create sequence tenderimport_id_seq;
-alter table tenderimport alter column tenderimportid set default nextval('tenderimport_id_seq');
-select setval('tenderimport_id_seq',  (SELECT MAX(tenderimportid) FROM tenderimport));
+--create sequence tenderimport_id_seq;
+--alter table tenderimport alter column tenderimportid set default nextval('tenderimport_id_seq');
+--select setval('tenderimport_id_seq',  (SELECT MAX(tenderimportid) FROM tenderimport));
 
 alter table tenderimport rename dgmarketId to datasourceid;
 
@@ -68,9 +68,9 @@ alter table tenderCriterion add column if not exists tenderuuid UUID;
 update tenderCriterion set tenderuuid=tenders.tenderuuid from tenders where tenderCriterion.tenderid=tenders.id;
 -- alter table tenderCriterion  drop column tenderid;
 
-create sequence tendercriterion_id_seq;
-alter table tendercriterion alter column tendercriterionid set default nextval('tendercriterion_id_seq');
-select setval('tendercriterion_id_seq',  (SELECT MAX(tendercriterionid) FROM tendercriterion));
+--create sequence tendercriterion_id_seq;
+--alter table tendercriterion alter column tendercriterionid set default nextval('tendercriterion_id_seq');
+--select setval('tendercriterion_id_seq',  (SELECT MAX(tendercriterionid) FROM tendercriterion));
 
 
 alter table tenderCriterionCpv add column if not exists tenderuuid UUID;
@@ -155,3 +155,8 @@ create table account (
 	creationdate timestamptz,
 	updatedate timestamptz
 );
+
+delete from tendergrouplink tl using tendergroup where tl.tendergroupid=tendergroup.tendergroupid and searchrequest is not null;
+
+delete from tendergroup where searchrequest is not null;
+
