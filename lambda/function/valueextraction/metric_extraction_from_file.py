@@ -5,6 +5,7 @@ and stores them in another
 """
 
 import data_preprocessing
+import filters
 import metric_extraction
 import pandas as pd
 
@@ -56,6 +57,9 @@ for i in range(100):
         tenders_data["title"].iloc[i],
         return_noise=True
     )
+
+    # Filter metrics on their value
+    title_metrics = filters.entity_floor(title_metrics, entity="length", lower_bound=100)
 #     print(len(title_metrics))
 
     # Adding unimportant metrics to the list of metrics noise
@@ -111,6 +115,9 @@ for i in range(100):
         tenders_data["description"].iloc[i],
         return_noise=True
     )
+
+    # Filter description metrics on their value
+    description_metrics = filters.entity_floor(description_metrics, entity="length", lower_bound=100)
     
     print("Computing noise...")
     for metric in desc_noise:
