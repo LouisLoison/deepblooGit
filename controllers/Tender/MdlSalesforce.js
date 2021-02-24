@@ -1,11 +1,8 @@
 exports.sendToSalesforce = (userId, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const FormData = require('form-data')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
       if (!tender) {

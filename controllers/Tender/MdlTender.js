@@ -1305,10 +1305,7 @@ exports.TenderGroupAddUpdate = (tenderGroup) => {
 exports.TenderGroupDelete = (tenderGroupId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroup 
@@ -1326,10 +1323,7 @@ exports.TenderGroupDelete = (tenderGroupId) => {
 exports.TenderGroupList = (tenderGroupId, userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderGroupId AS "tenderGroupId",
@@ -1391,13 +1385,19 @@ exports.TenderGroup = (tenderGroupId) => {
   })
 }
 
-exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
+exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
+
+      if (!algoliaId || !tenderId) {
+        const tender = await this.TenderGet(tenderId, algoliaId, tenderUuid)
+        if (tender) {
+          tenderId = tender.id
+          algoliaId = tender.algoliaId
+          tenderUuid = tender.tenderUuid
+        }
+      }
 
       let query = `
         DELETE FROM   tenderGroupLink 
@@ -1415,13 +1415,6 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
           updateDate: new Date(),
         }
         await BddTool.RecordAddUpdate('tenderGroupLink', tenderGroupLink)
-      }
-
-      if (!algoliaId) {
-        const tender = await this.TenderGet(tenderId)
-        if (tender) {
-          algoliaId = tender.algoliaId
-        }
       }
 
       const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
@@ -1445,7 +1438,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
       // synchroSalesforce
       let tenderGroup = await this.TenderGroup(tenderGroupId)
       if (tenderGroup && tenderGroup.synchroSalesforce) {
-        await require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
+        require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
       }
 
       resolve({
