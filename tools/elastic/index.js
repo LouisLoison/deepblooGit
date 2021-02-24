@@ -42,6 +42,14 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     }
     const { analyzedData, formatedData } = await analyzeTender(result)
 
+    await BddTool.RecordAddUpdate (
+          'tenders',
+          analyzedData,
+          'tenderUuid',
+          client,
+        )
+
+
     const { tenderCriterions, tenderCriterionCpvs } = analyzedData
 
     await BddTool.QueryExecPrepared(client, `
