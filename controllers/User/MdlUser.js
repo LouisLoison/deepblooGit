@@ -1194,7 +1194,7 @@ exports.SendPeriodicDashboard = (userUuid) => {
           FROM      tenders 
           LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = tenders.id 
           WHERE     tenders.noticeType != 'Contract Award' 
-          AND       tenders.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
+          AND       tenders.updateDate > (NOW() - INTERVAL '7 day') 
           AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId))}) `
         if (countrys && countrys.length) {
           query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys)}) `
