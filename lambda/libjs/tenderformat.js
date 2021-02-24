@@ -94,7 +94,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
   let tenderNew = {
     // objectID: tender.algoliaId ? tender.algoliaId : undefined,
     // dgmarketId: tender.dgmarketId,
-    // tenderId: tender.id,
+    tenderId: tender.id,
     procurementId: tender.procurementId,
     title: stripHtml(tender.title).result,
     lang: tender.lang,
