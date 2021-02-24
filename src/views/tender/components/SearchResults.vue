@@ -136,6 +136,9 @@ export default {
 
     async moveTenderToGroup(result, tenderGroup) {
       try {
+        console.log('-- moveTenderToGroup')
+        console.log(result)
+        console.log(tenderGroup)
         let SearchResultHtml = null
         if (result) {
           if (this.displayType === 'CARD') {
@@ -151,8 +154,7 @@ export default {
         const res = await this.$api.post("/Tender/TenderGroupMove", {
           userId: this.getUserId,
           tenderGroupId: tenderGroup ? tenderGroup.tenderGroupId : null,
-          tenderId: result.tender_id.raw,
-          algoliaId: result.object_id && result.object_id.raw ? result.object_id.raw : 0
+          tenderUuid: result.id.raw,
         })
         if (!res.success) {
           throw new Error(res.Error)

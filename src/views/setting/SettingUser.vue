@@ -545,7 +545,7 @@
                       v-if="dataSendPeriodicDashboard.loading === 1"
                       small
                       color="green"
-                      class="mrl-2"
+                      class="ml-2"
                       title="Notification sent"
                     >
                       fa-check

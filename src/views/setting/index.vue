@@ -39,7 +39,7 @@
       <v-divider class="mt-5" />
 
       <div class="grey--text pa-5 text-center">
-        Version 1.0
+        Version 1.1
       </div>
     </v-navigation-drawer>
     <div v-else style="position: fixed; top: 58px; right: 0px; z-index: 100;">
