@@ -1,6 +1,12 @@
 const crypto = require('crypto')
 const { getDbSecret } = require('../config')
 
+const log = (msg) => {
+  if(process.env.DEBUG) {
+    console.log(msg)
+  }
+}
+
 var Config = require(process.cwd() + '/config')
 
 const BddSchema = require(process.cwd() + '/global/BddSchema')
@@ -177,6 +183,7 @@ var QueryExecOracle = async function(onError, onSuccess, Query) {
 var QueryExecpostgres = (onError, onSuccess, Query, rowsCount) => {
   try {
     pgInitPool()
+    log(Query)
     pgPool.query(Query, (err, results) => {
       if (err) {
         err.Query = Query
@@ -205,6 +212,7 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
     values: actualValues || [],
     rowMode: 'array',
   }
+  log(preparedQuery)
 
   const { rows, fields, rowCount } = await client.query(preparedQuery)
 
@@ -273,6 +281,8 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
           actualValues.push(this.DateFormater(Record[ColumnName]))
         } else if (Table[ColumnName].type === 'Json') {
           actualValues.push(JSON.stringify(Record[ColumnName]))
+        } else if (typeof Record[ColumnName] === "boolean"){
+          actualValues.push(Number(Record[ColumnName]))
         } else {
           actualValues.push(Record[ColumnName])
         }
@@ -294,6 +304,7 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     rowMode: 'array',
   }
 
+  log(preparedQuery)
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
   const [ result ] = pgMapResult(rows, fields, TableName)
 
@@ -490,6 +501,9 @@ exports.bulkInsertpostgres = async (TableName, records, client=false) => {
   let errors = 0
   await values.forEach(async value => {
     Query.values = value
+
+    log(Query)
+
     await (client || pgPool) .query(Query)
       .catch(err => {
         err.Query = Query
@@ -608,6 +622,9 @@ exports.RecordDelete = (TableName, RecordId) => {
       DELETE FROM ${TableName} 
       WHERE ${ColumnKey} = ${RecordId} 
     `
+
+    log(Query)
+
     QueryExecBdd(Query, reject, () => {
       resolve()
     })
@@ -755,6 +772,9 @@ exports.ArrayNumericFormater = (ItemList) => {
 
 exports.DateFormater = (Texte) => {
   var moment = require('moment')
+  if (!Texte) {
+    return Texte
+  }
   if (Texte instanceof Date) {
     let DateTemp = moment(Texte).utcOffset(Texte.getUTCDate())
     if (DateTemp) {
