@@ -8,7 +8,7 @@
         <v-btn
           v-bind="attrs"
           v-on="on"
-          :style="item.data.isDataEmpty ? 'opacity: 0.5;' : ''"
+          :style="!getDatas || !getDatas.length ? 'opacity: 0.5;' : ''"
           dark
           block
           outlined
@@ -18,7 +18,16 @@
         </v-btn>
       </template>
       <div class="white">
+        <div v-if="item.facet === 'cpvs'" @click.stop>
+          <v-treeview
+            :items="cpvItems"
+            selectable
+            hoverable
+            open-on-click
+          />
+        </div>
         <v-list-item-group
+          v-else
           v-model="settings"
           :multiple="item.data.multiple"
           active-class=""
@@ -81,6 +90,83 @@ export default {
       { title: 'Data 4' },
     ],
     settings: [],
+    cpvItems: [
+      {
+        id: 1,
+        name: 'Petroleum products, fuel, electricity and other sources of energy',
+        children: [
+          {
+            id: 2,
+            name: 'electricity heating solar and nuclear energy',
+            children: [
+              { id: 11113, name: 'electricity' },
+              { id: 11114, name: 'steam hot water and associated products' },
+            ],
+          },
+        ],
+      },
+      {
+        id: 5,
+        name: 'Offgrid/energy access',
+        children: [
+          {
+            id: 6,
+            name: 'Microgrid',
+            children: [
+              {
+                id: 7,
+                name: 'electric rotary converters',
+                children: [
+                  { id: 8, name: 'Generating sets with compression ignition engines' },
+                  { id: 9, name: 'power converters' },
+                ],
+              },
+            ],
+          },
+          {
+            id: 10,
+            name: 'Bioenergy',
+            children: [
+              {
+                id: 11,
+                name: 'electric motors',
+                children: [
+                  { id: 12, name: 'adapters' },
+                  { id: 13, name: 'generators' },
+                  { id: 14, name: 'generating sets' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        id: 15,
+        name: 'Micro Hydro',
+        children: [
+          { id: 16, name: 'Power supply accessories' },
+          { id: 17, name: 'electrical machinery apparatus equipment and consumables lighting' },
+          { id: 18, name: 'electric motors generators and transformers' },
+        ],
+      },
+      {
+        id: 19,
+        name: 'hybrid',
+        children: [
+          {
+            id: 20,
+            name: 'Grid connected',
+            children: [
+              { id: 21, name: 'Mini Wind' },
+              { id: 22, name: 'Industrial / Network communication' },
+              { id: 23, name: 'Fault location' },
+            ],
+          },
+          { id: 24, name: 'Mining' },
+          { id: 25, name: 'basic metals and related products' },
+        ],
+      },
+    ],
   }),
 
   computed: {
@@ -96,7 +182,7 @@ export default {
         return facet[0].data
       }
       return []
-    }
+    },
   },
 
   methods: {

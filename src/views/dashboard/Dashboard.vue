@@ -820,6 +820,10 @@ export default {
         type: "value",
         size: 200
       },
+      cpvs: {
+        type: "value",
+        size: 200
+      },
     },
     selectedUuid: null,
     colors: [
@@ -860,7 +864,7 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'FILTER',
-          facet: 'brands',
+          facet: 'cpvs',
           data: {
             isDataEmpty: true,
             multiple: true,
