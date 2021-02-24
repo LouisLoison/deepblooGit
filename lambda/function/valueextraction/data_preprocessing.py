@@ -25,7 +25,7 @@ def clean_date_time(text, replace_with="time"):
     with the value of the parameter replace_with"""
 
     # Remove all time expressions formatted with 'am' and 'pm'
-    new_text = re.sub(r"\d{1,2}:\d{1,2}\s*[a|A|p|P][m|M]", replace_with, text)
-    new_text = re.sub(r"\d{1,2}:\d{1,2}:\d{1,2}\s*[a|A|p|P][m|M]", replace_with, new_text)
+    new_text = re.sub(r"\d{1,2}:\d{1,2}:\d{1,2}\s*[a|A|p|P][m|M]", replace_with, text)
+    new_text = re.sub(r"\d{1,2}:\d{1,2}\s*[a|A|p|P][m|M]", replace_with, new_text)
 
     return new_text
