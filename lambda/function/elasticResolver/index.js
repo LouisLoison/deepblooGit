@@ -28,14 +28,27 @@ exports.handler = async function (event,) {
         await indexToElasticsearch([elasticDoc], 'tenders')
         await indexObjectToAppsearch([appsearchDoc], 'deepbloo-dev')
 
+        let tenderAurora = { ...analyzedData }
+        delete tenderAurora.tenderCriterionCpvs
+        delete tenderAurora.tenderCriterions
+
         return {
             success: true, data: {
-                CreateTenderAuroraFunction: analyzedData,
-                CreateTenderCriterionCpvsAuroraFunction: analyzedData,
-                CreateTenderCriterionsAuroraFunction: analyzedData
+                CreateTenderAuroraFunction: tenderAurora,
+                CreateTenderCriterionCpvsAuroraFunction: updateObj(analyzedData.tenderCriterionCpvs, analyzedData.tenderUuid),
+                CreateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid)
             }
         }
     } catch (error) {
         return onError(error)
     }
+}
+
+let updateObj = (list, tenderUuid) => {
+    let cpList = [...list];
+    return cpList.map((item) => {
+        delete item.documentId
+        item['tenderUuid'] = tenderUuid
+        return item
+    })
 }

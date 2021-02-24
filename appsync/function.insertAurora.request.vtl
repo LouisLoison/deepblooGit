@@ -5,7 +5,7 @@ $util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctio
 
 #set($data = $context.prev.result[$currentPipelineFunction]) ## analyzedTender return from Elastic function.
 #set( $list = [] )
-#set( $sql = "INSERT INTO tenders " )
+#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$currentPipelineFunction]['table'] + " " )
 
 ## put everything in list
 #if( !$util.isList($data))

@@ -5,13 +5,23 @@ $util.qr($context.args.input.put("tenderUuid", $tenderuuid))
 $util.qr($context.args.input.put("creationDate", $timestamp)) 
 $util.qr($context.args.input.put("updateDate", $timestamp)) 
 $util.qr($context.stash.put("pipelineFunctions", 
-['TokenAuthorizerFunction',
-'GetUserAuroraFunction',
-'CreateTenderElasticFunction', 
-'CreateTenderAuroraFunction' ,
-'CreateTenderCriterionCpvsAuroraFunction', 
-'CreateTenderCriterionsAuroraFunction'
+["TokenAuthorizerFunction",
+"GetUserAuroraFunction",
+"CreateTenderElasticFunction", 
+"CreateTenderAuroraFunction" ,
+"CreateTenderCriterionCpvsAuroraFunction", 
+"CreateTenderCriterionsAuroraFunction"
 ]))
+$util.qr($context.stash.put("pipelineFunctionsInfo", 
+{
+"TokenAuthorizerFunction": {"type":"LAMBDA"},
+"GetUserAuroraFunction": {"type":"AURORA"},
+"CreateTenderElasticFunction": {"type":"LAMBDA"}, 
+"CreateTenderAuroraFunction": {"type":"AURORA", "table":"tenders"} ,
+"CreateTenderCriterionCpvsAuroraFunction": {"type":"AURORA", "table":"tendercriterioncpv"}, 
+"CreateTenderCriterionsAuroraFunction": {"type":"AURORA", "table":"tendercriterion"}
+}
+))
 $util.qr($context.stash.put("currentPipelineFunctionIndex", 0)) 
 
 {}
