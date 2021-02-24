@@ -385,14 +385,6 @@
                   Notify options
                 </v-expansion-panel-header>
                 <v-expansion-panel-content>
-                  <v-btn
-                    outlined
-                    color="blue-grey"
-                    class="ma-2"
-                    @click="testSendPeriodicDashboard(user)"
-                  >
-                    Test
-                  </v-btn>
                   <v-autocomplete
                     label="CPV"
                     v-model="cpvs"
@@ -538,6 +530,36 @@
                       `Do not contact: ${user.doNotContact ? 'Yes' : 'No'}`
                     "
                   />
+                  <v-divider />
+                  <v-btn
+                    @click="testSendPeriodicDashboard(user)"
+                    :loading="dataSendPeriodicDashboard.loading === 0"
+                    text
+                    block
+                    color="blue-grey"
+                    class="ma-2"
+                  >
+                    <v-icon small class="mr-2">fa-cogs</v-icon>
+                    Test notification
+                    <v-icon
+                      v-if="dataSendPeriodicDashboard.loading === 1"
+                      small
+                      color="green"
+                      class="mrl-2"
+                      title="Notification sent"
+                    >
+                      fa-check
+                    </v-icon>
+                    <v-icon
+                      v-if="dataSendPeriodicDashboard.loading === -1"
+                      small
+                      color="red"
+                      class="ml-2"
+                      title="Error"
+                    >
+                      fa-times
+                    </v-icon>
+                  </v-btn>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -657,6 +679,10 @@ export default {
     regionItems: null,
     countries: [],
     countryItems: null,
+    dataSendPeriodicDashboard: {
+      loading: null,
+      data: null
+    },
     notEmptyRules: [v => !!v || 'Data is required']
   }),
 
@@ -962,6 +988,7 @@ export default {
         if (!user.uuid || user.uuid.trim() === '') {
           return
         }
+        this.dataSendPeriodicDashboard.loading = 0
         const res = await this.$api.post('/User/SendPeriodicDashboard', {
           userUuid: user.uuid
         })
@@ -969,9 +996,9 @@ export default {
           throw new Error(res.Error)
         }
         this.loadUsers()
-        this.dialogUser = false
+        this.dataSendPeriodicDashboard.loading = 1
       } catch (err) {
-        this.dataUsers.loading = -1
+        this.dataSendPeriodicDashboard.loading = -1
         this.$api.error(err, this)
       }
     }
