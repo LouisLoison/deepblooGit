@@ -22,6 +22,8 @@ $util.qr($context.stash.put("pipelineFunctionsInfo",
 "CreateTenderCriterionsAuroraFunction": {"type":"AURORA", "table":"tendercriterion"}
 }
 ))
-$util.qr($context.stash.put("currentPipelineFunctionIndex", 0)) 
+## STARGING FROM INDEX 3 BECAUSE WE WANT TO TRACK FROM AURORA RESOLVERS ONLY
+$util.qr($context.stash.put("currentPipelineFunctionIndex", 3))
+$util.qr($context.stash.put("currentPipelineFunction", $context.stash.pipelineFunctions[$context.stash.currentPipelineFunctionIndex])) 
 
 {}

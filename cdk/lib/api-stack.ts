@@ -9,6 +9,7 @@ import {
   CfnDataSource,
   Schema,
   CfnFunctionConfiguration,
+  NoneDataSource,
 } from '@aws-cdk/aws-appsync';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
@@ -274,6 +275,10 @@ export class ApiStack extends cdk.Stack {
       elasticResolver
     )
 
+    const noneDataSource = api.addNoneDataSource( //TODO CHANGE IT TO CfnDataSource class
+      'noneDataSource',
+    )
+
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
 
     /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
@@ -463,6 +468,23 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: noneDataSource.name,
+      name: "localFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/localresolver.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/localresolver.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -519,7 +541,9 @@ export class ApiStack extends cdk.Stack {
           GetUserAuroraFunction.attrFunctionId,
           CreateTenderElasticFunction.attrFunctionId,
           CreateTenderAuroraFunction.attrFunctionId,
+          localFunction.attrFunctionId,
           CreateTenderCriterionCpvsAuroraFunction.attrFunctionId,
+          localFunction.attrFunctionId,
           CreateTenderCriterionsAuroraFunction.attrFunctionId
         ],
       },

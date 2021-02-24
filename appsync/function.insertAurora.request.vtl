@@ -1,11 +1,6 @@
-#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
-#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
-#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
-$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
-
-#set($data = $context.prev.result[$currentPipelineFunction]) ## analyzedTender return from Elastic function.
+#set($data = $context.prev.result[$context.stash.currentPipelineFunction]) ## analyzedTender return from Elastic function.
 #set( $list = [] )
-#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$currentPipelineFunction]['table'] + " " )
+#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$context.stash.currentPipelineFunction]['table'] + " " )
 
 ## put everything in list
 #if( !$util.isList($data))
