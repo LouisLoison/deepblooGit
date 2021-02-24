@@ -207,7 +207,7 @@ exports.FileParse = (fileLocation) => {
 exports.mergeTender = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList(null, true)
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
       const dataImportTenderInfos = await this.importTenderInfos({ tenderId: 0, statuss: [1, 5] }, null, null, 1, 1000)
       let tenderKoCount = 0

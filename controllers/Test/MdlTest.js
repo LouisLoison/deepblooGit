@@ -386,7 +386,7 @@ exports.Test4 = () => {
 exports.Test5 = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let creationDateMax = new Date()
       creationDateMax.setDate(creationDateMax.getDate() - 10);

@@ -3,7 +3,7 @@ exports.TenderAdd = (tender) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -240,7 +240,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
         cpvCodes = filter.cpvs.map(a => a.code)
       }
       if (filter && filter.cpvLabels && filter.cpvLabels.length) {
-        const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
         cpvCodes = []
         for (let cpvLabel of filter.cpvLabels) {
           cpvLabelFormats.push(cpvLabel.split('-').join(' ').trim())
@@ -561,7 +561,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -868,7 +868,7 @@ exports.TenderStatistic = (year, month, user) => {
     try {
       const config = require(process.cwd() + '/config')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let userData = null
       let userCpvs = []

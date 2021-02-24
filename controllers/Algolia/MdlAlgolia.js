@@ -2,7 +2,7 @@ exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       const BddTool = require(process.cwd() + '/global/BddTool')
@@ -156,7 +156,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
     try {
       if (!CpvList) {
         console.log('[TenderFormat] no CPV list !')
-        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       }
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
@@ -635,7 +635,7 @@ exports.TendersSynchro = () => {
       let apiKey = '5cc468809130d45b76cf76598a09ff21'
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let tenderNbr = 0

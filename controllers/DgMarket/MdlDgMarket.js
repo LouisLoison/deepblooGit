@@ -288,7 +288,7 @@ exports.FileParse = (fileLocation) => {
 exports.mergeTender = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList(null, true)
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
       const dataImportDgmarkets = await this.importDgmarkets({ statuss: [1, 5] }, null, null, 1, 1000)
       let tenderKoCount = 0
@@ -438,7 +438,7 @@ exports.CpvList = () => {
       const readFile = util.promisify(fs.readFile)
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
@@ -638,7 +638,7 @@ exports.CpvListOld = () => {
       const util = require('util')
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
@@ -715,7 +715,7 @@ exports.ExportUrlFromFile = () => {
       const fs = require('fs')
       const path = require('path')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe

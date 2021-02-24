@@ -260,7 +260,7 @@ exports.tenderFileImport = (tenderId) => {
       if (!tender) {
         resolve()
       }
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       for (const cpv of CpvList) {

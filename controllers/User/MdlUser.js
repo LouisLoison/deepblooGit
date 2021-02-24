@@ -414,7 +414,7 @@ exports.synchroNew = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
       
@@ -624,7 +624,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let usersBdd = await this.List()
       let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
 
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       // Update user bdd list
@@ -666,7 +666,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
         organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
       }
       if (!CpvList) {
-        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       }
       if (!RegionList) {
         RegionList = require(process.cwd() + '/public/constants/regions.json')
@@ -1110,7 +1110,7 @@ exports.SendPeriodicDashboard = (userUuid) => {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const tenderMax = 30
 
       const types = [1, 2, 4, 5]
