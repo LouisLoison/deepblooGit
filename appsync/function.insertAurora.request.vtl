@@ -46,7 +46,9 @@
                #end
                #set( $values = $values + "'$words'")
             #elseif($util.isString($item[$entry.key]))
-              #set( $values = $values + "'$item[$entry.key]'")
+              #set( $text = $item[$entry.key] )
+              #set( $text = $text.replaceAll("'","''") )
+              #set( $values = $values + "'$text'")
             #else
               #set( $values = $values + $item[$entry.key])
             #end
