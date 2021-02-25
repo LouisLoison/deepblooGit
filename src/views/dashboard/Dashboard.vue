@@ -577,7 +577,7 @@
                   v-else-if="getSelectedItem.type === 'CHART'"
                   class="pa-3"
                 >
-                  <div v-if="['line', 'area', 'column', 'pie'].includes(getSelectedItem.chart.chart.type)">
+                  <div v-if="['LINE', 'AREA', 'COLUMN', 'PIE'].includes(getSelectedItem.subType)">
                     <div>
                       <div class="grey--text">Facet</div>
                       <v-menu offset-y>
@@ -618,7 +618,23 @@
                         @change="setSearchDatas()"
                       />
                     </div>
-                    <div v-if="['pie'].includes(getSelectedItem.chart.chart.type)">
+                    <div v-if="['COLUMN'].includes(getSelectedItem.subType)">
+                      <div class="grey--text">Display type</div>
+                      <v-btn-toggle
+                        v-model="getSelectedItem.chart.chart.type"
+                        borderless
+                        color="blue-grey"
+                      >
+                        <v-btn value="column">
+                          <span class="hidden-sm-and-down">Vertical</span>
+                        </v-btn>
+
+                        <v-btn value="bar">
+                          <span class="hidden-sm-and-down">Horizontal</span>
+                        </v-btn>
+                      </v-btn-toggle>
+                    </div>
+                    <div v-else-if="['PIE'].includes(getSelectedItem.subType)">
                       <v-switch
                         v-model="getSelectedItem.chart.plotOptions.pie.dataLabels.enabled"
                         :label="`Data labels: ${getSelectedItem.chart.plotOptions.pie.dataLabels.enabled.toString()}`"
@@ -933,14 +949,15 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'CHART',
-          facet: 'brands',
+          subType: 'COLUMN',
+          facet: 'notice_type',
           facetCountMax: 10,
           data: {
             isDataEmpty: true,
           },
           chart: {
             chart: {
-              type: 'column',
+              type: 'bar',
               animation: false,
               backgroundColor: 'transparent',
             },
@@ -1003,6 +1020,7 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'CHART',
+          subType: 'PIE',
           facet: 'country',
           facetCountMax: 4,
           data: {
@@ -1284,7 +1302,7 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'CHART',
-          subType: '',
+          subType: 'LINE',
           facet: 'notice_type',
           facetCountMax: 10,
           data: {
@@ -1334,24 +1352,83 @@ export default {
         },
         {
           x: 0,
-          y: 44,
-          w: 10,
-          h: 10,
+          y: 54,
+          w: 6,
+          h: 11,
           i: '1166852',
           showHeader: true,
           title: '',
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'CHART',
-          subType: '',
-          facet: 'notice_type',
-          facetCountMax: 10,
+          subType: 'AREA',
+          facet: 'buyer_name',
+          facetCountMax: 4,
           data: {
             isDataEmpty: true,
           },
           chart: {
             chart: {
               type: 'area',
+              animation: false,
+              backgroundColor: 'transparent',
+            },
+            title: { text: '' },
+            credits: { enabled: false },
+            exporting: { enabled: false },
+            xAxis: {
+              categories: [],
+            },
+            yAxis: {
+              min: 0,
+              title: { text: '' },
+              stackLabels: {
+                enabled: true,
+                style: {
+                  fontWeight: 'bold',
+                  color: 'gray'
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{point.x}</b><br/>',
+              pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            legend: {
+              enabled: false,
+            },
+            plotOptions: {
+              column: {
+                cursor: 'pointer',
+                stacking: 'normal',
+                dataLabels: {
+                  enabled: true,
+                },
+              },
+            },
+            series: [],
+          },
+        },
+        {
+          x: 6,
+          y: 54,
+          w: 4,
+          h: 11,
+          i: '1',
+          showHeader: true,
+          title: 'Graph1',
+          colorHeader: 'blue-grey',
+          colorBackground: 'grey',
+          type: 'CHART',
+          subType: 'COLUMN',
+          facet: 'notice_type',
+          facetCountMax: 3,
+          data: {
+            isDataEmpty: true,
+          },
+          chart: {
+            chart: {
+              type: 'column',
               animation: false,
               backgroundColor: 'transparent',
             },
@@ -1538,7 +1615,7 @@ export default {
     setSearchDataChart(item) {
       item.data.isDataEmpty = true
       if (
-        ['line', 'area', 'column'].includes(item.chart.chart.type)
+        ['LINE', 'AREA', 'COLUMN'].includes(item.subType)
         && item.facet
       ) {
         item.chart.xAxis.categories = []
@@ -1569,7 +1646,7 @@ export default {
         }
       }
       if (
-        item.chart.chart.type === 'pie'
+        ['PIE'].includes(item.subType)
         && item.facet
       ) {
         item.chart.series = []
