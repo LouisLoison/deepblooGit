@@ -358,7 +358,7 @@ export class TenderStack extends Stack {
             // )
           )))
 
-    const stateMachine = new StateMachine(this, 'StateMachine', {
+    const stateMachine = new StateMachine(this, 'TenderProcess', {
       definition: chain,
       logs: {
         destination: logGroup,

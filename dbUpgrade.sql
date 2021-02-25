@@ -126,5 +126,4 @@ update tenders set creationdate = publicationdate where creationdate is null;
 
 alter table tenders add column owner_id uuid default null;
 
-
-alter table tendercriterion add column 
+alter table document drop constraint document_contenthash_key;

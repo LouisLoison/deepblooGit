@@ -104,6 +104,21 @@ export class DocumentStack extends Stack {
       }
     });
 
+    const stepDocumentStore = new Function(this, 'storeDocument', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepDocumentStore'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 30,
+      timeout: Duration.seconds(60),
+      vpc,
+      environment: {
+        ...environment,
+        ...dbEnv,
+      }
+    });
+
+
     const stepPdfToImg = new Function(this, 'PdfToImg', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/pdftoimg'),
