@@ -605,6 +605,11 @@
                           </v-list-item>
                         </v-list>
                       </v-menu>
+                      <itemDataChoice
+                        v-if="1 === 2"
+                        :item="getSelectedItem"
+                        :facets="facets"
+                      />
                     </div>
                     <div class="pt-3">
                       <div class="grey--text">Facet count max</div>
@@ -797,6 +802,7 @@ import ItemCard from '@/views/dashboard/components/items/ItemCard'
 import TendersDialog from '@/views/dashboard/components/TendersDialog'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TendersPreview from '@/views/dashboard/components/TendersPreview'
+import itemDataChoice from '@/views/dashboard/components/itemDataChoice'
 
 export default {
   name: 'Dashboard',
@@ -808,6 +814,7 @@ export default {
     TendersDialog,
     TenderDialog,
     TendersPreview,
+    itemDataChoice,
   },
 
   props: {
@@ -1414,7 +1421,7 @@ export default {
           y: 54,
           w: 4,
           h: 11,
-          i: '1',
+          i: '8855443322',
           showHeader: true,
           title: 'Graph1',
           colorHeader: 'blue-grey',
@@ -1527,7 +1534,6 @@ export default {
           searchRequest.searchInputValue = this.searchFilter.searchInputValue
           searchRequest.filter = JSON.parse(JSON.stringify(this.searchFilter.facets))
         }
-        // this.itemFilters
         for (const itemFilter of this.itemFilters) {
           if (!searchRequest.filter[itemFilter.item.facet]) {
             searchRequest.filter[itemFilter.item.facet] = []

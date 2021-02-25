@@ -24,7 +24,7 @@
           ? 'height: calc(100vh - 155px);'
           : 'height: calc(100vh - 40px);'
       "
-      scrolling="no"
+      scrolling="yes"
       @load="loading = false"
     />
   </div>
@@ -38,7 +38,7 @@ export default {
 
   data: () => ({
     loading: true,
-    dashboardUrl: 'https://d384aee8dd5b497f8d14891a59479e74.eu-west-1.aws.found.io/s/test_clientspace/app/dashboards#/view/8506d1a3-4683-4dc[…]om%3Anow-1y%2Cto%3Anow))',
+    dashboardUrl: 'https://d384aee8dd5b497f8d14891a59479e74.eu-west-1.aws.found.io/s/test_clientspace/app/dashboards#/view/8506d1a3-4683-4dc[…]m%3Anow-15m%2Cto%3Anow))',
   }),
 
   computed: {
