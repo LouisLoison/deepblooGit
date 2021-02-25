@@ -104,7 +104,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderConvert'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 15
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -117,7 +117,7 @@ export class TenderStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 15
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -131,7 +131,7 @@ export class TenderStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 15
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(50),
       environment: {
         ...environment,
@@ -145,7 +145,7 @@ export class TenderStack extends Stack {
       handler: 'index.handler',
       vpc,
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 15
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         ...environment,
@@ -158,7 +158,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderIndex'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 15
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(20),
       environment: {
         ...environment,
@@ -171,7 +171,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/stepTenderElasticIndex'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 20
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(20),
       environment: {
         ...environment,
@@ -184,7 +184,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/stepNotifyError'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 20
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(20),
       environment: {
         ...environment,
@@ -197,7 +197,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/valueextraction'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
       }
@@ -208,7 +208,7 @@ export class TenderStack extends Stack {
       code: new AssetCode('../lambda/function/stepNamedEntities'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
       }
