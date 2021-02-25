@@ -40,6 +40,22 @@
           </v-subheader>
           <v-list-item @click="addItem()">
             <v-list-item-icon>
+              <v-icon>fa-chart-line</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Line</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="addItem()">
+            <v-list-item-icon>
+              <v-icon>fa-chart-area</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Area</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click="addItem()">
+            <v-list-item-icon>
               <v-icon>fa-chart-bar</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
@@ -125,6 +141,7 @@
                 :item="item"
                 @selectItem="selectItem($event)"
                 @deleteItem="deleteItem($event)"
+                @filterChange="itemFilterChange(item, $event)"
                 @openTender="openTender($event)"
                 :ref="`ItemCard${item.i}`"
               />
@@ -560,7 +577,7 @@
                   v-else-if="getSelectedItem.type === 'CHART'"
                   class="pa-3"
                 >
-                  <div v-if="['column', 'pie'].includes(getSelectedItem.chart.chart.type)">
+                  <div v-if="['line', 'area', 'column', 'pie'].includes(getSelectedItem.chart.chart.type)">
                     <div>
                       <div class="grey--text">Facet</div>
                       <v-menu offset-y>
@@ -847,6 +864,7 @@ export default {
       { label: 'Deep-orange', value: 'deep-orange' },
       { label: 'Brown', value: 'brown' },
     ],
+    itemFilters: [],
     filter: null,
     dashboard: {
       name: 'DashTest',
@@ -868,7 +886,7 @@ export default {
           data: {
             isDataEmpty: true,
             multiple: true,
-          }
+          },
         },
         {
           x: 3,
@@ -885,7 +903,7 @@ export default {
           data: {
             isDataEmpty: true,
             multiple: true,
-          }
+          },
         },
         {
           x: 7,
@@ -902,7 +920,7 @@ export default {
           data: {
             isDataEmpty: true,
             multiple: true,
-          }
+          },
         },
         {
           x: 0,
@@ -917,6 +935,9 @@ export default {
           type: 'CHART',
           facet: 'brands',
           facetCountMax: 10,
+          data: {
+            isDataEmpty: true,
+          },
           chart: {
             chart: {
               type: 'column',
@@ -970,9 +991,6 @@ export default {
             },
             series: [],
           },
-          data: {
-            isDataEmpty: true,
-          },
         },
         {
           x: 6,
@@ -987,6 +1005,9 @@ export default {
           type: 'CHART',
           facet: 'country',
           facetCountMax: 4,
+          data: {
+            isDataEmpty: true,
+          },
           chart: {
             chart: {
               type: 'pie',
@@ -1017,9 +1038,6 @@ export default {
               }
             },
             series: [],
-          },
-          data: {
-            isDataEmpty: true,
           },
         },
         {
@@ -1087,7 +1105,7 @@ export default {
             textSize: 3,
             alignHorizontal: 'CENTER',
             alignVertical: 'MIDDLE',
-          }
+          },
         },
         {
           x: 8,
@@ -1106,7 +1124,7 @@ export default {
             textSize: 1,
             alignHorizontal: 'LEFT',
             alignVertical: 'TOP',
-          }
+          },
         },
         {
           x: 0,
@@ -1164,7 +1182,7 @@ export default {
                 pointFormat: '{point.name}: {point.z}'
               }
             }]
-          }
+          },
         },
         {
           x: 0,
@@ -1253,7 +1271,125 @@ export default {
                 data: []
               }
             ]
-          }
+          },
+        },
+        {
+          x: 0,
+          y: 44,
+          w: 10,
+          h: 10,
+          i: '46872222',
+          showHeader: true,
+          title: '',
+          colorHeader: 'blue-grey',
+          colorBackground: 'grey',
+          type: 'CHART',
+          subType: '',
+          facet: 'notice_type',
+          facetCountMax: 10,
+          data: {
+            isDataEmpty: true,
+          },
+          chart: {
+            chart: {
+              type: 'line',
+              animation: false,
+              backgroundColor: 'transparent',
+            },
+            title: { text: '' },
+            credits: { enabled: false },
+            exporting: { enabled: false },
+            xAxis: {
+              categories: [],
+            },
+            yAxis: {
+              min: 0,
+              title: { text: '' },
+              stackLabels: {
+                enabled: true,
+                style: {
+                  fontWeight: 'bold',
+                  color: 'gray'
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{point.x}</b><br/>',
+              pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            legend: {
+              enabled: false,
+            },
+            plotOptions: {
+              column: {
+                cursor: 'pointer',
+                stacking: 'normal',
+                dataLabels: {
+                  enabled: true,
+                },
+              },
+            },
+            series: [],
+          },
+        },
+        {
+          x: 0,
+          y: 44,
+          w: 10,
+          h: 10,
+          i: '1166852',
+          showHeader: true,
+          title: '',
+          colorHeader: 'blue-grey',
+          colorBackground: 'grey',
+          type: 'CHART',
+          subType: '',
+          facet: 'notice_type',
+          facetCountMax: 10,
+          data: {
+            isDataEmpty: true,
+          },
+          chart: {
+            chart: {
+              type: 'area',
+              animation: false,
+              backgroundColor: 'transparent',
+            },
+            title: { text: '' },
+            credits: { enabled: false },
+            exporting: { enabled: false },
+            xAxis: {
+              categories: [],
+            },
+            yAxis: {
+              min: 0,
+              title: { text: '' },
+              stackLabels: {
+                enabled: true,
+                style: {
+                  fontWeight: 'bold',
+                  color: 'gray'
+                }
+              }
+            },
+            tooltip: {
+              headerFormat: '<b>{point.x}</b><br/>',
+              pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            legend: {
+              enabled: false,
+            },
+            plotOptions: {
+              column: {
+                cursor: 'pointer',
+                stacking: 'normal',
+                dataLabels: {
+                  enabled: true,
+                },
+              },
+            },
+            series: [],
+          },
         },
       ],
     },
@@ -1306,15 +1442,24 @@ export default {
       try {
         this.dataSearch.loading = 0
         let searchRequest = {
-          searchInputValue: 'power',
-          filter: {
-            cpvs: ['Cable'],
-          },
+          searchInputValue: '',
+          filter: {},
           facets: this.facets,
         }
         if (this.searchFilter) {
           searchRequest.searchInputValue = this.searchFilter.searchInputValue
-          searchRequest.filter = this.searchFilter.facets
+          searchRequest.filter = JSON.parse(JSON.stringify(this.searchFilter.facets))
+        }
+        // this.itemFilters
+        for (const itemFilter of this.itemFilters) {
+          if (!searchRequest.filter[itemFilter.item.facet]) {
+            searchRequest.filter[itemFilter.item.facet] = []
+          }
+          for (const selectedItem of itemFilter.selectedItems) {
+            if (!searchRequest.filter[itemFilter.item.facet].includes(selectedItem.value)) {
+              searchRequest.filter[itemFilter.item.facet].push(selectedItem.value)
+            }
+          }
         }
         const res = await this.$api.post('/Elasticsearch/search', { searchRequest })
         if (!res.success) {
@@ -1339,10 +1484,15 @@ export default {
         w: 4,
         h: 4,
         i: `${maxId}`,
+        showHeader: true,
         title: '',
         type: '',
+        subType: '',
         colorHeader: 'blue-grey',
         colorBackground: 'grey',
+        data: {
+          isDataEmpty: true,
+        },
       }
       this.dashboard.items.push(item)
       this.selectedUuid = item.i
@@ -1388,7 +1538,7 @@ export default {
     setSearchDataChart(item) {
       item.data.isDataEmpty = true
       if (
-        item.chart.chart.type === 'column'
+        ['line', 'area', 'column'].includes(item.chart.chart.type)
         && item.facet
       ) {
         item.chart.xAxis.categories = []
@@ -1669,6 +1819,20 @@ export default {
     facetItemRemove(event) {
       this.$emit('facetItemRemove', event)
     },
+
+    itemFilterChange(item, selectedItems) {
+      let itemFilter = this.itemFilters.find(a => a.item.i === item.i)
+      if (itemFilter) {
+        itemFilter.item = item
+        itemFilter.selectedItems = selectedItems
+      } else {
+        this.itemFilters.push({
+          item,
+          selectedItems,
+        })
+      }
+      this.search()
+    }
   }
 }
 </script>

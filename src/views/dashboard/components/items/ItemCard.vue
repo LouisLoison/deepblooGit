@@ -28,7 +28,7 @@
         :filter="filter"
         :dataSearch="dataSearch"
         :item="item"
-        @openTender="openTender($event)"
+        @filterChange="filterChange($event)"
       />
     </div>
     <v-card
@@ -183,6 +183,10 @@ export default {
 
     deleteItem(item) {
       this.$emit('deleteItem', item)
+    },
+
+    filterChange(selectedItems) {
+      this.$emit('filterChange', selectedItems)
     },
 
     openTender(tender) {

@@ -28,7 +28,7 @@
         </div>
         <v-list-item-group
           v-else
-          v-model="settings"
+          @change="itemListChange($event)"
           :multiple="item.data.multiple"
           active-class=""
         >
@@ -83,13 +83,6 @@ export default {
   },
 
   data: () => ({
-    datas: [
-      { title: 'Data 1' },
-      { title: 'Data 2' },
-      { title: 'Data 3' },
-      { title: 'Data 4' },
-    ],
-    settings: [],
     cpvItems: [
       {
         id: 1,
@@ -167,6 +160,7 @@ export default {
         ],
       },
     ],
+    itemCache: [],
   }),
 
   computed: {
@@ -177,15 +171,33 @@ export default {
       ) {
         return []
       }
+      let datas = []
       const facet = this.dataSearch.data.facets[this.item.facet]
       if (facet && facet.length && facet[0].data && facet[0].data.length) {
-        return facet[0].data
+        datas = facet[0].data
       }
-      return []
+      for (const data of this.itemCache) {
+        if (!datas.find(a => a.value === data.value)) {
+          datas.push(data)
+        }
+      }
+      return datas
     },
   },
 
   methods: {
+    itemListChange(itemIds) {
+      for (const data of this.getDatas) {
+        if (!this.itemCache.find(a => a.value === data.value)) {
+          this.itemCache.push(data)
+        }
+      }
+      const selectedItems = []
+      for (const itemId of itemIds) {
+        selectedItems.push(this.getDatas[itemId])
+      }
+      this.$emit('filterChange', selectedItems)
+    },
   },
 }
 </script>

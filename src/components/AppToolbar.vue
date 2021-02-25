@@ -122,7 +122,7 @@ export default {
         to: { name: 'Tenders' },
       },
       {
-        title: 'Private deals',
+        title: 'Dashboard',
         to: { name: 'PrivateDeals' },
       },
     ]
