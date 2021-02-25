@@ -282,42 +282,65 @@ exports.tendersImport = (tendersNumberMax = 100) => {
   })
 }
 
+exports.formatSearchQuery = (searchRequest) => {
+  const query = searchRequest.searchInputValue
+  const searchFields = { title: {} }
+  const resultFields = {
+    title: { raw: {} },
+    country: { raw: {} },
+    publication_timestamp: { raw: {} },
+    bid_deadline_timestamp: { raw: {} },
+    cpvs: { raw: {} },
+    description: { raw: {} },
+  }
+  const options = {
+    filters: { all: [] },
+    search_fields: searchFields,
+    result_fields: resultFields,
+    facets: searchRequest.facets,
+  }
+  if (searchRequest.filter) {
+    for (const field in searchRequest.filter) {
+      if (searchRequest.filter[field].length) {
+        let anys = []
+        for (const value of searchRequest.filter[field]) {
+          let option = {}
+          option[field] = value
+          anys.push(option)
+        }
+        options.filters.all.push({ any: anys })
+      }
+    }
+  }
+  return {
+    query,
+    options,
+  }
+}
+
 // Import tender into elastic search
 exports.search = (searchRequest) => {
   return new Promise(async (resolve, reject) => {
     try {
       const client = await this.connectToPrivateAppSearch()
-      const query = searchRequest.searchInputValue
-      const searchFields = { title: {} }
-      const resultFields = {
-        title: { raw: {} },
-        country: { raw: {} },
-        publication_timestamp: { raw: {} },
-        bid_deadline_timestamp: { raw: {} },
-        cpvs: { raw: {} },
-        description: { raw: {} },
-      }
-      const options = {
-        filters: { all: [] },
-        search_fields: searchFields,
-        result_fields: resultFields,
-        facets: searchRequest.facets,
-      }
-      if (searchRequest.filter) {
-        for (const field in searchRequest.filter) {
-          if (searchRequest.filter[field].length) {
-            let anys = []
-            for (const value of searchRequest.filter[field]) {
-              let option = {}
-              option[field] = value
-              anys.push(option)
-            }
-            options.filters.all.push({ any: anys })
-          }
-        }
-      }
+      const { query, options } = this.formatSearchQuery(searchRequest)
       const result = await client.search(config.elasticEngineName, query, options)
       resolve(result)
+    } catch (err) { reject(err) }
+  })
+}
+
+// Import tender into elastic search
+exports.multiSearch = (searchRequests) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const searches = []
+      for (const searchRequest of searchRequests) {
+        searches.push(this.formatSearchQuery(searchRequest))
+      }
+      const results = await client.multiSearch(config.elasticEngineName, searches)
+      resolve(results)
     } catch (err) { reject(err) }
   })
 }
