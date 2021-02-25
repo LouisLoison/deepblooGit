@@ -8,7 +8,7 @@ exports.handler = async function(event, ) {
   const savedDocument = await BddTool.RecordAddUpdate (
     'document',
     event,
-    'tenderUuid',
+    'documentUuid',
     client,
   )
 
