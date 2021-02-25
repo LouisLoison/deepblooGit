@@ -1,49 +1,4 @@
 #set($analyzedTender = $context.prev.result) ## analyzedTender return from Elastic function.
-#set($tenderSchema = {
-      "id": { "type": "Int"},
-      "tenderUuid": { "type": "String" },
-      "procurementId": { "type": "String" },
-      "title": { "type": "String" },
-      "description": { "type": "String" },
-      "words": { "type": "String" },
-      "lang": { "type": "String" },
-      "contactFirstName": { "type": "String" },
-      "contactLastName": { "type": "String" },
-      "contactAddress": { "type": "String" },
-      "contactCity": { "type": "String" },
-      "contactState": { "type": "String" },
-      "contactCountry": { "type": "String" },
-      "contactEmail": { "type": "String" },
-      "contactPhone": { "type": "String" },
-      "buyerName": { "type": "String" },
-      "buyerCountry": { "type": "String" },
-      "procurementMethod": { "type": "String" },
-      "noticeType": { "type": "String" },
-      "country": { "type": "String" },
-      "estimatedCost": { "type": "String" },
-      "currency": { "type": "String" },
-      "publicationDate": { "type": "String" },
-      'cpvs': { "type": "String" },
-      'cpvDescriptions': { "type": "String" },
-      "cpvsOrigine":  { "type": "String" },
-      'words': { "type": "String" },
-      "bidDeadlineDate": { "type": "String" },
-      "sourceUrl": { "type": "String" },
-      "termDate": { "type": "DateTime" },
-      "fileSource": { "type": "String" },
-      "userId": { "type": "Int" },
-      "algoliaId": { "type": "Int" },
-      "brand": { "type": "String" },
-      "contractType1": { "type": "Int" },
-      "dataSource": { "type": "String" },
-      "dataSourceId": { "type": "String" },
-      "origine": { "type": "String", "description": 'Import source data : DgMarket, TenderInfo' },
-      "status": { "type": "Int", "description": '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
-      "creationDate": { "type": "DateTime" },
-      "updateDate": { "type": "DateTime" },
-      "owner_id": {"type": "String"}
-    }
-)
 
 
 #set( $sql = "INSERT INTO tenders " )
@@ -51,8 +6,8 @@
 #set( $items = "(" )
 #set( $values = "VALUES (" )
 
-#foreach( $entry in $tenderSchema.entrySet() )
-    #if( $analyzedTender[$entry.key] )
+#foreach( $entry in $analyzedTender.entrySet() )
+    #if( $analyzedTender[$entry.key] && $entry.key != 'tenderCriterionCpvs' && $entry.key != 'tenderCriterions')
           #set( $items = $items + $entry.key.toLowerCase())
           #if($util.isList($analyzedTender[$entry.key]) )
         	 #set( $words = "" )
