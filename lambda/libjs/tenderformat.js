@@ -31,8 +31,16 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       }
     }
   }
+
+  tender.title = stripHtml(tender.title).result
+  tender.description = stripHtml(tender.description).result
   if (cpvOkCount === 0) {
-    return (null) // To delete
+    return ({
+      procurementId: tender.procurementId,
+      title: tender.title,
+      description: tender.description,
+      status: -1,
+    })// To delete
   }
 
   // Categories
@@ -177,27 +185,18 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
 
 let cpvList
 exports.analyzeTender = async (tenderSrc) => {
-  let analyzedData, formatedData
   cpvList = cpvList || await CpvList(null, true)
   const { tender, importOrigine } = await importTender(tenderSrc, cpvList, textParseList)
-  if (!tender) {
-    analyzedData = {
-      ...tenderSrc,
-      exclusion: importOrigine.exclusion,
-      exclusionWord: importOrigine.exclusionWord,
-      status: importOrigine.status,
-    }
-    formatedData = { status: analyzedData.status }
+  const analyzedData = tender ? tender : {
+    ...tenderSrc,
+    exclusion: importOrigine.exclusion,
+    exclusionWord: importOrigine.exclusionWord,
+    status: importOrigine.status,
   }
-  else {
-    analyzedData = tender
-    formatedData = await this.tenderFormat(tender, cpvList, textParseList)
-    if (!formatedData) {
-      formatedData = { status: -1 }
-    } else {
-      analyzedData.status = 20
-      formatedData.status = 20
-    }
+  const formatedData = await this.tenderFormat(tender, cpvList, textParseList)
+  if (formatedData.status > 0) {
+    analyzedData.status = 20
+    formatedData.status = 20
   }
   return { analyzedData, formatedData }
 }
