@@ -278,8 +278,7 @@ export class DocumentStack extends Stack {
     const processDocx = new Pass(this, 'Docx process')
 
     const parallelProcessPdf = new Parallel(this, 'Pdf parallel process', {})
-      .branch(documentStorePdfBboxTask
-        .next(documentStorePdfBboxTask))
+      .branch(documentStorePdfBboxTask)
       .branch(textToSentencesTask
         .next(documentStorePdfSentencesTask))
 
