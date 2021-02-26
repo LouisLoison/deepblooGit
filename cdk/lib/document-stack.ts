@@ -94,7 +94,7 @@ export class DocumentStack extends Stack {
       code: new AssetCode('../lambda/function/stepDocumentDownload'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       vpc,
       environment: {
@@ -104,12 +104,27 @@ export class DocumentStack extends Stack {
       }
     });
 
+    const stepDocumentStore = new Function(this, 'storeDocument', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepDocumentStore'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 30,
+      timeout: Duration.seconds(60),
+      vpc,
+      environment: {
+        ...environment,
+        ...dbEnv,
+      }
+    });
+
+
     const stepPdfToImg = new Function(this, 'PdfToImg', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/pdftoimg'),
       handler: 'index.handler',
       memorySize: 1500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -121,7 +136,7 @@ export class DocumentStack extends Stack {
       code: new AssetCode('../lambda/function/pdftobboxtext'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -137,7 +152,7 @@ export class DocumentStack extends Stack {
       code: new AssetCode('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -149,7 +164,7 @@ export class DocumentStack extends Stack {
       code: new AssetCode('../lambda/function/zipExtraction'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -161,7 +176,7 @@ export class DocumentStack extends Stack {
       code: new AssetCode('../lambda/function/textToSentences'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 1, // to change at 30
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
