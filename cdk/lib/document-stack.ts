@@ -185,12 +185,14 @@ export class DocumentStack extends Stack {
 
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
+    stepDocumentStore.addLayers(nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepDocumentDownload)
+    dbSecret.grantRead(stepDocumentStore)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
@@ -316,7 +318,7 @@ export class DocumentStack extends Stack {
     const logGroup = new logs.LogGroup(this, 'DocumentLogGroup');
 
     const documentMap = new Map(this, 'Document Map', {
-      inputPath: '$.mergedData',
+      inputPath: '$',
       itemsPath: '$.newSourceUrls',
       resultPath: '$.downloadedData',
       maxConcurrency: 2,
