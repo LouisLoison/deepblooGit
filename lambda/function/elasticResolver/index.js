@@ -32,11 +32,20 @@ exports.handler = async function (event,) {
         delete tenderAurora.tenderCriterionCpvs
         delete tenderAurora.tenderCriterions
 
+        let aclAurora = {
+            resourceId: analyzeTender.tenderUuid,
+            granteeId: analyzeTender.owner_id,
+            role: "1",
+            creationDate: analyzeTender.creationDate,
+            updateDate: analyzeTender.updateDate
+        }
+
         return {
             success: true, data: {
                 CreateTenderAuroraFunction: tenderAurora,
                 CreateTenderCriterionCpvsAuroraFunction: updateObj(analyzedData.tenderCriterionCpvs, analyzedData.tenderUuid),
-                CreateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid)
+                CreateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid),
+                CreateAclAuroraFunction: aclAurora,
             }
         }
     } catch (error) {

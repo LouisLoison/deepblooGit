@@ -1,3 +1,10 @@
+#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
+#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
+#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
+#set( $nextPipelineFunction = $context.stash.pipelineFunctions[$nextPipelineFunctionIndex] )
+$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
+$util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction)) 
+
 #set($data = $context.prev.result[$context.stash.currentPipelineFunction]) ## analyzedTender return from Elastic function.
 #set( $list = [] )
 #set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$context.stash.currentPipelineFunction]['table'] + " " )
@@ -38,10 +45,16 @@
             #if($util.isList($item[$entry.key]) )
                #set( $words = "" )
                #foreach( $word in $item[$entry.key] )
-                  #if( $foreach.hasNext )
-                      #set( $words = $words + $word + ",")
+                  #if($util.isString($word)
+                    #set( $replacedWord = $word )
+                    #set( $replacedWord = $replacedWord.replaceAll("'","''") )
+                    #set( $words = $words + $replacedWord)
                   #else
                       #set( $words = $words + $word)
+                  #end
+                
+                  #if( $foreach.hasNext )
+                      #set( $words = $words + ",")
                   #end
                #end
                #set( $values = $values + "'$words'")

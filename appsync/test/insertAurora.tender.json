@@ -1,0 +1,147 @@
+{
+    "arguments": {
+        "result": {
+            "CreateTenderCriterionsAuroraFunction": [
+                {
+                    "documentId": 0,
+                    "textParseId": 82,
+                    "value": "",
+                    "word": "test",
+                    "findCount": 1,
+                    "scope": "TITLE",
+                    "status": 1
+                },
+                {
+                    "documentId": 0,
+                    "textParseId": 8,
+                    "value": "",
+                    "word": "provision of",
+                    "findCount": 2,
+                    "scope": "DESCRIPTION",
+                    "status": 1
+                },
+                {
+                    "documentId": 0,
+                    "textParseId": 12,
+                    "value": "",
+                    "word": "inspection",
+                    "findCount": 2,
+                    "scope": "DESCRIPTION",
+                    "status": 1
+                }
+            ],
+            "CreateTenderCriterionCpvsAuroraFunction": [
+                {
+                    "documentId": 0,
+                    "cpvId": 1259,
+                    "value": "Electrical services",
+                    "word": "",
+                    "findCount": 1,
+                    "scope": "PROVIDER_DGMARKET",
+                    "status": 1
+                },
+                {
+                    "documentId": 0,
+                    "cpvId": 999,
+                    "value": "electricity power lines",
+                    "word": "OVERHEAD LINES",
+                    "findCount": 2,
+                    "scope": "DESCRIPTION",
+                    "status": 1
+                },
+                {
+                    "documentId": 0,
+                    "cpvId": 1000,
+                    "value": "overhead power lines",
+                    "word": "OVERHEAD LINES",
+                    "findCount": 2,
+                    "scope": "DESCRIPTION",
+                    "status": 1
+                }
+            ],
+            "CreateTenderAuroraFunction": {
+                "datasourceId": "123456789",
+                "procurementId": "1479/2021",
+                "algoliaId": "402193911",
+                "title": "Test Mughees",
+                "description": "Public tender: pc-2020-000865 - public tender for the provision of inspection services for airline overhead lines for the electric ren, period 2021-2023&lt;br /&gt; <br>\n&lt;br /&gt; <br>\nBase price: 2. 593. 500,00 &lt;br /&gt; <br>\n&lt;br /&gt; <br>\nType of contract: purchasing services<br><br>Provision Of Inspection Services For Airline Overhead Lines<br><br>",
+                "lang": "pt",
+                "contactFirstName": "",
+                "contactLastName": "",
+                "contactAddress": "Avenida Dos Estados Unidos Da Amrica, 55",
+                "contactCity": "",
+                "contactState": "",
+                "contactCountry": "",
+                "contactEmail": "muhammadmughees08@gmail.com",
+                "contactPhone": "",
+                "buyerName": "REN - REDE ELCTRICA NACIONAL, S. A. (507866673)",
+                "buyerCountry": "Portugal",
+                "procurementMethod": "Other",
+                "noticeType": "Invitation for Bids",
+                "country": "Portugal",
+                "estimatedCost": "2593500",
+                "currency": "EUR",
+                "publicationDate": "2021-02-08",
+                "cpvs": "71314100,31321000,31321100",
+                "bidDeadlineDate": "2021-03-10",
+                "tenderUuid": "06fa942f-c17a-4fa5-91fd-b8c2ea867848",
+                "creationDate": "2021-02-19T13:42:45.013Z",
+                "updateDate": "2021-02-19T13:42:45.455Z",
+                "owner_id": "3fd2cab7-358c-404f-8dda-b5d491bb4f36",
+                "cpvsOrigine": "71356000,71630000,71356100,71620000,71323100,71356200,71356300,71314100",
+                "words": [
+                    "OVERHEAD LINES"
+                ],
+                "status": 20,
+                "cpvDescriptions": "Electrical services,electricity power lines,overhead power lines"
+            },
+            "CreateAclAuroraFunction": {
+                "resourceId": "06fa942f-c17a-4fa5-91fd-b8c2ea867848",
+                "granteeId": "3fd2cab7-358c-404f-8dda-b5d491bb4f36",
+                "role": "1",
+                "creationDate": "2021-02-19T13:42:45.013Z",
+                "updateDate": "2021-02-19T13:42:45.455Z"
+            }
+        }
+    },
+    "stash": {
+        "pipelineFunctions": [
+            "TokenAuthorizerFunction",
+            "GetUserAuroraFunction",
+            "CreateTenderElasticFunction",
+            "CreateTenderAuroraFunction",
+            "CreateTenderCriterionCpvsAuroraFunction",
+            "CreateTenderCriterionsAuroraFunction",
+            "CreateAclAuroraFunction"
+        ],
+        "currentPipelineFunction": "CreateTenderAuroraFunction",
+        "pipelineFunctionsInfo": {
+            "TokenAuthorizerFunction": {
+                "type": "LAMBDA"
+            },
+            "GetUserAuroraFunction": {
+                "type": "AURORA"
+            },
+            "CreateTenderElasticFunction": {
+                "type": "LAMBDA"
+            },
+            "CreateTenderAuroraFunction": {
+                "type": "AURORA",
+                "table": "tenders"
+            },
+            "CreateTenderCriterionCpvsAuroraFunction": {
+                "type": "AURORA",
+                "table": "tendercriterioncpv"
+            },
+            "CreateTenderCriterionsAuroraFunction": {
+                "type": "AURORA",
+                "table": "tendercriterion"
+            },
+            "CreateAclAuroraFunction": {
+                "type": "AURORA",
+                "table": "resourceaccesslist"
+            }
+        },
+        "currentPipelineFunctionIndex": 3
+    }
+}
