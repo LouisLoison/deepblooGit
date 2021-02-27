@@ -43,7 +43,6 @@ exports.getAppsearchSecret = async () => {
 
 exports.getElasticSecret = async () => {
   elasticSecret = elasticSecret || await getSecret(process.env.ELASTIC_SECRET)
-  const appsearchEndpoint = process.env.APPSEARCH_ENDPOINT
   return { ...elasticSecret }
 }
 
