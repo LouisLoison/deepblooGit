@@ -483,7 +483,7 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
     })
-    
+
     const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
@@ -496,6 +496,22 @@ export class ApiStack extends cdk.Stack {
       ),
       responseMappingTemplate: readFileSync(
         `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const GetAclAuroraFunction = new CfnFunctionConfiguration(this, `GetAclAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "GetAclAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "GetAclAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.response.vtl`,
         { encoding: "utf8" }
       ),
     })
@@ -532,7 +548,11 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId]
       },
     })
 

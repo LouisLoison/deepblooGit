@@ -33,11 +33,11 @@ exports.handler = async function (event,) {
         delete tenderAurora.tenderCriterions
 
         let aclAurora = {
-            resourceId: analyzeTender.tenderUuid,
-            granteeId: analyzeTender.owner_id,
-            role: "1",
-            creationDate: analyzeTender.creationDate,
-            updateDate: analyzeTender.updateDate
+            resourceId: analyzedData.tenderUuid,
+            granteeId: analyzedData.owner_id,
+            role: "OWNER",
+            creationDate: analyzedData.creationDate,
+            updateDate: analyzedData.updateDate
         }
 
         return {
