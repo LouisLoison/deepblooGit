@@ -2,6 +2,8 @@ const config = require(process.cwd() + '/config/')
 
 let elasticSearchClient = false
 
+const tendersEngine = `tenders-${process.env.NODE_ENV || 'dev'}`
+
 exports.connectToElasticsearch = async () => {
   if(!elasticSearchClient) {
     const { Client } = require('@elastic/elasticsearch')
@@ -36,7 +38,7 @@ exports.indexToElasticsearch = async (objects, index) => {
   })
 }
 
-exports.connectToPublicAppSearch = (engineName = "deepbloo") => {
+exports.connectToPublicAppSearch = (engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       const ElasticAppSearch = require("@elastic/app-search-javascript");
@@ -67,7 +69,7 @@ exports.connectToPrivateAppSearch = () => {
 // Indexes an objects array into appsearch's "deepbloo" engine.
 // This will update any document having the same "id" fields,
 // adding any new field to the document
-exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
+exports.indexObjectToAppsearch = (objects, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -90,7 +92,7 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
 }
 
 // This way of updating (PATCH operation) will NOT add any new field
-exports.updateObject = (objects, engineName = "deepbloo") => {
+exports.updateObject = (objects, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -112,7 +114,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
   })
 }
 
-exports.deleteObject = (objectIds, engineName = "deepbloo") => {
+exports.deleteObject = (objectIds, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       const client = await this.connectToPrivateAppSearch()
@@ -272,8 +274,8 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         borneMin += occurence
       } while (borneMin < tenders.length)
       for (const tranche of tranches) {
-        await this.indexObjectToAppsearch(tranche)
-        await this.indexObjectToAppsearch(tranche, 'deepbloo-en')
+         await this.indexObjectToAppsearch(tranche)
+        // await this.indexObjectToAppsearch(tranche, 'deepbloo-en')
         await this.indexToElasticsearch(tranche, 'tenders')
       }
       

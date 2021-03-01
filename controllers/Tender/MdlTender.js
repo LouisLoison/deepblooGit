@@ -1405,16 +1405,12 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId, tenderUui
 
       const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
       const groups = tenderGroupLinks.map(a => a.tenderGroupId)
-      try { 
-        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
-          {
-            id: tenderId,
-            groups,
-          }
-        ])
-      } catch (err) {
-        console.log('Elasticsearch indexObject error')
-      }
+      await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
+        {
+          id: tenderId,
+          groups,
+        }
+      ])
 
       // synchroSalesforce
       let tenderGroup = await this.TenderGroup(tenderGroupId)
@@ -1528,9 +1524,9 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
         if (where !== '') { where += 'AND ' }
         where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
-      if (tenderId && tenderId !== '' && tenderId > 0) {
+      if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `tenderUuid = ${BddTool.NumericFormater(tenderId)} \n`
+        where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
