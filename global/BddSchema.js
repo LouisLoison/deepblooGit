@@ -266,6 +266,7 @@ var Schema = {
       userId: { type: "Int" },
       tenderGroupId: { type: "Int" },
       tenderId: { type: "Int" },
+      tenderUuid: { type: "String" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
