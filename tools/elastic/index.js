@@ -9,8 +9,8 @@ const main = async (limit = 9) => {
   const client = await BddTool.getClient()
 
   const query = `select tenders.* from tenders
-    order by tenders.creationdate asc
-    nulls first
+    order by tenders.creationdate desc
+    nulls last
     limit $1`
 
 
@@ -130,7 +130,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     await indexToElasticsearch(tranche, 'tenders')
   }
   if(appTranche.length) {
-    await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
+    await indexObjectToAppsearch(appTranche, 'tenders-dev')
   }
   
   console.log(processed)

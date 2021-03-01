@@ -5,7 +5,7 @@ exports.handler =  async function(event, ) {
   if(event.mergedData.data) {
     formatedTender.id = event.mergedData.data.tenderUuid
 
-    return await indexObjectToAppsearch([formatedTender], 'deepbloo-dev')
+    return await indexObjectToAppsearch([formatedTender], 'tenders-dev')
   }
   return {}
 }
