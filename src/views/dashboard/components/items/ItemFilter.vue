@@ -14,11 +14,11 @@
           outlined
           color="blue-grey"
         >
-          {{ $global.facetLabel(item.facet) }}
+          {{ $global.facetLabel(item.data.source.main.facet) }}
         </v-btn>
       </template>
       <div class="white">
-        <div v-if="item.facet === 'cpvs'" @click.stop>
+        <div v-if="item.data.source.main.facet === 'cpvs'" @click.stop>
           <v-treeview
             :items="cpvItems"
             selectable
@@ -69,11 +69,6 @@ export default {
     filter: {
       type: Object,
       required: false,
-    },
-
-    dataSearch: {
-      type: Object,
-      required: true,
     },
 
     item: {
@@ -166,13 +161,17 @@ export default {
   computed: {
     getDatas() {
       if (
-        !this.dataSearch.data
-        || !this.item.facet
+        !this.item.dataSearch
+        || !this.item.dataSearch.data
+        || !this.item.data
+        || !this.item.data.source
+        || !this.item.data.source.main
+        || !this.item.data.source.main.facet
       ) {
         return []
       }
       let datas = []
-      const facet = this.dataSearch.data.facets[this.item.facet]
+      const facet = this.item.dataSearch.data.facets[this.item.data.source.main.facet]
       if (facet && facet.length && facet[0].data && facet[0].data.length) {
         datas = facet[0].data
       }
@@ -181,6 +180,11 @@ export default {
           datas.push(data)
         }
       }
+      datas = datas.sort((a, b) => {
+        let na = a.value
+        let nb = b.value
+        return na < nb ? -1 : na > nb ? 1 : 0
+      }).filter(a => a.value && a.value.trim() !== '')
       return datas
     },
   },

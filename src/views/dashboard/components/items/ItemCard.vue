@@ -4,7 +4,7 @@
       v-if="display === 'EDIT' && !item.showHeader"
       @click="selectItem(item)"
       class="vue-draggable-handle"
-      style="position: absolute; z-index: 1; background-color: #607d8b; border-radius: 10px; margin: 3px 0px 0px 3px; padding: 2px 4px 2px 4px;"
+      style="position: absolute; z-index: 4; background-color: #607d8b; border-radius: 10px; margin: 3px 0px 0px 3px; padding: 2px 4px 2px 4px;"
     >
       <v-icon color="white" small>fa-arrows-alt</v-icon>
       <v-btn
@@ -20,13 +20,43 @@
       </v-btn>
     </div>
     <div
-      v-if="item.type === 'FILTER'"
+      v-if="!isAuthorized"
+      class="red lighten-5 text-center red--text"
+      style="height: 100%;"
+    >
+      <div v-if="item.type === 'FILTER'" class="pt-1">
+        Not enough right !
+        <v-btn
+          rounded
+          color="green"
+          class="mx-1 white--text"
+          href="https://platform.deepbloo.com/memberships"
+          x-small
+          target="_blank"
+        >
+          Upgrade
+        </v-btn>
+      </div>
+      <div v-else class="pt-5">
+        <div>Not enough right !</div>
+        <v-btn
+          rounded
+          color="green"
+          class="mx-1 white--text"
+          href="https://platform.deepbloo.com/memberships"
+          target="_blank"
+        >
+          Upgrade
+        </v-btn>
+      </div>
+    </div>
+    <div
+      v-else-if="item.type === 'FILTER'"
       @click="selectItem(item)"
       :class="selectedUuid === item.i ? `${item.colorBackground} lighten-3` : `${item.colorBackground} lighten-5`"
     >
       <ItemFilter
         :filter="filter"
-        :dataSearch="dataSearch"
         :item="item"
         @filterChange="filterChange($event)"
       />
@@ -43,13 +73,7 @@
         class="py-0 pl-2 pr-0 vue-draggable-handle"
         :class="selectedUuid === item.i ? `${item.colorHeader} lighten-2` : `${item.colorHeader} lighten-4`"
       >
-        <span
-          v-if="!item.title || item.title.trim() === ''"
-          class="grey--text text--darken-2"
-        >
-          Item#{{ item.i }}
-        </span>
-        <span v-else>
+        <span>
           {{ item.title }}
         </span>
         <v-spacer />
@@ -71,11 +95,14 @@
         :style="`height: calc(100% - ${item.showHeader ? 32 : 0}px);`"
       >
         <div
-          v-if="!dataSearch.loading"
+          v-if="!item.dataSearch || !item.dataSearch.loading"
           class="text-center"
           :class="item.h > 1 ? 'pt-5' : 'pt-1'"
         >
           <v-progress-circular :size="item.h > 1 ? 50 : 20" color="blue-grey lighten-4" indeterminate />
+        </div>
+        <div v-else-if="item.dataSearch.loading === -1" class="text-center pt-5 red--text text-center">
+          Error !
         </div>
         <div v-else-if="item.data.isDataEmpty" class="grey--text pa-5 text-center">
           No data
@@ -130,6 +157,10 @@
               {{ item.data.value }}
             </span>
           </div>
+          <ItemTabs
+            v-else-if="item.type === 'TABS'"
+            :item="item"
+          />
         </template>
       </v-card-text>
     </v-card>
@@ -138,17 +169,24 @@
 
 <script>
 import ItemFilter from '@/views/dashboard/components/items/ItemFilter'
+import ItemTabs from '@/views/dashboard/components/items/ItemTabs'
 
 export default {
   name: 'ItemCard',
 
   components: {
     ItemFilter,
+    ItemTabs,
   },
 
   props: {
     display: {
       type: String,
+      required: false,
+    },
+
+    facets: {
+      type: Array,
       required: false,
     },
 
@@ -162,11 +200,6 @@ export default {
       required: false,
     },
 
-    dataSearch: {
-      type: Object,
-      required: true,
-    },
-
     item: {
       type: Object,
       required: true,
@@ -175,6 +208,37 @@ export default {
 
   data: () => ({
   }),
+
+  computed: {
+    isAuthorized() {
+      let authorized = true
+      if (
+        this.item
+        && this.item.data
+        && this.item.data.source
+        && this.item.data.source.main
+        && this.item.data.source.main.facet
+      ) {
+        const facet = this.facets.find(a => a.name === this.item.data.source.main.facet)
+        if (facet && !facet.status) {
+          authorized = false
+        }
+      }
+      if (
+        this.item
+        && this.item.data
+        && this.item.data.source
+        && this.item.data.source.secondary
+        && this.item.data.source.secondary.facet
+      ) {
+        const facet = this.facets.find(a => a.name === this.item.data.source.secondary.facet)
+        if (facet && !facet.status) {
+          authorized = false
+        }
+      }
+      return authorized
+    },
+  },
 
   methods: {
     selectItem(item) {
@@ -190,6 +254,8 @@ export default {
     },
 
     openTender(tender) {
+      console.log('-- openTender')
+      console.log(tender)
       this.$emit('openTender', tender)
     },
   },

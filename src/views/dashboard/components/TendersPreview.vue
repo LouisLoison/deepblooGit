@@ -47,6 +47,9 @@
     <div v-if="!dataSearch.loading" class="text-center pt-5">
       <v-progress-circular :size="50" color="blue-grey lighten-4" indeterminate />
     </div>
+    <div v-else-if="dataSearch.loading === -1" class="text-center pt-5 red--text text-center">
+      Error !
+    </div>
     <v-list
       v-else
       dense

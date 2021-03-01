@@ -27,6 +27,8 @@ export class GlobalService {
     return span.textContent || span.innerText
   }
 
+  // Facet
+
   formatLabel(text) {
     let label = text
     if (label && label.length) {
@@ -57,6 +59,8 @@ export class GlobalService {
 
     return this.formatLabel(field)
   }
+
+  // CPV
 
   cpvLogo(cpvs, dataCpvs) {
     if (

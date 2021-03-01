@@ -290,7 +290,6 @@ export default {
       'getScreenTenders',
       'getDataOpportunity',
       'getUserBusinessPipeline',
-      'getUserBusinessPipeline',
       'getDataTenderGroups',
     ]),
 
@@ -476,7 +475,7 @@ export default {
       this.loadUserMemberships()
       this.loadUserNotifys()
       this.loadOpportunity()
-      this.setUserConnexion("connexionTender")
+      this.setUserConnexion('connexionTender')
       this.loadTenderGroups()
       this.loadBusinessPipeline()
     }

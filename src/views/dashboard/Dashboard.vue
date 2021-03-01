@@ -19,16 +19,19 @@
           </v-btn>
         </template>
         <v-list>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('FILTER', '')">
+            <v-list-item-title>Filter</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="addItem('TEXT', '')">
             <v-list-item-title>Text</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('IMAGE', '')">
             <v-list-item-title>Image</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('DATA', '')">
             <v-list-item-title>Metric</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('TABLE', 'TENDER')">
             <v-list-item-title>Table</v-list-item-title>
           </v-list-item>
           <v-divider />
@@ -38,7 +41,7 @@
           >
             Chart
           </v-subheader>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('CHART', 'LINE')">
             <v-list-item-icon>
               <v-icon>fa-chart-line</v-icon>
             </v-list-item-icon>
@@ -46,7 +49,7 @@
               <v-list-item-title>Line</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('CHART', 'AREA')">
             <v-list-item-icon>
               <v-icon>fa-chart-area</v-icon>
             </v-list-item-icon>
@@ -54,7 +57,7 @@
               <v-list-item-title>Area</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('CHART', 'COLUMN')">
             <v-list-item-icon>
               <v-icon>fa-chart-bar</v-icon>
             </v-list-item-icon>
@@ -62,7 +65,7 @@
               <v-list-item-title>Column</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('CHART', 'PIE')">
             <v-list-item-icon>
               <v-icon>fa-chart-pie</v-icon>
             </v-list-item-icon>
@@ -70,7 +73,7 @@
               <v-list-item-title>Pie</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="addItem()">
+          <v-list-item @click="addItem('CHART-MAP', 'MAP-BUBBLE')">
             <v-list-item-icon>
               <v-icon>fa-globe-americas</v-icon>
             </v-list-item-icon>
@@ -135,9 +138,9 @@
             >
               <ItemCard
                 :display="display"
+                :facets="facets"
                 :selectedUuid="selectedUuid"
                 :filter="filter"
-                :dataSearch="dataSearch"
                 :item="item"
                 @selectItem="selectItem($event)"
                 @deleteItem="deleteItem($event)"
@@ -182,12 +185,12 @@
               <div class="grey lighten-4 pa-1 ma-2">
                 <div>
                   <v-switch
+                    v-model="getSelectedItem.showHeader"
+                    @change="resizedEvent(getSelectedItem)"
                     dense
                     hide-details
-                    v-model="getSelectedItem.showHeader"
                     class="pa-0 ma-0"
                     label="Show header"
-                    @change="resizedEvent(getSelectedItem)"
                   />
                 </div>
 
@@ -264,34 +267,13 @@
                   v-if="getSelectedItem.type === 'FILTER'"
                   class="pa-3"
                 >
-                  <div>
-                    <div class="grey--text">Facet</div>
-                    <v-menu offset-y>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="blue-grey"
-                          dark
-                          small
-                          block
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          {{ !getSelectedItem.facet ? 'none' : $global.facetLabel(getSelectedItem.facet) }}
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item
-                          v-for="(facet, index) in Object.keys(this.facets)"
-                          :key="`facet${index}`"
-                          @click="getSelectedItem.facet = facet; setSearchDatas()"
-                        >
-                          <v-list-item-title>
-                            {{ $global.facetLabel(facet) }}
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </div>
+                  <itemSourceEdit
+                    :item="getSelectedItem"
+                    :facets="facets"
+                    :hasFacetCountMax="true"
+                    :hasSecondary="false"
+                    @updateItemSource="getSelectedItem.data.source = $event; setSearchDatas()"
+                  />
                 </div>
                 <!-- TABLE -->
                 <div v-else-if="getSelectedItem.type === 'TABLE'">
@@ -326,16 +308,16 @@
                           </thead>
                           <tbody>
                             <tr
-                              v-for="(facet, index) in Object.keys(facets)"
+                              v-for="(facet, index) in facets"
                               :key="`facet${index}`"
                             >
                               <td>
-                                {{ $global.facetLabel(facet) }}
+                                {{ $global.facetLabel(facet.name) }}
                               </td>
                               <td>
                                 <v-switch
-                                  :input-value="getSelectedItem.data.fields.find(a => a.facet === facet) ? true : false"
-                                  @click="itemTableSwitch(getSelectedItem, facet)"
+                                  :input-value="getSelectedItem.data.fields.find(a => a.facet === facet.name) ? true : false"
+                                  @click="itemTableSwitch(getSelectedItem, facet.name)"
                                   dense
                                   hide-details
                                 />
@@ -346,32 +328,13 @@
                       </v-simple-table>
                     </div>
                     <div v-else-if="getSelectedItem.subType === 'FACET'">
-                      <div class="grey--text">Facet</div>
-                      <v-menu offset-y>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            color="blue-grey"
-                            dark
-                            small
-                            block
-                            v-bind="attrs"
-                            v-on="on"
-                          >
-                            {{ !getSelectedItem.facet ? 'none' : $global.facetLabel(getSelectedItem.facet) }}
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item
-                            v-for="(facet, index) in Object.keys(facets)"
-                            :key="`facet${index}`"
-                            @click="getSelectedItem.facet = facet; setSearchDatas()"
-                          >
-                            <v-list-item-title>
-                              {{ $global.facetLabel(facet) }}
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
+                      <itemSourceEdit
+                        :item="getSelectedItem"
+                        :facets="facets"
+                        :hasFacetCountMax="true"
+                        :hasSecondary="false"
+                        @updateItemSource="getSelectedItem.data.source = $event; setSearchDatas()"
+                      />
                     </div>
                   </div>
                   <v-divider class="mt-2" />
@@ -401,34 +364,12 @@
                   v-else-if="getSelectedItem.type === 'DATA'"
                   class="pa-3"
                 >
-                  <div>
-                    <div class="grey--text">Facet</div>
-                    <v-menu offset-y>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="blue-grey"
-                          dark
-                          small
-                          block
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          {{ !getSelectedItem.facet ? 'none' : $global.facetLabel(getSelectedItem.facet) }}
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-item
-                          v-for="(facet, index) in Object.keys(this.facets)"
-                          :key="`facet${index}`"
-                          @click="getSelectedItem.facet = facet; setSearchDatas()"
-                        >
-                          <v-list-item-title>
-                            {{ $global.facetLabel(facet) }}
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
-                  </div>
+                  <itemSourceEdit
+                    :item="getSelectedItem"
+                    :facets="facets"
+                    :hasSecondary="false"
+                    @updateItemSource="getSelectedItem.data.source = $event; setSearchDatas()"
+                  />
                   <div class="pt-3">
                     <div class="grey--text">Process type</div>
                     <v-menu offset-y>
@@ -578,52 +519,20 @@
                   class="pa-3"
                 >
                   <div v-if="['LINE', 'AREA', 'COLUMN', 'PIE'].includes(getSelectedItem.subType)">
-                    <div>
-                      <div class="grey--text">Facet</div>
-                      <v-menu offset-y>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            color="blue-grey"
-                            dark
-                            small
-                            block
-                            v-bind="attrs"
-                            v-on="on"
-                          >
-                            {{ !getSelectedItem.facet ? 'none' : $global.facetLabel(getSelectedItem.facet) }}
-                          </v-btn>
-                        </template>
-                        <v-list>
-                          <v-list-item
-                            v-for="(facet, index) in Object.keys(this.facets)"
-                            :key="`facet${index}`"
-                            @click="getSelectedItem.facet = facet; setSearchDatas()"
-                          >
-                            <v-list-item-title>
-                              {{ $global.facetLabel(facet) }}
-                            </v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                      <itemDataChoice
-                        v-if="1 === 2"
-                        :item="getSelectedItem"
-                        :facets="facets"
-                      />
-                    </div>
-                    <div class="pt-3">
-                      <div class="grey--text">Facet count max</div>
-                      <v-slider
-                        v-model="getSelectedItem.facetCountMax"
-                        color="blue-grey"
-                        label=""
-                        min="1"
-                        max="20"
-                        thumb-label
-                        @change="setSearchDatas()"
-                      />
-                    </div>
-                    <div v-if="['COLUMN'].includes(getSelectedItem.subType)">
+                    <itemSourceEdit
+                      :item="getSelectedItem"
+                      :facets="facets"
+                      :hasFacetCountMax="true"
+                      :hasSecondary="true"
+                      @updateItemSource="getSelectedItem.data.source = $event; setSearchDatas()"
+                    />
+
+                    <v-divider class="mt-3" />
+
+                    <div
+                      v-if="['COLUMN'].includes(getSelectedItem.subType)"
+                      class="pt-3"
+                    >
                       <div class="grey--text">Display type</div>
                       <v-btn-toggle
                         v-model="getSelectedItem.chart.chart.type"
@@ -638,6 +547,13 @@
                           <span class="hidden-sm-and-down">Horizontal</span>
                         </v-btn>
                       </v-btn-toggle>
+                      <div class="pt-3">
+                        <v-switch
+                          v-model="getSelectedItem.chart.legend.enabled"
+                          label="Show legend"
+                          class="pa-0 ma-0"
+                        />
+                      </div>
                     </div>
                     <div v-else-if="['PIE'].includes(getSelectedItem.subType)">
                       <v-switch
@@ -685,6 +601,34 @@
                       <v-icon color="red">fa-times</v-icon>
                     </v-btn>
                   </div>
+                </div>
+                <!-- DATA -->
+                <div
+                  v-else-if="getSelectedItem.type === 'TABS'"
+                  class="pa-3"
+                >
+                  <div class="grey--text">Tabs</div>
+                  <v-list dense>
+                    <v-list-item-group color="primary">
+                      <v-list-item
+                        v-for="(tab, index) in getSelectedItem.data.tabs"
+                        :key="`tab${index}`"
+                      >
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ tab.label }}
+                          </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                          <v-btn icon small>
+                            <v-icon x-small color="red lighten-1">
+                              fa-trash
+                            </v-icon>
+                          </v-btn>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
                 </div>
 
                 <v-divider class="mt-2" />
@@ -793,16 +737,17 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import VueGridLayout from 'vue-grid-layout'
+import { v4 as uuidv4 } from "uuid"
 import constCountrys from '@/assets/constants/countrys.json'
 import constCountryMap from '@/assets/constants/countryMap.json'
 import ItemCard from '@/views/dashboard/components/items/ItemCard'
 import TendersDialog from '@/views/dashboard/components/TendersDialog'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TendersPreview from '@/views/dashboard/components/TendersPreview'
-import itemDataChoice from '@/views/dashboard/components/itemDataChoice'
+import itemSourceEdit from '@/views/dashboard/components/itemSourceEdit'
 
 export default {
   name: 'Dashboard',
@@ -814,7 +759,7 @@ export default {
     TendersDialog,
     TenderDialog,
     TendersPreview,
-    itemDataChoice,
+    itemSourceEdit,
   },
 
   props: {
@@ -835,36 +780,73 @@ export default {
     constCountrys,
     constCountryMap,
     dataSearch: {
+      searchRequest: null,
       loading: null,
       data: null,
       error: null,
     },
-    facets: {
-      brands: {
-        type: "value",
-        size: 200
+    facets: [
+      {
+        name: 'brands',
+        type: 'STRING',
+        size: 200,
+        status: true,
+      }, {
+        name: 'country',
+        type: 'STRING',
+        size: 200,
+        status: true,
+      }, {
+        name: 'notice_type',
+        type: 'STRING',
+        size: 200,
+        status: true,
+      }, {
+        name: 'buyer_name',
+        type: 'STRING',
+        size: 300,
+        status: true,
+      }, {
+        name: 'financials',
+        type: 'STRING',
+        size: 200,
+        status: true,
+      }, {
+        name: 'bid_deadline_timestamp',
+        type: 'TIMESTAMP',
+        status: true,
+      }, {
+        name: 'currency',
+        type: 'STRING',
+        dataType: 'STRING',
+        status: true,
+      }, {
+        name: 'cpvs',
+        type: 'STRING',
+        size: 200,
+        status: true,
+      }, {
+        name: 'publication_timestamp',
+        type: 'TIMESTAMP',
+        status: true,
+      }, {
+        name: 'procurement_method',
+        type: 'STRING',
+        status: true,
+      }, {
+        name: 'lang',
+        type: 'STRING',
+        status: true,
+      }, {
+        name: 'scope_of_works',
+        type: 'STRING',
+        status: true,
+      }, {
+        name: 'segments',
+        type: 'STRING',
+        status: true,
       },
-      country: {
-        type: "value",
-        size: 200
-      },
-      notice_type: {
-        type: "value",
-        size: 200
-      },
-      buyer_name: {
-        type: "value",
-        size: 300
-      },
-      financials: {
-        type: "value",
-        size: 200
-      },
-      cpvs: {
-        type: "value",
-        size: 200
-      },
-    },
+    ],
     selectedUuid: null,
     colors: [
       { label: 'Blue-grey', value: 'blue-grey' },
@@ -905,10 +887,28 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'FILTER',
-          facet: 'cpvs',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'cpvs',
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             multiple: true,
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -922,10 +922,28 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'FILTER',
-          facet: 'country',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'country',
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             multiple: true,
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -939,10 +957,28 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'FILTER',
-          facet: 'financials',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'financials',
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             multiple: true,
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -957,10 +993,20 @@ export default {
           colorBackground: 'grey',
           type: 'CHART',
           subType: 'COLUMN',
-          facet: 'notice_type',
-          facetCountMax: 10,
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'buyer_name',
+                count: 5,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: 'cpvs',
+                count: 3,
+              },
+            },
           },
           chart: {
             chart: {
@@ -990,10 +1036,10 @@ export default {
               pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
             },
             legend: {
-              enabled: false,
+              enabled: true,
             },
             plotOptions: {
-              column: {
+              bar: {
                 cursor: 'pointer',
                 stacking: 'normal',
                 dataLabels: {
@@ -1015,6 +1061,13 @@ export default {
             },
             series: [],
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
         {
           x: 6,
@@ -1028,10 +1081,20 @@ export default {
           colorBackground: 'grey',
           type: 'CHART',
           subType: 'PIE',
-          facet: 'country',
-          facetCountMax: 4,
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'country',
+                count: 4,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
           },
           chart: {
             chart: {
@@ -1064,6 +1127,13 @@ export default {
             },
             series: [],
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
         {
           x: 0,
@@ -1079,6 +1149,18 @@ export default {
           subType: 'TENDER',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: null,
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             showHeader: true,
             fixedHeader: true,
             showFooter: true,
@@ -1102,11 +1184,18 @@ export default {
             datas: [],
             fields: [
               {
-                facet:"brands"
+                facet:'brands'
               }, {
-                facet:"buyer_name"
+                facet:'buyer_name'
               }
             ],
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -1120,16 +1209,34 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'DATA',
-          facet: 'brands',
+          subType: '',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'brands',
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             value: '',
-            field: 'country',
             processType: 'COUNT',
             unite: '',
             textSize: 3,
             alignHorizontal: 'CENTER',
             alignVertical: 'MIDDLE',
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -1143,12 +1250,20 @@ export default {
           colorHeader: 'blue-grey',
           colorBackground: 'grey',
           type: 'TEXT',
+          subType: '',
           data: {
-            isDataEmpty: true,
+            isDataEmpty: false,
             value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris turpis magna, sagittis nec molestie quis, porta luctus nulla.',
             textSize: 1,
             alignHorizontal: 'LEFT',
             alignVertical: 'TOP',
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: 1,
+            data: null,
+            error: null,
           },
         },
         {
@@ -1208,6 +1323,13 @@ export default {
               }
             }]
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
         {
           x: 0,
@@ -1221,9 +1343,20 @@ export default {
           colorBackground: 'grey',
           type: 'TABLE',
           subType: 'FACET',
-          facet: 'country',
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'country',
+                count: null,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
             showHeader: true,
             fixedHeader: true,
             showFooter: false,
@@ -1231,6 +1364,13 @@ export default {
             height: 270,
             headers: [],
             datas: [],
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -1256,7 +1396,7 @@ export default {
           },
           chart: {
             chart: {
-              map: "myMapName",
+              map: 'myMapName',
               backgroundColor: 'transparent',
             },
             title: { text: '' },
@@ -1266,7 +1406,7 @@ export default {
             mapNavigation: {
               enabled: true,
               buttonOptions: {
-                alignTo: "spacingBox"
+                alignTo: 'spacingBox'
               }
             },
             colorAxis: {
@@ -1282,20 +1422,27 @@ export default {
             },
             series: [
               {
-                name: "Tenders",
+                name: 'Tenders',
                 states: {
                   hover: {
-                    color: "#BADA55"
+                    color: '#BADA55'
                   }
                 },
                 dataLabels: {
                   enabled: true,
-                  format: "{point.name}"
+                  format: '{point.name}'
                 },
                 allAreas: false,
                 data: []
               }
             ]
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
           },
         },
         {
@@ -1310,10 +1457,20 @@ export default {
           colorBackground: 'grey',
           type: 'CHART',
           subType: 'LINE',
-          facet: 'notice_type',
-          facetCountMax: 10,
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'publication_timestamp',
+                count: 10,
+                count2: null,
+                type: 'DAY',
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
           },
           chart: {
             chart: {
@@ -1356,6 +1513,13 @@ export default {
             },
             series: [],
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
         {
           x: 0,
@@ -1369,10 +1533,20 @@ export default {
           colorBackground: 'grey',
           type: 'CHART',
           subType: 'AREA',
-          facet: 'buyer_name',
-          facetCountMax: 4,
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'buyer_name',
+                count: 4,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
           },
           chart: {
             chart: {
@@ -1415,6 +1589,13 @@ export default {
             },
             series: [],
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
         {
           x: 6,
@@ -1428,10 +1609,20 @@ export default {
           colorBackground: 'grey',
           type: 'CHART',
           subType: 'COLUMN',
-          facet: 'notice_type',
-          facetCountMax: 3,
           data: {
             isDataEmpty: true,
+            source: {
+              main: {
+                facet: 'notice_type',
+                count: 3,
+                count2: null,
+                type: null,
+              },
+              secondary: {
+                facet: null,
+                count: null,
+              },
+            },
           },
           chart: {
             chart: {
@@ -1474,6 +1665,117 @@ export default {
             },
             series: [],
           },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
+        },
+        {
+          x: 0,
+          y: 65,
+          w: 10,
+          h: 12,
+          i: '678412333',
+          showHeader: false,
+          title: '',
+          colorHeader: 'blue-grey',
+          colorBackground: 'grey',
+          type: 'TABS',
+          subType: '',
+          data: {
+            isDataEmpty: false,
+            tabs:[
+              {
+                label: 'Solar',
+                item: {
+                  i: '11000232',
+                  type: 'CHART',
+                  subType: 'COLUMN',
+                  data: {
+                    isDataEmpty: true,
+                    source: {
+                      main: {
+                        facet: 'procurement_method',
+                        count: 6,
+                        count2: null,
+                        type: null,
+                      },
+                      secondary: {
+                        facet: null,
+                        count: null,
+                      },
+                    },
+                  },
+                  chart: {
+                    chart: {
+                      type: 'column',
+                      animation: false,
+                      backgroundColor: 'transparent',
+                    },
+                    title: { text: '' },
+                    credits: { enabled: false },
+                    exporting: { enabled: false },
+                    xAxis: {
+                      categories: [],
+                    },
+                    yAxis: {
+                      min: 0,
+                      title: { text: '' },
+                      stackLabels: {
+                        enabled: true,
+                        style: {
+                          fontWeight: 'bold',
+                          color: 'gray'
+                        }
+                      }
+                    },
+                    tooltip: {
+                      headerFormat: '<b>{point.x}</b><br/>',
+                      pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+                    },
+                    legend: {
+                      enabled: false,
+                    },
+                    plotOptions: {
+                      column: {
+                        cursor: 'pointer',
+                        stacking: 'normal',
+                        dataLabels: {
+                          enabled: true,
+                        },
+                      },
+                    },
+                    series: [],
+                  },
+                  dataSearch: {
+                    searchRequest: null,
+                    searchRequests: null,
+                    loading: null,
+                    data: null,
+                    error: null,
+                  },
+                },
+              },
+              { i: 333, label: 'Micro-Grid', item: { i: 21312 } },
+              { i: 444, label: 'Wind', item: { i: 5678 } },
+              { i: 555, label: 'Cables', item: { i: 3541 } },
+              { i: 666, label: 'Energy', item: { i: 78564 } },
+              { i: 777, label: 'Power distribution', item: { i: 3628741 } },
+              { i: 888, label: 'Consulting', item: { i: 45045 } },
+              { i: 999, label: 'Electrical machninery', item: { i: 4405720 } },
+              { i: 111, label: 'Connection and contact', item: { i: 785207 } },
+            ],
+          },
+          dataSearch: {
+            searchRequest: null,
+            searchRequests: null,
+            loading: null,
+            data: null,
+            error: null,
+          },
         },
       ],
     },
@@ -1484,6 +1786,8 @@ export default {
       'getUserId',
       'isHeaderShow',
       'getIsMobile',
+      'getIsBusinessMembership',
+      'getUserType',
     ]),
 
     getHeightMainLayer() {
@@ -1514,7 +1818,17 @@ export default {
     },
   },
 
-  mounted() {
+  async mounted() {
+    // Get user memberships
+    if (this.getUserId) {
+      await this.loadUserMemberships()
+      if (!this.getIsBusinessMembership) {
+        const facet = this.facets.find(a => a.name === 'buyer_name')
+        if (facet) {
+          facet.status = false
+        }
+      }
+    }
     this.$nextTick(() => {
       this.resizedAll()
     })
@@ -1522,44 +1836,171 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'loadUserMemberships',
+    ]),
+
     async search() {
       try {
         this.dataSearch.loading = 0
-        let searchRequest = {
+        const facets = {}
+        for (const facet of this.facets) {
+          facets[facet.name] = {
+            type: 'value',
+            size: facet.size,
+          }
+        }
+        this.dataSearch.searchRequest = {
           searchInputValue: '',
           filter: {},
-          facets: this.facets,
+          facets,
         }
         if (this.searchFilter) {
-          searchRequest.searchInputValue = this.searchFilter.searchInputValue
-          searchRequest.filter = JSON.parse(JSON.stringify(this.searchFilter.facets))
+          this.dataSearch.searchRequest.searchInputValue = this.searchFilter.searchInputValue
+          this.dataSearch.searchRequest.filter = JSON.parse(JSON.stringify(this.searchFilter.facets))
         }
         for (const itemFilter of this.itemFilters) {
-          if (!searchRequest.filter[itemFilter.item.facet]) {
-            searchRequest.filter[itemFilter.item.facet] = []
+          if (!this.dataSearch.searchRequest.filter[itemFilter.item.data.source.main.facet]) {
+            this.dataSearch.searchRequest.filter[itemFilter.item.data.source.main.facet] = []
           }
           for (const selectedItem of itemFilter.selectedItems) {
-            if (!searchRequest.filter[itemFilter.item.facet].includes(selectedItem.value)) {
-              searchRequest.filter[itemFilter.item.facet].push(selectedItem.value)
+            if (!this.dataSearch.searchRequest.filter[itemFilter.item.data.source.main.facet].includes(selectedItem.value)) {
+              this.dataSearch.searchRequest.filter[itemFilter.item.data.source.main.facet].push(selectedItem.value)
             }
           }
         }
-        const res = await this.$api.post('/Elasticsearch/search', { searchRequest })
+        const res = await this.$api.post('/Elasticsearch/search', { searchRequest: this.dataSearch.searchRequest })
         if (!res.success) {
           throw new Error(res.Error)
         }
         this.dataSearch.data = res.data
         this.dataSearch.loading = 1
-        this.setSearchDatas()
+        for (const item of this.dashboard.items) {
+          this.searchItem(item)
+        }
         this.resizedAll()
+      } catch (err) {
+        this.dataSearch.loading = -1
+        if (this.dashboard.items) {
+          for (const item of this.dashboard.items) {
+            item.dataSearch.loading = -1
+          }
+        }
+        this.$api.error(err, this)
+      }
+    },
+
+    searchItem(item) {
+      let hasOwnCall = false
+      if (
+        item
+        && item.data
+        && item.data.source
+        && item.data.source.main
+        && item.data.source.main.facet
+      ) {
+        const facetObject = this.facets.find(a => a.name === item.data.source.main.facet)
+        if (
+          facetObject
+          && facetObject.type === 'TIMESTAMP'
+          && !item.data.source.secondary.facet
+        ) {
+          hasOwnCall = true
+          this.searchOwnCall(item)
+        } else if (
+          facetObject
+          && item.data.source.secondary.facet
+        ) {
+          hasOwnCall = true
+          this.searchsOwnCall(item)
+        }
+      }
+      if (!hasOwnCall) {
+        item.dataSearch = this.dataSearch
+        this.setSearchData(item)
+      }
+      if (item.type === 'TABS' && item.data.tabs) {
+        for (const tab of item.data.tabs) {
+          this.searchItem(tab.item)
+        }
+      }
+    },
+
+    async searchOwnCall(item) {
+      try {
+        item.dataSearch = JSON.parse(JSON.stringify(this.dataSearch))
+        item.dataSearch.loading = 0
+        item.dataSearch.data = null
+        item.dataSearch.error = null
+        const searchFacet = item.dataSearch.searchRequest.facets[item.data.source.main.facet]
+        searchFacet.type = 'range'
+        searchFacet.ranges = []
+        for (let i = 0; i < item.data.source.main.count; i++) {
+          let min_timestamp = new Date()
+          min_timestamp.setDate(min_timestamp.getDate() - i)
+          min_timestamp.setHours(0)
+          min_timestamp.setMinutes(0)
+          min_timestamp.setSeconds(0)
+          min_timestamp = min_timestamp.getTime()
+          let max_timestamp = new Date()
+          max_timestamp.setDate(max_timestamp.getDate() - i)
+          max_timestamp.setHours(0)
+          max_timestamp.setMinutes(0)
+          max_timestamp.setSeconds(0)
+          max_timestamp = max_timestamp.getTime()
+          searchFacet.ranges.push({
+            from: min_timestamp,
+            to: max_timestamp,
+            name: moment(min_timestamp).format('MM/DD/YYYY')
+          })
+        }
+        const res = await this.$api.post('/Elasticsearch/search', { searchRequest: item.dataSearch.searchRequest })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        item.dataSearch.data = res.data
+        item.dataSearch.loading = 1
+        this.setSearchData(item)
       } catch (err) {
         this.dataSearch.loading = -1
         this.$api.error(err, this)
       }
     },
 
-    addItem() {
-      let maxId = Math.max.apply(0, this.dashboard.items.map(a => parseInt(a.i, 10)))
+    async searchsOwnCall(item) {
+      try {
+        item.dataSearch = {
+          searchRequests: [],
+          loading: 0,
+          data: null,
+          error: null,
+        }
+
+        let datas = this.dataSearch.data.facets[item.data.source.main.facet][0].data
+        if (item.data.source.main.count) {
+          datas = datas.slice(0, item.data.source.main.count)
+        }
+        for (const data of datas) {
+          const searchRequest = JSON.parse(JSON.stringify(this.dataSearch.searchRequest))
+          searchRequest.filter[item.data.source.main.facet] = [ data.value ]
+          item.dataSearch.searchRequests.push(searchRequest)
+        }
+        const res = await this.$api.post('/Elasticsearch/multiSearch', { searchRequests: item.dataSearch.searchRequests })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        item.dataSearch.data = res.data
+        item.dataSearch.loading = 1
+        this.setSearchData(item)
+      } catch (err) {
+        this.dataSearch.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    addItem(type, subType) {
+      let maxId = uuidv4()
+      maxId = Math.max.apply(0, this.dashboard.items.map(a => parseInt(a.i, 10)))
       maxId = maxId + 1
       const item = {
         x: 0,
@@ -1569,16 +2010,93 @@ export default {
         i: `${maxId}`,
         showHeader: true,
         title: '',
-        type: '',
-        subType: '',
+        type,
+        subType,
         colorHeader: 'blue-grey',
         colorBackground: 'grey',
         data: {
           isDataEmpty: true,
+          source: {
+            main: {
+              facet: null,
+              count: null,
+              count2: null,
+              type: null,
+            },
+            secondary: {
+              facet: null,
+              count: null,
+            },
+          },
         },
+        dataSearch: {
+          searchRequest: null,
+          searchRequests: null,
+          loading: 1,
+          data: null,
+          error: null,
+        },
+      }
+
+      if (type === 'TEXT') {
+        item.data.value = ''
+        item.data.textSize = 1
+        item.data.alignHorizontal = 'LEFT'
+        item.data.alignVertical = 'TOP'
+      } else if (type === 'DATA') {
+        item.data.value = 'COUNT'
+        item.data.processType = 'COUNT'
+        item.data.unite = ''
+        item.data.textSize = 3
+        item.data.alignHorizontal = 'CENTER'
+        item.data.alignVertical = 'MIDDLE'
+      } else if (type === 'CHART' && subType === 'COLUMN') {
+        item.chart = {
+          chart: {
+            type: 'column',
+            animation: false,
+            backgroundColor: 'transparent',
+          },
+          title: { text: '' },
+          credits: { enabled: false },
+          exporting: { enabled: false },
+          xAxis: {
+            categories: [],
+          },
+          yAxis: {
+            min: 0,
+            title: { text: '' },
+            stackLabels: {
+              enabled: true,
+              style: {
+                fontWeight: 'bold',
+                color: 'gray'
+              }
+            }
+          },
+          tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+          },
+          legend: {
+            enabled: true,
+          },
+          plotOptions: {
+            column: {
+              cursor: 'pointer',
+              stacking: 'normal',
+              dataLabels: {
+                enabled: true,
+              },
+            },
+          },
+          series: [],
+        }
       }
       this.dashboard.items.push(item)
       this.selectedUuid = item.i
+      this.searchItem(item)
+      this.setSearchData(item)
     },
 
     selectItem(item) {
@@ -1615,6 +2133,9 @@ export default {
         this.setSearchDataTable(item)
       } else if (item.type === 'DATA') {
         this.setSearchDataData(item)
+      } else if (item.type === 'TEXT') {
+        item.data.isDataEmpty = false
+        item.dataSearch.loading = 1
       }
     },
 
@@ -1622,44 +2143,144 @@ export default {
       item.data.isDataEmpty = true
       if (
         ['LINE', 'AREA', 'COLUMN'].includes(item.subType)
-        && item.facet
+        && item.data.source.main.facet
       ) {
         item.chart.xAxis.categories = []
         item.chart.series = []
-        const facet = this.dataSearch.data.facets[item.facet]
-        if (facet && facet.length && facet[0].data && facet[0].data.length) {
-          item.chart.series = [{
-            name: item.facet,
-            data: [],
-          }]
-          for (const data of facet[0].data) {
-            item.chart.xAxis.categories.push(data.value)
-            item.chart.series[0].data.push(data.count)
-            if (item.chart.xAxis.categories.length >= item.facetCountMax) {
-              break
+        if (item.dataSearch.loading) {
+          let datas = null
+          if (item.dataSearch.searchRequest) {
+            const facet = item.dataSearch.data.facets[item.data.source.main.facet]
+            datas = facet[0].data
+          } else if (item.dataSearch.searchRequests) {
+            datas = []
+            for (const data of item.dataSearch.data) {
+              const facet = data.facets[item.data.source.main.facet]
+              if (facet) {
+                datas.push(facet[0].data[0])
+              }
             }
           }
-          item.chart.series[0].events = {
-            click: event => {
-              console.log(item)
-              console.log(event.point)
-              console.log(event.point.category)
-              console.log(event.point.series.name)
-              this.openTendersDialog()
-            }
+          if (!datas) {
+            return
           }
-          item.data.isDataEmpty = false
+          if (item.data.source.main.count) {
+            datas = datas.slice(0, item.data.source.main.count)
+          }
+          if (item.dataSearch.searchRequest) {
+            item.chart.series.push({
+              name: item.data.source.main.facet,
+              data: [],
+            })
+            for (const data of datas) {
+              item.chart.xAxis.categories.push(data.name ? data.name : data.value)
+              item.chart.series[0].data.push(data.count)
+            }
+            item.chart.series[0].events = {
+              click: event => {
+                console.log(item)
+                console.log(event.point)
+                console.log(event.point.category)
+                console.log(event.point.series.name)
+                this.openTendersDialog()
+              }
+            }
+            item.data.isDataEmpty = false
+          } else if (item.dataSearch.searchRequests) {
+            // ---------
+            let secondaryDatas = []
+            for (const data of item.dataSearch.data) {
+              const secondaryFacets = data.facets[item.data.source.secondary.facet][0].data
+              for (const secondaryFacet of secondaryFacets) {
+                const secondaryData = secondaryDatas.find(a => a.value === secondaryFacet.value)
+                if (secondaryData) {
+                  secondaryData.count = secondaryData.count + secondaryFacet.count
+                } else {
+                  secondaryDatas.push({
+                    count: secondaryFacet.count,
+                    value: secondaryFacet.value,
+                  })
+                }
+              }
+            }
+            secondaryDatas = secondaryDatas.sort((a, b) => {
+              let na = a.count
+              let nb = b.count
+              return na < nb ? 1 : na > nb ? -1 : 0
+            })
+            if (item.data.source.secondary.count) {
+              secondaryDatas = secondaryDatas.slice(0, item.data.source.secondary.count)
+            }
+
+            const dataFormat = {
+              secondaryNames: secondaryDatas.map(a => a.value),
+              mains: [],
+            }
+            let dataNum = -1
+            for (const data of datas) {
+              dataNum = dataNum + 1
+              const main = {
+                name: data.value,
+                from: null,
+                to: null,
+                secondarys: [],
+              }
+              for (const secondaryData of secondaryDatas) {
+                const dataResult = item.dataSearch.data[dataNum].facets[item.data.source.secondary.facet][0].data.find(a => a.value === secondaryData.value)
+                if (dataResult) {
+                  main.secondarys.push({
+                    name: secondaryData.value,
+                    count: dataResult.count,
+                  })
+                } else {
+                  main.secondarys.push({
+                    name: secondaryData.value,
+                    count: 0,
+                  })
+                }
+              }
+              dataFormat.mains.push(main)
+            }
+            // ---------
+
+            item.chart.xAxis.categories = dataFormat.mains.map(a => a.name)
+            for (const secondaryName of dataFormat.secondaryNames) {
+              const serie = {
+                name: secondaryName,
+                data: [],
+              }
+              for (const main of dataFormat.mains) {
+                const secondary = main.secondarys.find(a => a.name === secondaryName)
+                if (secondary) {
+                  serie.data.push(secondary.count)
+                } else {
+                  serie.data.push(0)
+                }
+              }
+              serie.events = {
+                click: event => {
+                  console.log(item)
+                  console.log(event.point)
+                  console.log(event.point.category)
+                  console.log(event.point.series.name)
+                  this.openTendersDialog()
+                }
+              }
+              item.chart.series.push(serie)
+            }
+            item.data.isDataEmpty = false
+          }
         }
       }
       if (
         ['PIE'].includes(item.subType)
-        && item.facet
+        && item.data.source.main.facet
       ) {
         item.chart.series = []
-        const facet = this.dataSearch.data.facets[item.facet]
+        const facet = this.dataSearch.data.facets[item.data.source.main.facet]
         if (facet && facet.length && facet[0].data && facet[0].data.length) {
           item.chart.series = [{
-            name: item.facet,
+            name: item.data.source.main.facet,
             colorByPoint: true,
             data: [],
           }]
@@ -1670,7 +2291,10 @@ export default {
               sliced: false,
               selected: false,
             })
-            if (item.chart.series[0].data.length >= item.facetCountMax) {
+            if (
+              item.data.source.main.count
+              && item.chart.series[0].data.length >= item.data.source.main.count
+            ) {
               break
             }
           }
@@ -1745,12 +2369,14 @@ export default {
       if (item.data.position) {
         this.$nextTick(() => {
           const ItemCard = this.$refs[`ItemCard${item.i}`][0]
-          const mapChart = ItemCard.$refs[`ChartMap${item.i}`].chart
-          const extremes0 = mapChart.axes[0].getExtremes()
-          let zoom = (item.data.position.max0 - item.data.position.min0) / (extremes0.dataMax - extremes0.dataMin)
-          mapChart.mapZoom(Math.abs(zoom))
-          mapChart.axes[0].setExtremes(item.data.position.min0, item.data.position.max0)
-          mapChart.axes[1].setExtremes(item.data.position.min1, item.data.position.max1)
+          const mapChart = ItemCard.$refs[`ChartMap${item.i}`] ? ItemCard.$refs[`ChartMap${item.i}`].chart : null
+          if (mapChart) {
+            const extremes0 = mapChart.axes[0].getExtremes()
+            let zoom = (item.data.position.max0 - item.data.position.min0) / (extremes0.dataMax - extremes0.dataMin)
+            mapChart.mapZoom(Math.abs(zoom))
+            mapChart.axes[0].setExtremes(item.data.position.min0, item.data.position.max0)
+            mapChart.axes[1].setExtremes(item.data.position.min1, item.data.position.max1)
+          }
         })
       }
     },
@@ -1759,22 +2385,28 @@ export default {
       if (item.subType === 'TENDER') {
         item.data.isDataEmpty = true
         item.data.datas = []
-        for (const result of this.dataSearch.data.results) {
-          item.data.datas.push({
-            title: result.title.raw.length > 40 ? `${result.title.raw.substr(0, 40)}...` : result.title.raw,
-            country: result.country.raw,
-            cpvs: result.cpvs.raw.join().length > 20 ? `${result.cpvs.raw.join().substr(0, 20)}...` : result.cpvs.raw.join(),
-            description: result.description.raw,
-            bidDeadline: moment(result.bid_deadline_timestamp.raw).format("MM/DD/YYYY"),
-            publication: moment(result.publication_timestamp.raw).format("MM/DD/YYYY"),
-          })
-          item.data.isDataEmpty = false
+        if (
+          this.dataSearch.data
+          && this.dataSearch.data.results
+        ) {
+          for (const result of this.dataSearch.data.results) {
+            item.data.datas.push({
+              id: result.id.raw,
+              title: result.title.raw.length > 40 ? `${result.title.raw.substr(0, 40)}...` : result.title.raw,
+              country: result.country.raw,
+              cpvs: result.cpvs.raw.join().length > 20 ? `${result.cpvs.raw.join().substr(0, 20)}...` : result.cpvs.raw.join(),
+              description: result.description.raw,
+              bidDeadline: moment(result.bid_deadline_timestamp.raw).format('MM/DD/YYYY'),
+              publication: moment(result.publication_timestamp.raw).format('MM/DD/YYYY'),
+            })
+            item.data.isDataEmpty = false
+          }
         }
       } else if (item.subType === 'FACET') {
         item.data.isDataEmpty = true
         item.data.headers = [
           {
-            text: !item.showHeader ? this.$global.facetLabel(item.facet) : '',
+            text: !item.showHeader ? this.$global.facetLabel(item.data.source.main.facet) : '',
             align: 'start',
             sortable: false,
             value: 'label',
@@ -1790,8 +2422,8 @@ export default {
           item.data.itemsPerPage = -1
         }
         item.data.datas = []
-        if (item.facet) {
-          const facet = this.dataSearch.data.facets[item.facet]
+        if (item.data.source.main.facet) {
+          const facet = this.dataSearch.data.facets[item.data.source.main.facet]
           if (facet && facet.length && facet[0].data && facet[0].data.length) {
             for (const data of facet[0].data) {
               item.data.datas.push({
@@ -1808,8 +2440,8 @@ export default {
     setSearchDataData(item) {
       item.data.isDataEmpty = true
       item.data.value = ''
-      if (item.facet) {
-        const facet = this.dataSearch.data.facets[item.facet]
+      if (item.data.source.main.facet) {
+        const facet = this.dataSearch.data.facets[item.data.source.main.facet]
         if (facet && facet.length && facet[0].data && facet[0].data.length) {
           item.data.value = 0
           if (item.data.processType === 'COUNT') {
@@ -1886,12 +2518,12 @@ export default {
       if (!item.data.fields) {
         item.data.fields = []
       }
-      if (!item.data.fields.find(a => a.facet === facet)) {
+      if (!item.data.fields.find(a => a.data.source.main.facet === facet)) {
         item.data.fields.push({
           facet,
         })
       } else {
-        item.data.fields = item.data.fields.filter(a => a.facet !== facet)
+        item.data.fields = item.data.fields.filter(a => a.data.source.main.facet !== facet)
       }
     },
 

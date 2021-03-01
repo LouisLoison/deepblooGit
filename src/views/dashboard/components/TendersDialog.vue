@@ -109,13 +109,20 @@ export default {
     async search() {
       try {
         this.dataSearch.loading = 0
+        const facets = {}
+        for (const facet of this.facets) {
+          facets[facet.name] = {
+            type: 'value',
+            size: facet.size,
+          }
+        }
         const res = await this.$api.post('/Elasticsearch/search', {
           searchRequest: {
             searchInputValue: 'power',
             filter: {
               cpvs: ['Cable'],
             },
-            facets: this.facets,
+            facets,
           }
         })
         if (!res.success) {
