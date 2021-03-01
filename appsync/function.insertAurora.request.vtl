@@ -1,13 +1,13 @@
 #set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
-#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
+#set( $currentPipelineFunction = $context.stash.currentPipelineFunction )
 #set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
 #set( $nextPipelineFunction = $context.stash.pipelineFunctions[$nextPipelineFunctionIndex] )
 $util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
 $util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction)) 
 
-#set($data = $context.prev.result[$context.stash.currentPipelineFunction]) ## analyzedTender return from Elastic function.
+#set($data = $context.prev.result[$currentPipelineFunction]) ## analyzedTender return from Elastic function.
 #set( $list = [] )
-#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$context.stash.currentPipelineFunction]['table'] + " " )
+#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$currentPipelineFunction]['table'] + " " )
 
 ## put everything in list
 #if( !$util.isList($data))
@@ -28,7 +28,7 @@ $util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction))
 #foreach( $entry in $columnsObj.entrySet() )
   #if( $columnsObj[$entry.key])
         #set( $items = $items + $entry.key.toLowerCase())
-    #if( $foreach.hasNext )
+    #if( $foreach.hasNext ) 
         #set( $items = $items + ", ")
     #else
         #set( $items = $items + ") ")
@@ -45,7 +45,7 @@ $util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction))
             #if($util.isList($item[$entry.key]) )
                #set( $words = "" )
                #foreach( $word in $item[$entry.key] )
-                  #if($util.isString($word)
+                  #if($util.isString($word))
                     #set( $replacedWord = $word )
                     #set( $replacedWord = $replacedWord.replaceAll("'","''") )
                     #set( $words = $words + $replacedWord)

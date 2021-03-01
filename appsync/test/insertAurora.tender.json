@@ -30,6 +30,13 @@
                     "status": 1
                 }
             ],
+            "CreateAclAuroraFunction": {
+                "resourceId": "9d8ff241-3359-46dd-95f7-89978979a19b",
+                "granteeId": "15507717-7dc9-4a33-ba8b-4220868037b1",
+                "role": "ADMIN",
+                "creationDate": "2021-03-01T05:19:23.084Z",
+                "updateDate": "2021-03-01T05:19:25.342Z"
+            },
             "CreateTenderCriterionCpvsAuroraFunction": [
                 {
                     "documentId": 0,
@@ -90,17 +97,10 @@
                 "owner_id": "3fd2cab7-358c-404f-8dda-b5d491bb4f36",
                 "cpvsOrigine": "71356000,71630000,71356100,71620000,71323100,71356200,71356300,71314100",
                 "words": [
-                    "OVERHEAD LINES"
+                    "OVERHEA'D LINES"
                 ],
                 "status": 20,
                 "cpvDescriptions": "Electrical services,electricity power lines,overhead power lines"
-            },
-            "CreateAclAuroraFunction": {
-                "resourceId": "06fa942f-c17a-4fa5-91fd-b8c2ea867848",
-                "granteeId": "3fd2cab7-358c-404f-8dda-b5d491bb4f36",
-                "role": "1",
-                "creationDate": "2021-02-19T13:42:45.013Z",
-                "updateDate": "2021-02-19T13:42:45.455Z"
             }
         }
     },
@@ -114,7 +114,7 @@
             "CreateTenderCriterionsAuroraFunction",
             "CreateAclAuroraFunction"
         ],
-        "currentPipelineFunction": "CreateTenderAuroraFunction",
+        "currentPipelineFunction": "CreateAclAuroraFunction",
         "pipelineFunctionsInfo": {
             "TokenAuthorizerFunction": {
                 "type": "LAMBDA"

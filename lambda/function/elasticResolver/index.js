@@ -26,7 +26,7 @@ exports.handler = async function (event,) {
         delete appsearchDoc.tenderUuid
 
         await indexToElasticsearch([elasticDoc], 'tenders')
-        await indexObjectToAppsearch([appsearchDoc], 'deepbloo-dev')
+        await indexObjectToAppsearch([appsearchDoc], 'tenders-dev')
 
         let tenderAurora = { ...analyzedData }
         delete tenderAurora.tenderCriterionCpvs
