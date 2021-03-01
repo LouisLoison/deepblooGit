@@ -3,20 +3,13 @@ This module implements a class Quantity designed specifically
 for the needs of the project
 """
 
-import csv
+from exceptions import EntityException, UnitNotFoundException
 from pint import UnitRegistry
+from utilities import unit_references, unit_entity_compatibility
 
 # SETTING UP THE MODULE
-
-# unit_references = pd.read_csv("unit_references.csv")
-# csv_file = open('unit_references.csv')
-# unit_references = csv.DictReader(csv_file)
-unit_references_path = 'unit_references.csv'
 ureg = UnitRegistry()  # Pint library unit registry
 Q_ = ureg.Quantity  # Pint Quantity class
-
-# Add volt-ampere to unit registry
-ureg.define('volt-ampere=VA')
 
 
 class Metric:
@@ -66,12 +59,23 @@ class Metric:
         
     def __repr__(self):
         unit_string = "Metric({}, ({}))".format(self.value, self.unit)
-        #unit_string += "Surface: {}".format(self.surface)
         
         return unit_string
     
     def __str__(self):
         return "{:.2f} {}".format(self.value, self.unit.name)
+
+    def __copy__(self):
+        return
+
+    def __eq__(self, other):
+        if isinstance(other, Metric) and self.unit.entity == other.unit.entity:
+            metric_1_in_official = self.to_official().value
+            metric_2_in_official = other.to_official().value
+
+            return metric_1_in_official == metric_2_in_official
+
+        return NotImplemented
     
     def to(self, unit_name):
         """Converts a metric to another unit
@@ -99,7 +103,7 @@ class Metric:
             quantity.ito(unit_name)
             
             # Step 3: Change the value and the unit of the metric
-            metric_instance = Metric(self.value, self.unit, self.unit.entity, self.surface)
+            metric_instance = Metric(self.value, self.unit.name, self.unit.entity, self.surface)
             metric_instance.value = quantity.magnitude
             metric_instance.unit.name = unit_name
             
@@ -147,8 +151,6 @@ class Unit:
     ----------
     name: str
         unit name (eg. kilowatt, A...)
-    full_name: str
-        unit full name (eg. ampere)
     ref_unit: str
         reference unit full name (eg. watt for kilowatt)
     entity: str
@@ -166,26 +168,56 @@ class Unit:
         entity: str
             entity represented by the unit (eg. power, current)
         uri: str, optional
-            WikiPedia URI
+            WikiPedia URI. Defaults to "en.m.wikipedia.org/wiki/[name]"
         """
+        # GUARDIANS
+        # Guardian 1: All arguments must be of type str
+        type_condition = all([isinstance(name, str), isinstance(entity, str), isinstance(uri, str)])
+
+        if not type_condition:
+            # If the type of the arguments is wrong, then we cannot proceed
+            error_message = "All units must be of type str. " + "Received {}, {} and {} instead.".format(type(name),
+                                                                                                         type(entity),
+                                                                                                         type(uri))
+            raise TypeError(error_message)
+
+        # Guardian 2: Unit name must correspond to an existing unit
+        # We will spend time checking whether the unit is in the registry
+        # if the corresponding entity is not dimensionless
+        if entity != 'dimensionless' and entity in [unit_info['entity'] for unit_info in unit_references]:
+            unit_existence = name in ureg  # bool
+            if not unit_existence:
+                raise UnitNotFoundException(name)
+
+        # Guardian 3: Unit and entity must be compatible
+        entity_compatibility = unit_entity_compatibility(name, entity)
+        if not entity_compatibility and entity in [unit_info['entity'] for unit_info in unit_references]:
+            raise EntityException()
+
+        # Evaluate whether or not we can proceed with the unit instantiation
+        # unit_instantiation_ok = all([type_condition,
+        #                             unit_existence,
+        #                             (entity_compatibility
+        #                              or entity not in [unit_info['entity'] for unit_info in unit_references])]
+        #                             )
+        # if unit_instantiation_ok:
+        #     print("Guardians evaluation completed.")
+        print("Instantiating object Unit with name {} and entity {}".format(name, entity))
+
         self.name = name
-        # TODO: Fill full_name attribute
         self.entity = entity
         # Defaulting the reference unit to handle units that are not
-        # in the reference file 
+        # in the reference file
         self.ref_unit = ""
-        self.uri = uri
-        # TODO: continue to fill the unit reference file
-        # TODO: Take in account the fact that the input entity might be
-        # wrong
+        self.uri = "en.m.wikipedia.org/wiki/{}".format(name)
+        # TODO: continue to fill the unit reference dictionary
         
-        # If the entity is referenced in unit_references.csv, define
+        # If the entity is referenced in unit_references, define
         # the value of the reference unit using it
-        with open(unit_references_path) as csv_file:
-            unit_references = csv.DictReader(csv_file)
-            for unit_reference in unit_references:
-                if unit_reference['entity'] == entity:
-                    self.ref_unit = unit_reference['unit_full_name']
+        for unit_reference in unit_references:
+            if unit_reference['entity'] == entity:
+                self.ref_unit = unit_reference['unit_full_name']
+                break
 
     def __str__(self):
         unit_string = "Unit name: {}\n".format(self.name)

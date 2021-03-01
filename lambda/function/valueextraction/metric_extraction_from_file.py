@@ -5,6 +5,7 @@ and stores them in another
 """
 
 import data_preprocessing
+import filters
 import metric_extraction
 import pandas as pd
 
@@ -46,13 +47,6 @@ print("Completed!")
 # For the sake of seeing more clearly what is written within the titles
 # and descriptions, let's save them in files
 # TODO: handle different character sets
-# with open("tests/output_data/titles.txt", "w") as titles_out, open("tests/output_data/descriptions.txt", "w") as desc_out:
-#     for i in range(100):
-#         try:
-#             titles_out.write(tenders_data["title"][i] + ";\n")
-#             desc_out.write(tenders_data["description"][i] + ";\n\n")
-#         except UnicodeEncodeError:
-#             pass
 
 # Step 3: Apply the extraction function to the titles and descriptions
 print("Metrics extraction...")
@@ -63,6 +57,9 @@ for i in range(100):
         tenders_data["title"].iloc[i],
         return_noise=True
     )
+
+    # Filter metrics on their value
+    title_metrics = filters.entity_floor(title_metrics, entity="length", lower_bound=100)
 #     print(len(title_metrics))
 
     # Adding unimportant metrics to the list of metrics noise
@@ -86,40 +83,41 @@ for i in range(100):
     # (supposedly)
     if not title_metrics:
         tenders_without_metrics.append([
-            tenders_data["tenderuuid"].iloc[i], # uuid
-            tenders_data["title"].iloc[i],      # text
-            "",                                 # surface
-            "",                                 # value
-            "",                                 # unit
-            "",                                 # entity
-            "",                                 # to_official
-            1,                                  # is_title
-            0,                                  # is_desc
-            0,                                  # has_results
-            1                                   # is_noise
+            tenders_data["tenderuuid"].iloc[i],  # uuid
+            tenders_data["title"].iloc[i],       # text
+            "",                                  # surface
+            "",                                  # value
+            "",                                  # unit
+            "",                                  # entity
+            "",                                  # to_official
+            1,                                   # is_title
+            0,                                   # is_desc
+            0,                                   # has_results
+            1                                    # is_noise
         ])
     
     for title_metric in title_metrics:
-#         print(title_metric.unit.entity)
         metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
-                              tenders_data["title"].iloc[i], #text
+                              tenders_data["title"].iloc[i],  # text
                               title_metric.surface,
                               title_metric.value,
                               title_metric.unit.name,
                               title_metric.unit.entity,
                               str(title_metric.to_official()),
-                              1, # is_title
-                              0, # is_description
-                              1, # has_results
-                              0  # is_noise
+                              1,  # is_title
+                              0,  # is_description
+                              1,  # has_results
+                              0   # is_noise
                               ])
-    
-    
+
     print("Analyzing description {}".format(i))
     description_metrics, desc_noise = metric_extraction.extract_metrics(
         tenders_data["description"].iloc[i],
         return_noise=True
     )
+
+    # Filter description metrics on their value
+    description_metrics = filters.entity_floor(description_metrics, entity="length", lower_bound=100)
     
     print("Computing noise...")
     for metric in desc_noise:
@@ -142,32 +140,31 @@ for i in range(100):
     # (supposedly)
     if not description_metrics:
         tenders_without_metrics.append([
-            tenders_data["tenderuuid"].iloc[i], # uuid
-            tenders_data["description"].iloc[i],# text
-            "",                                 # surface
-            "",                                 # value
-            "",                                 # unit
-            "",                                 # entity
-            "",                                 # to_official
-            0,                                  # is_title
-            1,                                  # is_desc
-            0,                                  # has_results
-            1                                   # is_noise
+            tenders_data["tenderuuid"].iloc[i],   # uuid
+            tenders_data["description"].iloc[i],  # text
+            "",                                   # surface
+            "",                                   # value
+            "",                                   # unit
+            "",                                   # entity
+            "",                                   # to_official
+            0,                                    # is_title
+            1,                                    # is_desc
+            0,                                    # has_results
+            1                                     # is_noise
         ])
     
     for description_metric in description_metrics:
-#         print(description_metric.unit.entity)
         metrics_lines.append([tenders_data["tenderuuid"].iloc[i],
-                              tenders_data["description"].iloc[i], # text
+                              tenders_data["description"].iloc[i],  # text
                               description_metric.surface,
                               description_metric.value,
                               description_metric.unit.name,
                               description_metric.unit.entity,
                               str(description_metric.to_official()),
-                              0, # is_title
-                              1, # is_desc
-                              1, # has_results
-                              0, # is_noise
+                              0,  # is_title
+                              1,  # is_desc
+                              1,  # has_results
+                              0,  # is_noise
                               ])
     
 # print(metrics_lines)
