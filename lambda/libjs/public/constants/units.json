@@ -1,0 +1,24 @@
+{
+  "reference": {
+    "power": {
+      "unit": "W",
+      "name": "watt"
+    },
+    "electric potential": {
+      "unit": "V",
+      "name": "volt"
+    },
+    "current": {
+      "unit": "A",
+      "name": "ampere"
+    },
+    "length": {
+      "unit": "m",
+      "name": "meter"
+    },
+    "energy": {
+      "unit": "Wh",
+      "name": "watt-hour"
+    }
+  }
+}

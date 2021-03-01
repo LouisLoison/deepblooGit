@@ -1,7 +1,16 @@
+schema{
+  query: Query
+  mutation: Mutation
+}
+
 type Tender {
-    id: ID
+    id: Int
     datasourceId: ID
     procurementId: ID
+    tenderUuid: ID #tenderuuid in db
+    owner_id: ID #owner_id in db
+    algoliaId: ID
+    # userId: ID
     title: String
     description: String
     lang: String
@@ -28,8 +37,6 @@ type Tender {
     sourceUrl: String
     termDate: String
     fileSource: String
-    userId: ID,
-    algoliaId: ID
     contractType1: String
     brand: String
     status: Int
@@ -78,16 +85,57 @@ type User{
   notifContactByPhone: Int
   notifContactBySms: Int
   notifContactByPost: Int
-  connexionTender: AWSDateTime
-  connexionBusiness: AWSDateTime
+  connexionTender: String
+  connexionBusiness: String
   dashboardUrl: String
   businessPipeline: String
   status: Int
-  creationDate: AWSDateTime
-  updateDate: AWSDateTime
+  creationDate: String
+  updateDate: String
 }
 
 type Query {
   GetTender(userToken:String!, id: ID): Tender
   GetUser(userToken:String!): User
+}
+
+type Mutation {
+  CreateTender(input:CreateTenderInput!, userToken:String!): Tender
+}
+
+input CreateTenderInput{
+  # owner_id: ID! #owner_id in db
+  datasourceId: ID!
+  procurementId: ID!
+  algoliaId: ID!
+  # userId: ID!
+  title: String!
+  description: String!
+  lang: String
+  contactFirstName: String
+  contactLastName: String
+  contactAddress: String
+  contactCity: String
+  contactState: String
+  contactCountry: String
+  contactEmail: String
+  contactPhone: String
+  buyerName: String
+  buyerCountry: String
+  procurementMethod: String
+  noticeType: String
+  country: String
+  estimatedCost: String
+  currency: String
+  publicationDate: String
+  cpvs: String
+  cpvDescriptions: String
+  words: String
+  bidDeadlineDate: String
+  sourceUrl: String
+  termDate: String
+  fileSource: String
+  contractType1: String
+  brand: String
+  status: Int
 }

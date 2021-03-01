@@ -1,11 +1,5 @@
  #if( $context.result && $context.result.Error )
       $utils.error($context.result.Error)
  #else
-     ## STASH
-     $util.qr($context.stash.put("userType", $context.result.data.type)) 
-     $util.qr($context.stash.put("userId", $context.result.data)) 
-     ## ARGUMENTS
-     $util.qr($context.arguments.put("hivebriteId", $context.result.data.hivebriteId))
-     ## RESULT
      $utils.toJson($context.result.data)
-  #end
+ #end

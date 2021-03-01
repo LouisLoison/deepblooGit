@@ -1,5 +1,12 @@
 var Schema = {
   deepbloo: {
+    account: {
+      accountid: { type: "string", key: true },
+      organizationid: { type: "string"},
+      name: { type: "string"},
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" },
+    },
     annonce: {
       annonceId: { type: "Int", key: true },
       title: { type: "String" },
@@ -115,15 +122,17 @@ var Schema = {
       termDate: { type: "DateTime" },
       fileSource: { type: "String" },
       userId: { type: "Int" },
-      algoliaId: { type: "Int" },
+      // algoliaId: { type: "Int" },
       brand: { type: "String" },
+      financial: { type: "String" },
       contractType1: { type: "Int" },
       dataSource: { type: "String" },
       dataSourceId: { type: "String" },
       origine: { type: "String", description: 'Import source data : DgMarket, TenderInfo' },
       status: { type: "Int", description: '-2 = Archive | -1 = To delete in Algolia | 20 = tender OK' },
       creationDate: { type: "DateTime" },
-      updateDate: { type: "DateTime" }
+      updateDate: { type: "DateTime" },
+      owner_id: { type: "String"}
     },
     tenderimport: {
       tenderImportId: { type: "Int" },
@@ -178,6 +187,15 @@ var Schema = {
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
+    mappingFinancial: {
+      mappingFinancialId: { type: "Int", key: true },
+      name: { type: "String" },
+      code: { type: "String" },
+      userId: { type: "Int" },
+      organizationId: { type: "Int" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    },
     tenderCriterionCpv: {
       tenderUuid: { type: "String" },
       documentUuid: { type: "String" },
@@ -195,7 +213,9 @@ var Schema = {
       tenderUuid: { type: "String" },
       textParseId: { type: "Int" },
       value: { type: "String" },
+      numericValue: { type: "String" },
       word: { type: "String" },
+      entity: { type: "String" },
       findCount: { type: "Int" },
       scope: { type: "String", description: 'TITLE | DESCRIPTION | DOCUMENT' },
       status: { type: "Int", description: '-1 = Delete | -2 = Archive' },
@@ -243,6 +263,7 @@ var Schema = {
       color: { type: "String" },
       searchRequest: { type: "String" },
       synchroSalesforce: { type: "Int" },
+      notify: { type: "Int" },
       creationDate: { type: "DateTime" },
       updateDate: { type: "DateTime" }
     },
@@ -366,6 +387,13 @@ var Schema = {
       origineType: { type: "Int", description: '-1 = delete | 1 = Synchro | 2 = Manuel' },
       rating: { type: "Int" },
     },
+    resourceAccessList: {
+      resourceId: { type: "String" },
+      granteeId: { type: "String" },
+      role: { type: "String" },
+      creationDate: { type: "DateTime" },
+      updateDate: { type: "DateTime" }
+    }
   }
 }
 

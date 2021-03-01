@@ -24,8 +24,8 @@ const getSecret = async (SecretId) => {
   // console.log(data)
   const params = JSON.parse(data.SecretString)
   if (process.env.NODE_ENV === 'local') {
-    params.host = 'localhost'
-    params.port = 5434
+    params.host = 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com'
+    params.port = 5432
   }
   return params
 }
@@ -43,7 +43,6 @@ exports.getAppsearchSecret = async () => {
 
 exports.getElasticSecret = async () => {
   elasticSecret = elasticSecret || await getSecret(process.env.ELASTIC_SECRET)
-  const appsearchEndpoint = process.env.APPSEARCH_ENDPOINT
   return { ...elasticSecret }
 }
 

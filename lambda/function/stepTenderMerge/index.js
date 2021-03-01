@@ -82,7 +82,7 @@ exports.handler =  async function(event, ) {
     for (const tenderCriterion of tenderCriterions) {
       tenderCriterion.tenderUuid = tender.tenderuuid
       tenderCriterion.creationDate = new Date()
-      tenderCriterion.updateDate = new Date()
+      tenderCriterion.updateDate = tenderCriterion.creationDate
       await BddTool.RecordAddUpdate (
         'tenderCriterion',
         tenderCriterion,

@@ -9,9 +9,9 @@ alter table dgmarket rename to tenders;
 --create table tenders as select * from dgmarket limit 1000;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-create sequence tenders_id_seq;
-alter table tenders alter column id set default nextval('tenders_id_seq');
-select setval('tenders_id_seq',  (SELECT MAX(id) FROM tenders));
+--create sequence tenders_id_seq;
+--alter table tenders alter column id set default nextval('tenders_id_seq');
+--select setval('tenders_id_seq',  (SELECT MAX(id) FROM tenders));
 
 -- alter table tenders rename id to old_id;
 --alter table tenders add column if not exists uuid UUID NOT NULL  DEFAULT uuid_generate_v4();
@@ -40,9 +40,9 @@ alter table importdgmarket rename to tenderimport;
 -- create table tenderimport as select * from importdgmarket limit 0;
 
 alter table tenderimport rename importdgmarketid to tenderimportid;
-create sequence tenderimport_id_seq;
-alter table tenderimport alter column tenderimportid set default nextval('tenderimport_id_seq');
-select setval('tenderimport_id_seq',  (SELECT MAX(tenderimportid) FROM tenderimport));
+--create sequence tenderimport_id_seq;
+--alter table tenderimport alter column tenderimportid set default nextval('tenderimport_id_seq');
+--select setval('tenderimport_id_seq',  (SELECT MAX(tenderimportid) FROM tenderimport));
 
 alter table tenderimport rename dgmarketId to datasourceid;
 
@@ -68,9 +68,9 @@ alter table tenderCriterion add column if not exists tenderuuid UUID;
 update tenderCriterion set tenderuuid=tenders.tenderuuid from tenders where tenderCriterion.tenderid=tenders.id;
 -- alter table tenderCriterion  drop column tenderid;
 
-create sequence tendercriterion_id_seq;
-alter table tendercriterion alter column tendercriterionid set default nextval('tendercriterion_id_seq');
-select setval('tendercriterion_id_seq',  (SELECT MAX(tendercriterionid) FROM tendercriterion));
+--create sequence tendercriterion_id_seq;
+--alter table tendercriterion alter column tendercriterionid set default nextval('tendercriterion_id_seq');
+--select setval('tendercriterion_id_seq',  (SELECT MAX(tendercriterionid) FROM tendercriterion));
 
 
 alter table tenderCriterionCpv add column if not exists tenderuuid UUID;
@@ -97,6 +97,9 @@ alter table tenderCriterionCpv add column if not exists  documentuuid UUID;
 update tenderCriterionCpv  set documentuuid=document.documentuuid from document where tenderCriterionCpv.documentid = document.documentid;
 alter table tenderCriterionCpv  drop column documentid;
 
+alter table tendercriterion add column entity varchar;
+alter table tendercriterion add column numericvalue numeric;
+
 create table tendercriteriondocument as select * from tendercriterion where documentuuid is not null;
 delete from tendercriterion where documentuuid is not null;
 alter table tendercriterion drop column documentuuid;
@@ -104,11 +107,6 @@ create unique index tendercriterion_textparseid_scope_tenderuuid_unique on tende
 -- create unique index tendercriterion_textparseid_scope_tenderuuid_documentuuid_val on tendercriterion(textparseid, scope, tenderuuid, documentuuid, value, word);
 
 create unique index document_tenderuuid_sourceurl_unique on document(tenderuuid, sourceurl);
-
-alter table documentmessage add column documentuuid uuid;
-update documentmessage set documentuuid=document.documentuuid from document where documentmessage.documentid = document.documentid;
-
-alter table documentmessage drop column documentuuid;
 
 alter table document drop column documentid;
 alter table document add column contenttype varchar;
@@ -123,3 +121,42 @@ update tenders set datasource='dgmarket' where origine='DgMarket';
 update tenders set datasource='tenderinfo' where origine='TenderInfo';
 
 update tenders set creationdate = publicationdate where creationdate is null;
+
+alter table tenders add column owner_id uuid default null;
+
+alter table document drop constraint document_contenthash_key;
+/*
+create table referenceunit (
+	entity varchar unique not null,
+        unit varchar,
+	name varchar
+);
+
+insert into referenceunit values
+	('power','W','watt'),
+	('electric potential','V','volt'),
+	('current','A','ampere'),
+	('length','m','meter')
+	;
+*/
+
+create table resourceaccesslist (
+	resourceid uuid,
+	granteeid uuid,
+	role varchar,
+	creationdate timestamptz,
+	updatedate timestamptz
+);
+
+create table account (
+	accountid uuid default uuid_generate_v4(),
+	organizationid uuid,
+	name varchar,
+	creationdate timestamptz,
+	updatedate timestamptz
+);
+
+delete from tendergrouplink tl using tendergroup where tl.tendergroupid=tendergroup.tendergroupid and searchrequest is not null;
+
+delete from tendergroup where searchrequest is not null;
+

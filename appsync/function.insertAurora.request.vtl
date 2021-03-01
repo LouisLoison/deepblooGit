@@ -1,0 +1,72 @@
+#set($data = $context.prev.result[$context.stash.currentPipelineFunction]) ## analyzedTender return from Elastic function.
+#set( $list = [] )
+#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$context.stash.currentPipelineFunction]['table'] + " " )
+
+## put everything in list
+#if( !$util.isList($data))
+	$util.qr($list.add($data))
+#else
+	#set( $list = $data )
+#end
+
+## check if list is empty
+#if( $list.isEmpty() )
+	#return($context.prev.result )
+#end
+
+#set( $columnsObj = $list[0] )
+#set( $items = "(" )
+
+## CREATE COLUMNS
+#foreach( $entry in $columnsObj.entrySet() )
+  #if( $columnsObj[$entry.key])
+        #set( $items = $items + $entry.key.toLowerCase())
+    #if( $foreach.hasNext )
+        #set( $items = $items + ", ")
+    #else
+        #set( $items = $items + ") ")
+    #end
+  #end
+#end
+
+## CREATE VALUES
+#set( $values = "VALUES" )
+#foreach( $item in $list )
+  #set( $values = $values + " (" )
+  #foreach( $entry in $item.entrySet() )
+      #if( $item[$entry.key])
+            #if($util.isList($item[$entry.key]) )
+               #set( $words = "" )
+               #foreach( $word in $item[$entry.key] )
+                  #if( $foreach.hasNext )
+                      #set( $words = $words + $word + ",")
+                  #else
+                      #set( $words = $words + $word)
+                  #end
+               #end
+               #set( $values = $values + "'$words'")
+            #elseif($util.isString($item[$entry.key]))
+              #set( $values = $values + "'$item[$entry.key]'")
+            #else
+              #set( $values = $values + $item[$entry.key])
+            #end
+        #if( $foreach.hasNext )
+            #set( $values = $values + ", ")
+        #else
+            #set( $values = $values + ")")
+        #end
+      #end
+  #end
+  #if( $foreach.hasNext )
+      #set( $values = $values + ",")
+  #end
+#end
+
+#set( $sql = $sql + $items + $values )
+
+{
+    "version": "2018-05-29",
+    "statements": [
+        $util.toJson($sql)
+    ]
+}

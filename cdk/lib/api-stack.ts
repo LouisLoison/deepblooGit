@@ -9,6 +9,7 @@ import {
   CfnDataSource,
   Schema,
   CfnFunctionConfiguration,
+  NoneDataSource,
 } from '@aws-cdk/aws-appsync';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
@@ -27,10 +28,19 @@ export class ApiStack extends cdk.Stack {
       NODE_ENV: "dev",
     }
     const dbSecretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
       DB_SECRET: dbSecretArn,
     }
+
+    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
+    const appsearchEnv = {
+      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
+      APPSEARCH_SECRET: appsearchSecretArn,
+    }
+
+    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
 
     const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
@@ -45,6 +55,14 @@ export class ApiStack extends cdk.Stack {
       exportName: 'db-arn',
       value: dbArn
     })
+
+    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
+      secretArn: appsearchSecretArn,
+    });
+
+    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
+      secretArn: elasticSecretArn,
+    });
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -112,6 +130,16 @@ export class ApiStack extends cdk.Stack {
             actions: ['secretsmanager:*'],
             resources: [hivebriteSecretArn]
           }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [appsearchSecretArn]
+          }),
+          new iam.PolicyStatement({
+            effect: iam.Effect.ALLOW,
+            actions: ['secretsmanager:*'],
+            resources: [elasticSecretArn]
+          })
           ]
         }),
 
@@ -148,16 +176,32 @@ export class ApiStack extends cdk.Stack {
       code: new AssetCode('../lambda/function/userResolver'),
       handler: 'index.handler',
       memorySize: 500,
-      timeout: Duration.seconds(11),
+      timeout: Duration.seconds(10),
+      environment: {
+        ...environment,
+        ...hivebriteEnv
+      },
+    });
+    userResolver.addLayers(nodeLayer, deepblooLayer)
+    hivebriteSecret.grantRead(userResolver)
+
+    const elasticResolver = new Function(this, 'elasticResolver', {
+      functionName: `elasticResolver-${environment.NODE_ENV}`,
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/elasticResolver'),
+      handler: 'index.handler',
+      memorySize: 500,
+      timeout: Duration.seconds(15),
       vpc,
       environment: {
         ...environment,
+        ...appsearchEnv,
         ...dbEnv,
-        ...hivebriteEnv
+        ELASTIC_SECRET: elasticSecretArn,
       },
       role: lambdaBasicDbSecretVpcExecutionRole
     });
-    userResolver.addLayers(nodeLayer, deepblooLayer)
+    elasticResolver.addLayers(nodeLayer, deepblooLayer)
 
     // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
@@ -226,6 +270,15 @@ export class ApiStack extends cdk.Stack {
       userResolver
     )
 
+    const elasticDataSource = api.addLambdaDataSource( //TODO CHANGE IT TO CfnDataSource class
+      'elasticDataSource',
+      elasticResolver
+    )
+
+    const noneDataSource = api.addNoneDataSource( //TODO CHANGE IT TO CfnDataSource class
+      'noneDataSource',
+    )
+
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
 
     /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
@@ -267,6 +320,23 @@ export class ApiStack extends cdk.Stack {
          `,
        ),
      })
+
+        const CreateTenderCriterionCpvs = new CfnResolver(this, `CreateTenderCriterionCpvs`, {
+      apiId: api.apiId,
+      typeName: "Query",
+      fieldName: "CreateTenderCriterionCpvs",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    CreateTenderCriterionCpvs.addDependsOn(auroraDataSource);
+
      */
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
@@ -318,6 +388,103 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const CreateTenderAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateTenderAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const CreateTenderElasticFunction = new CfnFunctionConfiguration(this, `CreateTenderElasticFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: elasticDataSource.name,
+      name: "CreateTenderElasticFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderElasticFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTenderElasticFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const CreateTenderCriterionCpvsAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderCriterionCpvsAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateTenderCriterionCpvsAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const CreateTenderCriterionsAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderCriterionsAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateTenderCriterionsAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const GetUserAuroraFunction = new CfnFunctionConfiguration(this, `GetUserAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: auroraDataSource.name,
+      name: "GetUserAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetUserAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetUserAuroraFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: noneDataSource.name,
+      name: "localFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/localresolver.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/localresolver.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -333,10 +500,9 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId]
       },
     })
-
 
     const GetTenderPipeline = new CfnResolver(this, `GetTenderPipeline`, {
       apiId: api.apiId,
@@ -352,7 +518,34 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+      },
+    })
+
+    const CreateTenderPipeline = new CfnResolver(this, `CreateTender`, {
+      apiId: api.apiId,
+      kind: 'PIPELINE',
+      typeName: "Mutation",
+      fieldName: "CreateTender",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTender.before.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CreateTender.after.vtl`,
+        { encoding: "utf8" }
+      ),
+      pipelineConfig: {
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          CreateTenderElasticFunction.attrFunctionId,
+          CreateTenderAuroraFunction.attrFunctionId,
+          localFunction.attrFunctionId,
+          CreateTenderCriterionCpvsAuroraFunction.attrFunctionId,
+          localFunction.attrFunctionId,
+          CreateTenderCriterionsAuroraFunction.attrFunctionId
+        ],
       },
     })
   }

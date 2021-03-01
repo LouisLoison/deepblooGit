@@ -1,42 +1,33 @@
-import { Chain, Choice, Condition, Fail, StateMachine, LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, Fail, StateMachine, IStateMachine,  LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
-import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
+import { Construct, Stack, StackProps, Duration, CfnOutput } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
 // import iam = require('@aws-cdk/aws-iam');
 import logs = require('@aws-cdk/aws-logs');
 
-/*
-interface ImportsStepsStackProps extends StackProps {
-  nodeLayerArn: ILayerVersion;
-}
- */
 
-export class ImportsStepsStack extends Stack {
+export class DocumentStack extends Stack {
+  public documentMachine: IStateMachine
+
   constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
+    super(scope, id, props)
 
     const environment = {
       NODE_ENV: "dev",
     }
 
     const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
-
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
       DB_SECRET: secretArn,
     }
 
-    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
-    const appsearchEnv = {
-      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
-      APPSEARCH_SECRET: appsearchSecretArn,
-    }
-
-    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
+    const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
+    const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
 
     const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
       secretArn,
@@ -44,21 +35,6 @@ export class ImportsStepsStack extends Stack {
       // If the secret is encrypted using a KMS-hosted CMK, either import or reference that key:
       // encryptionKey,
     });
-    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
-      secretArn: appsearchSecretArn,
-    });
-
-    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
-      secretArn: elasticSecretArn,
-    });
-
-    const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
-    const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
-
-    const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
-
-    // const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
-    //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
 
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId: 'vpc-f7456f91',
@@ -113,80 +89,12 @@ export class ImportsStepsStack extends Stack {
       description: 'Deepbloo lib layer.',
     });
 
-    const stepTenderConvert = new Function(this, 'convertTender', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/stepTenderConvert'),
-      handler: 'index.handler',
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
-      environment: {
-        ...environment,
-      }
-    });
-
-    const stepTenderAnalyze = new Function(this, 'analyzeTender', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/stepTenderAnalyze'),
-      handler: 'index.handler',
-      vpc,
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(60),
-      environment: {
-        ...environment,
-        ...dbEnv,
-      }
-    });
-
-    const stepTenderStore = new Function(this, 'storeTender', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/stepTenderStore'),
-      handler: 'index.handler',
-      vpc,
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
-      environment: {
-        ...environment,
-        ...dbEnv,
-      }
-    });
-
-    const stepTenderMerge = new Function(this, 'mergeTender', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/stepTenderMerge'),
-      handler: 'index.handler',
-      vpc,
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(60),
-      environment: {
-        ...environment,
-        ...dbEnv,
-      }
-    });
-
-    const stepTenderIndex = new Function(this, 'stepTenderIndex', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/stepTenderIndex'),
-      handler: 'index.handler',
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(60),
-      environment: {
-        ...environment,
-        ...appsearchEnv,
-        ELASTIC_SECRET: elasticSecretArn,
-      }
-    });
-
     const stepDocumentDownload = new Function(this, 'downloadDocument', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/stepDocumentDownload'),
       handler: 'index.handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 30,
       timeout: Duration.seconds(60),
       vpc,
       environment: {
@@ -196,12 +104,27 @@ export class ImportsStepsStack extends Stack {
       }
     });
 
+    const stepDocumentStore = new Function(this, 'storeDocument', {
+      runtime: Runtime.NODEJS_12_X,
+      code: new AssetCode('../lambda/function/stepDocumentStore'),
+      handler: 'index.handler',
+      memorySize: 500,
+      reservedConcurrentExecutions: 30,
+      timeout: Duration.seconds(60),
+      vpc,
+      environment: {
+        ...environment,
+        ...dbEnv,
+      }
+    });
+
+
     const stepPdfToImg = new Function(this, 'PdfToImg', {
       runtime: Runtime.NODEJS_12_X,
       code: new AssetCode('../lambda/function/pdftoimg'),
       handler: 'index.handler',
       memorySize: 1500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -213,7 +136,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/pdftobboxtext'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -229,7 +152,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -241,7 +164,7 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/zipExtraction'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
@@ -253,43 +176,21 @@ export class ImportsStepsStack extends Stack {
       code: new AssetCode('../lambda/function/textToSentences'),
       handler: 'lambda_function.lambda_handler',
       memorySize: 500,
-      reservedConcurrentExecutions: 40,
+      reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
       }
     })
 
-    const stepValueExtraction = new Function(this, 'ValueExtraction', {
-      runtime: Runtime.PYTHON_3_8,
-      code: new AssetCode('../lambda/function/valueextraction'),
-      handler: 'lambda_function.lambda_handler',
-      memorySize: 500,
-      reservedConcurrentExecutions: 40,
-      timeout: Duration.seconds(60),
-      environment: {
-      }
-    })
-
-    stepTenderConvert.addLayers(nodeLayer, deepblooLayer)
-    stepTenderAnalyze.addLayers(nodeLayer, deepblooLayer)
-    stepTenderStore.addLayers(nodeLayer, deepblooLayer)
-    stepTenderMerge.addLayers(nodeLayer, deepblooLayer)
-    stepTenderIndex.addLayers(nodeLayer, deepblooLayer)
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
-    stepValueExtraction.addLayers(pythonModulesLayer)
 
-    dbSecret.grantRead(stepTenderAnalyze)
-    dbSecret.grantRead(stepTenderStore)
-    dbSecret.grantRead(stepTenderMerge)
     dbSecret.grantRead(stepDocumentDownload)
-    appsearchSecret.grantRead(stepTenderIndex)
-    elasticSecret.grantRead(stepTenderIndex)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
@@ -297,76 +198,12 @@ export class ImportsStepsStack extends Stack {
     documentsBucket.grantReadWrite(stepZipExtraction)
     documentsBucket.grantReadWrite(stepTextToSentences)
 
-    const convertTenderTask = new LambdaInvoke(this, 'Tender Conversion Task', {
-      lambdaFunction: stepTenderConvert,
-      inputPath: '$.tenderData',
-      resultPath: '$.convertedData',
-      // outputPath: '$.Payload',
-      payloadResponseOnly: true,
-    }).addRetry({
-      backoffRate: 3,
-      interval: Duration.seconds(3),
-      maxAttempts: 4
-    })
-
-    const analyzeTenderTask = new LambdaInvoke(this, 'Tender Analyze Task', {
-      lambdaFunction: stepTenderAnalyze,
-      // inputPath: '$.convertedData',
-      // resultPath: '$.analyzedData',
-      payloadResponseOnly: true,
-    }).addRetry({
-      backoffRate: 3,
-      interval: Duration.seconds(4),
-      maxAttempts: 4
-    })
-
-
-    const storeTenderTask = new LambdaInvoke(this, 'Tender Store Task', {
-      lambdaFunction: stepTenderStore,
-      resultPath: '$.storedData',
-      payloadResponseOnly: true,
-    }).addRetry({
-      backoffRate: 3,
-      interval: Duration.seconds(5),
-      maxAttempts: 4
-    });
-
-
-
-    const mergeTenderTask = new LambdaInvoke(this, 'Tender Merge Task', {
-      lambdaFunction: stepTenderMerge,
-      // inputPath: '$.storedData',
-      resultPath: '$.mergedData',
-      payloadResponseOnly: true,
-    }).addRetry({
-      backoffRate: 4,
-      interval: Duration.seconds(3),
-      maxAttempts: 4
-    });
-
-
-
-    const stepTenderIndexTask = new LambdaInvoke(this, 'Appsearch Index Task', {
-      lambdaFunction: stepTenderIndex,
-      resultPath: '$.appsearchResult',
-      payloadResponseOnly: true,
-    }).addRetry({
-      backoffRate: 5,
-      interval: Duration.seconds(3),
-      maxAttempts: 4
-    });
-
-    const downloadFail = new Fail(this, 'documentFail', {
-      error: 'WorkflowFailure',
-      cause: "Download task failed"
-    });
-
     const downloadTask = new LambdaInvoke(this, 'Download Task', {
       lambdaFunction: stepDocumentDownload,
       // inputPath: '$.convertedData',
       resultPath: '$.document',
       payloadResponseOnly: true,
-    }).addCatch(downloadFail);
+    })
 
 
     const pdfToImgTask = new LambdaInvoke(this, 'Pdf to Image', {
@@ -404,13 +241,6 @@ export class ImportsStepsStack extends Stack {
       payloadResponseOnly: true,
     })
 
-    const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
-      lambdaFunction: stepValueExtraction,
-      inputPath: '$.formatedData',
-      resultPath: '$.metrics',
-      payloadResponseOnly: true,
-    }).addCatch(storeTenderTask)
-
     const processDoc = new Pass(this, 'Doc/docx process')
 
     const processDocx = new Pass(this, 'Docx process')
@@ -445,6 +275,8 @@ export class ImportsStepsStack extends Stack {
         .afterwards()
       )
 
+    const logGroup = new logs.LogGroup(this, 'DocumentLogGroup');
+
     const documentMap = new Map(this, 'Document Map', {
       inputPath: '$.mergedData',
       itemsPath: '$.newSourceUrls',
@@ -452,36 +284,25 @@ export class ImportsStepsStack extends Stack {
       maxConcurrency: 2,
     }).iterator(documentIterator);
 
-    const noInterest = new Succeed(this, 'No interest', { comment: "e.g. tender has no CPV match" })
-    const fullSucceed = new Succeed(this, 'Completed', { comment: "Tender fully available" })
+    // this.chain = Chain.start(downloadTask)
+    //   .next(new Choice(this, 'Document type ?')
+    //     .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
+    //     .when(Condition.or(
+    //       Condition.stringEquals('$.document.contentType', 'image/png'),
+    //       Condition.stringEquals('$.document.contentType', 'image/jpeg'),
+    //     ), processImg)
+    //     .when(Condition.stringEquals('$.document.contentType', 'application/pdf'), processPdf)
+    //     .when(Condition.stringEquals('$.document.contentType', 'application/msword'), processDoc)
+    //     .when(Condition.stringEquals('$.document.contentType',
+    //       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), processDocx)
+    //     .when(Condition.stringEquals('$.document.contentType', 'application/zip'), processZip)
+    //     .otherwise(new Pass(this, 'Document type unknown'))
+    //     .afterwards()
+    //   )
+    // const logGroup = new logs.LogGroup(this, 'DocumentProcessLogGroup');
 
-    const initialWait = new Wait(this, 'Waiting for our turn', {
-      time: WaitTime.secondsPath('$.startDelay')
-    })
-
-    const chain = Chain.start(initialWait)
-      .next(convertTenderTask)
-      .next(analyzeTenderTask)
-      .next(new Choice(this, 'Has interest ?')
-        .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
-        .otherwise(valueExtractionTask
-          .next(storeTenderTask)
-          .next(mergeTenderTask)
-          .next(stepTenderIndexTask)
-          .next(new Choice(this, 'Has documents ?')
-            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
-              .next(fullSucceed)
-            ).otherwise(fullSucceed)
-          )
-        )
-      )
-
-
-
-    const logGroup = new logs.LogGroup(this, 'MyLogGroup');
-
-    const stateMachine = new StateMachine(this, 'StateMachine', {
-      definition: chain,
+    this.documentMachine = new StateMachine(this, 'DocumentProcess', {
+      definition: documentMap,
       logs: {
         destination: logGroup,
         level: LogLevel.ERROR,
@@ -489,28 +310,18 @@ export class ImportsStepsStack extends Stack {
       tracingEnabled: true,
     });
 
-    const xmlImport = new Function(this, 'XmlImport', {
-      runtime: Runtime.NODEJS_12_X,
-      code: new AssetCode('../lambda/function/xmlimport'),
-      handler: 'index.handler',
-      memorySize: 1500,
-      reservedConcurrentExecutions: 2,
-      timeout: Duration.seconds(900),
-      environment: {
-        ...environment,
-        TENDER_STATE_MACHINE_ARN: stateMachine.stateMachineArn,
-      }
+    // pass the arn of this stack
+    /*
+     this.cfnArn = new CfnOutput(this, "DocumentProcessArn", {
+      value: stateMachine.stateMachineArn,
+      exportName: "ExportedDocumentProcessArn"
     });
 
-    xmlImport.addLayers(nodeLayer, deepblooLayer)
-    //Trigger
-    xmlImport.addEventSource(new S3EventSource(sftpBucket, {
-      events: [s3.EventType.OBJECT_CREATED],
-      filters: [{ prefix: 'incoming/', suffix: '.xml' }]
-    }))
-    sftpBucket.grantReadWrite(xmlImport)
-    stateMachine.grantStartExecution(xmlImport)
-    // stateMachine.grantRead(xmlImport)
-    // stateMachine.grantTaskResponse(xmlImport)
+     // pass the name of this stack
+     this.cfnName = new CfnOutput(this, "DocumentProcessId", {
+      value: id,
+      exportName: "ExportedDocumentProcessName",
+    });
+     */
   }
 }

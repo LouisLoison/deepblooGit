@@ -5,6 +5,7 @@ import os
 import csv
 import io
 from boto3.dynamodb.conditions import Key
+import shutil
 
 class DynamoDBHelper:
 
@@ -74,6 +75,11 @@ class AwsHelper:
         else:
             return boto3.resource(name, config=config)
 
+    @staticmethod
+    def refreshTmpFolder(folder_name):
+        shutil.rmtree(folder_name)
+
+
 class S3Helper:
     @staticmethod
     def getS3BucketRegion(bucketName):
@@ -129,13 +135,19 @@ class S3Helper:
     def readBytesFromS3(bucketName, s3FileName, awsRegion=None):
         s3 = AwsHelper().getResource('s3', awsRegion)
         obj = s3.Object(bucketName, s3FileName)
-        return obj.get()['Body'].read()
+        try:
+            content = obj.get()['Body'].read()
+            return content
+        except ClientError as e:
+            print("[ReadBytesFromS3 Error]: {}".format(e))
+            return None
 
     @staticmethod
     def readFromS3(bucketName, s3FileName, awsRegion=None):
-        s3 = AwsHelper().getResource('s3', awsRegion)
-        obj = s3.Object(bucketName, s3FileName)
-        return obj.get()['Body'].read().decode('utf-8')
+        content = S3Helper.readBytesFromS3(bucketName, s3FileName, awsRegion)
+        if content is None:
+            return None
+        return content.decode('utf-8')
 
     @staticmethod
     def writeCSV(fieldNames, csvData, bucketName, s3FileName, awsRegion=None):

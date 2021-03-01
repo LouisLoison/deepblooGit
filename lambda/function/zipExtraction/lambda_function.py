@@ -58,7 +58,7 @@ def get_tmp_name(tmp_folder: str, prefix: str="tmp") -> (str, str):
 def copy_zip_to_tmp(tmp_folder, aws_env: dict) -> str:
     zip_content = read_bytes_from_s3(aws_env['bucketName'],
                                      aws_env['objectName'],
-                                     aws_env['aws_region'])
+                                     aws_env['awsRegion'])
     zip_path, zip_tmp = get_tmp_name(tmp_folder)
     print("[DEBUG]: Copying {0} to {1}".format(aws_env["objectName"], zip_tmp))
     try:
@@ -81,7 +81,7 @@ def prepare_output_zip(tmp_output: str) -> None:
 def write_extracted_zip(aws_env: dict, zip_tmp: str):
     output_bucket = aws_env['bucketName']
     output_folder = aws_env['outputName']
-    aws_region = aws_env['aws_region']
+    aws_region = aws_env['awsRegion']
 
     print("Writing s3://{0}/{1} in {2}".format(output_bucket, output_folder,
                                                aws_region))
@@ -120,14 +120,14 @@ def lambda_handler(event, context):
         **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
-        "aws_region": "eu-west-1",
+        "awsRegion": "eu-west-1",
         "outputName": get_zip_output(event['objectName'])
     }
     print("=> AWS env: {0}".format(json.dumps(aws_env)))
-    tmp_folder = "/tmp"
+    tmp_folder = "/tmp/zip_extraction"
+    if os.path.isdir(tmp_folder) is True:
+        AwsHelper.refreshTmpFolder(tmp_folder)
     extraction_output = os.path.join(tmp_folder, "extractions")
-    if os.path.isdir(extraction_output) is True:
-        shutil.rmtree(extraction_output)
     prepare_output_zip(extraction_output)
     zip_tmp = copy_zip_to_tmp(tmp_folder, aws_env)
     print("[DEBUG]: Extracting {0} into tmp file: {1}".format(zip_tmp,
@@ -136,4 +136,5 @@ def lambda_handler(event, context):
     write_extracted_zip(aws_env, extraction_output)
     aws_env["status"] = 0
     aws_env["errorMessage"] = None
+    AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

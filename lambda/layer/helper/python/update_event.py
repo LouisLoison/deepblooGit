@@ -1,4 +1,5 @@
 import os
+from helper import S3Helper
 
 
 def update_event(source: dict, dest: dict) -> dict:

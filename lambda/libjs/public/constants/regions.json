@@ -3,10 +3,11 @@
     "label": "Africa",
     "regions": [
       {
-        "label": "Eastern",
+        "label": "East Africa",
         "countrys": [
           "Burundi",
           "Comoros",
+          "Comores",
           "Djibouti",
           "Eritrea",
           "Ethiopia",
@@ -20,28 +21,28 @@
           "Rwanda",
           "Seychelles",
           "Somalia",
+          "South Sudan",
+          "Sudan",
           "Tanzania",
           "Uganda"
         ]
       },
       {
-        "label": "Northern",
+        "label": "North Africa",
         "countrys": [
           "Algeria",
           "Egypt",
           "Libya",
           "Morocco",
-          "South Sudan",
-          "Sudan",
-          "Tunisia"
+          "Tunisia",
+          "Western Sahara"
         ]
       },
       {
-        "label": "Southern",
+        "label": "Southern Africa",
         "countrys": [
           "South Africa",
           "Botswana",
-          "Comores",
           "Eswatini",
           "Lesotho",
           "Malawi",
@@ -52,7 +53,7 @@
         ]
       },
       {
-        "label": "Western",
+        "label": "West Africa",
         "countrys": [
           "Benin",
           "Burkina Faso",
@@ -78,7 +79,7 @@
         ]
       },
       {
-        "label": "Central",
+        "label": "Central Africa",
         "countrys": [
           "Angola",
           "Cameroon",
@@ -89,20 +90,17 @@
           "Congo, the Democratic Republic of the",
           "Democratic Republic of the Congo",
           "Equatorial Guinea",
-          "Gabon"
+          "Gabon",
+          "Sao Tome and Principe"
         ]
       }
-    ],
-    "continents": [{
-      "code": "AF",
-      "label": "Africa"
-    }]
+    ]
   },
   {
     "label": "America",
     "regions": [
       {
-        "label": "Central",
+        "label": "Central America",
         "countrys": [
           "Anguilla",
           "Antigua and Barbuda",
@@ -137,27 +135,20 @@
           "Saint Vincent and the Grenadines",
           "Trinidad and Tobago",
           "Turks and Caicos Islands",
+          "Virgin Islands, British",
           "Virgin Islands, U.S."
-        ],
-        "continents": [{
-          "code": "AF",
-          "label": "North America"
-        }]
+        ]
       },
       {
-        "label": "North/Canada",
+        "label": "North America",
         "countrys": [
           "Canada",
           "Greenland",
           "United States"
-        ],
-        "continents": [{
-          "code": "NA",
-          "label": "North America"
-        }]
+        ]
       },
       {
-        "label": "South",
+        "label": "South America",
         "countrys": [
           "Argentina",
           "Bolivia",
@@ -174,11 +165,7 @@
           "Suriname",
           "Uruguay",
           "Venezuela"
-        ],
-        "continents": [{
-          "code": "SA",
-          "label": "South America"
-        }]
+        ]
       }
     ]
   },
@@ -186,7 +173,7 @@
     "label": "Asia",
     "regions": [
       {
-        "label": "Central",
+        "label": "Central Asia",
         "countrys": [
           "Kazakhstan",
           "Kyrgyzstan",
@@ -196,8 +183,10 @@
         ]
       },
       {
-        "label": "Eastern",
+        "label": "East Asia",
         "countrys": [
+          "China",
+          "People's Republic of China",
           "Democratic People's Republic of Korea",
           "Hong Kong",
           "Japan",
@@ -210,45 +199,46 @@
         ]
       },
       {
-        "label": "Southern",
+        "label": "South Asia",
         "countrys": [
           "Afghanistan",
           "Bangladesh",
           "Bhutan",
+          "Brunei Darussalam",
+          "India",
           "Maldives",
           "Nepal",
           "Sri Lanka",
-          "Brunei Darussalam",
           "Cambodia",
           "Indonesia",
           "Lao People's Democratic Republic",
           "Malaysia",
           "Myanmar",
+          "Pakistan",
           "Philippines",
           "Singapore",
+          "Sri Lanka",
           "Thailand",
           "Timor-Leste",
           "Viet Nam"
         ]
       }
-    ],
-    "continents": [{
-      "code": "AS",
-      "label": "Asia"
-    }]
+    ]
   },
   {
     "label": "Europe",
     "regions": [
       {
-        "label": "East",
+        "label": "East Europe",
         "countrys": [
           "Albania",
+          "Armenia",
           "Belarus",
           "Bosnia and Herzegovina",
           "Bulgaria",
           "Croatia",
           "Czech Republic",
+          "Georgia",
           "Hungary",
           "Kosovo",
           "Macedonia",
@@ -266,28 +256,34 @@
         ]
       },
       {
-        "label": "West",
+        "label": "West Europe",
         "countrys": [
           "Austria",
           "Belgium",
           "Denmark",
           "Estonia",
+          "Faroe Islands",
           "Finland",
           "France",
           "Germany",
+          "Gibraltar",
           "Greece",
+          "Holy See",
           "Iceland",
           "Ireland",
           "Isle of Man",
           "Italy",
           "Latvia",
+          "Liechtenstein",
           "Lithuania",
           "Luxembourg",
           "Malta",
+          "Monaco",
           "Netherlands",
           "Northern Ireland",
           "Norway",
           "Portugal",
+          "San Marino",
           "Spain",
           "Sweden",
           "Switzerland",
@@ -295,111 +291,71 @@
           "Vatican"
         ]
       }
-    ],
-    "continents": [{
-      "code": "EU",
-      "label": "Europe"
-    }]
-  },
-  {
-    "label": "India",
-    "countrys": [
-      "India"
-    ],
-    "continents": [{
-      "code": "AS",
-      "label": "Asia"
-    }]
+    ]
   },
   {
     "label": "Near & Middle East",
-    "countrys": [
-      "Azerbaijan",
-      "Bahrain",
-      "Cyprus",
-      "Iran",
-      "Iran (Islamic Republic of)",
-      "Iraq",
-      "Israel",
-      "Jordan",
-      "Kuwait",
-      "Lebanon",
-      "Oman",
-      "Pakistan",
-      "Palestinian Territory",
-      "Palestinian Territory, Occupied",
-      "Qatar",
-      "Saudi Arabia",
-      "State of Palestine",
-      "Syrian Arab Republic",
-      "Turkey",
-      "United Arab Emirates",
-      "Yemen"
-    ],
-    "continents": [{
-      "code": "AS",
-      "label": "Asia"
-    }, {
-      "code": "EU",
-      "label": "Europe"
-    }]
+    "regions": [
+      {
+        "label": "Near & Middle East",
+        "countrys": [
+          "Azerbaijan",
+          "Bahrain",
+          "Cyprus",
+          "Iran",
+          "Iran (Islamic Republic of)",
+          "Iraq",
+          "Israel",
+          "Jordan",
+          "Kuwait",
+          "Lebanon",
+          "Oman",
+          "Palestinian Territory",
+          "Palestinian Territory, Occupied",
+          "Qatar",
+          "Saudi Arabia",
+          "State of Palestine",
+          "Syria",
+          "Syrian Arab Republic",
+          "Turkey",
+          "United Arab Emirates",
+          "Yemen"
+        ]
+      }
+    ]
   },
   {
     "label": "Pacific",
-    "countrys": [
-      "American Samoa",
-      "Australia",
-      "Bougainville",
-      "Cook Islands",
-      "Federated States of Micronesia",
-      "Fiji",
-      "French Polynesia",
-      "Guam",
-      "Kiribati",
-      "Marshall Islands",
-      "Micronesia, Federated States of",
-      "Nauru",
-      "New Caledonia",
-      "New Zealand",
-      "Papua New Guinea",
-      "Samoa",
-      "Solomon Islands",
-      "Tokelau Islands",
-      "Tonga",
-      "Tuvalu",
-      "Vanuatu",
-      "Wallis & Futuna Islands",
-      "Micronesia"
-    ],
-    "continents": [{
-      "code": "OC",
-      "label": "Oceania"
-    }]
-  },
-  {
-    "label": "Russia and CIS",
-    "countrys": [
-      "Armenia",
-      "Georgia",
-      "Uzbekistan"
-    ],
-    "continents": [{
-      "code": "AS",
-      "label": "Asia"
-    }, {
-      "code": "EU",
-      "label": "Europe"
-    }]
-  },
-  {
-    "label": "China",
-    "countrys": [
-      "China"
-    ],
-    "continents": [{
-      "code": "AS",
-      "label": "Asia"
-    }]
+    "regions": [
+      {
+        "label": "Pacific",
+        "countrys": [
+          "American Samoa",
+          "Australia",
+          "Bougainville",
+          "Cocos (Keeling) Islands",
+          "Cook Islands",
+          "Christmas Island",
+          "Federated States of Micronesia",
+          "Fiji",
+          "French Polynesia",
+          "Guam",
+          "Kiribati",
+          "Marshall Islands",
+          "Micronesia, Federated States of",
+          "Nauru",
+          "New Caledonia",
+          "New Zealand",
+          "Papua New Guinea",
+          "Samoa",
+          "Solomon Islands",
+          "Tokelau Islands",
+          "Tonga",
+          "Tuvalu",
+          "Vanuatu"
+        ]
+      }
+    ]
   },
   {
     "label": "Worldwide"

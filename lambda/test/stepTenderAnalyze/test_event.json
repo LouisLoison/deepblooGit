@@ -1,0 +1,137 @@
+{
+  "tenderData": {
+    "id": [
+      "38988591"
+    ],
+    "procurementId": [
+      "1479/2021"
+    ],
+    "noticeTitle": [
+      {
+        "_": "Provision Of Inspection Services For Airline Overhead Lines",
+        "$": {
+          "lang": "pt"
+        }
+      }
+    ],
+    "contactAddress": [
+      {
+        "firstName": [
+          ""
+        ],
+        "lastName": [
+          ""
+        ],
+        "address": [
+          "Avenida Dos Estados Unidos Da Amrica, 55"
+        ],
+        "city": [
+          ""
+        ],
+        "state": [
+          ""
+        ],
+        "country": [
+          ""
+        ],
+        "email": [
+          "carlosdias@ren.pt"
+        ],
+        "phone": [
+          ""
+        ]
+      }
+    ],
+    "buyerName": [
+      "REN - REDE ELCTRICA NACIONAL, S. A. (507866673)"
+    ],
+    "buyerCountry": [
+      "Portugal"
+    ],
+    "procurementMethod": [
+      "Other"
+    ],
+    "noticeType": [
+      "Invitation for Bids"
+    ],
+    "country": [
+      "Portugal"
+    ],
+    "noticeText": [
+      {
+        "_": "Public tender: pc-2020-000865 - public tender for the provision of inspection services for airline overhead lines for the electric ren, period 2021-2023&lt;br /&gt; \r\n&lt;br /&gt; \r\nBase price: 2. 593. 500,00 &lt;br /&gt; \r\n&lt;br /&gt; \r\nType of contract: purchasing services",
+        "$": {
+          "lang": "pt"
+        }
+      },
+      {
+        "_": "Provision Of Inspection Services For Airline Overhead Lines",
+        "$": {
+          "lang": "pt"
+        }
+      }
+    ],
+    "estimatedCost": [
+      "2593500"
+    ],
+    "currency": [
+      "EUR"
+    ],
+    "publicationDate": [
+      "20210208"
+    ],
+    "cpvs": [
+      "71356000,71630000,71356100,71620000,71323100,71356200,71356300,71314100"
+    ],
+    "cpvDescriptions": [
+      "technical-services-,technical-inspection-and-testing-services-,technical-control-services-,analysis-services-,electrical-power-systems-design-services-,technical-assistance-services-,technical-support-services-,electrical-services-"
+    ],
+    "bidDeadlineDate": [
+      "20210310"
+    ],
+    "sourceUrl": [
+      "https://www2.dgmarket.com/Notice/GetDocument/14456504?secret=sdfsfs452Rfsdgbjsdb343RFGG,https://www2.dgmarket.com/Notice/GetDocument/14456503?secret=sdfsfs452Rfsdgbjsdb343RFGG"
+    ],
+    "dataSource": "dgmarket"
+  },
+  "fileSource": "incoming/dgmarket/feed-20210208-2.xml",
+  "fileSourceIndex": 2960,
+  "startDelay": 612,
+  "dataSource": "dgmarket",
+  "status": 1,
+  "creationDate": "2021-02-09T10:16:58.328Z",
+  "updateDate": "2021-02-09T10:16:58.328Z",
+  "convertedData": {
+    "dataSourceId": 38988591,
+    "procurementId": "1479/2021",
+    "title": "Provision Of Inspection Services For Airline Overhead Lines",
+    "lang": "pt",
+    "description": "Public tender: pc-2020-000865 - public tender for the provision of inspection services for airline overhead lines for the electric ren, period 2021-2023&lt;br /&gt; \r\n&lt;br /&gt; \r\nBase price: 2. 593. 500,00 &lt;br /&gt; \r\n&lt;br /&gt; \r\nType of contract: purchasing services<br><br>Provision Of Inspection Services For Airline Overhead Lines<br><br>",
+    "contactFirstName": "",
+    "contactLastName": "",
+    "contactAddress": "Avenida Dos Estados Unidos Da Amrica, 55",
+    "contactCity": "",
+    "contactState": "",
+    "contactCountry": "",
+    "contactEmail": "carlosdias@ren.pt",
+    "contactPhone": "",
+    "buyerName": "REN - REDE ELCTRICA NACIONAL, S. A. (507866673)",
+    "buyerCountry": "Portugal",
+    "procurementMethod": "Other",
+    "noticeType": "Invitation for Bids",
+    "country": "Portugal",
+    "estimatedCost": "2593500",
+    "currency": "EUR",
+    "publicationDate": "2021-02-08",
+    "cpvs": "71356000,71630000,71356100,71620000,71323100,71356200,71356300,71314100",
+    "bidDeadlineDate": "2021-03-10",
+    "sourceUrl": [
+      "https://www2.dgmarket.com/Notice/GetDocument/14456504?secret=sdfsfs452Rfsdgbjsdb343RFGG",
+      "https://www2.dgmarket.com/Notice/GetDocument/14456503?secret=sdfsfs452Rfsdgbjsdb343RFGG"
+    ],
+    "dataSource": "dgmarket",
+    "origine": "DgMarket",
+    "creationDate": "2021-02-09T10:27:10.462Z",
+    "updateDate": "2021-02-09T10:27:10.462Z"
+  }
+}
