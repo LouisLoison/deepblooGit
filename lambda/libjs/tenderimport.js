@@ -125,48 +125,6 @@ exports.importTender = (tender, CpvList, textParses) => {
   tender.status = 20
   tender.updateDate = new Date()
 
-  // Remove tenderCriterion
-  /*
-      if (tender.id) {
-        query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-        query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      }
-      */
-
-  // const tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'id')
-
-  // Bulk insert into tenderCriterion table
-  /*
-      if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {
-        for (const tenderCriterionCpv of tender.tenderCriterionCpvs) {
-          tenderCriterionCpv.tenderId = tenderNew.id
-          tenderCriterionCpv.cpv = undefined
-          tenderCriterionCpv.creationDate = new Date()
-          tenderCriterionCpv.updateDate = new Date()
-        }
-        await BddTool.bulkInsert(
-          BddId,
-          BddEnvironnement,
-          'tenderCriterionCpv',
-          tender.tenderCriterionCpvs
-        )
-      }
-      if (tender.tenderCriterions && tender.tenderCriterions.length) {
-        for (const tenderCriterion of tender.tenderCriterions) {
-          tenderCriterion.tenderId = tenderNew.id
-          tenderCriterion.creationDate = new Date()
-          tenderCriterion.updateDate = new Date()
-        }
-        await BddTool.bulkInsert(
-          BddId,
-          BddEnvironnement,
-          'tenderCriterion',
-          tender.tenderCriterions
-        )
-      }
-      */
   return({tender})
 }
 

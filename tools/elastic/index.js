@@ -9,13 +9,13 @@ const main = async (limit = 9) => {
   const client = await BddTool.getClient()
 
   const query = `select tenders.* from tenders
-    order by tenders.creationdate desc
-    nulls last
+    order by tenders.creationdate asc
+    nulls first
     limit $1`
 
 
   const results = await BddTool.QueryExecPrepared(client, query, [limit])
-  await processResults(results)
+  await processResults(client, results)
 
   // const results2 = await BddTool.QueryExecPrepared(client, query1, [limit])
   // await processResults(results2)
@@ -23,7 +23,7 @@ const main = async (limit = 9) => {
   process.exit()
 }
 
-const processResults = async ({ rows, fields, rowCount }) => {
+const processResults = async (client, { rows, fields, rowCount }) => {
   let tranche = []
   let appTranche = []
   let processed = 0
@@ -41,6 +41,57 @@ const processResults = async ({ rows, fields, rowCount }) => {
       console.log(result.contactAddress)
     }
     const { analyzedData, formatedData } = await analyzeTender(result)
+
+    await BddTool.RecordAddUpdate (
+          'tenders',
+          analyzedData,
+          'tenderUuid',
+          client,
+        )
+
+
+    const { tenderCriterions, tenderCriterionCpvs } = analyzedData
+
+    await BddTool.QueryExecPrepared(client, `
+      delete from tenderCriterionCpv where tenderUuid = $1;
+      `, [result.tenderUuid])
+
+    if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
+      for (const tenderCriterionCpv of tenderCriterionCpvs) {
+        tenderCriterionCpv.tenderUuid = result.tenderUuid
+        tenderCriterionCpv.cpv = undefined
+        tenderCriterionCpv.creationDate = new Date()
+        tenderCriterionCpv.updateDate = new Date()
+        await BddTool.RecordAddUpdate (
+          'tenderCriterionCpv',
+          tenderCriterionCpv,
+          'tenderUuid, scope, cpvId',
+          client,
+        )
+      }
+    }
+    if (tenderCriterions && tenderCriterions.length) {
+    console.log('Has criterions')
+    await BddTool.QueryExecPrepared(client, `
+      delete from tenderCriterion where tenderUuid = $1;
+      `, [result.tenderUuid])
+
+
+
+      for (const tenderCriterion of tenderCriterions) {
+        tenderCriterion.tenderUuid = result.tenderUuid
+        tenderCriterion.creationDate = new Date()
+        tenderCriterion.updateDate = tenderCriterion.creationDate
+        await BddTool.RecordAddUpdate (
+          'tenderCriterion',
+          tenderCriterion,
+          'tenderUuid, scope, textparseId',
+          client,
+        )
+      }
+    }
+  
+
     const elasticDoc = {
       ...analyzedData,
       ...formatedData,

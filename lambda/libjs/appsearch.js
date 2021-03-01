@@ -12,7 +12,7 @@ exports.connectToPrivateAppSearch = async () => {
 // Indexes an objects array into appsearch's "deepbloo" engine.
 // This will update any document having the same "id" fields,
 // adding any new field to the document
-exports.indexObjectToAppsearch = async (objects, engineName = "deepbloo") => {
+exports.indexObjectToAppsearch = async (objects, engineName = "tenders") => {
   // Init object id
   for (const object of objects) {
     if (!object.id && object.tenderUuid) {

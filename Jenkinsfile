@@ -85,7 +85,6 @@ pipeline {
               aws cloudfront create-invalidation --distribution-id E3US7LPL6BXFWF --paths '/*'
             '''
           }
-          /*
           post {
             success {
               slackSend channel: "#${env.ENV}", color: 'good', message: "[${env.ENV.toUpperCase()}] *${env.ENV}_${env.CUR_DATE}_${env.BUILD_NUMBER}* deployed ✅ (last commit by ${env.GIT_USERNAME}): success (<${env.BUILD_URL}/console|Open>)"
@@ -94,7 +93,6 @@ pipeline {
               slackSend channel: "#${env.ENV}", color: 'danger', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} apply ❌(last commit by ${env.GIT_USERNAME}): failure (<${env.BUILD_URL}/console|Open>)"
             }
           }
-	  */
         }
 
       }
