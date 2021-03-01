@@ -326,9 +326,9 @@ exports.Memberships = (userId) => {
         memberships = membershipsResponse.data.memberships
       }
       
-      let isFreeMembership = false;
-      let isPremiumMembership = false;
-      let isBusinessMembership = false;
+      let isFreeMembership = false
+      let isPremiumMembership = false
+      let isBusinessMembership = false
       for (let membership of memberships) {
         if (
           membership.type_name.startsWith('Free Trial')

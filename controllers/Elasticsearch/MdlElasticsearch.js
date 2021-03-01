@@ -286,6 +286,7 @@ exports.formatSearchQuery = (searchRequest) => {
   const query = searchRequest.searchInputValue
   const searchFields = { title: {} }
   const resultFields = {
+    id: { raw: {} },
     title: { raw: {} },
     country: { raw: {} },
     publication_timestamp: { raw: {} },
