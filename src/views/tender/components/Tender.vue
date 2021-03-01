@@ -2032,7 +2032,7 @@ export default {
       try {
         const res = await this.$api.post("/Tender/TenderGroupLinkList", {
           userId: this.getUserId,
-          tenderId: this.tender.id
+          tenderId: this.tender.tenderUuid
         })
         if (!res.success) {
           throw new Error(res.Error)
