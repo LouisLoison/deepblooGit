@@ -1390,46 +1390,27 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId, tenderUui
     try {
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      if (!algoliaId || !tenderId) {
-        const tender = await this.TenderGet(tenderId, algoliaId, tenderUuid)
-        if (tender) {
-          tenderId = tender.id
-          algoliaId = tender.algoliaId
-          tenderUuid = tender.tenderUuid
-        }
-      }
-
-      let query = `
-        DELETE FROM   tenderGroupLink 
-        WHERE         tenderId = ${BddTool.NumericFormater(tenderId)}
-        AND           userId = ${BddTool.NumericFormater(userId)}
-      `
-      await BddTool.QueryExecBdd2(query)
+      tenderId = tenderId || tenderUuid
 
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
           tenderGroupId: tenderGroupId,
-          tenderId: tenderId,
+          tenderUuid: tenderUuid,
           creationDate: new Date(),
           updateDate: new Date(),
         }
-        await BddTool.RecordAddUpdate('tenderGroupLink', tenderGroupLink)
+        await BddTool.RecordAddUpdate('tenderGroupLink', tenderGroupLink, 'userId, tenderUuid')
       }
 
       const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
       const groups = tenderGroupLinks.map(a => a.tenderGroupId)
-      const tender = {
-        objectID: algoliaId,
+
+      await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
+        {
+          id: tenderId,
         groups,
-      }
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderUpdate(tender)
-      try {
-        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
-          {
-            id: tenderId,
-            groups,
-          }
+        }
         ])
       } catch (err) {
         console.log('Elasticsearch indexObject error')
@@ -1537,7 +1518,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
         SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
                     userId AS "userId",
                     tenderGroupId AS "tenderGroupId",
-                    tenderId AS "tenderId",
+                    tenderUuid AS "tenderUuid",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
         FROM        tenderGroupLink 
@@ -1549,7 +1530,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       }
       if (tenderId && tenderId !== '' && tenderId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = ${BddTool.NumericFormater(tenderId)} \n`
+        where += `tenderUuid = ${BddTool.NumericFormater(tenderId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1559,7 +1540,8 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
           tenderGroupLinkId: record.tenderGroupLinkId,
           userId: record.userId,
           tenderGroupId: record.tenderGroupId,
-          tenderId: record.tenderId,
+          tenderId: record.tenderUuid,
+          tenderUuid: record.tenderUuid,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })
