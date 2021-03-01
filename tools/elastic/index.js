@@ -116,6 +116,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     if (tranche.length >= 50) {
       await indexToElasticsearch(tranche, 'tenders')
       if(appTranche.length) {
+        await indexObjectToAppsearch(appTranche, 'tenders-dev')
         appTranche.forEach((r, index) => delete appTranche[index])
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
