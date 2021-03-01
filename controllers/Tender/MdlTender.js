@@ -1405,12 +1405,12 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId, tenderUui
 
       const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
       const groups = tenderGroupLinks.map(a => a.tenderGroupId)
-
-      await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
-        {
-          id: tenderId,
-        groups,
-        }
+      try { 
+        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
+          {
+            id: tenderId,
+            groups,
+          }
         ])
       } catch (err) {
         console.log('Elasticsearch indexObject error')
