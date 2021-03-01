@@ -191,7 +191,8 @@ class Unit:
 
         # Guardian 3: Unit and entity must be compatible
         entity_compatibility = unit_entity_compatibility(name, entity)
-        if not entity_compatibility and entity in [unit_info['entity'] for unit_info in unit_references]:
+        if not entity_compatibility:
+                #and entity in [unit_info['entity'] for unit_info in unit_references]:
             raise EntityException()
 
         # Evaluate whether or not we can proceed with the unit instantiation
