@@ -9,6 +9,7 @@ const main = async (limit = 9) => {
   const client = await BddTool.getClient()
 
   const query = `select tenders.* from tenders
+    where now() - creationdate < interval '1 month'
     order by tenders.creationdate desc
     nulls last
     limit $1`
@@ -71,7 +72,6 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       }
     }
     if (tenderCriterions && tenderCriterions.length) {
-    console.log('Has criterions')
     await BddTool.QueryExecPrepared(client, `
       delete from tenderCriterion where tenderUuid = $1;
       `, [result.tenderUuid])
@@ -116,7 +116,6 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     if (tranche.length >= 50) {
       await indexToElasticsearch(tranche, 'tenders')
       if(appTranche.length) {
-        await indexObjectToAppsearch(appTranche, 'deepbloo-dev')
         appTranche.forEach((r, index) => delete appTranche[index])
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
