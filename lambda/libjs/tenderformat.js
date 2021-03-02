@@ -196,7 +196,7 @@ exports.analyzeTender = async (tenderSrc) => {
     exclusionWord: importOrigine.exclusionWord,
     status: importOrigine.status,
   }
-  const formatedData = await this.tenderFormat(tender, cpvList, textParseList)
+  const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
   if (formatedData && analyzedData.status > 0) {
     analyzedData.status = 20
     formatedData.status = 20

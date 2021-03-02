@@ -68,6 +68,7 @@ exports.handler =  async function(event, ) {
   // Bulk insert into tenderCriterion table
   if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
     for (const tenderCriterionCpv of tenderCriterionCpvs) {
+      tenderCriterionCpv.tenderId = tender.id
       tenderCriterionCpv.tenderUuid = tender.tenderUuid
       tenderCriterionCpv.cpv = undefined
       tenderCriterionCpv.creationDate = new Date()
@@ -99,6 +100,7 @@ exports.handler =  async function(event, ) {
 
   if (tenderCriterions && tenderCriterions.length) {
     for (const tenderCriterion of tenderCriterions) {
+      tenderCriterion.tenderId = tender.id
       tenderCriterion.tenderUuid = tender.tenderUuid
       tenderCriterion.creationDate = new Date()
       tenderCriterion.updateDate = tenderCriterion.creationDate
