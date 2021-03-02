@@ -86,6 +86,7 @@ exports.handler =  async function(event, ) {
     "value": m.surface,
     "numericValue": m.value,
     "entity": m.unit.entity,
+    "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
     "scope": 'TITLE',
   }))
 
@@ -93,6 +94,7 @@ exports.handler =  async function(event, ) {
     "value": m.surface,
     "numericValue": m.value,
     "entity": m.unit.entity,
+    "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
     "scope": 'DESCRIPTION',
   }))
 
