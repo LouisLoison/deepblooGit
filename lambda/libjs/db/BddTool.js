@@ -2,6 +2,13 @@ const crypto = require('crypto')
 const BddSchema = require('./BddSchema')
 const { getDbSecret } = require('../config')
 
+const log = (msg) => {
+  if(process.env.DEBUG) {
+    console.log(msg)
+  }
+}
+
+
 let BddId
 let Environnement
 let configBdd
@@ -21,6 +28,7 @@ exports.bddInit = async () => {
 
 exports.getClient = async () => {
   await this.bddInit()
+  console.log('Get client')
   return await pgPool.connect() // Passes the client to enable transaction
 }
 
@@ -200,8 +208,11 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
     rowMode: 'array',
   }
 
-  // console.log(preparedQuery);
+  const before = new Date().getTime()
+  log(preparedQuery)
+
   const { rows, fields, rowCount } = await client.query(preparedQuery)
+  log(`Success (elapsed ${new Date().getTime() - before })`)
 
   return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
 }
@@ -288,8 +299,13 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     values: actualValues,
     rowMode: 'array',
   }
+  
+  const before = new Date().getTime()
+  log(preparedQuery) 
 
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
+  // const elapsed = new Date().getTime()
+  log(`Success (elapsed ${new Date().getTime() - before })`)
   // console.log(rows);
   const [ result ] = pgMapResult(rows, fields, TableName)
 

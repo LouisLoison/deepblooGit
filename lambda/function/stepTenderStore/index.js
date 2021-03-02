@@ -6,9 +6,9 @@ const { log, BddTool } = require('deepbloo');
 exports.handler = async function(event, ) {
   const { analyzedData, convertedData, tenderData } = event
   const client = await BddTool.getClient()
-  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
+  //  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
 
-  analyzedData.dataRaw = tenderData
+  analyzedData.dataRaw = convertedData.dataRaw
   const tender = await BddTool.RecordAddUpdate (
     'tenderimport',
     analyzedData,
@@ -16,7 +16,7 @@ exports.handler = async function(event, ) {
     client,
   )
 
-  await BddTool.QueryExecPrepared(client, 'COMMIT;');
+  //  await BddTool.QueryExecPrepared(client, 'COMMIT;');
   client.release()
   return {...tender}
 }

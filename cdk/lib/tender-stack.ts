@@ -132,10 +132,11 @@ export class TenderStack extends Stack {
       vpc,
       memorySize: 500,
       reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(70),
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
@@ -150,6 +151,7 @@ export class TenderStack extends Stack {
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
