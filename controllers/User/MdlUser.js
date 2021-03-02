@@ -1168,7 +1168,7 @@ exports.SendPeriodicDashboard = (userUuid) => {
           for (const automaticQuery of automaticQuerys) {
             let tenderCount = 0
             if (automaticQuery.tenders) {
-              html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">CPV : ${automaticQuery.label}</div><br>`
+              html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">Pipeline : ${automaticQuery.label}</div><br>`
               html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
               html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
               html += `    <td>Country</td>`
