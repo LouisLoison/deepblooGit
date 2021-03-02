@@ -1,7 +1,7 @@
 """In this module, I implement functions that are useful for other
 processes"""
 
-import pandas as pd
+#import pandas as pd
 from pint import UnitRegistry, Context, Unit
 
 unit_references = [

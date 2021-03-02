@@ -197,6 +197,7 @@ var Schema = {
       updateDate: { type: "DateTime" }
     },
     tenderCriterionCpv: {
+      tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
       documentUuid: { type: "String" },
       cpvId: { type: "Int" },
@@ -210,6 +211,7 @@ var Schema = {
     },
     tenderCriterion: {
       tenderCriterionId: { type: "Int", key: true },
+      tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
       textParseId: { type: "Int" },
       value: { type: "String" },

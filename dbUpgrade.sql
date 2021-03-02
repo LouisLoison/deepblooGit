@@ -160,3 +160,9 @@ delete from tendergrouplink tl using tendergroup where tl.tendergroupid=tendergr
 
 delete from tendergroup where searchrequest is not null;
 
+alter table tendergrouplink add column tenderUuid uuid;
+
+update tendergrouplink set tenderuuid = tenders.tenderuuid from tenders where tenders.id=tenderid;
+
+
+create unique index tendergrouplink_userid_tenderuuid_unique on tendergrouplink(userid, tenderuuid);

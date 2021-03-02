@@ -11,6 +11,7 @@ const appsearch = require('./appsearch')
 const elastic = require('./elastic')
 const document = require('./document')
 const hivebrite = require('./hivebrite')
+const metricranges = require('./metricranges')
 const { AWS, documentsBucket } = require('./config')
 
 module.exports = {
@@ -24,6 +25,7 @@ module.exports = {
   document,
   elastic,
   hivebrite,
+  metricranges,
   AWS,
   documentsBucket,
 }

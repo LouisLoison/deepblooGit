@@ -132,10 +132,11 @@ export class TenderStack extends Stack {
       vpc,
       memorySize: 500,
       reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(70),
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
@@ -150,6 +151,7 @@ export class TenderStack extends Stack {
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
@@ -315,20 +317,20 @@ export class TenderStack extends Stack {
       inputPath: '$.formatedData',
       resultPath: '$.entities',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
 
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
       stateMachine: props.documentMachine,
       inputPath: "$.mergedData",
       resultPath: '$.downloadedData'
-    });
+    }).addCatch(notifyErrorTask)
 
     const logGroup = new logs.LogGroup(this, 'TenderLogGroup');
 

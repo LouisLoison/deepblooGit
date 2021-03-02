@@ -758,7 +758,6 @@ exports.textParseTreat = (text, textParses, scope) => {
   if (!textParses) {
     return null
   }
-
   const contextLength = 40
   const textNew = removeDiacritics(text).toUpperCase()
 
@@ -802,7 +801,7 @@ exports.textParseTreat = (text, textParses, scope) => {
       const words = textParse.words.split(',')
       words.push(textParse.group)
       for (const word of words) {
-        if (!word || word.trim() !== '') {
+        if (!word || word.trim() === '') {
           continue
         }
         const wordTemp = removeDiacritics(word).toUpperCase().trim()
