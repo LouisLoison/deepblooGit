@@ -1,6 +1,13 @@
-#set($data = $context.prev.result[$context.stash.currentPipelineFunction]) ## analyzedTender return from Elastic function.
+#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
+#set( $currentPipelineFunction = $context.stash.currentPipelineFunction )
+#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
+#set( $nextPipelineFunction = $context.stash.pipelineFunctions[$nextPipelineFunctionIndex] )
+$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
+$util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction)) 
+
+#set($data = $context.prev.result[$currentPipelineFunction]) ## analyzedTender return from Elastic function.
 #set( $list = [] )
-#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$context.stash.currentPipelineFunction]['table'] + " " )
+#set( $sql = "INSERT INTO " + $ctx.stash.pipelineFunctionsInfo[$currentPipelineFunction]['table'] + " " )
 
 ## put everything in list
 #if( !$util.isList($data))
@@ -21,7 +28,7 @@
 #foreach( $entry in $columnsObj.entrySet() )
   #if( $columnsObj[$entry.key])
         #set( $items = $items + $entry.key.toLowerCase())
-    #if( $foreach.hasNext )
+    #if( $foreach.hasNext ) 
         #set( $items = $items + ", ")
     #else
         #set( $items = $items + ") ")
@@ -38,15 +45,23 @@
             #if($util.isList($item[$entry.key]) )
                #set( $words = "" )
                #foreach( $word in $item[$entry.key] )
-                  #if( $foreach.hasNext )
-                      #set( $words = $words + $word + ",")
+                  #if($util.isString($word))
+                    #set( $replacedWord = $word )
+                    #set( $replacedWord = $replacedWord.replaceAll("'","''") )
+                    #set( $words = $words + $replacedWord)
                   #else
                       #set( $words = $words + $word)
+                  #end
+                
+                  #if( $foreach.hasNext )
+                      #set( $words = $words + ",")
                   #end
                #end
                #set( $values = $values + "'$words'")
             #elseif($util.isString($item[$entry.key]))
-              #set( $values = $values + "'$item[$entry.key]'")
+              #set( $text = $item[$entry.key] )
+              #set( $text = $text.replaceAll("'","''") )
+              #set( $values = $values + "'$text'")
             #else
               #set( $values = $values + $item[$entry.key])
             #end

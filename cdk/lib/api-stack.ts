@@ -484,7 +484,37 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "CreateAclAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateAclAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
 
+    const GetAclAuroraFunction = new CfnFunctionConfiguration(this, `GetAclAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "GetAclAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "GetAclAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -518,7 +548,11 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId]
       },
     })
 
@@ -541,10 +575,9 @@ export class ApiStack extends cdk.Stack {
           GetUserAuroraFunction.attrFunctionId,
           CreateTenderElasticFunction.attrFunctionId,
           CreateTenderAuroraFunction.attrFunctionId,
-          localFunction.attrFunctionId,
           CreateTenderCriterionCpvsAuroraFunction.attrFunctionId,
-          localFunction.attrFunctionId,
-          CreateTenderCriterionsAuroraFunction.attrFunctionId
+          CreateTenderCriterionsAuroraFunction.attrFunctionId,
+          CreateAclAuroraFunction.attrFunctionId
         ],
       },
     })

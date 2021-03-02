@@ -26,17 +26,26 @@ exports.handler = async function (event,) {
         delete appsearchDoc.tenderUuid
 
         await indexToElasticsearch([elasticDoc], 'tenders')
-        await indexObjectToAppsearch([appsearchDoc], 'deepbloo-dev')
+        await indexObjectToAppsearch([appsearchDoc], 'tenders-dev')
 
         let tenderAurora = { ...analyzedData }
         delete tenderAurora.tenderCriterionCpvs
         delete tenderAurora.tenderCriterions
 
+        let aclAurora = {
+            resourceId: analyzedData.tenderUuid,
+            granteeId: analyzedData.owner_id,
+            role: "OWNER",
+            creationDate: analyzedData.creationDate,
+            updateDate: analyzedData.updateDate
+        }
+
         return {
             success: true, data: {
                 CreateTenderAuroraFunction: tenderAurora,
                 CreateTenderCriterionCpvsAuroraFunction: updateObj(analyzedData.tenderCriterionCpvs, analyzedData.tenderUuid),
-                CreateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid)
+                CreateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid),
+                CreateAclAuroraFunction: aclAurora,
             }
         }
     } catch (error) {

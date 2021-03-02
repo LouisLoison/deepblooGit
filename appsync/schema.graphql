@@ -95,7 +95,7 @@ type User{
 }
 
 type Query {
-  GetTender(userToken:String!, id: ID): Tender
+  GetTender(userToken:String!, id: ID!): Tender
   GetUser(userToken:String!): User
 }
 
