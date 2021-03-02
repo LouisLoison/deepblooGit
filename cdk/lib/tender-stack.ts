@@ -315,20 +315,20 @@ export class TenderStack extends Stack {
       inputPath: '$.formatedData',
       resultPath: '$.entities',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
 
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
       stateMachine: props.documentMachine,
       inputPath: "$.mergedData",
       resultPath: '$.downloadedData'
-    });
+    }).addCatch(notifyErrorTask)
 
     const logGroup = new logs.LogGroup(this, 'TenderLogGroup');
 
