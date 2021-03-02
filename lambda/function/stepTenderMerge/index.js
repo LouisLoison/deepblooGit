@@ -98,8 +98,6 @@ exports.handler =  async function(event, ) {
     "scope": 'DESCRIPTION',
   }))
 
-  console.log(tenderCriterions)
-
   if (tenderCriterions && tenderCriterions.length) {
     for (const tenderCriterion of tenderCriterions) {
       tenderCriterion.tenderId = tender.id
@@ -119,8 +117,6 @@ exports.handler =  async function(event, ) {
 
   tender.power = metricsRanges('power', tenderCriterions)
   tender.voltage = metricsRanges('electric potential', tenderCriterions)
-
-  console.log(tender.power, tender.voltage)
 
   const data = (tender !== undefined) ? tender : false
   const newSourceUrls = []
