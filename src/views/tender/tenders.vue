@@ -120,17 +120,40 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
-        <v-btn
-          v-if="!getIsMobile && 1 === 2"
-          @click="displayType = 'DASHBOARD'"
-          icon
-          large
-          :color="displayType === 'DASHBOARD' ? 'blue-grey' : 'grey'"
-          class="mt-2 mb-0 mx-0"
-          title="Dashboard"
-        >
-          <v-icon style="font-size: 24px;">fa-chart-pie</v-icon>
-        </v-btn>
+        <div v-if="!getIsMobile && 1 === 2">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                icon
+                large
+                :color="displayType === 'DASHBOARD' ? 'blue-grey' : 'grey'"
+                class="mt-2 mb-0 mx-0"
+                title="Dashboard"
+              >
+                <v-icon style="font-size: 24px;">fa-chart-pie</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Energie
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Solar in Asia
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Micro-Grid
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>          
+        </div>
       </div>
       <div
         v-if="searchState.wasSearched && displayType !== 'DASHBOARD'"
@@ -269,6 +292,8 @@ export default {
       groups: [],
       buyer_name: [],
       financials: [],
+      power: [],
+      voltage: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',

@@ -978,6 +978,122 @@
                         data not available
                       </span>
                     </div>
+                    <div class="grey--text pt-3">Power</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getPower && getPower.length">
+                          <v-menu
+                            v-for="(power, index) in getPower"
+                            :key="`power${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ power.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in power.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
+                    <div class="grey--text pt-3">Electric potential</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getVoltage && getVoltage.length">
+                          <v-menu
+                            v-for="(voltage, index) in getVoltage"
+                            :key="`voltage${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ voltage.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in voltage.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
                   </div>
                 </div>
               </v-card-text>
@@ -1667,6 +1783,14 @@ export default {
 
     getFinancialOrganization() {
       return this.searchTextParse("Financial Organization")
+    },
+
+    getPower() {
+      return this.searchTextParse("Power")
+    },
+
+    getVoltage() {
+      return this.searchTextParse("Voltage")
     },
   },
 

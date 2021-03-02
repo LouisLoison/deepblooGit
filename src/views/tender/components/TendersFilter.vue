@@ -321,6 +321,60 @@
     </v-card>
 
     <v-card
+      class="mx-auto mb-3"
+      outlined
+      style="overflow-y: auto;"
+    >
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
+        <SearchFacet
+          :checked="filter.power"
+          :facet="searchState.facets.power[0]"
+          @change="handleFacetChange($event, 'power')"
+          @checkAll="handleFacetCheckAll('power')"
+          @unCheckAll="handleFacetUnCheckAll('power')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
+      class="mx-auto mb-3"
+      outlined
+      style="overflow-y: auto;"
+    >
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
+        <SearchFacet
+          :checked="filter.voltage"
+          :facet="searchState.facets.voltage[0]"
+          @change="handleFacetChange($event, 'voltage')"
+          @checkAll="handleFacetCheckAll('voltage')"
+          @unCheckAll="handleFacetUnCheckAll('voltage')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
       v-if="getUserType === 1"
       class="mx-auto mb-3"
       outlined
@@ -390,6 +444,8 @@ export default {
       groups: [],
       buyer_name: [],
       financials: [],
+      power: [],
+      voltage: [],
     },
   }),
 

@@ -91,6 +91,12 @@ const config = {
         type: "value",
         size: 200
       },
+      power: {
+        type: "value"
+      },
+      voltage: {
+        type: "value"
+      },
     }
   }
 }

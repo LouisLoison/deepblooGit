@@ -102,6 +102,8 @@ export default {
         scope_of_works: [],
         segments: [],
         user_id: [],
+        power: [],
+        voltage: [],
       }
       this.search()
     },
