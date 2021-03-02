@@ -1,10 +1,12 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 
 const { BddTool } = require('deepbloo');
+const { metricsRanges } = require('deepbloo').metricranges;
 
 exports.handler =  async function(event, ) {
   const { uuid } = event.storedData
   const { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
+  const { title_metrics, description_metrics } = event.metrics
 
   const client = await BddTool.getClient()
 
@@ -66,7 +68,8 @@ exports.handler =  async function(event, ) {
   // Bulk insert into tenderCriterion table
   if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
     for (const tenderCriterionCpv of tenderCriterionCpvs) {
-      tenderCriterionCpv.tenderUuid = tender.tenderuuid
+      tenderCriterionCpv.tenderId = tender.id
+      tenderCriterionCpv.tenderUuid = tender.tenderUuid
       tenderCriterionCpv.cpv = undefined
       tenderCriterionCpv.creationDate = new Date()
       tenderCriterionCpv.updateDate = new Date()
@@ -78,11 +81,31 @@ exports.handler =  async function(event, ) {
       )
     }
   }
+
+  title_metrics.forEach(m => tenderCriterions.push({
+    "value": m.surface,
+    "numericValue": m.value,
+    "entity": m.unit.entity,
+    "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+    "scope": 'TITLE',
+  }))
+
+  description_metrics.forEach(m => tenderCriterions.push({
+    "value": m.surface,
+    "numericValue": m.value,
+    "entity": m.unit.entity,
+    "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+    "scope": 'DESCRIPTION',
+  }))
+
   if (tenderCriterions && tenderCriterions.length) {
     for (const tenderCriterion of tenderCriterions) {
-      tenderCriterion.tenderUuid = tender.tenderuuid
+      tenderCriterion.tenderId = tender.id
+      tenderCriterion.tenderUuid = tender.tenderUuid
       tenderCriterion.creationDate = new Date()
       tenderCriterion.updateDate = tenderCriterion.creationDate
+      //      const upsertKey = tenderCriterion.textparseId ? 'tenderUuid, scope, textparseId' :
+      //	tenderCriterion.entity ?
       await BddTool.RecordAddUpdate (
         'tenderCriterion',
         tenderCriterion,
@@ -92,6 +115,8 @@ exports.handler =  async function(event, ) {
     }
   }
 
+  tender.power = metricsRanges('power', tenderCriterions)
+  tender.voltage = metricsRanges('electric potential', tenderCriterions)
 
   const data = (tender !== undefined) ? tender : false
   const newSourceUrls = []

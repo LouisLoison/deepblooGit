@@ -4,6 +4,7 @@ const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
 const { stripHtml } = require("string-strip-html")
 const { importTender } = require('./tenderimport')
+const { metricsRanges } = require('./metricranges')
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()
@@ -154,9 +155,11 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     brands: [],
     financials: [],
     // fileSource: tender.fileSource,
-    groups: [],
+    // groups: [], 
     datasource: tender.datasource,
     accountId: 'none',
+    power: metricsRanges('power', tender.tenderCriterions),
+    voltage: metricsRanges('electric potential', tender.tenderCriterions),
   }
 
   if (tender.tenderCriterions) {
@@ -193,8 +196,8 @@ exports.analyzeTender = async (tenderSrc) => {
     exclusionWord: importOrigine.exclusionWord,
     status: importOrigine.status,
   }
-  const formatedData = await this.tenderFormat(tender, cpvList, textParseList)
-  if (formatedData.status > 0) {
+  const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
+  if (formatedData && analyzedData.status > 0) {
     analyzedData.status = 20
     formatedData.status = 20
   }

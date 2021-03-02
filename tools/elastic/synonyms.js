@@ -12,7 +12,7 @@ const records = parse(csvData)
   .filter(record => record)
 // console.log(records)
 
-const engineName = `deepbloo-${process.env.NODE_ENV || 'dev'}`
+const engineName = `tenders-${process.env.NODE_ENV || 'dev'}`
 // const engineName = `deepbloo`
 const client = new Client(process.env.APPSEARCH_PRIVATE, `${process.env.APPSEARCH_ENDPOINT}api/as/v1/`)
 

@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     title_metrics = filters.entity_floor(title_metrics)
     description_metrics = filters.entity_floor(description_metrics)
     
-    return json.dumps({'title_metrics': list(map(lambda m: m.to_official().to_dict(),
+    return {'title_metrics': list(map(lambda m: m.to_official().to_dict(),
                                                  title_metrics)),
                        'description_metrics': list(map(lambda m: m.to_official().to_dict(),
-                                                       description_metrics))})
+                                                       description_metrics))}
