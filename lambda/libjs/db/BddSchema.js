@@ -59,6 +59,7 @@ var Schema = {
     },
     document: {
       documentUuid: { type: "String", key: true },
+      tenderId: { type: "Int" },
       tenderUuid: { type: "String" },
       cpvs: { type: "String" },
       filename: { type: "String" },
