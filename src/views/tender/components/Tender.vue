@@ -2194,10 +2194,12 @@ export default {
       this.documentImport = false;
     },
 
-    documentDeleteDialog(document) {
+    async documentDeleteDialog(document) {
       if (!document.documentId) {
-        return;
+        return
       }
+      await this.documentDelete(document)
+      /*
       var message = "Do you really want to delete this document ?<br>";
       message += `Filename: <span class="black--text">${document.filename}</span><br>`;
       this.showConfirmModal({
@@ -2210,13 +2212,14 @@ export default {
             libelle: "Yes",
             class: "red--text",
             action: async dialog => {
-              await this.documentDelete(document);
+              await this.documentDelete(document)
               dialog.close();
             }
           },
           { libelle: "No", text: true, class: "" }
         ]
-      });
+      })
+      */
     },
 
     async documentDelete(document) {
