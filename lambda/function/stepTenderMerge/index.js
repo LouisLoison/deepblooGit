@@ -5,7 +5,7 @@ const { metricsRanges } = require('deepbloo').metricranges;
 
 exports.handler =  async function(event, ) {
   const { uuid } = event.storedData
-  const { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
+  let { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
   const { title_metrics, description_metrics } = event.metrics
 
   const client = await BddTool.getClient()
@@ -86,6 +86,8 @@ exports.handler =  async function(event, ) {
         )
       }
     }
+
+    tenderCriterions = tenderCriterions || []
 
     title_metrics.forEach(m => tenderCriterions.push({
       "value": m.surface,
