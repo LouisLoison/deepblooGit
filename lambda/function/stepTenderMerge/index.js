@@ -69,63 +69,63 @@ exports.handler =  async function(event, ) {
   	and tenderimport.uuid = $1`;
 
     const [ tender ] = await BddTool.QueryExecPrepared(client, query5, [ uuid ], 'tenders');
-
-    // Bulk insert into tenderCriterion table
-    if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
-      for (const tenderCriterionCpv of tenderCriterionCpvs) {
-        tenderCriterionCpv.tenderId = tender.id
-        tenderCriterionCpv.tenderUuid = tender.tenderUuid
-        tenderCriterionCpv.cpv = undefined
-        tenderCriterionCpv.creationDate = new Date()
-        tenderCriterionCpv.updateDate = new Date()
-        await BddTool.RecordAddUpdate (
-          'tenderCriterionCpv',
-          tenderCriterionCpv,
-          'tenderUuid, scope, cpvId',
-          client,
-        )
-      }
-    }
-
-    tenderCriterions = tenderCriterions || []
-
-    title_metrics.forEach(m => tenderCriterions.push({
-      "value": m.surface,
-      "numericValue": m.value,
-      "entity": m.unit.entity,
-      "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
-      "scope": 'TITLE',
-    }))
-
-    description_metrics.forEach(m => tenderCriterions.push({
-      "value": m.surface,
-      "numericValue": m.value,
-      "entity": m.unit.entity,
-      "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
-      "scope": 'DESCRIPTION',
-    }))
-
-    if (tenderCriterions && tenderCriterions.length) {
-      for (const tenderCriterion of tenderCriterions) {
-        tenderCriterion.tenderId = tender.id
-        tenderCriterion.tenderUuid = tender.tenderUuid
-        tenderCriterion.creationDate = new Date()
-        tenderCriterion.updateDate = tenderCriterion.creationDate
-        //      const upsertKey = tenderCriterion.textparseId ? 'tenderUuid, scope, textparseId' :
-        //	tenderCriterion.entity ?
-        await BddTool.RecordAddUpdate (
-          'tenderCriterion',
-          tenderCriterion,
-          'tenderUuid, scope, textparseId',
-          client,
-        )
-      }
-    }
-
-
     const data = (tender !== undefined) ? tender : false
     const newSourceUrls = []
-    if(data) {
+    if(tender) {
+
+      // Bulk insert into tenderCriterion table
+      if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
+        for (const tenderCriterionCpv of tenderCriterionCpvs) {
+          tenderCriterionCpv.tenderId = tender.id
+          tenderCriterionCpv.tenderUuid = tender.tenderUuid
+          tenderCriterionCpv.cpv = undefined
+          tenderCriterionCpv.creationDate = new Date()
+          tenderCriterionCpv.updateDate = new Date()
+          await BddTool.RecordAddUpdate (
+            'tenderCriterionCpv',
+            tenderCriterionCpv,
+            'tenderUuid, scope, cpvId',
+            client,
+          )
+        }
+      }
+
+      tenderCriterions = tenderCriterions || []
+
+      title_metrics.forEach(m => tenderCriterions.push({
+        "value": m.surface,
+        "numericValue": m.value,
+        "entity": m.unit.entity,
+        "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+        "scope": 'TITLE',
+      }))
+
+      description_metrics.forEach(m => tenderCriterions.push({
+        "value": m.surface,
+        "numericValue": m.value,
+        "entity": m.unit.entity,
+        "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+        "scope": 'DESCRIPTION',
+      }))
+
+      if (tenderCriterions && tenderCriterions.length) {
+        for (const tenderCriterion of tenderCriterions) {
+          tenderCriterion.tenderId = tender.id
+          tenderCriterion.tenderUuid = tender.tenderUuid
+          tenderCriterion.creationDate = new Date()
+          tenderCriterion.updateDate = tenderCriterion.creationDate
+          //      const upsertKey = tenderCriterion.textparseId ? 'tenderUuid, scope, textparseId' :
+          //	tenderCriterion.entity ?
+          await BddTool.RecordAddUpdate (
+            'tenderCriterion',
+            tenderCriterion,
+            'tenderUuid, scope, textparseId',
+            client,
+          )
+        }
+      }
+
+
       event.convertedData.sourceUrl.forEach(sourceUrl => newSourceUrls.push({
         tenderUuid: data.tenderUuid,
         tenderId: data.tenderId,
