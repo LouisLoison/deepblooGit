@@ -581,5 +581,21 @@ export class ApiStack extends cdk.Stack {
         ],
       },
     })
+
+    const updateTender = new CfnResolver(this, `updateTender`, {
+      apiId: api.apiId,
+      typeName: "Query",
+      fieldName: "updateTender",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    updateTender.addDependsOn(auroraDataSource);
   }
 }

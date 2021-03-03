@@ -91,7 +91,7 @@
                 "publicationDate": "2021-02-08",
                 "cpvs": "71314100,31321000,31321100",
                 "bidDeadlineDate": "2021-03-10",
-                "tenderUuid": "06fa942f-c17a-4fa5-91fd-b8c2ea867848",
+                "tenderUuid": "5e98b1c8-ddbb-455b-a9ad-329b30a94f4c",
                 "creationDate": "2021-02-19T13:42:45.013Z",
                 "updateDate": "2021-02-19T13:42:45.455Z",
                 "owner_id": "3fd2cab7-358c-404f-8dda-b5d491bb4f36",
@@ -112,9 +112,10 @@
             "CreateTenderAuroraFunction",
             "CreateTenderCriterionCpvsAuroraFunction",
             "CreateTenderCriterionsAuroraFunction",
-            "CreateAclAuroraFunction"
+            "CreateAclAuroraFunction",
+            ""
         ],
-        "currentPipelineFunction": "CreateAclAuroraFunction",
+        "currentPipelineFunction": "CreateTenderAuroraFunction",
         "pipelineFunctionsInfo": {
             "TokenAuthorizerFunction": {
                 "type": "LAMBDA"
@@ -127,7 +128,8 @@
             },
             "CreateTenderAuroraFunction": {
                 "type": "AURORA",
-                "table": "tenders"
+                "table": "tenders",
+                "key": "tenderUuid"
             },
             "CreateTenderCriterionCpvsAuroraFunction": {
                 "type": "AURORA",
@@ -142,6 +144,6 @@
                 "table": "resourceaccesslist"
             }
         },
-        "currentPipelineFunctionIndex": 3
+        "currentPipelineFunctionIndex": 6
     }
 }
