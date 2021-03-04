@@ -590,7 +590,7 @@
                       </span>
                     </div>
                     <v-btn
-                      v-if="hasDocumentToImport"
+                      v-if="hasDocumentToImport && 1 === 2"
                       :loading="documentImport"
                       rounded
                       dark

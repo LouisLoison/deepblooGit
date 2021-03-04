@@ -70,7 +70,6 @@
             v-if="
               [
                 'cpv',
-                'region',
                 'country',
                 'notice_type',
                 'buyer_name',
@@ -79,9 +78,12 @@
                 'scope_of_work',
                 'segment',
                 'brand',
-                'contract_type',
+                'financial',
+                'contract_types',
                 'procurement_method',
                 'currency',
+                'power',
+                'voltage',
               ].includes(column.property)
             "
           >
@@ -106,6 +108,13 @@
               </template>
 
               <v-card class="pa-3">
+                <SearchFacetRegion
+                  v-if="column.property === 'region' && filter.region_lvl1 && searchState.facets  && searchState.facets.region_lvl1"
+                  :region_lvl0="filter.region_lvl0"
+                  :region_lvl1="filter.region_lvl1"
+                  @filterChange="facetRegionChange($event, 'region_lvl1')"
+                />
+
                 <SearchFacet
                   v-if="column.property === 'bid_deadline' && filter.bid_deadline_timestamp && searchState.facets  && searchState.facets.bid_deadline_timestamp"
                   :checked="filter.bid_deadline_timestamp"
@@ -197,7 +206,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'contract_type' && filter.contract_types && searchState.facets  && searchState.facets.contract_types"
+                  v-if="column.property === 'contract_types' && filter.contract_types && searchState.facets  && searchState.facets.contract_types"
                   :checked="filter.contract_types"
                   :facet="searchState.facets.contract_types[0]"
                   @change="handleFacetChange($event, 'contract_types')"
@@ -240,6 +249,24 @@
                   @checkAll="handleFacetCheckAll('buyer_name')"
                   @unCheckAll="handleFacetUnCheckAll('buyer_name')"
                 />
+
+                <SearchFacet
+                  v-if="column.property === 'power' && filter.power && searchState.facets  && searchState.facets.power"
+                  :checked="filter.power"
+                  :facet="searchState.facets.power[0]"
+                  @change="handleFacetChange($event, 'power')"
+                  @checkAll="handleFacetCheckAll('power')"
+                  @unCheckAll="handleFacetUnCheckAll('power')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'voltage' && filter.voltage && searchState.facets  && searchState.facets.voltage"
+                  :checked="filter.voltage"
+                  :facet="searchState.facets.voltage[0]"
+                  @change="handleFacetChange($event, 'voltage')"
+                  @checkAll="handleFacetCheckAll('voltage')"
+                  @unCheckAll="handleFacetUnCheckAll('voltage')"
+                />
               </v-card>
             </v-menu>
           </div>
@@ -248,9 +275,7 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="results && results.length > 0"
-      >
+      <div v-if="results && results.length > 0">
         <div
           v-for="result in results"
           :key="result.id.raw"
@@ -595,12 +620,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import SearchFacet from '@/views/tender/components/SearchFacet'
+import SearchFacetRegion from '@/views/tender/components/SearchFacetRegion'
 
 export default {
   name: 'SearchResultsTable',
 
   components: {
     SearchFacet,
+    SearchFacetRegion,
   },
 
   props: {
@@ -668,12 +695,6 @@ export default {
       },
       {
         show: false,
-        title: "Currency",
-        property: "currency",
-        menu: null
-      },
-      {
-        show: false,
         title: "Biding type",
         property: "biding_type",
         menu: null
@@ -718,6 +739,18 @@ export default {
         show: false,
         title: "Currency",
         property: "currency",
+        menu: null
+      },
+      {
+        show: false,
+        title: "power",
+        property: "power",
+        menu: null
+      },
+      {
+        show: false,
+        title: "voltage",
+        property: "voltage",
         menu: null
       },
       {

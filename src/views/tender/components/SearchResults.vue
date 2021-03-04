@@ -142,7 +142,9 @@ export default {
         let SearchResultHtml = null
         if (result) {
           if (this.displayType === 'CARD') {
+            console.log(this.$refs.SearchResult)
             SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
+            console.log(SearchResultHtml)
             if (SearchResultHtml) {
               SearchResultHtml.groupLoadingStatus(true)
             }
