@@ -179,9 +179,8 @@
       <div
         class="text-center blue--text text--darken-1 pt-3"
         :class="getIsMobile ? '' : 'display-1'"
-      >
-        {{ tender.title }}
-      </div>
+        v-html="tender.title"
+      />
       <div class="text-center">{{ tender.country }}</div>
       <div class="pa-4" style="overflow: auto;">
         <div class="modal-grid">
@@ -1927,6 +1926,7 @@ export default {
         }
         this.dataTenderCriterions.data = res.data
         this.dataTenderCriterions.loading = 1
+        this.formatTextFromCriterions()
       } catch (err) {
         this.dataTenderCriterions.loading = -1
         this.$api.error(err, this)
@@ -2447,6 +2447,32 @@ export default {
 
       return textParseFinds
     },
+
+    formatTextFromCriterions() {
+      for (const tenderCriterion of this.dataTenderCriterions.data) {
+        if (
+          !tenderCriterion.word
+          || tenderCriterion.word.trim() === ''
+        ) {
+          continue
+        }
+        const textParse = this.dataTextParses.data.find(
+          a => a.textParseId === tenderCriterion.textParseId
+        )
+        if (!textParse) {
+          continue
+        }
+        tenderCriterion.textParse = textParse
+        const word = tenderCriterion.word
+        const title = `${tenderCriterion.textParse.theme}/${tenderCriterion.textParse.group}`
+        const replaceMask = `<span class="textCriterion" title="${title}">${word}</span>`
+        if (tenderCriterion.scope === 'DESCRIPTION') {
+          this.tender.description = this.tender.description.replace(new RegExp(word, "i"), replaceMask)
+        } else if (tenderCriterion.scope === 'TITLE') {
+          this.tender.title = this.tender.title.replace(new RegExp(word, "i"), replaceMask)
+        }
+      }
+    },
   },
 }
 </script>
@@ -2540,5 +2566,14 @@ export default {
 .document-item:hover {
   border: 1px solid #eeeeee;
   opacity: 1;
+}
+
+.textCriterion {
+  text-decoration: underline;
+  background-color: #00000009;
+  cursor: help;
+}
+.textCriterion:hover {
+  background-color: #f9f8637a;
 }
 </style>
