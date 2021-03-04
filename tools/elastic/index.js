@@ -137,4 +137,4 @@ const processResults = async (client, { rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(4000000)// .then(process.exit())
+main(40)// .then(process.exit())

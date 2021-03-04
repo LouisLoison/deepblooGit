@@ -1,4 +1,46 @@
 const Units = require('./public/constants/units.json')
+const { stripHtml } = require("string-strip-html")
+const { AWS } = require('./config')
+
+exports.extractMetrics = async (tender) => {
+  return new Promise((resolve, reject) => {
+    tender = tender || {}
+    tender.title = stripHtml(tender.title).result
+    tender.description = stripHtml(tender.description).result
+    const lambda = new AWS.Lambda()
+    lambda.invoke({
+      FunctionName: "TenderStack-ValueExtractionAE20FB0D-9I3I260E2HPF",
+      Payload: JSON.stringify(tender),
+      InvocationType: 'RequestResponse',
+      LogType: 'Tail',
+    }, (err, data) => {
+      if(err) {
+        reject(err)
+      } else {
+        resolve(JSON.parse(data.Payload))
+      }
+    })
+  })
+}
+
+exports.metricsCriterions = ({ title_metrics, description_metrics }) => {
+  return [
+    ...title_metrics.map(m => ({
+      "value": m.surface,
+      "numericValue": m.value,
+      "entity": m.unit.entity,
+      "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+      "scope": 'TITLE',
+    })),
+    ...description_metrics.map(m => ({
+      "value": m.surface,
+      "numericValue": m.value,
+      "entity": m.unit.entity,
+      "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
+      "scope": 'DESCRIPTION',
+    })),
+  ]
+}
 
 const metricsRange = ({ entity, numericValue }) => {
   const ranges = Units.ranges[entity] || []

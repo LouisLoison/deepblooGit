@@ -1,8 +1,11 @@
 const AWS = require('aws-sdk')
 AWS.config.apiVersions = {
   secretsmanager: '2017-10-17',
+  lambda: '2015-03-31',
   // other service API versions
 };
+
+AWS.config.region = 'eu-west-1'
 
 exports.AWS = AWS
 exports.documentsBucket = process.env.DOCUMENTS_BUCKET
