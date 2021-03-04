@@ -27,6 +27,7 @@ const main = async (limit = 9) => {
 const processResults = async (client, { rows, fields, rowCount }) => {
   let tranche = []
   let appTranche = []
+  let promiseTranche = []
   let processed = 0
   for (let i=0; i < rowCount; i += 1) {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
@@ -41,8 +42,8 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       console.log(err)
       console.log(result.contactAddress)
     }
-    const { analyzedData, formatedData } = await analyzeTender(result)
 
+    promiseTranche.push(analyzeTender(result).then(async ({ analyzedData, formatedData }) => {
     await BddTool.RecordAddUpdate (
           'tenders',
           analyzedData,
@@ -59,6 +60,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
 
     if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
       for (const tenderCriterionCpv of tenderCriterionCpvs) {
+        tenderCriterionCpv.tenderId = result.id
         tenderCriterionCpv.tenderUuid = result.tenderUuid
         tenderCriterionCpv.cpv = undefined
         tenderCriterionCpv.creationDate = new Date()
@@ -79,6 +81,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
 
 
       for (const tenderCriterion of tenderCriterions) {
+        tenderCriterion.tenderId = result.id
         tenderCriterion.tenderUuid = result.tenderUuid
         tenderCriterion.creationDate = new Date()
         tenderCriterion.updateDate = tenderCriterion.creationDate
@@ -110,10 +113,12 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       appTranche.push(appsearchDoc)
     }
     processed += 1
+    }))
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (tranche.length >= 50) {
+    if (promiseTranche.length >= 18) {
+      await Promise.all(promiseTranche)
       await indexToElasticsearch(tranche, 'tenders')
       if(appTranche.length) {
         await indexObjectToAppsearch(appTranche, 'tenders-dev')
@@ -121,11 +126,14 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
+      promiseTranche.forEach((r, index) => delete promiseTranche[index])
+      promiseTranche = []
       tranche = []
       appTranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
+  await Promise.all(promiseTranche)
   if (tranche.length) {
     await indexToElasticsearch(tranche, 'tenders')
   }
