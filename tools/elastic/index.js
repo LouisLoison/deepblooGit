@@ -57,7 +57,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
 
       const { rows } = await BddTool.QueryExecPrepared(client, query, [analyzedData.tenderUuid])
       const [[groups]] = rows
-      formatedData.groups = groups
+      formatedData.groups = groups || []
       console.log(groups)
 
 
