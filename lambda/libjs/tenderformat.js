@@ -218,7 +218,7 @@ exports.analyzeTender = async (tenderSrc) => {
     formatedData.status = 20
   }
 
-  console.log(formatedData.power, formatedData.voltage)
+  // console.log(formatedData.power, formatedData.voltage)
 
   return { analyzedData, formatedData }
 }

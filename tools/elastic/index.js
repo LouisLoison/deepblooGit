@@ -10,8 +10,8 @@ const main = async (limit = 9) => {
 
   const query = `select tenders.* from tenders
     where now() - creationdate < interval '1 month'
-    order by tenders.creationdate desc
-    nulls last
+    order by tenders.creationdate asc
+    nulls first
     limit $1`
 
 
@@ -58,9 +58,6 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       const { rows } = await BddTool.QueryExecPrepared(client, query, [analyzedData.tenderUuid])
       const [[groups]] = rows
       formatedData.groups = groups || []
-      console.log(groups)
-
-
 
       const { tenderCriterions, tenderCriterionCpvs } = analyzedData
 
@@ -155,4 +152,4 @@ const processResults = async (client, { rows, fields, rowCount }) => {
   // return result.length
 }
 
-main(40)// .then(process.exit())
+main(4000000)// .then(process.exit())
