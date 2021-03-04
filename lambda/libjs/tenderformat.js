@@ -198,13 +198,18 @@ exports.analyzeTender = async (tenderSrc) => {
     exclusionWord: importOrigine.exclusionWord,
     status: importOrigine.status,
   }
-  const metrics = await extractMetrics(analyzedData)
-  const criterions = metricsCriterions(metrics)
 
-  analyzedData.tenderCriterions = [
-    ...(analyzedData.tenderCriterions || []),
-    ...criterions,
-  ]
+  try {
+    const metrics = await extractMetrics(analyzedData)
+    const criterions = metricsCriterions(metrics)
+    analyzedData.tenderCriterions = [
+      ...(analyzedData.tenderCriterions || []),
+      ...criterions,
+    ]
+  } catch (err) {
+    console.log(analyzedData)
+    throw err
+  }
 
   const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
   if (formatedData && analyzedData.status > 0) {
