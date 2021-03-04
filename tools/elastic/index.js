@@ -51,17 +51,27 @@ const processResults = async (client, { rows, fields, rowCount }) => {
           client,
         )
 
+    const query = `select array_agg(distinct tendergroupid)
+      from tendergrouplink
+      where tenderuuid=$1`
+
+    const {rows} = await BddTool.QueryExecPrepared(client, query, [analyzedData.tenderUuid])
+    const [[ groups ]] = rows
+    formatedData.groups = groups
+	    console.log(groups)
+
+
 
     const { tenderCriterions, tenderCriterionCpvs } = analyzedData
 
     await BddTool.QueryExecPrepared(client, `
       delete from tenderCriterionCpv where tenderUuid = $1;
-      `, [result.tenderUuid])
+      `, [analyzedData.tenderUuid])
 
     if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
       for (const tenderCriterionCpv of tenderCriterionCpvs) {
-        tenderCriterionCpv.tenderId = result.id
-        tenderCriterionCpv.tenderUuid = result.tenderUuid
+        tenderCriterionCpv.tenderId = analyzedData.id
+        tenderCriterionCpv.tenderUuid = analyzedData.tenderUuid
         tenderCriterionCpv.cpv = undefined
         tenderCriterionCpv.creationDate = new Date()
         tenderCriterionCpv.updateDate = new Date()
@@ -76,13 +86,13 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     if (tenderCriterions && tenderCriterions.length) {
     await BddTool.QueryExecPrepared(client, `
       delete from tenderCriterion where tenderUuid = $1;
-      `, [result.tenderUuid])
+      `, [analyzedData.tenderUuid])
 
 
 
       for (const tenderCriterion of tenderCriterions) {
-        tenderCriterion.tenderId = result.id
-        tenderCriterion.tenderUuid = result.tenderUuid
+        tenderCriterion.tenderId = analyzedData.id
+        tenderCriterion.tenderUuid = analyzedData.tenderUuid
         tenderCriterion.creationDate = new Date()
         tenderCriterion.updateDate = tenderCriterion.creationDate
         await BddTool.RecordAddUpdate (
@@ -98,18 +108,18 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     const elasticDoc = {
       ...analyzedData,
       ...formatedData,
-      id: result.tenderUuid,
+      id: analyzedData.tenderUuid,
     }
     delete elasticDoc.tenderUuid
     const appsearchDoc = {
       ...formatedData,
-      id: result.tenderUuid,
-      account_id: result.owner_id || 'none',
+      id: analyzedData.tenderUuid,
+      account_id: analyzedData.owner_id || 'none',
     }
     delete appsearchDoc.tenderUuid
     tranche.push(elasticDoc)
 
-    if (result.status === 20) {
+    if (analyzedData.status === 20) {
       appTranche.push(appsearchDoc)
     }
     processed += 1
