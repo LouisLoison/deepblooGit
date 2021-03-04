@@ -20,11 +20,11 @@ exports.documentAddUpdate = async (client, document) => {
   return (documentNew)
 }
 
-exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
+exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
   const client = await BddTool.getClient()
   await BddTool.QueryExecPrepared(client, 'BEGIN;')
 
-  const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl })
+  const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl, tenderId })
 
   if (sourceUrl.includes('www2.dgmarket.com') && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
     sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'

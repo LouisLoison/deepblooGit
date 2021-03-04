@@ -10,7 +10,7 @@ const metricsRange = ({ entity, numericValue }) => {
 }
 
 const metricsRanges = (entity, criterions) => {
-  return criterions
+  return (criterions || [])
     .filter(c => (c.entity === entity) && isFinite(c.numericValue))
     .map(c => metricsRange(c))
     .filter(label => label)

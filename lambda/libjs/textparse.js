@@ -724,7 +724,7 @@ exports.cpvParseTreat = (text, CpvList, CpvListFormated, scope) => {
     }
     for (const cpvWord of cpv.cpvWords) {
       const word = cpvWord.word.trim()
-      if (!word || word.trim() !== '') {
+      if (!word || word.trim() === '') {
         continue
       }
 
@@ -778,9 +778,9 @@ exports.textParseTreat = (text, textParses, scope) => {
         let word2 = wordCouple.split('|')[1].trim()
         if (
           !word1
-          || word1.trim() !== ''
+          || word1.trim() === ''
           || !word2
-          || word2.trim() !== ''
+          || word2.trim() === ''
         ) {
           continue
         }
