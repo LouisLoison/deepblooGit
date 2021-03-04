@@ -1,6 +1,11 @@
+#if( $ctx.args.id )
+	#set( $id = $ctx.args.id )
+#else
+	#set( $id = $ctx.args.input.tenderUuid )
+#end
 {
   "version": "2018-05-29",
   "statements": [
-    "select role as \"role\" FROM resourceaccesslist WHERE resourceid = '$ctx.args.id' and  granteeid = '$ctx.stash.user_uuid'"
+    "select role as \"role\" FROM resourceaccesslist WHERE resourceid = '$id' and  granteeid = '$ctx.stash.user_uuid'"
   ]
 }

@@ -1,0 +1,23 @@
+## PUT NEW INPUT ARGUMENTS NEED TO CREATE TENDERS
+$util.qr($context.stash.put("pipelineFunctions", 
+["TokenAuthorizerFunction",
+"GetUserAuroraFunction",
+"GetAclAuroraFunction",
+"UpdateTenderElasticFunction", 
+"UpdateTenderAuroraFunction" ,
+""
+]))
+$util.qr($context.stash.put("pipelineFunctionsInfo", 
+{
+"TokenAuthorizerFunction": {"type":"LAMBDA"},
+"GetUserAuroraFunction": {"type":"AURORA"},
+"GetAclAuroraFunction": {"type":"AURORA", "table":"resourceaccesslist"}, 
+"UpdateTenderElasticFunction": {"type":"LAMBDA"} ,
+"UpdateTenderAuroraFunction": {"type":"AURORA", "table":"tenders", "key": "tenderUuid"}, 
+}
+))
+## STARTING FROM INDEX 3 BECAUSE WE WANT TO TRACK FROM AURORA RESOLVERS ONLY
+$util.qr($context.stash.put("currentPipelineFunctionIndex", 4))
+$util.qr($context.stash.put("currentPipelineFunction", $context.stash.pipelineFunctions[$context.stash.currentPipelineFunctionIndex])) 
+
+{}

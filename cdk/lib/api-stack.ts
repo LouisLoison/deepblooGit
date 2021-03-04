@@ -420,6 +420,23 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const UpdateTenderElasticFunction = new CfnFunctionConfiguration(this, `UpdateTenderElasticFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: elasticDataSource.name,
+      name: "UpdateTenderElasticFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderElasticFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderElasticFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+
     const CreateTenderCriterionCpvsAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderCriterionCpvsAuroraFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
@@ -515,6 +532,22 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
     })
+
+    const updateTenderAuroraFunction = new CfnFunctionConfiguration(this, `updateTenderAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "updateTenderAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "updateTenderAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertUpdateAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.insertUpdateAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -582,20 +615,27 @@ export class ApiStack extends cdk.Stack {
       },
     })
 
-    const updateTender = new CfnResolver(this, `updateTender`, {
+    const UpdateTenderPipeline = new CfnResolver(this, `UpdateTenderPipeline`, {
       apiId: api.apiId,
-      typeName: "Query",
-      fieldName: "updateTender",
+      kind: 'PIPELINE',
+      typeName: "Mutation",
+      fieldName: "UpdateTender",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        `${__dirname}/../../appsync/function.UpdateTender.before.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
+        `${__dirname}/../../appsync/function.UpdateTender.after.vtl`,
         { encoding: "utf8" }
       ),
-      dataSourceName: auroraDataSource.name,
+      pipelineConfig: {
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          UpdateTenderElasticFunction.attrFunctionId,
+          updateTenderAuroraFunction.attrFunctionId]
+      }
     })
-    updateTender.addDependsOn(auroraDataSource);
   }
 }
