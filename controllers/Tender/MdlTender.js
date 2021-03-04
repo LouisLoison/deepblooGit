@@ -1385,17 +1385,23 @@ exports.TenderGroup = (tenderGroupId) => {
   })
 }
 
-exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId, tenderUuid) => {
+exports.TenderGroupMove = (userId, tenderGroupId, tenderId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      tenderId = tenderId || tenderUuid
+      if (!tenderId && tenderUuid) {
+        const tender = await this.TenderGet(null, null, tenderUuid)
+        if (tender) {
+          tenderId = tender.id
+        }
+      }
 
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
           tenderGroupId: tenderGroupId,
+          tenderId: tenderId,
           tenderUuid: tenderUuid,
           creationDate: new Date(),
           updateDate: new Date(),
@@ -1514,6 +1520,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
         SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
                     userId AS "userId",
                     tenderGroupId AS "tenderGroupId",
+                    tenderId AS "tenderId",
                     tenderUuid AS "tenderUuid",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
@@ -1526,7 +1533,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       }
       if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
+        where += `tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1536,7 +1543,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
           tenderGroupLinkId: record.tenderGroupLinkId,
           userId: record.userId,
           tenderGroupId: record.tenderGroupId,
-          tenderId: record.tenderUuid,
+          tenderId: record.tenderId,
           tenderUuid: record.tenderUuid,
           creationDate: record.creationDate,
           updateDate: record.updateDate

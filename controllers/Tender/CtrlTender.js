@@ -59,7 +59,7 @@ exports.TenderGroupList = (req, res) => {
 }
 
 exports.TenderGroupMove = (req, res) => {
-  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupMove(req.body.userId, req.body.tenderGroupId, req.body.tenderId, req.body.algoliaId, req.body.tenderUuid).then((data) => {
+  require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupMove(req.body.userId, req.body.tenderGroupId, req.body.tenderId, req.body.tenderUuid).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }
