@@ -1390,18 +1390,12 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, tenderUuid) => {
     try {
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      if (!tenderId && tenderUuid) {
-        const tender = await this.TenderGet(null, null, tenderUuid)
-        if (tender) {
-          tenderId = tender.id
-        }
-      }
+      tenderId = tenderId || tenderUuid
 
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
           tenderGroupId: tenderGroupId,
-          tenderId: tenderId,
           tenderUuid: tenderUuid,
           creationDate: new Date(),
           updateDate: new Date(),
@@ -1520,7 +1514,6 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
         SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
                     userId AS "userId",
                     tenderGroupId AS "tenderGroupId",
-                    tenderId AS "tenderId",
                     tenderUuid AS "tenderUuid",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
@@ -1533,7 +1526,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       }
       if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
+        where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1543,7 +1536,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
           tenderGroupLinkId: record.tenderGroupLinkId,
           userId: record.userId,
           tenderGroupId: record.tenderGroupId,
-          tenderId: record.tenderId,
+          tenderId: record.tenderUuid,
           tenderUuid: record.tenderUuid,
           creationDate: record.creationDate,
           updateDate: record.updateDate
