@@ -1413,7 +1413,7 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, tenderUuid) => {
       const groups = tenderGroupLinks.map(a => a.tenderGroupId)
       await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
         {
-          id: tenderId,
+          id: tenderUuid,
           groups,
         }
       ])
@@ -1526,7 +1526,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       }
       if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
+        where += `tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
@@ -1536,7 +1536,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
           tenderGroupLinkId: record.tenderGroupLinkId,
           userId: record.userId,
           tenderGroupId: record.tenderGroupId,
-          tenderId: record.tenderUuid,
+          tenderId: record.tenderId,
           tenderUuid: record.tenderUuid,
           creationDate: record.creationDate,
           updateDate: record.updateDate
