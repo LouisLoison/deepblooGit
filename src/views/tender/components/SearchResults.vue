@@ -249,9 +249,12 @@ export default {
 
     async sendToSalesforce(result) {
       try {
+        if (!result.tender_id) {
+          return
+        }
         const res = await this.$api.post('/Tender/sendToSalesforce', {
           userId: this.getUserId,
-          tenderId: parseInt(result.id.raw, 10),
+          tenderId: parseInt(result.tender_id.raw, 10),
         })
         if (!res.success) {
           let message = ''
@@ -278,6 +281,15 @@ export default {
           })
           throw new Error(res.Error)
         }
+        this.showConfirmModal({
+          headerClass: "white--text darken-4--text green lighten-1",
+          headerIcon: "fa-check",
+          title: "Synchro with Salesforce",
+          message: 'Tender send to salesforce',
+          buttons: [
+            { libelle: "Close", text: true, class: "" }
+          ]
+        })
       } catch (err) {
         this.$api.error(err, this)
       }
