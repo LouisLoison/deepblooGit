@@ -62,6 +62,7 @@ var Schema = {
       pageCount: { type: "Int" },
       sourceUrl: { type: "String" },
       s3Url: { type: "String" },
+      thumbnailUrl: { type: "String" },
       boxFolderId: { type: "String" },
       boxFileId: { type: "String" },
       parseResult: { type: "String" },
