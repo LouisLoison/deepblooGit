@@ -1390,12 +1390,18 @@ exports.TenderGroupMove = (userId, tenderGroupId, tenderId, tenderUuid) => {
     try {
       const BddTool = require(process.cwd() + '/global/BddTool')
 
-      tenderId = tenderId || tenderUuid
+      if (!tenderId && tenderUuid) {
+        const tender = await this.TenderGet(null, null, tenderUuid)
+        if (tender) {
+          tenderId = tender.id
+        }
+      }
 
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
           tenderGroupId: tenderGroupId,
+          tenderId: tenderId,
           tenderUuid: tenderUuid,
           creationDate: new Date(),
           updateDate: new Date(),
@@ -1433,8 +1439,6 @@ exports.TenderArchiveMove = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroupLink 
@@ -1470,8 +1474,6 @@ exports.TenderDeleteMove = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroupLink 
@@ -1507,8 +1509,6 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
@@ -1555,8 +1555,6 @@ exports.TenderDetailList = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderDetailId AS "tenderDetailId", 
@@ -1610,8 +1608,6 @@ exports.TenderDetailAddUpdate = (tenderDetail) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       if (!tenderDetail.tenderDetailId) {
         tenderDetail.creationDate = new Date()
@@ -1669,8 +1665,6 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let data = await BddTool.RecordAddUpdate('tenderCriterion', tenderCriterion)
       resolve(data)
     } catch (err) {
@@ -1682,10 +1676,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
 exports.tenderCriterions = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
@@ -1740,10 +1731,7 @@ exports.tenderCriterions = (filter) => {
 exports.tenderCriterionCpvs = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderCriterionCpv.tenderId AS "tenderId", 
@@ -1793,10 +1781,7 @@ exports.tenderCriterionCpvs = (filter) => {
 exports.tenderFilterAddUpdate = (tenderFilter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let tenderFilterNew = await BddTool.RecordAddUpdate('tenderFilter', tenderFilter)
       resolve(tenderFilterNew);
     } catch (err) { reject(err) }
@@ -1806,10 +1791,7 @@ exports.tenderFilterAddUpdate = (tenderFilter) => {
 exports.tenderFilterDelete = (tenderFilterId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       if (!tenderFilterId) {
         throw new Error("No available id !")
@@ -1840,13 +1822,10 @@ exports.tenderFilterDelete = (tenderFilterId) => {
 exports.tenderFilterList = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
       // Get tenderFilter list
       const tenderFilters = []
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = `
         SELECT    tenderFilter.tenderFilterId AS "tenderFilterId", 
                   tenderFilter.userId AS "userId", 
@@ -1893,10 +1872,7 @@ exports.tenderFilterList = (filter) => {
 exports.tenderUserGroupDispatch = (tenders) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let userFilters = [
         {
