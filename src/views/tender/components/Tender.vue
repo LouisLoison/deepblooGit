@@ -1035,7 +1035,7 @@
                         data not available
                       </span>
                     </div>
-                    <div class="grey--text pt-3">Electric potential</div>
+                    <div class="grey--text pt-3">Voltage</div>
                     <div>
                       <span v-if="hasReadRight">
                         <span v-if="getVoltage && getVoltage.length">
