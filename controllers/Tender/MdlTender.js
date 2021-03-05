@@ -1526,9 +1526,11 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       }
       if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `( tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
-        where += ` or tenderUuid = '${BddTool.ChaineFormater(tenderId)}' ) \n`
-
+          if (isFinite(tenderId)) {
+            where += `tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
+          } else {
+            where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
+          }
       }
       if (where !== '') { query += 'WHERE ' + where }
       let recordset = await BddTool.QueryExecBdd2(query)
