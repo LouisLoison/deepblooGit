@@ -234,8 +234,7 @@ export class TenderStack extends Stack {
     elasticSecret.grantRead(stepTenderElasticIndex)
     elasticSecret.grantRead(stepNotifyError)
 
-    stepTenderAnalyze.grantInvoke(stepValueExtraction)
-
+    stepValueExtraction.grantInvoke(stepTenderAnalyze)
     const processFail = new Fail(this, 'processFail', {
       error: 'WorkflowFailure',
       cause: "Download task failed"
@@ -322,12 +321,14 @@ export class TenderStack extends Stack {
       payloadResponseOnly: true,
     }).addCatch(notifyErrorTask)
 
+    /*
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
     }).addCatch(notifyErrorTask)
+    */
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
       stateMachine: props.documentMachine,
@@ -347,7 +348,6 @@ export class TenderStack extends Stack {
     const chain = Chain.start(initialWait)
       .next(convertTenderTask)
       .next(analyzeTenderTask)
-      .next(valueExtractionTask)
       .next(namedEntitiesTask)
       .next(storeTenderTask)
       .next(mergeTenderTask)

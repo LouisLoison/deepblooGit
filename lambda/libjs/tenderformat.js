@@ -208,8 +208,8 @@ exports.analyzeTender = async (tenderSrc) => {
     ]
   } catch (err) {
     const { title, description } = analyzedData
+    console.log(err)
     console.log(JSON.stringify({ title, description }))
-    //throw err
   }
 
   const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
