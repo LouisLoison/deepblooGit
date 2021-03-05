@@ -195,6 +195,7 @@ export class TenderStack extends Stack {
     });
 
     const stepValueExtraction = new Function(this, 'ValueExtraction', {
+      functionName: `stepValueExtraction-${environment.NODE_ENV}`,
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/valueextraction'),
       handler: 'lambda_function.lambda_handler',
@@ -232,6 +233,8 @@ export class TenderStack extends Stack {
     appsearchSecret.grantRead(stepTenderIndex)
     elasticSecret.grantRead(stepTenderElasticIndex)
     elasticSecret.grantRead(stepNotifyError)
+
+    stepTenderAnalyze.grantInvoke(stepValueExtraction)
 
     const processFail = new Fail(this, 'processFail', {
       error: 'WorkflowFailure',

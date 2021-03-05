@@ -23,7 +23,7 @@ exports.extractMetrics = async (tender) => {
 
     const lambda = new AWS.Lambda()
     lambda.invoke({
-      FunctionName: "TenderStack-ValueExtractionAE20FB0D-9I3I260E2HPF",
+      FunctionName: `stepValueExtraction-${process.env.NODE_ENV || 'dev'}`,
       Payload: JSON.stringify({
         title,
         description,
