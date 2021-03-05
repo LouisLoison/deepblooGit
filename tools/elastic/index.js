@@ -95,7 +95,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
           await BddTool.RecordAddUpdate(
             'tenderCriterion',
             tenderCriterion,
-            'tenderUuid, scope, textparseId',
+            'tenderUuid, scope, textParseId, word',
             client,
           )
         }

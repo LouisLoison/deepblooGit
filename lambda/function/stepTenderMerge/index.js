@@ -119,7 +119,7 @@ exports.handler =  async function(event, ) {
           await BddTool.RecordAddUpdate (
             'tenderCriterion',
             tenderCriterion,
-            'tenderUuid, scope, textparseId',
+            'tenderUuid, scope, textParseId, word',
             client,
           )
         }
