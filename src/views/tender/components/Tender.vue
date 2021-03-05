@@ -2359,7 +2359,7 @@ export default {
     openTenderGroupChoice() {
       let result = {
         id: {
-          raw: this.tender.id.toString()
+          raw: (this.tender.tenderUuid || this.tender.id).toString()
         },
         object_id: {
           raw: this.tender.id.toString()
