@@ -10,15 +10,24 @@ const textparseIds = {
   'current': 1005,
 }
 
+const formatString = (str) => {
+  return stripHtml(str).result
+    .replace(/[/-]/g, '|').replace(/[kK][V]/g, 'Kv')
+}
+
 exports.extractMetrics = async (tender) => {
   return new Promise((resolve, reject) => {
     tender = tender || {}
-    tender.title = stripHtml(tender.title).result
-    tender.description = stripHtml(tender.description).result
+    const title = formatString(tender.title)
+    const description = formatString(tender.description)
+
     const lambda = new AWS.Lambda()
     lambda.invoke({
       FunctionName: "TenderStack-ValueExtractionAE20FB0D-9I3I260E2HPF",
-      Payload: JSON.stringify(tender),
+      Payload: JSON.stringify({
+        title,
+        description,
+      }),
       InvocationType: 'RequestResponse',
       LogType: 'Tail',
     }, (err, data) => {
