@@ -1,6 +1,7 @@
 exports.sendToSalesforce = (userId, tenderId) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const moment = require('moment')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const FormData = require('form-data')
 
@@ -9,9 +10,27 @@ exports.sendToSalesforce = (userId, tenderId) => {
         throw new Error(`Unknown tender #${tenderId}`)
       }
 
-      // Get countryId
+      // Get scope of work
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
       const tenderCriterions = await require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions({ tenderId })
+      let scopeOfWorkTextParses = textParses.filter(a => a.theme === 'Scope of Work')
+      let scopeOfWorkTextTenderCriterions = []
+      for (const tenderCriterion of tenderCriterions) {
+        let textParse = scopeOfWorkTextParses.find(a => a.textParseId === tenderCriterion.textParseId)
+        if (textParse) {
+          tenderCriterion.textParse = textParse
+          scopeOfWorkTextTenderCriterions.push(tenderCriterion)
+        }
+      }
+      let scopeOfWork = ''
+      if (
+        scopeOfWorkTextTenderCriterions.length
+        && scopeOfWorkTextTenderCriterions[0].textParse
+      ) {
+        scopeOfWork = scopeOfWorkTextTenderCriterions[0].textParse.group
+      }
+
+      // Get financial organization
       let financialOrganizationTextParses = textParses.filter(a => a.theme === 'Financial Organization')
       let financialOrganizationTenderCriterions = []
       for (const tenderCriterion of tenderCriterions) {
@@ -72,17 +91,19 @@ exports.sendToSalesforce = (userId, tenderId) => {
       }
 
       let title = tender.title.substring(0, 50)
+      let description = tender.description
       let response2 = await require('axios').post(
         `https://sediver--sediveruat.my.salesforce.com/services/data/v50.0/sobjects/Project__c`, {
           Tender_UUID__c: tender.tenderUuid,
           Name: title,
+          Description__c: description,
           Country__c: countryId,
           Account_Name_DB__c: "TEST ACCOUNT NAME",
-          BDD__c: "2020-12-20T14:23:44",
+          BDD__c: moment(tender.bidDeadlineDate).format('YYYY-MM-DDTHH:mm:ss'), // exemple : "2020-12-20T14:23:44"
           Tender_Issue_Date__c: "2020-11-20T14:23:44",
           Status__c: "Postponed",
           CurrencyIsoCode: tender.currency,
-          Scope__c: "Project scope here",
+          Scope__c: scopeOfWork,
           Market_Segment__c: "Transmission",
           Application__c: "New Construction",
           Voltage1__c: 33,
