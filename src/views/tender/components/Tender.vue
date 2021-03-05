@@ -2362,7 +2362,7 @@ export default {
           raw: this.tender.id.toString()
         },
         object_id: {
-          raw: this.tender.algoliaId.toString()
+          raw: this.tender.id.toString()
         },
         tender_id: {
           raw: this.tender.id.toString()
