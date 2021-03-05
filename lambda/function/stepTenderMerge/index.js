@@ -1,12 +1,10 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 
 const { BddTool } = require('deepbloo');
-const { metricsRanges } = require('deepbloo').metricranges;
 
 exports.handler =  async function(event, ) {
   const { uuid } = event.storedData
   let { tenderCriterions, tenderCriterionCpvs } = event.analyzedData
-  const { title_metrics, description_metrics } = event.metrics
 
   const client = await BddTool.getClient()
 
@@ -92,22 +90,6 @@ exports.handler =  async function(event, ) {
 
       tenderCriterions = tenderCriterions || []
 
-      title_metrics.forEach(m => tenderCriterions.push({
-        "value": m.surface,
-        "numericValue": m.value,
-        "entity": m.unit.entity,
-        "findCount": title_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
-        "scope": 'TITLE',
-      }))
-
-      description_metrics.forEach(m => tenderCriterions.push({
-        "value": m.surface,
-        "numericValue": m.value,
-        "entity": m.unit.entity,
-        "findCount": description_metrics.reduce((acc, val) => acc + ((val.surface === m.surface) ? 1 : 0), 0),
-        "scope": 'DESCRIPTION',
-      }))
-
       if (tenderCriterions && tenderCriterions.length) {
         for (const tenderCriterion of tenderCriterions) {
           tenderCriterion.tenderId = tender.id
@@ -119,7 +101,7 @@ exports.handler =  async function(event, ) {
           await BddTool.RecordAddUpdate (
             'tenderCriterion',
             tenderCriterion,
-            'tenderUuid, scope, textparseId',
+            'tenderUuid, scope, textParseId, word',
             client,
           )
         }
@@ -131,10 +113,6 @@ exports.handler =  async function(event, ) {
         tenderId: data.tenderId,
         sourceUrl,
       }))
-
-
-      data.power = metricsRanges('power', tenderCriterions)
-      data.voltage = metricsRanges('electric potential', tenderCriterions)
     }
 
     console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'data', (tender !== undefined) )

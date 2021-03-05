@@ -32,6 +32,9 @@
     "cpvs": {
       "raw": {}
     },
+    "tender_id": {
+      "raw": {}
+    },
     "description": {
       "snippet": {
         "size": 180
@@ -89,6 +92,9 @@
     "categories": {
       "raw": {}
     },
+    "power": {
+      "raw": {}
+    },
     "lang": {
       "raw": {}
     },
@@ -107,19 +113,21 @@
     "families": {
       "raw": {}
     },
+    "voltage": {
+      "raw": {}
+    },
     "publication_timestamp": {
       "raw": {}
     },
     "bid_deadline_timestamp": {
       "raw": {}
     },
-    "designs": {
-      "raw": {}
-    },
     "datasource": {
       "raw": {}
+    },
+    "designs": {
+      "raw": {}
     }
-
   },
   "boosts": {}
 }

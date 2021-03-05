@@ -166,3 +166,7 @@ update tendergrouplink set tenderuuid = tenders.tenderuuid from tenders where te
 
 
 create unique index tendergrouplink_userid_tenderuuid_unique on tendergrouplink(userid, tenderuuid);
+
+drop index tendercriterion_textparseid_scope_tenderuuid_unique ;
+
+create unique index tendercriterion_textparseid_word_scope_tenderuuid_unique on tendercriterion(textparseid, scope, word, tenderuuid);
