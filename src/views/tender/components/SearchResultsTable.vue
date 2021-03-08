@@ -599,6 +599,64 @@
                   {{ contractType }}
                 </div>
               </div>
+              <div
+                v-else-if="column.property === 'power' && result.power && result.power.raw"
+                style="position: relative;"
+                :title="
+                  result && result.power.raw
+                    ? result.power.raw.join(', ')
+                    : ''
+                "
+              >
+                <div v-if="result.power && result.power.raw">
+                  <div
+                    v-for="(item, itemIndex) of result.power.raw"
+                    :key="`itemIndex${itemIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ item }}
+                  </div>
+                  <div
+                    v-if="
+                      result.power.raw &&
+                      result.power.raw.length > 2
+                    "
+                    class="blue-grey--text"
+                    style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                  >
+                    +{{ result.power.raw.length - 2 }} more
+                  </div>
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'voltage' && result.voltage && result.voltage.raw"
+                style="position: relative;"
+                :title="
+                  result && result.voltage.raw
+                    ? result.voltage.raw.join(', ')
+                    : ''
+                "
+              >
+                <div v-if="result.voltage && result.voltage.raw">
+                  <div
+                    v-for="(item, itemIndex) of result.voltage.raw"
+                    :key="`itemIndex${itemIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ item }}
+                  </div>
+                  <div
+                    v-if="
+                      result.voltage.raw &&
+                      result.voltage.raw.length > 2
+                    "
+                    class="blue-grey--text"
+                    style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                  >
+                    +{{ result.voltage.raw.length - 2 }} more
+                  </div>
+                </div>
+              </div>
               <div v-else>
                 <div v-if="result[column.property] && result[column.property].raw">
                   {{ result[column.property].raw }}
