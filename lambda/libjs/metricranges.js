@@ -1,6 +1,6 @@
 const Units = require('./public/constants/units.json')
 const { stripHtml } = require("string-strip-html")
-const { AWS } = require('./config')
+const { AWS, env } = require('./config')
 
 const textparseIds = {
   'power': 1001,
@@ -23,7 +23,7 @@ exports.extractMetrics = async (tender) => {
 
     const lambda = new AWS.Lambda()
     lambda.invoke({
-      FunctionName: `stepValueExtraction-${process.env.NODE_ENV || 'dev'}`,
+      FunctionName: `stepValueExtraction-${env}`,
       Payload: JSON.stringify({
         title,
         description,
