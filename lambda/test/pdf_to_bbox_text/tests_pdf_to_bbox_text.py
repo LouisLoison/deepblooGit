@@ -9,7 +9,7 @@ def test_pdf_to_bbox_execution():
     os.environ['TEXTRACT_ONLY'] = "false"
     os.environ['MIN_CHAR_NEEDED'] = "10"
     os.environ['EXTRACT_PDF_LINES'] = "true"
-    dest_s3_path = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d-analysis/2e61ac87-061a-41ba-8c48-42ada588ab5c/T459624983.txt"
+    dest_s3_path = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983.txt"
     bucket_name = os.environ['DOCUMENTS_BUCKET']
     aws_region = os.environ['AWS_REGION']
 

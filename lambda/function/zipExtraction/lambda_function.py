@@ -5,7 +5,7 @@ import shutil
 import json
 
 from helper import AwsHelper, S3Helper
-from update_event import update_event, get_new_s3_url
+from update_event import update_event, get_s3_object_url
 
 
 def extract_nested_zip(zip_file, output_zip):
@@ -107,11 +107,11 @@ def write_extracted_zip(aws_env: dict, zip_tmp: str):
                                        aws_region)
 
 
-def get_zip_output(object_name: str) -> str:
-    folder_output, zip_name = os.path.split(object_name)
-    name, ext = os.path.splitext(zip_name)
-    output = os.path.join(folder_output, name)
-    return output
+# def get_zip_output(object_name: str) -> str:
+#     folder_output, zip_name = os.path.split(object_name)
+#     name, ext = os.path.splitext(zip_name)
+#     output = os.path.join(folder_output, name)
+#     return output
 
 
 def lambda_handler(event, context):
@@ -121,7 +121,7 @@ def lambda_handler(event, context):
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
         "awsRegion": "eu-west-1",
-        "outputName": get_zip_output(event['objectName'])
+        "outputName": event['objectName'][0:-4]
     }
     print("=> AWS env: {0}".format(json.dumps(aws_env)))
     tmp_folder = "/tmp/zip_extraction"
