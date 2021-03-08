@@ -4,6 +4,7 @@ $util.qr($context.stash.put("pipelineFunctions",
 "GetUserAuroraFunction",
 "GetAclAuroraFunction",
 "GetTenderAuroraFunction",
+"UpdateTenderLocalFunction",
 "UpdateTenderElasticFunction", 
 "UpdateTenderAuroraFunction",
 "UpdateTenderCriterionCpvsAuroraFunction",
@@ -15,7 +16,8 @@ $util.qr($context.stash.put("pipelineFunctionsInfo",
 "TokenAuthorizerFunction": {"type":"LAMBDA"},
 "GetUserAuroraFunction": {"type":"AURORA"},
 "GetAclAuroraFunction": {"type":"AURORA", "table":"resourceaccesslist"},
-"GetTenderAuroraFunction": {"type":"AURORA"}, 
+"GetTenderAuroraFunction": {"type":"AURORA"},
+"UpdateTenderLocalFunction": {"type": "LOCAL"}, 
 "UpdateTenderElasticFunction": {"type":"LAMBDA"} ,
 "UpdateTenderAuroraFunction": {"type":"AURORA", "table":"tenders", "key": "tenderUuid"},
 "UpdateTenderCriterionCpvsAuroraFunction": {"type":"AURORA", "table":"tendercriterioncpv", "key": "tenderUuid, scope, cpvId"},
@@ -23,6 +25,6 @@ $util.qr($context.stash.put("pipelineFunctionsInfo",
 }
 ))
 ## STARTING FROM INDEX 4 BECAUSE WE WANT TO TRACK FROM AURORA RESOLVERS ONLY
-$util.qr($context.stash.put("currentPipelineFunctionIndex", 5))
+$util.qr($context.stash.put("currentPipelineFunctionIndex", 6))
 $util.qr($context.stash.put("currentPipelineFunction", $context.stash.pipelineFunctions[$context.stash.currentPipelineFunctionIndex])) 
 {}

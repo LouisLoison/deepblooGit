@@ -103,6 +103,7 @@
             "GetUserAuroraFunction",
             "GetAclAuroraFunction",
             "GetTenderAuroraFunction",
+            "UpdateTenderLocalFunction",
             "UpdateTenderElasticFunction",
             "UpdateTenderAuroraFunction",
             "UpdateTenderCriterionCpvsAuroraFunction",
@@ -124,6 +125,9 @@
             "GetTenderAuroraFunction": {
                 "type": "AURORA"
             },
+            "UpdateTenderLocalFunction": {
+                "type": "LOCAL"
+            },
             "UpdateTenderElasticFunction": {
                 "type": "LAMBDA"
             },
@@ -143,6 +147,6 @@
                 "key": "tenderUuid, scope, textParseId, word"
             }
         },
-        "currentPipelineFunctionIndex": 5
+        "currentPipelineFunctionIndex": 6
     }
 }

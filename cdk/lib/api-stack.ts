@@ -590,6 +590,22 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
     })
+
+    const UpdateTenderLocalFunction = new CfnFunctionConfiguration(this, `UpdateTenderLocalFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "UpdateTenderLocalFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "UpdateTenderLocalFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderLocalFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderLocalFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -676,6 +692,7 @@ export class ApiStack extends cdk.Stack {
           GetUserAuroraFunction.attrFunctionId,
           GetAclAuroraFunction.attrFunctionId,
           GetTenderFunction.attrFunctionId,
+          UpdateTenderLocalFunction.attrFunctionId,
           UpdateTenderElasticFunction.attrFunctionId,
           UpdateTenderAuroraFunction.attrFunctionId,
           UpdateTenderCriterionsAuroraFunction.attrFunctionId,
