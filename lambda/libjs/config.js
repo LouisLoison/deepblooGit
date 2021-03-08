@@ -1,14 +1,21 @@
 const AWS = require('aws-sdk')
 AWS.config.apiVersions = {
   secretsmanager: '2017-10-17',
+  lambda: '2015-03-31',
   // other service API versions
 };
+
+AWS.config.region = 'eu-west-1'
 
 exports.AWS = AWS
 exports.documentsBucket = process.env.DOCUMENTS_BUCKET
 
-let env = process.env.NODE_ENV || 'dev'
-env = process.env.NODE_ENV == 'local' ? 'dev' : env
+const defaultEnv = 'dev'
+const defaultLocalEnv = 'local'
+
+const localEnv = process.env.NODE_ENV || defaultEnv
+
+const env = localEnv === defaultLocalEnv ? defaultEnv : process.env.NODE_ENV || localEnv
 
 exports.env = env
 
@@ -23,7 +30,7 @@ const getSecret = async (SecretId) => {
   const data = await secretsmanager.getSecretValue({ SecretId }).promise()
   // console.log(data)
   const params = JSON.parse(data.SecretString)
-  if (process.env.NODE_ENV === 'local') {
+  if (localEnv === 'local') {
     params.host = 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com'
     params.port = 5432
   }

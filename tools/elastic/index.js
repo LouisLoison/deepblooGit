@@ -10,8 +10,8 @@ const main = async (limit = 9) => {
 
   const query = `select tenders.* from tenders
     where now() - creationdate < interval '1 month'
-    order by tenders.creationdate desc
-    nulls last
+    order by tenders.creationdate asc
+    nulls first
     limit $1`
 
 
@@ -27,8 +27,9 @@ const main = async (limit = 9) => {
 const processResults = async (client, { rows, fields, rowCount }) => {
   let tranche = []
   let appTranche = []
+  let promiseTranche = []
   let processed = 0
-  for (let i=0; i < rowCount; i += 1) {
+  for (let i = 0; i < rowCount; i += 1) {
     const [result] = BddTool.pgMapResult([rows[i]], fields, 'tenders')
     delete rows[i]
     try {
@@ -41,98 +42,112 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       console.log(err)
       console.log(result.contactAddress)
     }
-    const { analyzedData, formatedData } = await analyzeTender(result)
 
-    await BddTool.RecordAddUpdate (
-          'tenders',
-          analyzedData,
-          'tenderUuid',
-          client,
-        )
+    promiseTranche.push(analyzeTender(result).then(async ({ analyzedData, formatedData }) => {
+      await BddTool.RecordAddUpdate(
+        'tenders',
+        analyzedData,
+        'tenderUuid',
+        client,
+      )
 
+      const query = `select array_agg(distinct tendergroupid)
+      from tendergrouplink
+      where tenderuuid=$1`
 
-    const { tenderCriterions, tenderCriterionCpvs } = analyzedData
+      const { rows } = await BddTool.QueryExecPrepared(client, query, [analyzedData.tenderUuid])
+      const [[groups]] = rows
+      formatedData.groups = groups || []
 
-    await BddTool.QueryExecPrepared(client, `
+      const { tenderCriterions, tenderCriterionCpvs } = analyzedData
+
+      await BddTool.QueryExecPrepared(client, `
       delete from tenderCriterionCpv where tenderUuid = $1;
-      `, [result.tenderUuid])
+      `, [analyzedData.tenderUuid])
 
-    if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
-      for (const tenderCriterionCpv of tenderCriterionCpvs) {
-        tenderCriterionCpv.tenderUuid = result.tenderUuid
-        tenderCriterionCpv.cpv = undefined
-        tenderCriterionCpv.creationDate = new Date()
-        tenderCriterionCpv.updateDate = new Date()
-        await BddTool.RecordAddUpdate (
-          'tenderCriterionCpv',
-          tenderCriterionCpv,
-          'tenderUuid, scope, cpvId',
-          client,
-        )
+      if (tenderCriterionCpvs && tenderCriterionCpvs.length) {
+        for (const tenderCriterionCpv of tenderCriterionCpvs) {
+          tenderCriterionCpv.tenderId = analyzedData.id
+          tenderCriterionCpv.tenderUuid = analyzedData.tenderUuid
+          tenderCriterionCpv.cpv = undefined
+          tenderCriterionCpv.creationDate = new Date()
+          tenderCriterionCpv.updateDate = new Date()
+          await BddTool.RecordAddUpdate(
+            'tenderCriterionCpv',
+            tenderCriterionCpv,
+            'tenderUuid, scope, cpvId',
+            client,
+          )
+        }
       }
-    }
-    if (tenderCriterions && tenderCriterions.length) {
-    await BddTool.QueryExecPrepared(client, `
+      if (tenderCriterions && tenderCriterions.length) {
+        await BddTool.QueryExecPrepared(client, `
       delete from tenderCriterion where tenderUuid = $1;
-      `, [result.tenderUuid])
+      `, [analyzedData.tenderUuid])
 
 
 
-      for (const tenderCriterion of tenderCriterions) {
-        tenderCriterion.tenderUuid = result.tenderUuid
-        tenderCriterion.creationDate = new Date()
-        tenderCriterion.updateDate = tenderCriterion.creationDate
-        await BddTool.RecordAddUpdate (
-          'tenderCriterion',
-          tenderCriterion,
-          'tenderUuid, scope, textparseId',
-          client,
-        )
+        for (const tenderCriterion of tenderCriterions) {
+          tenderCriterion.tenderId = analyzedData.id
+          tenderCriterion.tenderUuid = analyzedData.tenderUuid
+          tenderCriterion.creationDate = new Date()
+          tenderCriterion.updateDate = tenderCriterion.creationDate
+          await BddTool.RecordAddUpdate(
+            'tenderCriterion',
+            tenderCriterion,
+            'tenderUuid, scope, textParseId, word',
+            client,
+          )
+        }
       }
-    }
-  
 
-    const elasticDoc = {
-      ...analyzedData,
-      ...formatedData,
-      id: result.tenderUuid,
-    }
-    delete elasticDoc.tenderUuid
-    const appsearchDoc = {
-      ...formatedData,
-      id: result.tenderUuid,
-      account_id: result.owner_id || 'none',
-    }
-    delete appsearchDoc.tenderUuid
-    tranche.push(elasticDoc)
 
-    if (result.status === 20) {
-      appTranche.push(appsearchDoc)
-    }
-    processed += 1
+      const elasticDoc = {
+        ...analyzedData,
+        ...formatedData,
+        id: analyzedData.tenderUuid,
+      }
+      delete elasticDoc.tenderUuid
+      const appsearchDoc = {
+        ...formatedData,
+        id: analyzedData.tenderUuid,
+        account_id: analyzedData.owner_id || 'none',
+      }
+      delete appsearchDoc.tenderUuid
+      tranche.push(elasticDoc)
+
+      if (analyzedData.status === 20) {
+        appTranche.push(appsearchDoc)
+      }
+      processed += 1
+    }))
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (tranche.length >= 50) {
+    if (promiseTranche.length >= 18) {
+      await Promise.all(promiseTranche)
       await indexToElasticsearch(tranche, 'tenders')
-      if(appTranche.length) {
+      if (appTranche.length) {
         await indexObjectToAppsearch(appTranche, 'tenders-dev')
         appTranche.forEach((r, index) => delete appTranche[index])
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
       tranche.forEach((r, index) => delete tranche[index])
+      promiseTranche.forEach((r, index) => delete promiseTranche[index])
+      promiseTranche = []
       tranche = []
       appTranche = []
     }
     //console.log(formated.title, formated.cpv)
   }
+  await Promise.all(promiseTranche)
   if (tranche.length) {
     await indexToElasticsearch(tranche, 'tenders')
   }
-  if(appTranche.length) {
+  if (appTranche.length) {
     await indexObjectToAppsearch(appTranche, 'tenders-dev')
   }
-  
+
   console.log(processed)
   // return result.length
 }

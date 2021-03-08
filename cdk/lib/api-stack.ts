@@ -185,6 +185,14 @@ export class ApiStack extends cdk.Stack {
     userResolver.addLayers(nodeLayer, deepblooLayer)
     hivebriteSecret.grantRead(userResolver)
 
+
+    const stepValueExtraction = Function.fromFunctionAttributes(
+      this, 'stepValueExtraction',
+      {
+        functionArn: `arn:aws:lambda:eu-west-1:669031476932:function:stepValueExtraction-${environment.NODE_ENV}`,
+      }
+    );
+
     const elasticResolver = new Function(this, 'elasticResolver', {
       functionName: `elasticResolver-${environment.NODE_ENV}`,
       runtime: Runtime.NODEJS_12_X,
@@ -202,6 +210,8 @@ export class ApiStack extends cdk.Stack {
       role: lambdaBasicDbSecretVpcExecutionRole
     });
     elasticResolver.addLayers(nodeLayer, deepblooLayer)
+    stepValueExtraction.grantInvoke(elasticResolver)
+
 
     // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {

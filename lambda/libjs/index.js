@@ -12,7 +12,8 @@ const elastic = require('./elastic')
 const document = require('./document')
 const hivebrite = require('./hivebrite')
 const metricranges = require('./metricranges')
-const { AWS, documentsBucket } = require('./config')
+const lambda = require('./lambda')
+const { AWS, documentsBucket, env } = require('./config')
 
 module.exports = {
   ...esmRequire('./main.js'),
@@ -28,4 +29,6 @@ module.exports = {
   metricranges,
   AWS,
   documentsBucket,
+  env,
+  lambda,
 }
