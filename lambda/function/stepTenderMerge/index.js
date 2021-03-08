@@ -114,8 +114,6 @@ const handler =  async function(event, context, client ) {
   console.log('mergedProcurementId',mergedProcurementId,'mergedBuyerBiddeadline',mergedBuyerBiddeadline, 'data', (tender !== undefined) )
   const error = !(mergedProcurementId || mergedBuyerBiddeadline || data)
 
-  await BddTool.QueryExecPrepared(client, 'COMMIT;');
-  client.release()
   return {
     mergedProcurementId,
     mergedBuyerBiddeadline,
