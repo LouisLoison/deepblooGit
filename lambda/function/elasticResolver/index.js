@@ -80,7 +80,11 @@ let UpdateTender = async (analyzedData) => {
     delete tenderAurora.tenderCriterionCpvs
     delete tenderAurora.tenderCriterions
 
-    return { UpdateTenderAuroraFunction: tenderAurora }
+    return {
+        UpdateTenderAuroraFunction: tenderAurora,
+        UpdateTenderCriterionCpvsAuroraFunction: updateObj(analyzedData.tenderCriterionCpvs, analyzedData.tenderUuid),
+        UpdateTenderCriterionsAuroraFunction: updateObj(analyzedData.tenderCriterions, analyzedData.tenderUuid),
+    }
 }
 
 let updateObj = (list, tenderUuid) => {
