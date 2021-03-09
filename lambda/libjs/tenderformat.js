@@ -199,8 +199,9 @@ exports.analyzeTender = async (tenderSrc) => {
     status: importOrigine.status,
   }
 
+  let metrics
   try {
-    const metrics = await extractMetrics(analyzedData)
+    metrics = await extractMetrics(analyzedData)
     const criterions = metricsCriterions(metrics)
     analyzedData.tenderCriterions = [
       ...(analyzedData.tenderCriterions || []),
@@ -209,6 +210,7 @@ exports.analyzeTender = async (tenderSrc) => {
   } catch (err) {
     const { title, description } = analyzedData
     console.log(err)
+    console.log(metrics)
     console.log(JSON.stringify({ title, description }))
   }
 

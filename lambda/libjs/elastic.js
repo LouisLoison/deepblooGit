@@ -1,6 +1,11 @@
 
 const { Client } = require('@elastic/elasticsearch')
 const { getElasticSecret, env } = require('./config')
+const countriesByName = require('./public/constants/countries.json').reduce((acc, val) => ({
+  ...acc,
+  [val.name]: val.code,
+}), {})
+
 let elasticSearchClient = false
 
 exports.connectToElasticsearch = async () => {
@@ -27,6 +32,40 @@ exports.connectToElasticsearch = async () => {
   return elasticSearchClient
 }
 
+exports.filterDocument = (doc) => {
+  const filteredDoc = [
+    "bidDeadlineDate",
+    "brand",
+    "buyer_name",
+    "contactEmail",
+    "contactPhone",
+    "contactState",
+    "contractType1",
+    "country",
+    "cpvs",
+    "cpvsOrigine",
+    "currency",
+    "description",
+    "estimatedCost",
+    "noticeType",
+    "publicationDate",
+    "regionLvl0",
+    "regionLvl1",
+    "title",
+    "words",
+    "id",
+  ].reduce((acc, key) => {
+    acc[key] = doc[key]
+    return acc
+  }, {})
+  filteredDoc.countryCode = countriesByName[doc.country] || ''
+  if (filteredDoc.countryCode === '') {
+    console.log(`Unknown country ${doc.country}`)
+  }
+  return filteredDoc
+}
+
+
 exports.indexToElasticsearch = async (objects, index) => {
   const client = elasticSearchClient || await this.connectToElasticsearch()
   const result = await Promise.all(objects.map(async body => {
@@ -48,4 +87,3 @@ exports.getElasticMapping = async (index) => {
     index: `${index}-${env}`,
   }))
 }
-
