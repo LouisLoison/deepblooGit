@@ -106,7 +106,7 @@ const handler =  async function(event, context, client ) {
 
     event.convertedData.sourceUrl.forEach(sourceUrl => newSourceUrls.push({
       tenderUuid: data.tenderUuid,
-      tenderId: data.tenderId,
+      tenderId: data.id,
       sourceUrl,
     }))
   }

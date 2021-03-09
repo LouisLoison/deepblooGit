@@ -42,6 +42,8 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
       document.s3Url = s3Url
       document.bucketName = documentsBucket
       document.objectName = objectName
+      document.filename = fileInfo.filename
+      document.status = 1
       document.contentType = contentType
       result = await this.documentAddUpdate(client, document)
     } catch (err) {
@@ -215,9 +217,10 @@ exports.fileExportAws = (tenderId, fileLocation) => {
     try {
       const path = require('path')
 
-      const objectName = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+      const fileName = path.basename(fileLocation)
+      const objectName = `tenders/tender#${tenderId}/${fileName}`
       const res = await this.awsFileAdd(fileLocation, objectName)
-      resolve({ ...res, objectName })
+      resolve({ ...res, objectName, fileName })
     } catch (err) { reject(err) }
   })
 }
