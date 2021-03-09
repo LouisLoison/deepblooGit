@@ -212,7 +212,7 @@
       "code": "CR"
   },
   {
-      "name": "Cote D\"Ivoire",
+      "name": "Cote D'Ivoire",
       "code": "CI"
   },
   {
@@ -468,6 +468,10 @@
       "code": "KR"
   },
   {
+      "name": "South Korea",
+      "code": "KR"
+  },
+  {
       "name": "Kosovo",
       "code": "XK"
   },
@@ -528,6 +532,10 @@
       "code": "MK"
   },
   {
+      "name": "Macedonia, the former yugoslav republic of",
+      "code": "MK"
+  },
+  {
       "name": "Madagascar",
       "code": "MG"
   },
@@ -581,6 +589,10 @@
   },
   {
       "name": "Moldova",
+      "code": "MD"
+  },
+  {
+      "name": "Moldova, republic of",
       "code": "MD"
   },
   {
@@ -872,6 +884,10 @@
       "code": "TW"
   },
   {
+      "name": "Taiwan",
+      "code": "TW"
+  },
+  {
       "name": "Tajikistan",
       "code": "TJ"
   },
@@ -880,11 +896,19 @@
       "code": "TZ"
   },
   {
+      "name": "Tanzania, united republic of",
+      "code": "TZ"
+  },
+  {
       "name": "Thailand",
       "code": "TH"
   },
   {
       "name": "Timor-Leste",
+      "code": "TL"
+  },
+  {
+      "name": "East Timor",
       "code": "TL"
   },
   {
