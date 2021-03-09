@@ -157,7 +157,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     financials: [],
     // fileSource: tender.fileSource,
     groups: tender.groups || [],
-    datasource: tender.datasource,
+    datasource: tender.dataSource,
     accountId: 'none',
     power: metricsRanges('power', tender.tenderCriterions),
     voltage: metricsRanges('electric potential', tender.tenderCriterions),
