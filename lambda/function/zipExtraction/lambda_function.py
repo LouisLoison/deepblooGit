@@ -134,7 +134,7 @@ def lambda_handler(event, context):
                                                               extraction_output))
     extract_nested_zip(zip_tmp, extraction_output)
     write_extracted_zip(aws_env, extraction_output)
-    aws_env["status"] = 0
+    aws_env["status"] = 1
     aws_env["errorMessage"] = None
     AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

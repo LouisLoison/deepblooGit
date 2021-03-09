@@ -33,7 +33,7 @@ def convert_html_to_pdf(html_str, aws_env):
             "errorMessage": "PDF format not supported."
         }
     return {
-        "status": 0,
+        "status": 1,
         "errorMessage": None
     }
 

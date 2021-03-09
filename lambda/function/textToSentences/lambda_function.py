@@ -58,7 +58,7 @@ def lambda_handler(event, context):
         return update_event(aws_env, event)
     spacy_sentences_extraction(content, aws_env)
     print("==> Aws env: {0}".format(json.dumps(aws_env)))
-    aws_env['status'] = 0
+    aws_env['status'] = 1
     aws_env['errorMessage'] = None
     aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], "_sentences.txt")
     aws_env["contentType"] = "text/txt"

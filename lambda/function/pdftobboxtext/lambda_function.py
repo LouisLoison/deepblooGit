@@ -117,10 +117,7 @@ def lambda_handler(event, context):
         "minCharNeeded": int(os.environ.get('MIN_CHAR_NEEDED')),
         "extract_pdf_lines": os.environ.get('EXTRACT_PDF_LINES'),
     }
-    status = {
-        "statusCode": 200,
-        "body": "All right"
-    }
+    status =  1
     extract_pdf_lines = aws_env['extract_pdf_lines']
     textract_only = aws_env['textractOnly']
     tmp_folder = "/tmp/pdfToBbox"
@@ -152,7 +149,6 @@ def lambda_handler(event, context):
                                              aws_env['awsRegion'])
     aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], ".txt")
     aws_env["status"] = status
-    aws_env["status"] = 0
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
