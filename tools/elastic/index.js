@@ -1,7 +1,7 @@
 
 const { BddTool } = require('deepbloo')
 const { analyzeTender } = require('deepbloo').tenderformat
-const { indexToElasticsearch } = require('deepbloo').elastic
+const { indexToElasticsearch, filterDocument } = require('deepbloo').elastic
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
 const { stripHtml } = require("string-strip-html")
 
@@ -102,12 +102,12 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       }
 
 
-      const elasticDoc = {
+      const elasticDoc = filterDocument({
         ...analyzedData,
         ...formatedData,
         id: analyzedData.tenderUuid,
-      }
-      delete elasticDoc.tenderUuid
+      })
+
       const appsearchDoc = {
         ...formatedData,
         id: analyzedData.tenderUuid,
