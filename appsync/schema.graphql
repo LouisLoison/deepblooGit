@@ -4,7 +4,7 @@ schema{
 }
 
 type Tender {
-    id: Int
+    # id: Int
     datasourceId: ID
     procurementId: ID
     tenderUuid: ID #tenderuuid in db
@@ -95,7 +95,7 @@ type User{
 }
 
 type Query {
-  GetTender(userToken:String!, id: ID!): Tender
+  GetTender(userToken:String!, tenderUuid: ID!): Tender
   GetUser(userToken:String!): User
 }
 
