@@ -1,6 +1,0 @@
-#if( $context.error )
-  $utils.error($context.error.message)
-#else
-  #set( $result = $ctx.prev.result )
-  $utils.toJson($result)
-#end
