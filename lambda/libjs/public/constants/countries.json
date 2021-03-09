@@ -500,6 +500,10 @@
       "code": "LR"
   },
   {
+      "name": "Libya",
+      "code": "LY"
+  },
+  {
       "name": "Libyan Arab Jamahiriya",
       "code": "LY"
   },
@@ -676,6 +680,10 @@
       "code": "PS"
   },
   {
+      "name": "Palestinian Territory",
+      "code": "PS"
+  },
+  {
       "name": "Panama",
       "code": "PA"
   },
@@ -725,6 +733,10 @@
   },
   {
       "name": "Russian Federation",
+      "code": "RU"
+  },
+  {
+      "name": "Russia",
       "code": "RU"
   },
   {
@@ -848,6 +860,10 @@
       "code": "CH"
   },
   {
+      "name": "Syria",
+      "code": "SY"
+  },
+  {
       "name": "Syrian Arab Republic",
       "code": "SY"
   },
@@ -949,6 +965,10 @@
   },
   {
       "name": "Viet Nam",
+      "code": "VN"
+  },
+  {
+      "name": "Vietnam",
       "code": "VN"
   },
   {

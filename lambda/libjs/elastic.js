@@ -3,7 +3,7 @@ const { Client } = require('@elastic/elasticsearch')
 const { getElasticSecret, env } = require('./config')
 const countriesByName = require('./public/constants/countries.json').reduce((acc, val) => ({
   ...acc,
-  [val.name]: val.code,
+  [val.name.toLowerCase()]: val.code,
 }), {})
 
 let elasticSearchClient = false
@@ -58,7 +58,7 @@ exports.filterDocument = (doc) => {
     acc[key] = doc[key]
     return acc
   }, {})
-  filteredDoc.countryCode = countriesByName[doc.country] || ''
+  filteredDoc.countryCode = countriesByName[doc.country.toLowerCase()] || ''
   if (filteredDoc.countryCode === '') {
     console.log(`Unknown country ${doc.country}`)
   }
