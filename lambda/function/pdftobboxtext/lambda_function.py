@@ -103,7 +103,7 @@ def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    if (event['status'] <= 0):
+    if event['status'] <= 0:
       return { **event, "errorMessage": "Status isnt positive" }
     aws_env = {
         **event,
