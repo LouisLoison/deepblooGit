@@ -5,7 +5,7 @@ import shutil
 import json
 
 from helper import AwsHelper, S3Helper
-from update_event import update_event, get_s3_object_url
+from update_event import update_event, get_s3_object_url, get_filename
 
 
 def extract_nested_zip(zip_file, output_zip):
@@ -136,5 +136,6 @@ def lambda_handler(event, context):
     write_extracted_zip(aws_env, extraction_output)
     aws_env["status"] = 1
     aws_env["errorMessage"] = None
+    aws_env['filename'] = get_filename(aws_env['objectName'])
     AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

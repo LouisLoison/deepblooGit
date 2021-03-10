@@ -5,7 +5,7 @@ import simplejson
 
 from PdfToBbox import Pdf
 from helper import AwsHelper, S3Helper
-from update_event import update_event, get_s3_object_url, get_s3_url
+from update_event import update_event, get_s3_object_url, get_s3_url, get_filename
 
 
 def send_message(client, qUrl, json_message) -> None:
@@ -24,15 +24,6 @@ def send_to_textract(aws_env: dict):
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
     qUrl = aws_env['textractQueueUrl']
     send_message(client, qUrl, json_message)
-
-
-# def get_bbox_filename(path_to_pdf: str, extension: str) -> str:
-#     folder_output, pdf_output = os.path.split(path_to_pdf)
-#     file_name, ext = os.path.splitext(pdf_output)
-#     json_file = file_name + extension
-#     json_output = os.path.join(folder_output, json_file)
-#     return json_output
-
 
 def write_bbox_to_s3(aws_env: dict) -> None:
     with open(aws_env['tmpJsonOutput'], "r") as file:
@@ -153,6 +144,7 @@ def lambda_handler(event, context):
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
+    aws_env["filename"] = get_filename(aws_env['objectName'])
     aws_env["sourceUrl"] = aws_env["s3Url"]
     AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

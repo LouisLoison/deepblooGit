@@ -6,7 +6,7 @@ from xhtml2pdf import pisa
 from htmllaundry import sanitize
 
 from helper import S3Helper, AwsHelper
-from update_event import update_event, get_s3_url, get_s3_object_url
+from update_event import update_event, get_s3_url, get_s3_object_url, get_filename
 
 
 def convert_html_to_pdf(html_str, aws_env):
@@ -93,5 +93,9 @@ def lambda_handler(event, context):
     aws_env["errorMessage"] = status["errorMessage"]
     aws_env["contentType"] = "text/pdf"
     aws_env["objectName"] = aws_env["outputName"]
+    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
+                                             aws_env['outputName'],
+                                             aws_env['awsRegion'])
+    aws_env["filename"] = get_filename(aws_env['objectName'])
     aws_env["sourceUrl"] = aws_env["s3Url"]
     return update_event(aws_env, event)

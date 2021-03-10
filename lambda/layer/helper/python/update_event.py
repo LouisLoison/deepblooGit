@@ -46,3 +46,6 @@ def get_s3_url(s3_url: str, extension: str) -> str:
                                    document_name,
                                    new_document_file)
     return s3_document_url
+
+def get_filename(object_name: str):
+    return os.path.split(object_name)[-1]

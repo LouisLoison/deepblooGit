@@ -2,7 +2,7 @@ import json
 import os
 import spacy
 from helper import S3Helper
-from update_event import update_event, get_s3_object_url, get_s3_url
+from update_event import update_event, get_s3_object_url, get_s3_url, get_filename
 
 
 def get_file_content(aws_env: dict):
@@ -30,15 +30,6 @@ def spacy_sentences_extraction(content: str, aws_env: dict):
                        aws_env['outputNameTxt'], aws_env['awsRegion'])
 
 
-# def get_s3_path(path_s3_txt: str) -> str:
-#     get_s3_object_url(path_s3_txt, )
-#     folder_output, pdf_output = os.path.split(path_s3_txt)
-#     file_name, ext = os.path.splitext(pdf_output)
-#     txt_file = "{}_sentences.txt".format(file_name)
-#     txt_output = os.path.join(folder_output, txt_file)
-#     return txt_output
-
-
 def lambda_handler(event, context):
     print("==> Event: {0}".format(json.dumps(event)))
     aws_env = {
@@ -63,6 +54,9 @@ def lambda_handler(event, context):
     aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], "_sentences.txt")
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
-    print("====> NEW PATH: ", aws_env['objectName'])
+    aws_env['filename'] = get_filename(aws_env['objectName'])
+    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
+                                             aws_env['outputNameTxt'],
+                                             aws_env['awsRegion'])
     aws_env["sourceUrl"] = aws_env["s3Url"]
     return update_event(aws_env, event)
