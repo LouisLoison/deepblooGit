@@ -19,7 +19,6 @@ def send_to_textract(aws_env: dict):
     json_message = {
         "bucketName": aws_env["outputBucket"],
         "objectName": aws_env['objectName'],
-        "documentUuid": aws_env["documentUuid"],
         "awsRegion": aws_env["awsRegion"]
     }
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
@@ -104,6 +103,8 @@ def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
+    if (event['status'] <= 0):
+      return { **event, "errorMessage": "Status isnt positive" }
     aws_env = {
         **event,
         "bucketName": os.environ.get('DOCUMENTS_BUCKET'),
@@ -152,5 +153,6 @@ def lambda_handler(event, context):
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
+    aws_env["sourceUrl"] = aws_env["s3Url"]
     AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

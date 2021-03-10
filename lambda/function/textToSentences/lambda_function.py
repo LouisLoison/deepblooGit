@@ -64,4 +64,5 @@ def lambda_handler(event, context):
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
     print("====> NEW PATH: ", aws_env['objectName'])
+    aws_env["sourceUrl"] = aws_env["s3Url"]
     return update_event(aws_env, event)

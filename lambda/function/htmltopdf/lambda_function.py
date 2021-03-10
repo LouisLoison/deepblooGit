@@ -28,6 +28,7 @@ def convert_html_to_pdf(html_str, aws_env):
         content = output_content.getvalue().decode("utf-8", errors="ignore")
         s3_obj.put(Body=content)
     except ValueError as e:
+        print(e)
         return {
             "status": -1,
             "errorMessage": "PDF format not supported."
@@ -92,4 +93,5 @@ def lambda_handler(event, context):
     aws_env["errorMessage"] = status["errorMessage"]
     aws_env["contentType"] = "text/pdf"
     aws_env["objectName"] = aws_env["outputName"]
+    aws_env["sourceUrl"] = aws_env["s3Url"]
     return update_event(aws_env, event)

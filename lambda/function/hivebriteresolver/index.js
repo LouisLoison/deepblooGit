@@ -3,13 +3,13 @@ const { get } = require('deepbloo').hivebrite
 
 
 exports.handler = async function (event,) {
-    log("EVENT ---", event.field);
-    switch (event.field) {
+    log("EVENT ---", event.method);
+    switch (event.method) {
         case 'User': {
             return User(event).then((data) => ({ success: true, data })).catch((err) => onError(err));
         }
         default: {
-            return `Unknown field, unable to resolve ${event.field}`;
+            return `Unknown field, unable to resolve ${event.method}`;
         }
     }
 }
