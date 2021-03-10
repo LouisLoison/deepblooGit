@@ -656,7 +656,7 @@
                   </div>
                   <v-list v-else three-line>
                     <template v-for="(item, index) in getMessagePrivates">
-                      <v-subheader v-if="item.header" :key="item.header">
+                      <v-subheader v-if="item.header" :key="item.header" v-text="item.header">
                         {{ item.header }}
                       </v-subheader>
 
@@ -666,24 +666,28 @@
                         :inset="item.inset"
                       ></v-divider>
 
-                      <v-list-tile v-else :key="item.title" avatar @click.stop>
+                      <v-list-item v-else :key="item.title" avatar @click.stop>
                         <v-avatar
                           size="50"
                         >
                           <img :src="item.avatar">
                         </v-avatar>
 
-                        <v-list-tile-content>
-                          <v-list-tile-title
+                        <v-list-item-content>
+                          <v-list-item-title
                             class="blue-grey--text text--lighten-2 caption"
                           >
+                          <div class="pl-3">
                             {{ item.title }}
-                          </v-list-tile-title>
-                          <v-list-tile-sub-title class="black--text">
+                          </div>
+                          </v-list-item-title>
+                          <v-list-item-sub-title class="black--text">
+                            <div class="pl-3">
                             {{ item.subtitle }}
-                          </v-list-tile-sub-title>
-                        </v-list-tile-content>
-                      </v-list-tile>
+                            </div>
+                          </v-list-item-sub-title>
+                        </v-list-item-content>
+                      </v-list-item>
                     </template>
                   </v-list>
                 </v-tab-item>
