@@ -43,6 +43,7 @@ type Tender {
     creationDate: String
     updateDate: String
     tenderCriterionCpv: [TenderCriterionCpv]
+    tenderCriterion: [TenderCriterion]
 }
 
 type TenderCriterionCpv{
@@ -52,6 +53,22 @@ type TenderCriterionCpv{
     cpvId: ID
     value: String
     word: String
+    findCount: Int
+    scope: String # 'TITLE | DESCRIPTION | DOCUMENT' 
+    status: Int # '-1 = Delete | -2 = Archive' 
+    creationDate: String
+    updateDate: String
+}
+
+type TenderCriterion{
+    tenderCriterionId: ID
+    tenderId: ID
+    tenderUuid: ID
+    textParseId: ID
+    value: String
+    numericValue: String
+    word: String
+    entity: String
     findCount: Int
     scope: String # 'TITLE | DESCRIPTION | DOCUMENT' 
     status: Int # '-1 = Delete | -2 = Archive' 
