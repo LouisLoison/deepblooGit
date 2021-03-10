@@ -4,7 +4,7 @@ $util.qr($context.args.input.put("owner_id", $context.stash.user_uuid))
     "version": "2017-02-28",
     "operation": "Invoke",
     "payload": {
-        "field": "CreateTender",
+        "method": "CreateTender",
         "arguments":  $utils.toJson($context.arguments),
         "stash":  $utils.toJson($context.stash)
     }

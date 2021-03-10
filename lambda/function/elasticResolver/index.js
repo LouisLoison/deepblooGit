@@ -6,9 +6,9 @@ const { indexObjectToAppsearch } = require('deepbloo').appsearch
 
 exports.handler = async function (event,) {
     try {
-        log("EVENT ---", event.field);
+        log("EVENT ---", event.method);
         let analyzedTender = await indexToElastic(event);
-        switch (event.field) {
+        switch (event.method) {
             case 'CreateTender': {
                 return CreateTender(analyzedTender).then((data) => ({ success: true, data })).catch((err) => onError(err));
             }
@@ -16,7 +16,7 @@ exports.handler = async function (event,) {
                 return UpdateTender(analyzedTender).then((data) => ({ success: true, data })).catch((err) => onError(err));
             }
             default: {
-                return `Unknown field, unable to resolve ${event.field}`;
+                return `Unknown field, unable to resolve ${event.method}`;
             }
         }
     } catch (error) {

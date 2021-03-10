@@ -316,7 +316,7 @@ export class ApiStack extends cdk.Stack {
            "version": "2017-02-28",
            "operation": "Invoke",
            "payload": {
-               "field": "HivebriteUsers",
+               "method": "HivebriteUsers",
                "arguments":  $utils.toJson($context.arguments)
            }
        }`),
