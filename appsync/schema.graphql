@@ -42,6 +42,21 @@ type Tender {
     status: Int
     creationDate: String
     updateDate: String
+    tenderCriterionCpv: [TenderCriterionCpv]
+}
+
+type TenderCriterionCpv{
+    tenderId: ID
+    tenderUuid: ID
+    documentUuid: ID
+    cpvId: ID
+    value: String
+    word: String
+    findCount: Int
+    scope: String # 'TITLE | DESCRIPTION | DOCUMENT' 
+    status: Int # '-1 = Delete | -2 = Archive' 
+    creationDate: String
+    updateDate: String
 }
 
 type HivebriteUser{
