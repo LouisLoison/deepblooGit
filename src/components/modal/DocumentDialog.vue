@@ -190,12 +190,11 @@
                             :key="`message${index2}`"
                             avatar
                           >
-                            <v-list-tile-avatar>
-                              <img
-                                :src="message.userPhoto"
-                                :alt="message.username"
-                              />
-                            </v-list-tile-avatar>
+                          <v-avatar
+                            size="60"
+                          >
+                            <img :src="message.userPhoto" :alt="message.username">
+                          </v-avatar>
 
                             <v-list-tile-content>
                               <v-list-tile-title>
