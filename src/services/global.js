@@ -32,7 +32,7 @@ export class GlobalService {
   formatLabel(text) {
     let label = text
     if (label && label.length) {
-      label = label.replace(new RegExp('_'), ' ')
+      label = label.replaceAll('_', ' ')
       label = label.charAt(0).toUpperCase() + label.slice(1)
     }
     return label

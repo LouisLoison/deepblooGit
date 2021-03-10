@@ -97,7 +97,8 @@
           </div>
           <div
             class="cursor-pointer"
-            style="display: flex; align-items: center; text-shadow: rgb(255, 255, 255) 1px 0px 10px;"
+            style="display: flex; align-items: center; text-shadow: -1px 0 rgb(255 255 255 / 50%), 0 1px rgb(255 255 255 / 50%), 1px 0 rgb(255 255 255 / 50%), 0 -1px rgb(255 255 255 / 50%);"
+            :style="group.tenderGroupId === tenderGroupId ? 'font-weight: 900;' : ''"
           >
             {{ group.label }}
           </div>
@@ -264,7 +265,8 @@
           </div>
           <div
             class="cursor-pointer"
-            style="display: flex; align-items: center; text-shadow: rgb(255, 255, 255) 1px 0px 10px;"
+            style="display: flex; align-items: center; text-shadow: -1px 0 rgb(255 255 255 / 50%), 0 1px rgb(255 255 255 / 50%), 1px 0 rgb(255 255 255 / 50%), 0 -1px rgb(255 255 255 / 50%);"
+            :style="group.tenderGroupId === tenderGroupId ? 'font-weight: 900;' : ''"
           >
             {{ group.label }}
           </div>

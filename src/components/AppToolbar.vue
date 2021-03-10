@@ -125,7 +125,7 @@ export default {
       },
       {
         title: 'Dashboard',
-        to: { name: 'PrivateDeals' },
+        to: { name: 'Dashboards' }, // PrivateDeals
       },
     ]
   }),
