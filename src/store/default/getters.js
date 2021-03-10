@@ -74,13 +74,16 @@ export function getDataTenderGroups(state) {
   return state.dataTenderGroups
 }
 
-export function getCpvsLogoFromLabel(state, cpvs) {
+export const getCpvsLogoFromLabel = (state) => (cpvs) => {
   let logo = 'https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png'
   let cpvsArray = cpvs
   if (!cpvs) {
     cpvs = ""
   }
   if (!Array.isArray(cpvs)) {
+    console.log('cc')
+    console.log(cpvsArray)
+    console.log('cc')
     cpvsArray = cpvs.split(",").map(a => a)
   }
   if (cpvsArray && cpvsArray.length) {
@@ -94,13 +97,14 @@ export function getCpvsLogoFromLabel(state, cpvs) {
   return logo
 }
 
-export function getCpvsLogoFromCode(state, cpvs) {
+export const getCpvsLogoFromCode = (state) => (cpvs) => {
   let logo = "https://tender-document-bucket-v2.s3-eu-west-1.amazonaws.com/images/default.png"
   let cpvsArray = cpvs
   if (!cpvs) {
     cpvs = ""
   }
   if (!Array.isArray(cpvs)) {
+    console.log(cpvs)
     cpvsArray = cpvs.split(",").map(a => parseInt(a, 10))
   }
   if (cpvsArray && cpvsArray.length) {
