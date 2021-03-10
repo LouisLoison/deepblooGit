@@ -2467,9 +2467,9 @@ export default {
         const title = `${tenderCriterion.textParse.theme}/${tenderCriterion.textParse.group}`
         const replaceMask = `<span class="textCriterion" title="${title}">${word}</span>`
         if (tenderCriterion.scope === 'DESCRIPTION') {
-          this.tender.description = this.tender.description.replace(new RegExp(word, "i"), replaceMask)
+          this.tender.description = this.tender.description.replace(new RegExp(word, 'ig'), replaceMask)
         } else if (tenderCriterion.scope === 'TITLE') {
-          this.tender.title = this.tender.title.replace(new RegExp(word, "i"), replaceMask)
+          this.tender.title = this.tender.title.replace(new RegExp(word, 'ig'), replaceMask)
         }
       }
     },
