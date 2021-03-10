@@ -566,7 +566,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'isUserLoggedIn',
       'getDataCpvs',
     ])
@@ -655,7 +655,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'loadCpvs',
     ]),
 

@@ -47,7 +47,7 @@ export default {
   name: 'InsufficientRightDialog',
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getInsufficientRightDialog',
       'getUserMembership',
     ]),
@@ -68,7 +68,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'hideInsufficientRightDialog',
     ]),
   }

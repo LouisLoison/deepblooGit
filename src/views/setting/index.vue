@@ -127,7 +127,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
     ]),
   },
@@ -139,7 +139,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'setHeaderShow',
     ])
   }

@@ -49,14 +49,14 @@ export default {
   name: 'TendersAction',
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getUserType',
     ]),
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'logoutUser',
     ]),
   },

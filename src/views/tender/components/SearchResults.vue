@@ -114,7 +114,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getIsFreeMembership',
       'getIsPremiumMembership',
@@ -124,7 +124,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showConfirmModal',
       'showInsufficientRightDialog',
       'loadUserNotifys',
