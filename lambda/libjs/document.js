@@ -47,6 +47,7 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
       document.contentType = contentType
       result = await this.documentAddUpdate(client, document)
     } catch (err) {
+      await BddTool.QueryExecPrepared(client, 'ROLLBACK;')
       client.release()
       // result = err
       throw new Error(err)

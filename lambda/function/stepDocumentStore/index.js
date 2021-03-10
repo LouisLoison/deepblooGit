@@ -6,9 +6,13 @@ const handler = async function(event, context, client) {
   const savedDocument = await BddTool.RecordAddUpdate (
     'document',
     event,
-    'documentUuid',
+    'tenderuuid, sourceurl',
     client,
   )
+  if (savedDocument.contentType === 'application/zip') {
+    savedDocument.parentUuid = savedDocument.documentUuid
+  }
+  delete savedDocument.documentUuid
   return {...savedDocument}
 }
 
