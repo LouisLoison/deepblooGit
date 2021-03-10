@@ -45,6 +45,9 @@ const pdfToImages = async (documentsBucket, objectName) => {
 
 exports.handler = async function (event, context) {
   const { objectName } = event
+  if(event.status <= 0) {
+    return { ...event, errorMessage: "Status inst positive" }
+  }
   //console.log("EVENT: \n" + JSON.stringify(event, null, 2))
   const imageData = await pdfToImages(documentsBucket, objectName)
   console.log(JSON.stringify(imageData, null, 2))
