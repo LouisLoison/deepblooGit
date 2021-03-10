@@ -1,7 +1,7 @@
 {
     "arguments": {
         "result": {
-            "CreateTenderCriterionsAuroraFunction": [
+            "UpdateTenderCriterionsAuroraFunction": [
                 {
                     "documentId": 0,
                     "textParseId": 82,
@@ -30,14 +30,7 @@
                     "status": 1
                 }
             ],
-            "CreateAclAuroraFunction": {
-                "resourceId": "9d8ff241-3359-46dd-95f7-89978979a19b",
-                "granteeId": "15507717-7dc9-4a33-ba8b-4220868037b1",
-                "role": "ADMIN",
-                "creationDate": "2021-03-01T05:19:23.084Z",
-                "updateDate": "2021-03-01T05:19:25.342Z"
-            },
-            "CreateTenderCriterionCpvsAuroraFunction": [
+            "UpdateTenderCriterionCpvsAuroraFunction": [
                 {
                     "documentId": 0,
                     "cpvId": 1259,
@@ -66,7 +59,7 @@
                     "status": 1
                 }
             ],
-            "CreateTenderAuroraFunction": {
+            "UpdateTenderAuroraFunction": {
                 "datasourceId": "123456789",
                 "procurementId": "1479/2021",
                 "algoliaId": "402193911",
@@ -108,14 +101,16 @@
         "pipelineFunctions": [
             "TokenAuthorizerFunction",
             "GetUserAuroraFunction",
-            "CreateTenderElasticFunction",
-            "CreateTenderAuroraFunction",
-            "CreateTenderCriterionCpvsAuroraFunction",
-            "CreateTenderCriterionsAuroraFunction",
-            "CreateAclAuroraFunction",
+            "GetAclAuroraFunction",
+            "GetTenderAuroraFunction",
+            "UpdateTenderLocalFunction",
+            "UpdateTenderElasticFunction",
+            "UpdateTenderAuroraFunction",
+            "UpdateTenderCriterionCpvsAuroraFunction",
+            "UpdateTenderCriterionsAuroraFunction",
             ""
         ],
-        "currentPipelineFunction": "CreateTenderAuroraFunction",
+        "currentPipelineFunction": "UpdateTenderAuroraFunction",
         "pipelineFunctionsInfo": {
             "TokenAuthorizerFunction": {
                 "type": "LAMBDA"
@@ -123,25 +118,33 @@
             "GetUserAuroraFunction": {
                 "type": "AURORA"
             },
-            "CreateTenderElasticFunction": {
+            "GetAclAuroraFunction": {
+                "type": "AURORA",
+                "table": "resourceaccesslist"
+            },
+            "GetTenderAuroraFunction": {
+                "type": "AURORA"
+            },
+            "UpdateTenderLocalFunction": {
+                "type": "LOCAL"
+            },
+            "UpdateTenderElasticFunction": {
                 "type": "LAMBDA"
             },
-            "CreateTenderAuroraFunction": {
+            "UpdateTenderAuroraFunction": {
                 "type": "AURORA",
                 "table": "tenders",
                 "key": "tenderUuid"
             },
-            "CreateTenderCriterionCpvsAuroraFunction": {
+            "UpdateTenderCriterionCpvsAuroraFunction": {
                 "type": "AURORA",
-                "table": "tendercriterioncpv"
+                "table": "tendercriterioncpv",
+                "key": "tenderUuid, scope, cpvId"
             },
-            "CreateTenderCriterionsAuroraFunction": {
+            "UpdateTenderCriterionsAuroraFunction": {
                 "type": "AURORA",
-                "table": "tendercriterion"
-            },
-            "CreateAclAuroraFunction": {
-                "type": "AURORA",
-                "table": "resourceaccesslist"
+                "table": "tendercriterion",
+                "key": "tenderUuid, scope, textParseId, word"
             }
         },
         "currentPipelineFunctionIndex": 6

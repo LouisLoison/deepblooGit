@@ -1,13 +1,6 @@
 
-            #if($ctx.error)
-                $utils.error($ctx.error.message, $ctx.error.type)
-            #end
-            #set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
-            #set($returnResp = {})
-            #if($ctx.stash.user_type == 3)
-            	$util.qr($returnResp.put('description', $result.description))
-            	$util.qr($returnResp.put('title', $result.title))
-                $utils.toJson($returnResp)
-            #else
-            	$utils.toJson($result)
-            #end
+#if($ctx.error)
+    $utils.error($ctx.error.message, $ctx.error.type)
+#end
+#set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
+$utils.toJson($result)
