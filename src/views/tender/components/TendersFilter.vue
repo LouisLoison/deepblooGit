@@ -450,7 +450,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserType',
       'getIsFreeMembership',
       'getIsPremiumMembership',
@@ -465,7 +465,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showInsufficientRightDialog',
     ]),
 

@@ -490,7 +490,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getDataTenderGroups',
       'getIsFreeMembership',
@@ -534,7 +534,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showConfirmModal',
       'loadTenderGroups',
     ]),

@@ -180,7 +180,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getUserType',
       'getDataCpvs',

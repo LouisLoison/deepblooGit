@@ -70,7 +70,7 @@ export default {
   name: 'TendersYourProfile',
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getUsername',
       'getUserHivebriteId',

@@ -37,7 +37,7 @@ export default {
   name: 'SettingAnalytics',
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'isHeaderShow',
     ]),
   },

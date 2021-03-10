@@ -1,5 +1,5 @@
 import axios from "axios";
-import store from "@/store";
+import {Store} from '../store/index.js'
 import router from "@/router/";
 
 export class ApiService {
@@ -12,7 +12,7 @@ export class ApiService {
   }
 
   getApiHost = () => {
-    var Host = store.getters.getApiUrl;
+    var Host = Store.getters['defaultStore/getApiUrl'];
     if (Host === null || Host === "") {
       Host = process.env.VUE_APP_API_HOST;
     }
@@ -21,10 +21,10 @@ export class ApiService {
 
   Instance = (
     baseURL = this.getApiHost() + "api",
-    headers = { Authorization: `bearer ${store.getters.getUserToken}` }
+    headers = { Authorization: `bearer ${Store.getters['defaultStore/getUserToken']}` }
   ) => {
     headers = {
-      Authorization: `bearer ${store.getters.getUserToken}`
+      Authorization: `bearer ${Store.getters['defaultStore/getUserToken']}`
     };
     var instance = new ApiService();
     instance.setInstance(
@@ -42,10 +42,10 @@ export class ApiService {
   };
 
   init = (
-    headers = { Authorization: `bearer ${store.getters.getUserToken}` }
+    headers = { Authorization: `bearer ${Store.getters['defaultStore/getUserToken']}` }
   ) => {
     headers = {
-      Authorization: `bearer ${store.getters.getUserToken}`
+      Authorization: `bearer ${Store.getters['defaultStore/getUserToken']}`
     };
     this.instance = axios.create({
       baseURL: `${this.getApiHost()}api`,
@@ -218,10 +218,10 @@ export class ApiService {
         resolve();
         return;
       }
-      let Option = JSON.parse(JSON.stringify(store.getters.getSetting));
+      let Option = JSON.parse(JSON.stringify(Store.getters['defaultStore/getSetting']));
       Option.ProgressModal.visible = true;
       Option.ProgressModal.value = 0;
-      store.commit("UPDATE_SETTING", Option);
+      Store.commit("defaultStore/UPDATE_SETTING", Option);
       var file = files[0];
       let formData = new FormData();
       formData.append("file", file);
@@ -235,23 +235,23 @@ export class ApiService {
             let uploadPercentage = parseInt(
               Math.round((progressEvent.loaded * 100) / progressEvent.total)
             );
-            let Option = JSON.parse(JSON.stringify(store.getters.getSetting));
+            let Option = JSON.parse(JSON.stringify(Store.getters['defaultStore/getSetting']));
             Option.ProgressModal.value = uploadPercentage;
-            store.commit("UPDATE_SETTING", Option);
+            Store.commit("defaultStore/UPDATE_SETTING", Option);
           }
         })
         .then(() => {
-          let Option = JSON.parse(JSON.stringify(store.getters.getSetting));
+          let Option = JSON.parse(JSON.stringify(Store.getters['defaultStore/getSetting']));
           Option.ProgressModal.visible = false;
           Option.ProgressModal.value = 0;
-          store.commit("UPDATE_SETTING", Option);
+          Store.commit("defaultStore/UPDATE_SETTING", Option);
           resolve();
         })
         .catch(err => {
-          let Option = JSON.parse(JSON.stringify(store.getters.getSetting));
+          let Option = JSON.parse(JSON.stringify(Store.getters['defaultStore/getSetting']));
           Option.ProgressModal.visible = false;
           Option.ProgressModal.value = 0;
-          store.commit("UPDATE_SETTING", Option);
+          Store.commit("defaultStore/UPDATE_SETTING", Option);
           reject(err);
         });
     });
