@@ -1674,7 +1674,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
       'isUserLoggedIn',
       'getUserId',

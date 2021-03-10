@@ -51,7 +51,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'isHeaderShow',
       'getIsMobile',
     ]),
@@ -65,7 +65,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'initIsMobile',
       'hideConfirmModal',
       'hideInsufficientRightDialog',

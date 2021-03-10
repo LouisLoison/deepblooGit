@@ -216,7 +216,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'isHeaderShow',
       'getIsMobile',

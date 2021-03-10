@@ -808,7 +808,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       "getIsMobile",
       "getUserId",
       "getUserHivebriteId",

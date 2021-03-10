@@ -40,7 +40,7 @@ export default {
   name: 'TendersYourColleague',
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getDataOpportunity',
     ]),

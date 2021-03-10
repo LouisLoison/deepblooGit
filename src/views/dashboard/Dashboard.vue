@@ -1782,7 +1782,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'isHeaderShow',
       'getIsMobile',
@@ -1836,7 +1836,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'loadUserMemberships',
     ]),
 

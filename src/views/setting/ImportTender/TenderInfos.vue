@@ -241,7 +241,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
       'getDataCpvs',
       'getCpvsLogoFromCode',
@@ -266,7 +266,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'setHeaderShow',
       'loadCpvs',
     ]),
