@@ -267,9 +267,10 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     insertColumnList.push(ColumnName)
     if (ColumnName === 'creationDate') {
       insertValuesList.push('now()')
+      UpdateColumnsList.push('creationDate')
     } else if (ColumnName === 'updateDate') {
       insertValuesList.push('now()')
-      UpdateColumnsList.push('updateDate = now()')
+      UpdateColumnsList.push('updateDate')
     } else {
       index++;
       insertValuesList.push(`$${index}`)
@@ -289,6 +290,20 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
       }
     }
   }
+
+  if (!insertColumnList.includes('updateDate')) {
+    insertColumnList.push('updateDate')
+    UpdateColumnsList.push('updateDate = now()')
+    insertValuesList.push('now()')
+  }
+
+  if (!insertColumnList.includes('creationDate')) {
+    insertColumnList.push('creationDate')
+    UpdateColumnsList.push('creationDate = now()')
+    insertValuesList.push('now()')
+  }
+
+  console.log(DateNow(Environnement, BddId))
 
   Query = `
     INSERT INTO "${TableName.toLowerCase()}" (${insertColumnList.join(', ')})
