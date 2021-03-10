@@ -667,9 +667,11 @@
                       ></v-divider>
 
                       <v-list-tile v-else :key="item.title" avatar @click.stop>
-                        <v-list-tile-avatar>
-                          <img :src="item.avatar" />
-                        </v-list-tile-avatar>
+                        <v-avatar
+                          size="50"
+                        >
+                          <img :src="item.avatar">
+                        </v-avatar>
 
                         <v-list-tile-content>
                           <v-list-tile-title
@@ -1175,7 +1177,7 @@ export default {
         this.dataDocumentMessages.loading = 0;
         const res = await this.$api.post("/Document/documentMessageList", {
           filter: {
-            documentId: this.document.documentId
+            documentUuid: this.document.documentUuid
           },
           userData: true
         })
@@ -1277,7 +1279,7 @@ export default {
         this.messageLoading = 0
         const res = await this.$api.post("/Document/documentMessageAddUpdate", {
           documentMessage: {
-            documentId: this.document.documentId,
+            documentUuid: this.document.documentUuid,
             organizationId:
               this.commentTabActive === 0 ? this.user.organizationId : 0,
             userId: this.getUserId,
@@ -1374,7 +1376,7 @@ export default {
         25 +
         this.$refs.documentDisplay.scrollTop;
       const documentMessage = {
-        documentId: this.document.documentId,
+        documentUuid: this.document.documentUuid,
         organizationId: this.user.organizationId,
         userId: this.getUserId,
         username: this.getUsername,
@@ -1399,7 +1401,7 @@ export default {
         return;
       }
       const documentMessage = {
-        documentId: this.document.documentId,
+        documentUuid: this.document.documentUuid,
         organizationId: this.user.organizationId,
         userId: this.getUserId,
         username: this.getUsername,
