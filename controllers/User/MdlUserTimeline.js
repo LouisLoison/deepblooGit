@@ -171,7 +171,7 @@ exports.Timeline = (Identifiant) => {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
             BddTool.QueryExecBdd(`
-                SELECT     DocumentID AS "DocumentID", 
+                SELECT     DocumentUuid AS "DocumentUuid", 
                            Environnement AS "Environnement", 
                            Type AS "Type", 
                            Lien AS "Lien", 
@@ -184,7 +184,7 @@ exports.Timeline = (Identifiant) => {
                 for (var record of recordset) {
                     Result.push({
                         Type: 'Document',
-                        DocumentID: record.DocumentID,
+                        DocumentUuid: record.DocumentUuid,
                         Environnement: record.Environnement,
                         DocumentType: record.Type,
                         Lien: record.Lien,

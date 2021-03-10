@@ -174,7 +174,7 @@ exports.documentMessageList = (filter, userData) => {
         }
         if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentUuid = ${BddTool.NumericFormater(filter.documentUuid)} \n`
+          where += `documentMessage.documentUuid = '${BddTool.ChaineFormater(filter.documentUuid)}' \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
