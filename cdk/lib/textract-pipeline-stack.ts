@@ -136,6 +136,10 @@ export class TextractPipelineStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
     });
 
+    const zipExtractionQueue = new sqs.Queue(this, 'zipExtractionQueue', {
+      visibilityTimeout: cdk.Duration.seconds(60), retentionPeriod: cdk.Duration.seconds(1209600), deadLetterQueue : { queue: dlq, maxReceiveCount: 50}
+    })
+
 
 
     //Trigger
@@ -207,10 +211,12 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     s3Processor.addLayers(helperLayer)
     //Trigger
+    /*
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
       events: [ s3.EventType.OBJECT_CREATED ],
       filters: [{ prefix: 'tenders/'}]
     }));
+       */
     //Permissions
     documentsTable.grantReadWriteData(s3Processor)
     syncJobsQueue.grantSendMessages(s3Processor)
@@ -259,9 +265,11 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     documentProcessor.addLayers(helperLayer)
     //Trigger
+    /*
     documentProcessor.addEventSource(new DynamoEventSource(documentsTable, {
       startingPosition: lambda.StartingPosition.TRIM_HORIZON
     }));
+    */
 
     //Permissions
     documentsTable.grantReadWriteData(documentProcessor)
@@ -270,6 +278,7 @@ export class TextractPipelineStack extends cdk.Stack {
     pdftoimgQueue.grantSendMessages(documentProcessor)
     htmltoboundingboxQueue.grantSendMessages(documentProcessor)
     pdfToBoundingBoxAndTextQueue.grantSendMessages(documentProcessor)
+    zipExtractionQueue.grantSendMessages(documentProcessor)
 
     //------------------------------------------------------------
 
@@ -290,9 +299,11 @@ export class TextractPipelineStack extends cdk.Stack {
     syncProcessor.addLayers(helperLayer)
     syncProcessor.addLayers(textractorLayer)
     //Trigger
+    /*
     syncProcessor.addEventSource(new SqsEventSource(syncJobsQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     contentBucket.grantReadWrite(syncProcessor)
     existingContentBucket.grantReadWrite(syncProcessor)
@@ -338,10 +349,11 @@ export class TextractPipelineStack extends cdk.Stack {
     // disabled as it seems unusefull
     // asyncProcessor.addEventSource(new SnsEventSource(jobCompletionTopic))
     //
+    /*
     asyncProcessor.addEventSource(new SqsEventSource(asyncJobsQueue, {
       batchSize: 1
     }));
-
+    */
     //Permissions
     contentBucket.grantRead(asyncProcessor)
     existingContentBucket.grantReadWrite(asyncProcessor)
@@ -380,9 +392,11 @@ export class TextractPipelineStack extends cdk.Stack {
     jobResultProcessor.addLayers(helperLayer)
     jobResultProcessor.addLayers(textractorLayer)
     //Triggers
+    /*
     jobResultProcessor.addEventSource(new SqsEventSource(jobResultsQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     outputTable.grantReadWriteData(jobResultProcessor)
     documentsTable.grantReadWriteData(jobResultProcessor)
@@ -419,9 +433,11 @@ export class TextractPipelineStack extends cdk.Stack {
     //Layer
     appsearchIndexer.addLayers(nodeModulesLayer)
     //Triggers
+    /*
     appsearchIndexer.addEventSource(new SqsEventSource(esIndexQueue, {
       batchSize: 1
     }));
+    */
     //Permissions
     //outputTable.grantReadWriteData(appsearchIndexer)
     //documentsTable.grantReadWriteData(appsearchIndexer)
@@ -449,10 +465,11 @@ export class TextractPipelineStack extends cdk.Stack {
     // pdfToImg.addLayers(textractorLayer)
     pdfToImg.addLayers(nodeModulesLayer)
     //Triggers
+    /*
     pdfToImg.addEventSource(new SqsEventSource(syncJobsQueue, {
       batchSize: 1
     }));
-
+    */
     /*
     s3Processor.addEventSource(new S3EventSource(contentBucket, {
       events: [ s3.EventType.OBJECT_CREATED ],
@@ -471,7 +488,7 @@ export class TextractPipelineStack extends cdk.Stack {
     // Async Job Processor (Start jobs using Async APIs)
     const htmlToBoundingBox = new lambda.Function(this, 'HtmlToBoundingBox', {
       runtime: lambda.Runtime.PYTHON_3_8,
-      code: lambda.Code.asset('../lambda/function/htmltoboundingbox'),
+      code: lambda.Code.asset('../lambda/function/htmltopdf'),
       handler: 'lambda_function.lambda_handler',
       reservedConcurrentExecutions: 1,
       timeout: cdk.Duration.seconds(50),
@@ -487,9 +504,11 @@ export class TextractPipelineStack extends cdk.Stack {
     htmlToBoundingBox.addLayers(pythonModulesLayer)
     htmlToBoundingBox.addLayers(helperLayer)
 
+    /*
     htmlToBoundingBox.addEventSource(new SqsEventSource(htmltoboundingboxQueue, {
       batchSize: 1
     }));
+    */
 
     //Permissions
     contentBucket.grantRead(htmlToBoundingBox)
@@ -512,6 +531,34 @@ export class TextractPipelineStack extends cdk.Stack {
     pdfGenerator.grantInvoke(asyncProcessor)
     */
 
+    // Zip extraction lambda
+    const zipExtraction = new lambda.Function(this, 'zipExtraction', {
+      runtime: lambda.Runtime.PYTHON_3_8,
+      code: lambda.Code.asset('../lambda/function/zipExtraction'),
+      handler: 'lambda_function.lambda_handler',
+      reservedConcurrentExecutions: 1,
+      timeout: cdk.Duration.seconds(50),
+      memorySize: 1280,
+      environment: {
+        OUTPUT_BUCKET: outputBucket.bucketName,
+        OUTPUT_TABLE: outputTable.tableName,
+        ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
+      }
+    });
+
+    zipExtraction.addLayers(pythonModulesLayer);
+    zipExtraction.addLayers(helperLayer);
+    /*
+    zipExtraction.addEventSource(new SqsEventSource(zipExtractionQueue, {
+      batchSize: 1
+    }));
+    */
+    // Permissions
+    zipExtractionQueue.grantSendMessages(zipExtraction)
+    contentBucket.grantRead(zipExtraction)
+    existingContentBucket.grantReadWrite(zipExtraction)
+    outputBucket.grantReadWrite(zipExtraction)
+
     // Async Job Processor (Start jobs using Async APIs)
     const pdfToBoundingBox = new lambda.Function(this, 'PdfToBboxAndText', {
       runtime: lambda.Runtime.PYTHON_3_8,
@@ -526,16 +573,18 @@ export class TextractPipelineStack extends cdk.Stack {
         ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
+        EXTRACT_PDF_LINES: "true",
       }
     });
 
      //Layer
     pdfToBoundingBox.addLayers(pythonModulesLayer)
     pdfToBoundingBox.addLayers(helperLayer)
-
+    /*
     pdfToBoundingBox.addEventSource(new SqsEventSource(pdfToBoundingBoxAndTextQueue, {
       batchSize: 1
     }));
+    */
 
     // Permissions
     contentBucket.grantRead(pdfToBoundingBox)

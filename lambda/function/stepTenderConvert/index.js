@@ -32,9 +32,22 @@ exports.handler =  async function(event, ) {
 
     // importDgmarket
     const bidDeadlineDateText = getXmlJsonData(event.bidDeadlineDate)
-    const bidDeadlineDate = `${bidDeadlineDateText.substring(0, 4)}-${bidDeadlineDateText.substring(4, 6)}-${bidDeadlineDateText.substring(6, 8)}`
+    const bidDeadlineDate = bidDeadlineDateText ?
+      `${
+        bidDeadlineDateText.substring(0, 4)
+      }-${
+        bidDeadlineDateText.substring(4, 6)
+      }-${
+        bidDeadlineDateText.substring(6, 8)
+      }` : bidDeadlineDateText
     const publicationDateText = getXmlJsonData(event.publicationDate)
-    const publicationDate = `${publicationDateText.substring(0, 4)}-${publicationDateText.substring(4, 6)}-${publicationDateText.substring(6, 8)}`
+    const publicationDate = `${
+      publicationDateText.substring(0, 4)
+    }-${
+      publicationDateText.substring(4, 6)
+    }-${
+      publicationDateText.substring(6, 8)
+    }`
 
     const sourceUrl = []
     getXmlJsonArray(event.sourceUrl)
@@ -66,10 +79,7 @@ exports.handler =  async function(event, ) {
       cpvs: getXmlJsonData(event.cpvs),
       bidDeadlineDate,
       sourceUrl: sourceUrl,
-      dataSource: event.dataSource,
       origine: 'DgMarket',
-      creationDate: new Date(),
-      updateDate: new Date(),
     }
 
     // check biddeadline
@@ -197,6 +207,12 @@ exports.handler =  async function(event, ) {
     }
   }
   else { throw new Error(`Unknown dataSource ${event.dataSource}`) }
-
-  return tender
-}
+  tender.fileSource = event.fileSource
+  tender.fileSourceIndex = event.fileSourceIndex
+  tender.dataSource = event.dataSource
+  tender.creationDate = new Date()
+  tender.updateDate = tender.creationDate
+  return {
+    convertedData: tender,
+    status: 1
+  }}

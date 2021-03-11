@@ -8,7 +8,12 @@ const tenderimport = require('./tenderimport')
 const cpv = require('./cpv')
 const tenderformat = require('./tenderformat')
 const appsearch = require('./appsearch')
+const elastic = require('./elastic')
 const document = require('./document')
+const hivebrite = require('./hivebrite')
+const metricranges = require('./metricranges')
+const lambda = require('./lambda')
+const { AWS, documentsBucket, env } = require('./config')
 
 module.exports = {
   ...esmRequire('./main.js'),
@@ -19,4 +24,11 @@ module.exports = {
   tenderformat,
   appsearch,
   document,
+  elastic,
+  hivebrite,
+  metricranges,
+  AWS,
+  documentsBucket,
+  env,
+  lambda,
 }

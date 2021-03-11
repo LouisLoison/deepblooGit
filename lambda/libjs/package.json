@@ -10,9 +10,16 @@
   "author": "Deepbloo Team",
   "license": "UNLICENSED",
   "dependencies": {
-    "esm": "^3.2.25"
+    "@elastic/app-search-node": "^7.10",
+    "@elastic/elasticsearch": "^7.10.0",
+    "axios": "^0.21",
+    "esm": "^3.2",
+    "fs-extra": "^9.0",
+    "object-hash": "^2.0",
+    "pg": "^8.5",
+    "string-strip-html": "^8.1"
   },
   "devDependencies": {
-    "aws-sdk": "^2.793.0"
+    "aws-sdk": "^2.793"
   }
 }

@@ -1,0 +1,11 @@
+## PUTTING owner_id IN INPUT ARGUMENT IN ELASTIC MAPPING BECAUSE OWNER_ID WILL BE AVAILABLE AFTER TOKENAUTHORIZATION FUNCTION WHICH IS FIRST IN PIPELINE.
+$util.qr($context.args.input.put("owner_id", $context.stash.user_uuid)) 
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "method": "CreateTender",
+        "arguments":  $utils.toJson($context.arguments),
+        "stash":  $utils.toJson($context.stash)
+    }
+}

@@ -2,6 +2,13 @@ const crypto = require('crypto')
 const BddSchema = require('./BddSchema')
 const { getDbSecret } = require('../config')
 
+const log = (msg) => {
+  if(process.env.DEBUG) {
+    console.log(msg)
+  }
+}
+
+
 let BddId
 let Environnement
 let configBdd
@@ -21,26 +28,25 @@ exports.bddInit = async () => {
 
 exports.getClient = async () => {
   await this.bddInit()
+  console.log('Get client')
   return await pgPool.connect() // Passes the client to enable transaction
 }
 
-const pgInitPool = (onError) => {
-  try {
-    if(!pgPool) {
-      const pgArgs = {
-        host: configBdd.host,
-        user: configBdd.username,
-        password: configBdd.password,
-        database: configBdd.dbname,
-      }
-      console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
-      const { Pool } = require('pg')
-      pgPool = new Pool(pgArgs)
+const pgInitPool = () => {
+  if(!pgPool) {
+    const pgArgs = {
+      host: configBdd.host,
+      user: configBdd.username,
+      password: configBdd.password,
+      database: configBdd.dbname,
+      port: configBdd.port || 5432,
+      max: 2,
     }
-    return pgPool;
-  } catch (err) {
-    onError(err)
+    console.log(`Connection to db ${configBdd.dbname} on ${configBdd.host}` )
+    const { Pool } = require('pg')
+    pgPool = new Pool(pgArgs)
   }
+  return pgPool;
 }
 
 
@@ -202,10 +208,13 @@ exports.QueryExecPrepared = async (client, Query, actualValues, tableName=false)
     rowMode: 'array',
   }
 
-  console.log(preparedQuery);
-  const { rows, fields, rowCount } = await client.query(preparedQuery)
+  const before = new Date().getTime()
+  log(preparedQuery)
 
-  return tableName ? pgMapResult(rows, fields, tableName) : rowCount
+  const { rows, fields, rowCount } = await client.query(preparedQuery)
+  log(`Success (elapsed ${new Date().getTime() - before })`)
+
+  return tableName ? pgMapResult(rows, fields, tableName) : { rows, fields, rowCount }
 }
 
 var QueryExecBdd = (Query, onError, onSuccess, rowsCount) => {
@@ -233,20 +242,17 @@ exports.QueryExecBdd2 = (Query, rowsCount) => {
 const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = false) => {
   let ColumnList = []
   let Table = Schema[TableName]
-  console.log(TableName, Record)
+  // console.log(TableName, Record)
   for(let ColumnName in Table) {
     let Column = Table[ColumnName]
     if (Column.key && !ColumnKey) {
-    // if (Column.key) {
       ColumnKey = ColumnName
-    } else {
-      if (ColumnName in Record) {
-        ColumnList.push(ColumnName)
-      }
+    }
+    if (ColumnName in Record) {
+      ColumnList.push(ColumnName)
     }
   }
   let Query = ''
-  //  if (Record[ColumnKey] && Record[ColumnKey] !== 0 && Record[ColumnKey] !== '') {
   let UpdateColumnsList = []
   let insertColumnList = []
   let insertValuesList = []
@@ -270,6 +276,8 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
           actualValues.push(this.DateFormater(Record[ColumnName]))
         } else if (Table[ColumnName].type === 'Json') {
           actualValues.push(JSON.stringify(Record[ColumnName]))
+        } else if (typeof Record[ColumnName] === "boolean"){
+          actualValues.push(Number(Record[ColumnName]))
         } else {
           actualValues.push(Record[ColumnName])
         }
@@ -278,12 +286,12 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
   }
 
   Query = `
-    INSERT INTO ${TableName} (${insertColumnList.join(', ')})
+    INSERT INTO "${TableName.toLowerCase()}" (${insertColumnList.join(', ')})
     VALUES (${insertValuesList.join(', ')})
     ON CONFLICT (${ColumnKey}) DO UPDATE SET ${UpdateColumnsList.join(', ')}
     RETURNING *
   `
-  console.log(Query)
+  // console.log(Query)
 
   const preparedQuery = {
     name: getSHA1ofJSON(Query),
@@ -291,8 +299,13 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     values: actualValues,
     rowMode: 'array',
   }
+  
+  const before = new Date().getTime()
+  log(preparedQuery) 
 
   const { rows, fields } = await (client || pgPool).query(preparedQuery)
+  // const elapsed = new Date().getTime()
+  log(`Success (elapsed ${new Date().getTime() - before })`)
   // console.log(rows);
   const [ result ] = pgMapResult(rows, fields, TableName)
 
@@ -317,6 +330,8 @@ const pgMapResult = (rows, fields, TableName) => {
     return mapedRow
   })
 }
+
+exports.pgMapResult = pgMapResult
 
 const RecordAddUpdateGeneric = (TableName, Record) => {
   return new Promise((resolve, reject) => {
@@ -750,6 +765,9 @@ exports.ArrayNumericFormater = (ItemList) => {
 }
 
 exports.DateFormater = (Texte) => {
+  if (!Texte) {
+    return Texte
+  }
   var moment = require('moment')
   if (Texte instanceof Date) {
     let DateTemp = moment(Texte).utcOffset(Texte.getUTCDate())

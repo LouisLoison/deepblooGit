@@ -1,0 +1,12 @@
+#set( $currentPipelineFunctionIndex = $context.stash.currentPipelineFunctionIndex )
+#set( $currentPipelineFunction = $context.stash.pipelineFunctions[$currentPipelineFunctionIndex] )
+#set( $nextPipelineFunctionIndex = $currentPipelineFunctionIndex + 1 )
+#set( $nextPipelineFunction = $context.stash.pipelineFunctions[$nextPipelineFunctionIndex] )
+
+$util.qr($context.stash.put("currentPipelineFunctionIndex", $nextPipelineFunctionIndex))
+$util.qr($context.stash.put("currentPipelineFunction", $nextPipelineFunction)) 
+
+{
+  "version": "2017-02-28",
+  "payload": {}
+}

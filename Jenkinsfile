@@ -78,9 +78,13 @@ pipeline {
               echo "Deploy in ${ENV}"
               # $(./tools/assume_role.sh $ENV)
               npm run deploy-all
+	      ssh deepbloo@172.31.1.146 "cd deepbloo-back && git pull && npm install && nohup npm run restart >> backend.log 2>&1"
+              ssh deepbloo-front@172.31.1.146 "cd deepbloo-front && git pull && npm install"
+              sleep 10
+              aws cloudfront create-invalidation --distribution-id EEY9ER5MY2XRN --paths '/*'
+              aws cloudfront create-invalidation --distribution-id E3US7LPL6BXFWF --paths '/*'
             '''
           }
-
           post {
             success {
               slackSend channel: "#${env.ENV}", color: 'good', message: "[${env.ENV.toUpperCase()}] *${env.ENV}_${env.CUR_DATE}_${env.BUILD_NUMBER}* deployed ✅ (last commit by ${env.GIT_USERNAME}): success (<${env.BUILD_URL}/console|Open>)"

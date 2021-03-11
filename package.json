@@ -4,7 +4,7 @@
   "scripts": {
     "postinstall": "npm run build-deps ; (cd cdk && npm install )",
     "build-deps": "./tools/build-deps.sh",
-    "clean": "rm -fr lambda/layer/pipenv/python cdk/cdk.out",
+    "clean": "rm -fr lambda/layer/pipenv/python lambda/layer/pipenv/bin cdk/cdk.out lambda/build/ lambda/layer/npm/nodejs/node_modules/; cd lambda/layer/pipenv && (pipenv --venv && rm -fr $(pipenv --venv); echo) && cd ../../../lambda/test/ && (pipenv --venv && rm -fr $(pipenv --venv); echo)",
     "lint": "eslint lambda cdk || true",
     "test": "./tools/test-lambda-imports.sh || true",
     "local-start": "sudo -b nohup docker-compose -f local/stack.yml up -d  && sudo tail --retry -f nohup.out",
@@ -12,11 +12,19 @@
     "local-stop": "sudo docker-compose -f local/stack.yml down",
     "local-clean": "sudo docker-compose -f local/stack.yml rm -f",
     "deploy-all": "./tools/build-lib.sh && cd cdk && npm run deploy-all",
-    "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy"
+    "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy",
+    "sam": "./tools/start-sam.sh",
+    "tests_run": "cd lambda/test && pipenv shell 'cd ../../ && pytest -vv'",
+    "test:unit": "NODE_PATH=$NODE_PATH:lambda/libjs jest -c .jest/config.unit.js",
+    "cov": "cd lambda/test/ && pipenv shell 'cd ../../ && pytest -v --cov-report term-missing --cov=lambda'"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "sam": "0.0.7"
+  },
   "dependencies": {
     "aws-sdk": "^2.793.0",
+    "images": "^3.2.3",
     "moment": "^2.29.1"
   }
 }

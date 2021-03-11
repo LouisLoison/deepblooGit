@@ -1,0 +1,15 @@
+{
+  "name": "deepbloo-ftpget",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ftpget": "node --unhandled-rejections=strict index.js"
+  },
+  "author": "",
+  "license": "PRIVATE",
+  "dependencies": {
+    "promise-ftp": "^1.3"
+  }
+}

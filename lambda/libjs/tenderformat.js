@@ -2,6 +2,10 @@ const { CpvList } = require('./cpv')
 const { textParseList } = require('./textparse')
 const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
+const { stripHtml } = require("string-strip-html")
+const { importTender } = require('./tenderimport')
+const { metricsRanges, metricsCriterions, extractMetrics } = require('./metricranges')
+
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()
@@ -29,8 +33,16 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
       }
     }
   }
+
+  tender.title = stripHtml(tender.title).result
+  tender.description = stripHtml(tender.description).result
   if (cpvOkCount === 0) {
-    return(null) // To delete
+    return ({
+      procurementId: tender.procurementId,
+      title: tender.title,
+      description: tender.description,
+      status: -1,
+    })// To delete
   }
 
   // Categories
@@ -87,14 +99,16 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
 
   let bidDeadline_timestamp = new Date(tender.bidDeadlineDate).getTime()
 
+  const bidDeadlineDate = tender.bidDeadlineDate === '--' ? null : tender.bidDeadlineDate
+
   let tenderNew = {
     // objectID: tender.algoliaId ? tender.algoliaId : undefined,
     // dgmarketId: tender.dgmarketId,
     tenderId: tender.id,
     procurementId: tender.procurementId,
-    title: tender.title,
+    title: stripHtml(tender.title).result,
     lang: tender.lang,
-    description: tender.description,
+    description: stripHtml(tender.description).result,
     /*
     contact: {
       firstName: tender.contactFirstName,
@@ -128,21 +142,25 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     publication_timestamp: publication_timestamp,
     // cpvsOrigine: tender.cpvsOrigine,
     cpvs: cpvs,
-    bidDeadlineDate: tender.bidDeadlineDate,
+    bidDeadlineDate: bidDeadlineDate,
     bidDeadline_timestamp: bidDeadline_timestamp,
     creation_timestamp: new Date().getTime(),
     // creation_timestamp: new Date('2019-04-02T08:24:00').getTime(),
     // creation_timestamp: publication_timestamp,
     // sourceUrls: sourceUrls,
-    // userId: tender.userId ? tender.userId : 0,
+    userId: tender.userId ? tender.userId : 0,
     scopeOfWorks: [],
     segments: [],
     designs: [],
     contractTypes: [],
     brands: [],
+    financials: [],
     // fileSource: tender.fileSource,
-    groups: [],
-    // origine: tender.origine,
+    groups: tender.groups || [],
+    datasource: tender.dataSource,
+    accountId: 'none',
+    power: metricsRanges('power', tender.tenderCriterions),
+    voltage: metricsRanges('electric potential', tender.tenderCriterions),
   }
 
   if (tender.tenderCriterions) {
@@ -161,9 +179,59 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
         tenderNew.contractTypes.push(textParse.group)
       } else if (textParse.theme === "Brand" && !tenderNew.brands.includes(textParse.group)) {
         tenderNew.brands.push(textParse.group)
+      } else if (textParse.theme === "Financial Organization" && !tenderNew.financials.includes(textParse.group)) {
+        tenderNew.financials.push(textParse.group)
       }
     }
   }
-  return(JSON.parse(JSON.stringify(tenderNew)))
+  return (JSON.parse(JSON.stringify(tenderNew)))
 }
 
+let cpvList
+
+exports.analyzeTender = async (tenderSrc) => {
+  cpvList = cpvList || await CpvList(null, true)
+  const { tender, importOrigine } = await importTender(tenderSrc, cpvList, textParseList)
+  const analyzedData = tender ? tender : {
+    ...tenderSrc,
+    exclusion: importOrigine.exclusion,
+    exclusionWord: importOrigine.exclusionWord,
+    status: importOrigine.status,
+  }
+
+  let metrics
+  try {
+    metrics = await extractMetrics(analyzedData)
+    const criterions = metricsCriterions(metrics)
+    analyzedData.tenderCriterions = [
+      ...(analyzedData.tenderCriterions || []),
+      ...criterions,
+    ]
+  } catch (err) {
+    const { title, description } = analyzedData
+    console.log(err)
+    console.log(metrics)
+    console.log(JSON.stringify({ title, description }))
+  }
+
+  const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
+  if (formatedData && analyzedData.status > 0) {
+    analyzedData.status = 20
+    formatedData.status = 20
+  }
+
+  // console.log(formatedData.power, formatedData.voltage)
+
+  return { analyzedData, formatedData }
+}
+
+/*
+exports.completeTender = async (tender) => {
+  const { analyzedData, formatedData } = await this.analyzeTender(tender)
+  return {
+    ...analyzedData,
+    ...formatedData,
+    id: tender.tenderUuid,
+  }
+}
+*/
