@@ -70,7 +70,6 @@
             v-if="
               [
                 'cpv',
-                'region',
                 'country',
                 'notice_type',
                 'buyer_name',
@@ -79,9 +78,12 @@
                 'scope_of_work',
                 'segment',
                 'brand',
-                'contract_type',
+                'financial',
+                'contract_types',
                 'procurement_method',
                 'currency',
+                'power',
+                'voltage',
               ].includes(column.property)
             "
           >
@@ -106,8 +108,15 @@
               </template>
 
               <v-card class="pa-3">
+                <SearchFacetRegion
+                  v-if="column.property === 'region' && filter.region_lvl1 && searchState.facets  && searchState.facets.region_lvl1"
+                  :region_lvl0="filter.region_lvl0"
+                  :region_lvl1="filter.region_lvl1"
+                  @filterChange="facetRegionChange($event, 'region_lvl1')"
+                />
+
                 <SearchFacet
-                  v-if="column.property === 'bid_deadline'"
+                  v-if="column.property === 'bid_deadline' && filter.bid_deadline_timestamp && searchState.facets  && searchState.facets.bid_deadline_timestamp"
                   :checked="filter.bid_deadline_timestamp"
                   :facet="searchState.facets.bid_deadline_timestamp[0]"
                   @change="handleFacetChange($event, 'bid_deadline_timestamp')"
@@ -116,7 +125,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'country'"
+                  v-if="column.property === 'country' && filter.country && searchState.facets  && searchState.facets.country"
                   :checked="filter.country"
                   :facet="searchState.facets.country[0]"
                   @change="handleFacetChange($event, 'country')"
@@ -125,7 +134,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'cpv'"
+                  v-if="column.property === 'cpv' && filter.cpvs && searchState.facets  && searchState.facets.cpvs"
                   :checked="filter.cpvs"
                   :facet="searchState.facets.cpvs[0]"
                   @change="handleFacetChange($event, 'cpvs')"
@@ -134,7 +143,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'notice_type'"
+                  v-if="column.property === 'notice_type' && filter.notice_type && searchState.facets  && searchState.facets.notice_type"
                   :checked="filter.notice_type"
                   :facet="searchState.facets.notice_type[0]"
                   @change="handleFacetChange($event, 'notice_type')"
@@ -143,7 +152,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'publication_date'"
+                  v-if="column.property === 'publication_date' && filter.publication_timestamp && searchState.facets  && searchState.facets.publication_timestamp"
                   :checked="filter.publication_timestamp"
                   :facet="searchState.facets.publication_timestamp[0]"
                   @change="handleFacetChange($event, 'publication_timestamp')"
@@ -152,7 +161,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'procurement_method'"
+                  v-if="column.property === 'procurement_method' && filter.procurement_method && searchState.facets  && searchState.facets.procurement_method"
                   :checked="filter.procurement_method"
                   :facet="searchState.facets.procurement_method[0]"
                   @change="handleFacetChange($event, 'procurement_method')"
@@ -161,7 +170,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'lang'"
+                  v-if="column.property === 'lang' && filter.lang && searchState.facets  && searchState.facets.lang"
                   :checked="filter.lang"
                   :facet="searchState.facets.lang[0]"
                   @change="handleFacetChange($event, 'lang')"
@@ -170,7 +179,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'scope_of_work'"
+                  v-if="column.property === 'scope_of_work' && filter.scope_of_works && searchState.facets  && searchState.facets.scope_of_works"
                   :checked="filter.scope_of_works"
                   :facet="searchState.facets.scope_of_works[0]"
                   @change="handleFacetChange($event, 'scope_of_works')"
@@ -179,7 +188,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'segment'"
+                  v-if="column.property === 'segment' && filter.segments && searchState.facets  && searchState.facets.segments"
                   :checked="filter.segments"
                   :facet="searchState.facets.segments[0]"
                   @change="handleFacetChange($event, 'segments')"
@@ -188,7 +197,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'designs'"
+                  v-if="column.property === 'designs' && filter.designs && searchState.facets  && searchState.facets.designs"
                   :checked="filter.designs"
                   :facet="searchState.facets.designs[0]"
                   @change="handleFacetChange($event, 'designs')"
@@ -197,7 +206,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'contract_type'"
+                  v-if="column.property === 'contract_types' && filter.contract_types && searchState.facets  && searchState.facets.contract_types"
                   :checked="filter.contract_types"
                   :facet="searchState.facets.contract_types[0]"
                   @change="handleFacetChange($event, 'contract_types')"
@@ -206,7 +215,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'brand'"
+                  v-if="column.property === 'brand' && filter.brands && searchState.facets  && searchState.facets.brands"
                   :checked="filter.brands"
                   :facet="searchState.facets.brands[0]"
                   @change="handleFacetChange($event, 'brands')"
@@ -215,7 +224,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'financial'"
+                  v-if="column.property === 'financial' && filter.financials && searchState.facets  && searchState.facets.financials"
                   :checked="filter.financials"
                   :facet="searchState.facets.financials[0]"
                   @change="handleFacetChange($event, 'financials')"
@@ -224,7 +233,7 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'currency'"
+                  v-if="column.property === 'currency' && filter.currency && searchState.facets  && searchState.facets.currency"
                   :checked="filter.currency"
                   :facet="searchState.facets.currency[0]"
                   @change="handleFacetChange($event, 'currency')"
@@ -233,12 +242,30 @@
                 />
 
                 <SearchFacet
-                  v-if="column.property === 'buyer_name'"
+                  v-if="column.property === 'buyer_name' && filter.buyer_name && searchState.facets  && searchState.facets.buyer_name"
                   :checked="filter.buyer_name"
                   :facet="searchState.facets.buyer_name[0]"
                   @change="handleFacetChange($event, 'buyer_name')"
                   @checkAll="handleFacetCheckAll('buyer_name')"
                   @unCheckAll="handleFacetUnCheckAll('buyer_name')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'power' && filter.power && searchState.facets  && searchState.facets.power"
+                  :checked="filter.power"
+                  :facet="searchState.facets.power[0]"
+                  @change="handleFacetChange($event, 'power')"
+                  @checkAll="handleFacetCheckAll('power')"
+                  @unCheckAll="handleFacetUnCheckAll('power')"
+                />
+
+                <SearchFacet
+                  v-if="column.property === 'voltage' && filter.voltage && searchState.facets  && searchState.facets.voltage"
+                  :checked="filter.voltage"
+                  :facet="searchState.facets.voltage[0]"
+                  @change="handleFacetChange($event, 'voltage')"
+                  @checkAll="handleFacetCheckAll('voltage')"
+                  @unCheckAll="handleFacetUnCheckAll('voltage')"
                 />
               </v-card>
             </v-menu>
@@ -248,9 +275,7 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="results && results.length > 0"
-      >
+      <div v-if="results && results.length > 0">
         <div
           v-for="result in results"
           :key="result.id.raw"
@@ -411,7 +436,7 @@
                 style="height: 24px; position: absolute; bottom: 2px; right: 2px;"
               />
               <div
-                v-if="getUserType === 1 && result.origine && result.origine.raw === 'TenderInfo'"
+                v-if="getUserType === 1 && result.datasource && result.datasource.raw === 'tenderinfo'"
                 style="position: absolute; top: 2px; right: 8px; display: inline-block; background-color: #2196f3; color: #ffffff; border-radius: 100px; font-size: 10px; width: 14px;"
               >
                 TI
@@ -427,7 +452,7 @@
               :key="`column${index}`"
               class="display-table-cell display-table-cell-standard caption"
             >
-              <div v-if="column.property === 'buyer'">
+              <div v-if="column.property === 'buyer' && result.buyer && result.buyer.raw">
                 <div
                   style="text-overflow: ellipsis; overflow: hidden;"
                   :style="
@@ -448,7 +473,7 @@
                 </div>
               </div>
               <div
-                v-else-if="column.property === 'cpv'"
+                v-else-if="column.property === 'cpv' && result.cpvs && result.cpvs.raw"
                 style="position: relative;"
                 :title="result.cpvs.raw.join(', ')"
               >
@@ -476,7 +501,7 @@
                 </div>
               </div>
               <div
-                v-else-if="column.property === 'bid_deadline'"
+                v-else-if="column.property === 'bid_deadline' && result.bid_deadline_timestamp && result.bid_deadline_timestamp.raw"
                 class="text-center"
               >
                 <div v-if="result.bid_deadline_timestamp && result.bid_deadline_timestamp.raw">
@@ -484,7 +509,7 @@
                 </div>
               </div>
               <div
-                v-else-if="column.property === 'publication_date'"
+                v-else-if="column.property === 'publication_date' && result.publication_date && result.publication_date.raw"
                 class="text-center"
               >
                 <div v-if="result.publication_date && result.publication_date.raw">
@@ -492,7 +517,7 @@
                 </div>
               </div>
               <div
-                v-else-if="column.property === 'region'"
+                v-else-if="column.property === 'region' && result.region_lvl0 && result.region_lvl0.raw"
                 class="text-center"
               >
                 <div v-if="result.region_lvl0 && result.region_lvl0.raw">
@@ -504,7 +529,7 @@
                 </div>
               </div>
               <div
-                v-else-if="column.property === 'scope_of_work'"
+                v-else-if="column.property === 'scope_of_work' && result.scope_of_works && result.scope_of_works.raw"
                 style="position: relative;"
                 :title="
                   result && result.scope_of_works.raw
@@ -532,7 +557,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else-if="column.property === 'segment'">
+              <div v-else-if="column.property === 'segment' && result.segments && result.segments.raw">
                 <div v-if="result.segments && result.segments.raw">
                   <div
                     v-for="(segment, segmentIndex) of result.segments.raw"
@@ -543,7 +568,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else-if="column.property === 'brand'">
+              <div v-else-if="column.property === 'brand' && result.brands && result.brands.raw">
                 <div v-if="result.brands && result.brands.raw">
                   <div
                     v-for="(brand, brandIndex) of result.brands.raw"
@@ -554,7 +579,7 @@
                   </div>
                 </div>
               </div>
-              <div v-else-if="column.property === 'financial'">
+              <div v-else-if="column.property === 'financial' && result.financials && result.financials.raw">
                 <div v-if="result.financials && result.financials.raw">
                   <div
                     v-for="(financial, financialIndex) of result.financials.raw"
@@ -565,13 +590,71 @@
                   </div>
                 </div>
               </div>
-              <div v-else-if="column.property === 'contract_types'">
+              <div v-else-if="column.property === 'contract_types' && result.contract_types && result.contract_types.raw">
                 <div
                   v-for="(contractType, contractTypeIndex) of result.contract_types.raw"
                   :key="`contractTypeIndex${contractTypeIndex}`"
                   style="overflow: hidden; white-space: nowrap;"
                 >
                   {{ contractType }}
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'power' && result.power && result.power.raw"
+                style="position: relative;"
+                :title="
+                  result && result.power.raw
+                    ? result.power.raw.join(', ')
+                    : ''
+                "
+              >
+                <div v-if="result.power && result.power.raw">
+                  <div
+                    v-for="(item, itemIndex) of result.power.raw"
+                    :key="`itemIndex${itemIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ item }}
+                  </div>
+                  <div
+                    v-if="
+                      result.power.raw &&
+                      result.power.raw.length > 2
+                    "
+                    class="blue-grey--text"
+                    style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                  >
+                    +{{ result.power.raw.length - 2 }} more
+                  </div>
+                </div>
+              </div>
+              <div
+                v-else-if="column.property === 'voltage' && result.voltage && result.voltage.raw"
+                style="position: relative;"
+                :title="
+                  result && result.voltage.raw
+                    ? result.voltage.raw.join(', ')
+                    : ''
+                "
+              >
+                <div v-if="result.voltage && result.voltage.raw">
+                  <div
+                    v-for="(item, itemIndex) of result.voltage.raw"
+                    :key="`itemIndex${itemIndex}`"
+                    style="overflow: hidden; white-space: nowrap;"
+                  >
+                    {{ item }}
+                  </div>
+                  <div
+                    v-if="
+                      result.voltage.raw &&
+                      result.voltage.raw.length > 2
+                    "
+                    class="blue-grey--text"
+                    style="position: absolute; top: 18px; right: 0px; background-color: #dfe2ee; padding: 0px 4px; border-radius: 8px; border: 3px solid #ffffff;"
+                  >
+                    +{{ result.voltage.raw.length - 2 }} more
+                  </div>
                 </div>
               </div>
               <div v-else>
@@ -595,12 +678,14 @@
 import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 import SearchFacet from '@/views/tender/components/SearchFacet'
+import SearchFacetRegion from '@/views/tender/components/SearchFacetRegion'
 
 export default {
   name: 'SearchResultsTable',
 
   components: {
     SearchFacet,
+    SearchFacetRegion,
   },
 
   props: {
@@ -668,12 +753,6 @@ export default {
       },
       {
         show: false,
-        title: "Currency",
-        property: "currency",
-        menu: null
-      },
-      {
-        show: false,
         title: "Biding type",
         property: "biding_type",
         menu: null
@@ -722,6 +801,18 @@ export default {
       },
       {
         show: false,
+        title: "power",
+        property: "power",
+        menu: null
+      },
+      {
+        show: false,
+        title: "voltage",
+        property: "voltage",
+        menu: null
+      },
+      {
+        show: false,
         title: "ID",
         property: "id",
         menu: null
@@ -730,7 +821,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserType',
       'getIsFreeMembership',
       'getIsPremiumMembership',
@@ -778,7 +869,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showInsufficientRightDialog',
       'setScreenTenders',
     ]),

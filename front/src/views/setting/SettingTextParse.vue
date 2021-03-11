@@ -80,16 +80,24 @@
             </div>
           </div>
           <div>
-            <v-chip
-              v-for="(word, wordIndex) in textParse.words.split(',')"
-              :key="`word${wordIndex}`"
-              small
-              outlined
-              color="primary"
-              class="mr-1 mb-1"
+            <div
+              v-if="textParse.words.trim() === ''"
+              class="grey--text"
             >
-              {{ word }}
-            </v-chip>
+              none
+            </div>
+            <div v-else>
+              <v-chip
+                v-for="(word, wordIndex) in textParse.words.split('§')"
+                :key="`word${wordIndex}`"
+                small
+                outlined
+                color="primary"
+                class="mr-1 mb-1"
+              >
+                {{ word.trim() }}
+              </v-chip>
+            </div>
           </div>
         </div>
       </div>
@@ -115,7 +123,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
     ]),
 
@@ -149,7 +157,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showConfirmModal',
     ]),
 

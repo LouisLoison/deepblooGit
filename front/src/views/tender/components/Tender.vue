@@ -179,9 +179,8 @@
       <div
         class="text-center blue--text text--darken-1 pt-3"
         :class="getIsMobile ? '' : 'display-1'"
-      >
-        {{ tender.title }}
-      </div>
+        v-html="tender.title"
+      />
       <div class="text-center">{{ tender.country }}</div>
       <div class="pa-4" style="overflow: auto;">
         <div class="modal-grid">
@@ -590,7 +589,7 @@
                       </span>
                     </div>
                     <v-btn
-                      v-if="hasDocumentToImport"
+                      v-if="hasDocumentToImport && 1 === 2"
                       :loading="documentImport"
                       rounded
                       dark
@@ -959,6 +958,122 @@
                                   <tbody>
                                     <tr
                                       v-for="(tenderCriterion, index) in financialOrganization.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
+                    <div class="grey--text pt-3">Power</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getPower && getPower.length">
+                          <v-menu
+                            v-for="(power, index) in getPower"
+                            :key="`power${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ power.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in power.tenderCriterions"
+                                      :key="`tenderCriterion${index}`"
+                                    >
+                                      <td>{{ tenderCriterion.scope }}</td>
+                                      <td>{{ tenderCriterion.word }}</td>
+                                    </tr>
+                                  </tbody>
+                                </template>
+                              </v-simple-table>
+                            </v-card>
+                          </v-menu>
+                        </span>
+                        <span v-else>
+                          -
+                        </span>
+                      </span>
+                      <span v-else class="text-blur">
+                        data not available
+                      </span>
+                    </div>
+                    <div class="grey--text pt-3">Voltage</div>
+                    <div>
+                      <span v-if="hasReadRight">
+                        <span v-if="getVoltage && getVoltage.length">
+                          <v-menu
+                            v-for="(voltage, index) in getVoltage"
+                            :key="`voltage${index}`"
+                            :close-on-content-click="false"
+                            origin="top left"
+                            transition="scale-transition"
+                            offset-y
+                          >
+                            <template v-slot:activator="{ on, attrs }">
+                              <div
+                                v-bind="attrs"
+                                v-on="getUserType === 1 ? on : null"
+                              >
+                                {{ voltage.group }}
+                              </div>
+                            </template>
+                            <v-card>
+                              <v-simple-table
+                                dense
+                                class="blue-grey lighten-5 blue-grey--text text--darken-2"
+                              >
+                                <template v-slot:default>
+                                  <thead>
+                                    <tr>
+                                      <th class="text-left">
+                                        Scope
+                                      </th>
+                                      <th class="text-left">
+                                        Word
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="(tenderCriterion, index) in voltage.tenderCriterions"
                                       :key="`tenderCriterion${index}`"
                                     >
                                       <td>{{ tenderCriterion.scope }}</td>
@@ -1559,7 +1674,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
       'isUserLoggedIn',
       'getUserId',
@@ -1668,10 +1783,18 @@ export default {
     getFinancialOrganization() {
       return this.searchTextParse("Financial Organization")
     },
+
+    getPower() {
+      return this.searchTextParse("Power")
+    },
+
+    getVoltage() {
+      return this.searchTextParse("Voltage")
+    },
   },
 
   methods: {
-    async loadTender(tenderId, tenderUuid) {
+    async loadTender(tenderUuid) {
       try {
         this.getUserMemberships()
         this.tender = null
@@ -1679,7 +1802,6 @@ export default {
         this.tenderError = null
         this.groupLoading = true
         const res = await this.$api.post("/Tender/TenderGet", {
-          id: tenderId,
           tenderUuid: tenderUuid,
         })
         if (!res.success) {
@@ -1804,6 +1926,7 @@ export default {
         }
         this.dataTenderCriterions.data = res.data
         this.dataTenderCriterions.loading = 1
+        this.formatTextFromCriterions()
       } catch (err) {
         this.dataTenderCriterions.loading = -1
         this.$api.error(err, this)
@@ -1837,7 +1960,7 @@ export default {
           return
         }
         this.dataUserNotifys.loading = 0;
-        const res = await this.$api.post("/user/userNotifyList", {
+        const res = await this.$api.post("/User/userNotifyList", {
           filter: {
             userId: this.getUserId,
             tenderId: this.tender.id,
@@ -2033,7 +2156,7 @@ export default {
       try {
         const res = await this.$api.post("/Tender/TenderGroupLinkList", {
           userId: this.getUserId,
-          tenderId: this.tender.id
+          tenderId: this.tender.tenderUuid
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -2053,12 +2176,12 @@ export default {
     },
 
     getItemUrl(tender) {
-      if (!tender || !tender.sourceUrl || tender.sourceUrl.trim() === "") {
+      if (!tender || !tender.sourceUrl) {
         return []
       }
       const sourceUrls = []
       if (tender.sourceUrl) {
-        for (const sourceUrl of tender.sourceUrl.split(",")) {
+        for (const sourceUrl of tender.sourceUrl) {
           if (sourceUrl.trim() === "") {
             continue
           }
@@ -2194,9 +2317,9 @@ export default {
       this.documentImport = false;
     },
 
-    async documentDeleteDialog(document) {
-      if (!document.documentId) {
-        return
+    documentDeleteDialog(document) {
+      if (!document.documentUuid) {
+        return;
       }
       await this.documentDelete(document)
       /*
@@ -2225,7 +2348,7 @@ export default {
     async documentDelete(document) {
       try {
         const res = await this.$api.post("/Document/documentDelete", {
-          documentId: document.documentId
+          documentUuid: document.documentUuid
         });
         if (!res.success) {
           throw new Error(res.Error);
@@ -2239,10 +2362,10 @@ export default {
     openTenderGroupChoice() {
       let result = {
         id: {
-          raw: this.tender.id.toString()
+          raw: (this.tender.tenderUuid || this.tender.id).toString()
         },
         object_id: {
-          raw: this.tender.algoliaId.toString()
+          raw: this.tender.id.toString()
         },
         tender_id: {
           raw: this.tender.id.toString()
@@ -2326,6 +2449,32 @@ export default {
       })
 
       return textParseFinds
+    },
+
+    formatTextFromCriterions() {
+      for (const tenderCriterion of this.dataTenderCriterions.data) {
+        if (
+          !tenderCriterion.word
+          || tenderCriterion.word.trim() === ''
+        ) {
+          continue
+        }
+        const textParse = this.dataTextParses.data.find(
+          a => a.textParseId === tenderCriterion.textParseId
+        )
+        if (!textParse) {
+          continue
+        }
+        tenderCriterion.textParse = textParse
+        const word = tenderCriterion.word
+        const title = `${tenderCriterion.textParse.theme}/${tenderCriterion.textParse.group}`
+        const replaceMask = `<span class="textCriterion" title="${title}">${word}</span>`
+        if (tenderCriterion.scope === 'DESCRIPTION') {
+          this.tender.description = this.tender.description.replace(new RegExp(word, 'ig'), replaceMask)
+        } else if (tenderCriterion.scope === 'TITLE') {
+          this.tender.title = this.tender.title.replace(new RegExp(word, 'ig'), replaceMask)
+        }
+      }
     },
   },
 }
@@ -2420,5 +2569,14 @@ export default {
 .document-item:hover {
   border: 1px solid #eeeeee;
   opacity: 1;
+}
+
+.textCriterion {
+  text-decoration: underline;
+  background-color: #00000009;
+  cursor: help;
+}
+.textCriterion:hover {
+  background-color: #f9f8637a;
 }
 </style>

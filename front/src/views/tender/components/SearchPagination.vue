@@ -2,8 +2,9 @@
   <div class="pagination">
     <v-pagination
       v-model="searchState.current"
-      :length="searchState.totalPages"
       @input="changePage()"
+      :length="searchState.totalPages"
+      :total-visible="6"
       color="blue"
     />
   </div>

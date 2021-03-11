@@ -91,7 +91,9 @@
             :to="item.to"
             active-class="highlighted"
           >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title>
+              {{ item.title }}
+            </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -122,14 +124,14 @@ export default {
         to: { name: 'Tenders' },
       },
       {
-        title: 'Private deals',
-        to: { name: 'PrivateDeals' },
+        title: 'Dashboard',
+        to: { name: 'Dashboards' }, // PrivateDeals
       },
     ]
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
       'getUserId',
       'getUserPhoto',

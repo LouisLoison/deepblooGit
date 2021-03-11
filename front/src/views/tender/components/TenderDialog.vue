@@ -31,7 +31,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
     ]),
   },
@@ -41,9 +41,20 @@ export default {
       this.isVisible = true
       this.tender = tender
       this.$nextTick(() => {
-        let tenderId = tender.tender_id && tender.tender_id ? tender.tender_id.raw : null
-        let tenderUuid = tender.tender_id && tender.tender_uuid ? tender.tender_uuid.raw : null
-        this.$refs.Tender.loadTender(tenderId, tenderUuid)
+        let tenderUuid = null
+        if (tender.id) {
+          tenderUuid = tender.id
+          if (tender.id.raw) {
+            tenderUuid = tender.id.raw
+          }
+        }
+        if (
+          tender.tender_uuid
+          && tender.tender_uuid.raw
+        ) {
+          tenderUuid = tender.tender_uuid.raw
+        }
+        this.$refs.Tender.loadTender(tenderUuid)
       })
     },
 

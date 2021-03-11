@@ -449,24 +449,16 @@
                   </v-autocomplete>
                   <v-switch
                     v-model="user.notifSend"
-                    :label="
-                      `Send notifications: ${user.notifSend ? 'Yes' : 'No'}`
-                    "
+                    :label="`Send notifications: ${user.notifSend ? 'Yes' : 'No'}`"
                   />
                   <v-divider />
                   <v-switch
                     v-model="user.notifPostEmail"
-                    :label="
-                      `New user post: ${user.notifPostEmail ? 'Yes' : 'No'}`
-                    "
+                    :label="`New user post: ${user.notifPostEmail ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifTripEmail"
-                    :label="
-                      `New trip around me: ${
-                        user.notifTripEmail ? 'Yes' : 'No'
-                      }`
-                    "
+                    :label="`New trip around me: ${user.notifTripEmail ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifEventEmail"
@@ -474,25 +466,15 @@
                   />
                   <v-switch
                     v-model="user.notifCommentEmail"
-                    :label="
-                      `Comment: ${user.notifCommentEmail ? 'Yes' : 'No'}`
-                    "
+                    :label="`Comment: ${user.notifCommentEmail ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifVentureEmail"
-                    :label="
-                      `Project comment: ${
-                        user.notifVentureEmail ? 'Yes' : 'No'
-                      }`
-                    "
+                    :label="`Project comment: ${user.notifVentureEmail ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifBusinessRequest"
-                    :label="
-                      `Business opportunities: ${
-                        user.notifBusinessRequest ? 'Yes' : 'No'
-                      }`
-                    "
+                    :label="`Business opportunities: ${user.notifBusinessRequest ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifDigestEmail"
@@ -500,11 +482,7 @@
                   />
                   <v-switch
                     v-model="user.notifCurrentLocationEmail"
-                    :label="
-                      `Current location: ${
-                        user.notifCurrentLocationEmail ? 'Yes' : 'No'
-                      }`
-                    "
+                    :label="`Current location: ${user.notifCurrentLocationEmail ? 'Yes' : 'No'}`"
                   />
                   <v-switch
                     v-model="user.notifEmailingComEmail"
@@ -552,6 +530,36 @@
                       `Do not contact: ${user.doNotContact ? 'Yes' : 'No'}`
                     "
                   />
+                  <v-divider />
+                  <v-btn
+                    @click="testSendPeriodicDashboard(user)"
+                    :loading="dataSendPeriodicDashboard.loading === 0"
+                    text
+                    block
+                    color="blue-grey"
+                    class="ma-2"
+                  >
+                    <v-icon small class="mr-2">fa-cogs</v-icon>
+                    Test notification
+                    <v-icon
+                      v-if="dataSendPeriodicDashboard.loading === 1"
+                      small
+                      color="green"
+                      class="ml-2"
+                      title="Notification sent"
+                    >
+                      fa-check
+                    </v-icon>
+                    <v-icon
+                      v-if="dataSendPeriodicDashboard.loading === -1"
+                      small
+                      color="red"
+                      class="ml-2"
+                      title="Error"
+                    >
+                      fa-times
+                    </v-icon>
+                  </v-btn>
                 </v-expansion-panel-content>
               </v-expansion-panel>
             </v-expansion-panels>
@@ -671,11 +679,15 @@ export default {
     regionItems: null,
     countries: [],
     countryItems: null,
+    dataSendPeriodicDashboard: {
+      loading: null,
+      data: null
+    },
     notEmptyRules: [v => !!v || 'Data is required']
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getIsMobile',
       'getDataCpvs',
       'getCpvsLogoFromCode',
@@ -750,7 +762,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'setHeaderShow',
       'loadCpvs',
     ]),
@@ -967,6 +979,26 @@ export default {
         this.dialogUser = false
       } catch (err) {
         this.dataUsers.loading = -1
+        this.$api.error(err, this)
+      }
+    },
+
+    async testSendPeriodicDashboard(user) {
+      try {
+        if (!user.uuid || user.uuid.trim() === '') {
+          return
+        }
+        this.dataSendPeriodicDashboard.loading = 0
+        const res = await this.$api.post('/User/SendPeriodicDashboard', {
+          userUuid: user.uuid
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.loadUsers()
+        this.dataSendPeriodicDashboard.loading = 1
+      } catch (err) {
+        this.dataSendPeriodicDashboard.loading = -1
         this.$api.error(err, this)
       }
     }

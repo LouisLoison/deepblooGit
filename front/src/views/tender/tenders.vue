@@ -120,9 +120,43 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
+        <div v-if="!getIsMobile && 1 === 1">
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                icon
+                large
+                :color="displayType === 'DASHBOARD' ? 'blue-grey' : 'grey'"
+                class="mt-2 mb-0 mx-0"
+                title="Dashboard"
+              >
+                <v-icon style="font-size: 24px;">fa-chart-pie</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Energie
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Solar in Asia
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="displayType = 'DASHBOARD'">
+                <v-list-item-title>
+                  Micro-Grid
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>          
+        </div>
       </div>
       <div
-        v-if="searchState.wasSearched"
+        v-if="searchState.wasSearched && displayType !== 'DASHBOARD'"
         class="hit-header-grid pt-2 pb-2"
       >
         <div>
@@ -157,6 +191,7 @@
         </div>
       </div>
       <TendersRefinement
+        v-if="displayType !== 'DASHBOARD'"
         :searchInputValue="searchInputValue"
         :filter="filter"
         @searchInputValueRemove="searchInputValueRemove()"
@@ -176,6 +211,8 @@
           @handleFacetUnCheckAll="$refs.TendersFilter.handleFacetUnCheckAll($event)"
           @tenderOpen="tenderOpen($event)"
           @removeTender="removeTender($event)"
+          @searchInputValueRemove="searchInputValueRemove()"
+          @facetItemRemove="facetItemRemove($event.facet, $event.item)"
         />
       </div>
       <div v-if="!searchState.wasSearched" class="text-center pa-5">
@@ -251,10 +288,12 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
-      origine: [],
+      datasource: [],
       groups: [],
       buyer_name: [],
       financials: [],
+      power: [],
+      voltage: [],
     },
     displayType: 'CARD',
     bidDeadlineFacet: 'NOT_EXPIRED',
@@ -269,13 +308,12 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'isHeaderShow',
       'getIsMobile',
       'getScreenTenders',
       'getDataOpportunity',
-      'getUserBusinessPipeline',
       'getUserBusinessPipeline',
       'getDataTenderGroups',
     ]),
@@ -462,7 +500,7 @@ export default {
       this.loadUserMemberships()
       this.loadUserNotifys()
       this.loadOpportunity()
-      this.setUserConnexion("connexionTender")
+      this.setUserConnexion('connexionTender')
       this.loadTenderGroups()
       this.loadBusinessPipeline()
     }
@@ -471,7 +509,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'userLogin',
       'setHeaderShow',
       'loadUserMemberships',
@@ -747,7 +785,7 @@ export default {
 
 .searchbox-grid {
   display: grid;
-  grid-template-columns: 1fr 50px 50px;
+  grid-template-columns: 1fr 50px 50px 50px;
   grid-gap: 0px 0px;
   background-color: #f5f5f5;
   height: 55px;

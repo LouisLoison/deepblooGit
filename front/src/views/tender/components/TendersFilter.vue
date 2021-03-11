@@ -321,6 +321,60 @@
     </v-card>
 
     <v-card
+      class="mx-auto mb-3"
+      outlined
+      style="overflow-y: auto;"
+    >
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
+        <SearchFacet
+          :checked="filter.power"
+          :facet="searchState.facets.power[0]"
+          @change="handleFacetChange($event, 'power')"
+          @checkAll="handleFacetCheckAll('power')"
+          @unCheckAll="handleFacetUnCheckAll('power')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
+      class="mx-auto mb-3"
+      outlined
+      style="overflow-y: auto;"
+    >
+      <v-card-text
+        @click="
+          getIsPremiumMembership
+            ? showInsufficientRightDialog()
+            : null
+        "
+      >
+        <SearchFacet
+          :checked="filter.voltage"
+          :facet="searchState.facets.voltage[0]"
+          @change="handleFacetChange($event, 'voltage')"
+          @checkAll="handleFacetCheckAll('voltage')"
+          @unCheckAll="handleFacetUnCheckAll('voltage')"
+          :style="
+            getIsPremiumMembership
+              ? 'pointer-events: none; opacity: 0.5;'
+              : ''
+          "
+        />
+      </v-card-text>
+    </v-card>
+
+    <v-card
       v-if="getUserType === 1"
       class="mx-auto mb-3"
       outlined
@@ -328,11 +382,11 @@
     >
       <v-card-text>
         <SearchFacet
-          :checked="filter.origine"
-          :facet="searchState.facets.origine[0]"
-          @change="handleFacetChange($event, 'origine')"
-          @checkAll="handleFacetCheckAll('origine')"
-          @unCheckAll="handleFacetUnCheckAll('origine')"
+          :checked="filter.datasource"
+          :facet="searchState.facets.datasource[0]"
+          @change="handleFacetChange($event, 'datasource')"
+          @checkAll="handleFacetCheckAll('datasource')"
+          @unCheckAll="handleFacetUnCheckAll('datasource')"
         />
       </v-card-text>
     </v-card>
@@ -386,15 +440,17 @@ export default {
       designs: [],
       contract_types: [],
       brands: [],
-      origine: [],
+      datasource: [],
       groups: [],
       buyer_name: [],
       financials: [],
+      power: [],
+      voltage: [],
     },
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserType',
       'getIsFreeMembership',
       'getIsPremiumMembership',
@@ -409,7 +465,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showInsufficientRightDialog',
     ]),
 

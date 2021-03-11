@@ -26,7 +26,7 @@
       </div>
     </div>
     <SearchResultsTable
-      v-else
+      v-else-if="displayType === 'TABLE'"
       ref="SearchResultsTable"
       :results="results"
       :filter="filter"
@@ -38,6 +38,13 @@
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
       @sendToSalesforce="sendToSalesforce($event)"
+    />
+    <Dashboard
+      v-else-if="displayType === 'DASHBOARD'"
+      inTendersScreen
+      :searchFilter="{ searchInputValue: searchState.searchTerm, facets: filter }"
+      @searchInputValueRemove="searchInputValueRemove()"
+      @facetItemRemove="facetItemRemove($event)"
     />
 
     <!-- Dialog -->
@@ -65,6 +72,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import SearchResult from './SearchResult'
 import SearchResultsTable from './SearchResultsTable'
+import Dashboard from '@/views/dashboard/Dashboard'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from '@/views/tender/components/TenderGroupChoice'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
@@ -76,6 +84,7 @@ export default {
   components: {
     SearchResult,
     SearchResultsTable,
+    Dashboard,
     TenderGroupChoice,
     SentEmailDialog,
     TenderDialog,
@@ -105,7 +114,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getUserId',
       'getIsFreeMembership',
       'getIsPremiumMembership',
@@ -115,7 +124,7 @@ export default {
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'showConfirmModal',
       'showInsufficientRightDialog',
       'loadUserNotifys',
@@ -127,10 +136,15 @@ export default {
 
     async moveTenderToGroup(result, tenderGroup) {
       try {
+        console.log('-- moveTenderToGroup')
+        console.log(result)
+        console.log(tenderGroup)
         let SearchResultHtml = null
         if (result) {
           if (this.displayType === 'CARD') {
+            console.log(this.$refs.SearchResult)
             SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
+            console.log(SearchResultHtml)
             if (SearchResultHtml) {
               SearchResultHtml.groupLoadingStatus(true)
             }
@@ -142,8 +156,7 @@ export default {
         const res = await this.$api.post("/Tender/TenderGroupMove", {
           userId: this.getUserId,
           tenderGroupId: tenderGroup ? tenderGroup.tenderGroupId : null,
-          tenderId: result.tender_id.raw,
-          algoliaId: result.object_id && result.object_id.raw ? result.object_id.raw : 0
+          tenderUuid: result.id.raw,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -236,9 +249,12 @@ export default {
 
     async sendToSalesforce(result) {
       try {
+        if (!result.tender_id) {
+          return
+        }
         const res = await this.$api.post('/Tender/sendToSalesforce', {
           userId: this.getUserId,
-          tenderId: parseInt(result.id.raw, 10),
+          tenderId: parseInt(result.tender_id.raw, 10),
         })
         if (!res.success) {
           let message = ''
@@ -265,9 +281,26 @@ export default {
           })
           throw new Error(res.Error)
         }
+        this.showConfirmModal({
+          headerClass: "white--text darken-4--text green lighten-1",
+          headerIcon: "fa-check",
+          title: "Synchro with Salesforce",
+          message: 'Tender send to salesforce',
+          buttons: [
+            { libelle: "Close", text: true, class: "" }
+          ]
+        })
       } catch (err) {
         this.$api.error(err, this)
       }
+    },
+
+    searchInputValueRemove() {
+      this.$emit('searchInputValueRemove')
+    },
+
+    facetItemRemove(event) {
+      this.$emit('facetItemRemove', event)
     },
   },
 };

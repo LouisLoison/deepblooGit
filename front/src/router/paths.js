@@ -152,8 +152,24 @@ export default [
         },
         name: 'SettingOther',
         component: () => import(`@/views/setting/SettingOther.vue`)
-      }
+      },
     ]
+  },
+  {
+    path: '/dashboards',
+    meta: {
+      public: true
+    },
+    name: 'Dashboards',
+    component: () => import(`@/views/dashboard/Dashboards.vue`)
+  },
+  {
+    path: '/dashboard',
+    meta: {
+      public: true
+    },
+    name: 'Dashboard',
+    component: () => import(`@/views/dashboard/Dashboard.vue`)
   },
   {
     path: '/404',

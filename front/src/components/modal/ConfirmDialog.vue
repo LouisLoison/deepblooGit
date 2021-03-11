@@ -56,13 +56,13 @@ export default {
   }),
 
   computed: {
-    ...mapGetters([
+    ...mapGetters('defaultStore', [
       'getConfirmModal',
     ]),
   },
 
   methods: {
-    ...mapActions([
+    ...mapActions('defaultStore', [
       'hideConfirmModal'
     ]),
 
