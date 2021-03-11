@@ -20,11 +20,11 @@ exports.documentAddUpdate = async (client, document) => {
   return (documentNew)
 }
 
-exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
+exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
   const client = await BddTool.getClient()
   await BddTool.QueryExecPrepared(client, 'BEGIN;')
 
-  const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl })
+  const document = await this.documentAddUpdate(client, { tenderUuid, sourceUrl, tenderId })
 
   if (sourceUrl.includes('www2.dgmarket.com') && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
     sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
@@ -42,9 +42,12 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl) => {
       document.s3Url = s3Url
       document.bucketName = documentsBucket
       document.objectName = objectName
+      document.filename = fileInfo.filename
+      document.status = 1
       document.contentType = contentType
       result = await this.documentAddUpdate(client, document)
     } catch (err) {
+      await BddTool.QueryExecPrepared(client, 'ROLLBACK;')
       client.release()
       // result = err
       throw new Error(err)
@@ -215,9 +218,10 @@ exports.fileExportAws = (tenderId, fileLocation) => {
     try {
       const path = require('path')
 
-      const objectName = `tenders/tender#${tenderId}/${path.basename(fileLocation)}`
+      const fileName = path.basename(fileLocation)
+      const objectName = `tenders/tender#${tenderId}/${fileName}`
       const res = await this.awsFileAdd(fileLocation, objectName)
-      resolve({ ...res, objectName })
+      resolve({ ...res, objectName, fileName })
     } catch (err) { reject(err) }
   })
 }

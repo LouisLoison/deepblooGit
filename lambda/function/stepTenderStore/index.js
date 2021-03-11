@@ -1,14 +1,14 @@
 // const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList
 
-const { log, BddTool } = require('deepbloo');
+const { dbLambda } = require('deepbloo').lambda;
+const { BddTool } = require('deepbloo');
 
 
-exports.handler = async function(event, ) {
+
+const handler = async function(event, context, client) {
   const { analyzedData, convertedData, tenderData } = event
-  const client = await BddTool.getClient()
-  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
 
-  analyzedData.dataRaw = tenderData
+  analyzedData.dataRaw = convertedData.dataRaw
   const tender = await BddTool.RecordAddUpdate (
     'tenderimport',
     analyzedData,
@@ -16,7 +16,7 @@ exports.handler = async function(event, ) {
     client,
   )
 
-  await BddTool.QueryExecPrepared(client, 'COMMIT;');
-  client.release()
   return {...tender}
 }
+
+exports.handler = dbLambda(handler)

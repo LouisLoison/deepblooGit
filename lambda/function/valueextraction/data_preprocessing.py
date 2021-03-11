@@ -1,7 +1,7 @@
 """Data preprocessing modules created to simplify the preprocessing
 steps of future works"""
 
-import pandas as pd
+# import pandas as pd
 import re
 
 
@@ -13,11 +13,11 @@ def clean_html(raw_html):
     return clean_text
 
 
-def process_column(column_name, dataframe, process):
+#def process_column(column_name, dataframe, process):
     """Define a method to apply the same process to every row in a
     pandas DataFrame column"""
 
-    dataframe[column_name] = pd.DataFrame(map(process, dataframe[column_name]))
+#    dataframe[column_name] = pd.DataFrame(map(process, dataframe[column_name]))
 
 
 def clean_date_time(text, replace_with="time"):

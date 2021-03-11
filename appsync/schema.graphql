@@ -4,7 +4,7 @@ schema{
 }
 
 type Tender {
-    id: Int
+    # id: Int
     datasourceId: ID
     procurementId: ID
     tenderUuid: ID #tenderuuid in db
@@ -95,12 +95,13 @@ type User{
 }
 
 type Query {
-  GetTender(userToken:String!, id: ID): Tender
+  GetTender(userToken:String!, tenderUuid: ID!): Tender
   GetUser(userToken:String!): User
 }
 
 type Mutation {
   CreateTender(input:CreateTenderInput!, userToken:String!): Tender
+  UpdateTender(input:UpdateTenderInput!, userToken:String!): Tender
 }
 
 input CreateTenderInput{
@@ -139,3 +140,40 @@ input CreateTenderInput{
   brand: String
   status: Int
 }
+
+input UpdateTenderInput{
+  tenderUuid: ID! #tenderUuid
+  datasourceId: ID
+  procurementId: ID
+  algoliaId: ID
+  title: String
+  description: String
+  lang: String  
+  contactFirstName: String
+  contactLastName: String
+  contactAddress: String
+  contactCity: String
+  contactState: String
+  contactCountry: String
+  contactEmail: String
+  contactPhone: String
+  buyerName: String
+  buyerCountry: String
+  procurementMethod: String
+  noticeType: String
+  country: String
+  estimatedCost: String
+  currency: String
+  publicationDate: String
+  cpvs: String
+  cpvDescriptions: String
+  words: String
+  bidDeadlineDate: String
+  sourceUrl: String
+  termDate: String
+  fileSource: String
+  contractType1: String
+  brand: String
+  status: Int
+}
+

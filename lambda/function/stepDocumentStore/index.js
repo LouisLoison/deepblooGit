@@ -1,18 +1,19 @@
 const { log, BddTool } = require('deepbloo');
+const { dbLambda } = require('deepbloo').lambda;
 
 
-exports.handler = async function(event, ) {
-  const client = await BddTool.getClient()
-  await BddTool.QueryExecPrepared(client, 'START TRANSACTION ISOLATION LEVEL READ COMMITTED;');
-
+const handler = async function(event, context, client) {
   const savedDocument = await BddTool.RecordAddUpdate (
     'document',
     event,
-    'documentUuid',
+    'tenderuuid, sourceurl',
     client,
   )
-
-  await BddTool.QueryExecPrepared(client, 'COMMIT;');
-  client.release()
+  if (savedDocument.contentType === 'application/zip') {
+    savedDocument.parentUuid = savedDocument.documentUuid
+  }
+  delete savedDocument.documentUuid
   return {...savedDocument}
 }
+
+exports.handler = dbLambda(handler)

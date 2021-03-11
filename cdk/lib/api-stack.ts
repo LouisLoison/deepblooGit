@@ -185,6 +185,14 @@ export class ApiStack extends cdk.Stack {
     userResolver.addLayers(nodeLayer, deepblooLayer)
     hivebriteSecret.grantRead(userResolver)
 
+
+    const stepValueExtraction = Function.fromFunctionAttributes(
+      this, 'stepValueExtraction',
+      {
+        functionArn: `arn:aws:lambda:eu-west-1:669031476932:function:stepValueExtraction-${environment.NODE_ENV}`,
+      }
+    );
+
     const elasticResolver = new Function(this, 'elasticResolver', {
       functionName: `elasticResolver-${environment.NODE_ENV}`,
       runtime: Runtime.NODEJS_12_X,
@@ -202,6 +210,8 @@ export class ApiStack extends cdk.Stack {
       role: lambdaBasicDbSecretVpcExecutionRole
     });
     elasticResolver.addLayers(nodeLayer, deepblooLayer)
+    stepValueExtraction.grantInvoke(elasticResolver)
+
 
     // ------------- GraphqlApi DEFINITIONS----------------- //
     const api = new GraphqlApi(this, 'deepbloo-dev-api', {
@@ -306,7 +316,7 @@ export class ApiStack extends cdk.Stack {
            "version": "2017-02-28",
            "operation": "Invoke",
            "payload": {
-               "field": "HivebriteUsers",
+               "method": "HivebriteUsers",
                "arguments":  $utils.toJson($context.arguments)
            }
        }`),
@@ -420,6 +430,23 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
+    const UpdateTenderElasticFunction = new CfnFunctionConfiguration(this, `UpdateTenderElasticFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: elasticDataSource.name,
+      name: "UpdateTenderElasticFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderElasticFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderElasticFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+
     const CreateTenderCriterionCpvsAuroraFunction = new CfnFunctionConfiguration(this, `CreateTenderCriterionCpvsAuroraFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
@@ -468,23 +495,117 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
-    const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
+    // const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
+    //   apiId: api.apiId,
+    //   functionVersion: "2018-05-29",
+    //   description: "description",
+    //   dataSourceName: noneDataSource.name,
+    //   name: "localFunction",
+    //   requestMappingTemplate: readFileSync(
+    //     `${__dirname}/../../appsync/localresolver.request.vtl`,
+    //     { encoding: "utf8" }
+    //   ),
+    //   responseMappingTemplate: readFileSync(
+    //     `${__dirname}/../../appsync/localresolver.response.vtl`,
+    //     { encoding: "utf8" }
+    //   ),
+    // })
+
+    const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
-      description: "description",
-      dataSourceName: noneDataSource.name,
-      name: "localFunction",
+      description: "CreateAclAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "CreateAclAuroraFunction",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/localresolver.request.vtl`,
+        `${__dirname}/../../appsync/function.insertAurora.request.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/localresolver.response.vtl`,
+        `${__dirname}/../../appsync/function.insertAurora.response.vtl`,
         { encoding: "utf8" }
       ),
     })
 
+    const GetAclAuroraFunction = new CfnFunctionConfiguration(this, `GetAclAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "GetAclAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "GetAclAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.GetAclAuroraFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
 
+    const UpdateTenderAuroraFunction = new CfnFunctionConfiguration(this, `UpdateTenderAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "UpdateTenderAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "UpdateTenderAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const UpdateTenderCriterionsAuroraFunction = new CfnFunctionConfiguration(this, `UpdateTenderCriterionsAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "UpdateTenderCriterionsAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "UpdateTenderCriterionsAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const UpdateTenderCriterionCpvsAuroraFunction = new CfnFunctionConfiguration(this, `UpdateTenderCriterionCpvsAuroraFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "UpdateTenderCriterionCpvsAuroraFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "UpdateTenderCriterionCpvsAuroraFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.multiInsertUpdateAurora.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
+    const UpdateTenderLocalFunction = new CfnFunctionConfiguration(this, `UpdateTenderLocalFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "UpdateTenderLocalFunction",
+      dataSourceName: auroraDataSource.name,
+      name: "UpdateTenderLocalFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderLocalFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTenderLocalFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
     // -------------PIPELINE QUERIES AND MUTATIONS DEFINITIONS----------------- //
     const GetUserPipeline = new CfnResolver(this, `GetUserPipeline`, {
       apiId: api.apiId,
@@ -518,7 +639,11 @@ export class ApiStack extends cdk.Stack {
         { encoding: "utf8" }
       ),
       pipelineConfig: {
-        functions: [TokenAuthorizerFunction.attrFunctionId, GetUserAuroraFunction.attrFunctionId, GetTenderFunction.attrFunctionId]
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId]
       },
     })
 
@@ -541,12 +666,39 @@ export class ApiStack extends cdk.Stack {
           GetUserAuroraFunction.attrFunctionId,
           CreateTenderElasticFunction.attrFunctionId,
           CreateTenderAuroraFunction.attrFunctionId,
-          localFunction.attrFunctionId,
           CreateTenderCriterionCpvsAuroraFunction.attrFunctionId,
-          localFunction.attrFunctionId,
-          CreateTenderCriterionsAuroraFunction.attrFunctionId
+          CreateTenderCriterionsAuroraFunction.attrFunctionId,
+          CreateAclAuroraFunction.attrFunctionId
         ],
       },
+    })
+
+    const UpdateTenderPipeline = new CfnResolver(this, `UpdateTenderPipeline`, {
+      apiId: api.apiId,
+      kind: 'PIPELINE',
+      typeName: "Mutation",
+      fieldName: "UpdateTender",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTender.before.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.UpdateTender.after.vtl`,
+        { encoding: "utf8" }
+      ),
+      pipelineConfig: {
+        functions: [
+          TokenAuthorizerFunction.attrFunctionId,
+          GetUserAuroraFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId,
+          UpdateTenderLocalFunction.attrFunctionId,
+          UpdateTenderElasticFunction.attrFunctionId,
+          UpdateTenderAuroraFunction.attrFunctionId,
+          UpdateTenderCriterionsAuroraFunction.attrFunctionId,
+          UpdateTenderCriterionCpvsAuroraFunction.attrFunctionId
+        ]
+      }
     })
   }
 }

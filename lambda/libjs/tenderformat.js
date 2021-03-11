@@ -4,6 +4,8 @@ const RegionList = require('./public/constants/regions.json')
 const CategoryList = require('./public/constants/categories.json')
 const { stripHtml } = require("string-strip-html")
 const { importTender } = require('./tenderimport')
+const { metricsRanges, metricsCriterions, extractMetrics } = require('./metricranges')
+
 
 exports.tenderFormat = async (tender, cpvList, textParses) => {
   cpvList = cpvList ? cpvList : await CpvList()
@@ -154,9 +156,11 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
     brands: [],
     financials: [],
     // fileSource: tender.fileSource,
-    groups: [],
-    datasource: tender.datasource,
+    groups: tender.groups || [],
+    datasource: tender.dataSource,
     accountId: 'none',
+    power: metricsRanges('power', tender.tenderCriterions),
+    voltage: metricsRanges('electric potential', tender.tenderCriterions),
   }
 
   if (tender.tenderCriterions) {
@@ -184,6 +188,7 @@ exports.tenderFormat = async (tender, cpvList, textParses) => {
 }
 
 let cpvList
+
 exports.analyzeTender = async (tenderSrc) => {
   cpvList = cpvList || await CpvList(null, true)
   const { tender, importOrigine } = await importTender(tenderSrc, cpvList, textParseList)
@@ -193,11 +198,30 @@ exports.analyzeTender = async (tenderSrc) => {
     exclusionWord: importOrigine.exclusionWord,
     status: importOrigine.status,
   }
-  const formatedData = await this.tenderFormat(tender, cpvList, textParseList)
-  if (formatedData.status > 0) {
+
+  let metrics
+  try {
+    metrics = await extractMetrics(analyzedData)
+    const criterions = metricsCriterions(metrics)
+    analyzedData.tenderCriterions = [
+      ...(analyzedData.tenderCriterions || []),
+      ...criterions,
+    ]
+  } catch (err) {
+    const { title, description } = analyzedData
+    console.log(err)
+    console.log(metrics)
+    console.log(JSON.stringify({ title, description }))
+  }
+
+  const formatedData = await this.tenderFormat(analyzedData, cpvList, textParseList)
+  if (formatedData && analyzedData.status > 0) {
     analyzedData.status = 20
     formatedData.status = 20
   }
+
+  // console.log(formatedData.power, formatedData.voltage)
+
   return { analyzedData, formatedData }
 }
 

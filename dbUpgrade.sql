@@ -160,3 +160,15 @@ delete from tendergrouplink tl using tendergroup where tl.tendergroupid=tendergr
 
 delete from tendergroup where searchrequest is not null;
 
+alter table tendergrouplink add column tenderUuid uuid;
+
+update tendergrouplink set tenderuuid = tenders.tenderuuid from tenders where tenders.id=tenderid;
+
+
+create unique index tendergrouplink_userid_tenderuuid_unique on tendergrouplink(userid, tenderuuid);
+
+drop index tendercriterion_textparseid_scope_tenderuuid_unique ;
+
+create unique index tendercriterion_textparseid_word_scope_tenderuuid_unique on tendercriterion(textparseid, scope, word, tenderuuid);
+
+alter table document add column parentuuid uuid;

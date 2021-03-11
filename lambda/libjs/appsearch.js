@@ -1,17 +1,21 @@
 const AppSearchClient = require('@elastic/app-search-node')
 const { getAppsearchSecret } = require('./config')
 
+let client = false
+
 exports.connectToPrivateAppSearch = async () => {
   const config = await getAppsearchSecret()
   const privateKey = config.appsearchPrivateKey
   const baseUrlFn = () => config.appsearchEndpoint + 'api/as/v1/'
-  const client = new AppSearchClient(undefined, privateKey, baseUrlFn)
+  client = client || new AppSearchClient(undefined, privateKey, baseUrlFn)
   return client
 }
 
 // Indexes an objects array into appsearch's "deepbloo" engine.
 // This will update any document having the same "id" fields,
 // adding any new field to the document
+
+
 exports.indexObjectToAppsearch = async (objects, engineName = "tenders") => {
   // Init object id
   for (const object of objects) {

@@ -132,10 +132,11 @@ export class TenderStack extends Stack {
       vpc,
       memorySize: 500,
       reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(50),
+      timeout: Duration.seconds(70),
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
@@ -150,6 +151,7 @@ export class TenderStack extends Stack {
       environment: {
         ...environment,
         ...dbEnv,
+        DEBUG: "1",
       }
     });
 
@@ -193,6 +195,7 @@ export class TenderStack extends Stack {
     });
 
     const stepValueExtraction = new Function(this, 'ValueExtraction', {
+      functionName: `stepValueExtraction-${environment.NODE_ENV}`,
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/valueextraction'),
       handler: 'lambda_function.lambda_handler',
@@ -231,6 +234,7 @@ export class TenderStack extends Stack {
     elasticSecret.grantRead(stepTenderElasticIndex)
     elasticSecret.grantRead(stepNotifyError)
 
+    stepValueExtraction.grantInvoke(stepTenderAnalyze)
     const processFail = new Fail(this, 'processFail', {
       error: 'WorkflowFailure',
       cause: "Download task failed"
@@ -315,20 +319,22 @@ export class TenderStack extends Stack {
       inputPath: '$.formatedData',
       resultPath: '$.entities',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
 
+    /*
     const valueExtractionTask = new LambdaInvoke(this, 'Value Extraction', {
       lambdaFunction: stepValueExtraction,
       inputPath: '$.formatedData',
       resultPath: '$.metrics',
       payloadResponseOnly: true,
-    })
+    }).addCatch(notifyErrorTask)
+    */
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
       stateMachine: props.documentMachine,
       inputPath: "$.mergedData",
       resultPath: '$.downloadedData'
-    });
+    }).addCatch(notifyErrorTask)
 
     const logGroup = new logs.LogGroup(this, 'TenderLogGroup');
 
@@ -342,7 +348,6 @@ export class TenderStack extends Stack {
     const chain = Chain.start(initialWait)
       .next(convertTenderTask)
       .next(analyzeTenderTask)
-      .next(valueExtractionTask)
       .next(namedEntitiesTask)
       .next(storeTenderTask)
       .next(mergeTenderTask)

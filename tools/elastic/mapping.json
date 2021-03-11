@@ -1,34 +1,10 @@
 {
   "mappings": {
     "properties": {
-      "algoliaId": {
-        "type": "long"
-      },
       "bidDeadlineDate": {
         "type": "date"
       },
-      "bidDeadline_timestamp": {
-        "type": "long"
-      },
       "brand": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "buyerCountry": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "buyerName": {
         "type": "text",
         "fields": {
           "keyword": {
@@ -46,79 +22,7 @@
           }
         }
       },
-      "categories": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "categoryLvl0": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "categoryLvl1": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "contactAddress": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "contactCity": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "contactCountry": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
       "contactEmail": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "contactFirstName": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "contactLastName": {
         "type": "text",
         "fields": {
           "keyword": {
@@ -157,7 +61,7 @@
           }
         }
       },
-      "cpvDescriptions": {
+      "countryCode": {
         "type": "text",
         "fields": {
           "keyword": {
@@ -184,12 +88,6 @@
           }
         }
       },
-      "creationDate": {
-        "type": "date"
-      },
-      "creation_timestamp": {
-        "type": "long"
-      },
       "currency": {
         "type": "text",
         "fields": {
@@ -198,18 +96,6 @@
             "ignore_above": 256
           }
         }
-      },
-      "dataSource": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "dataSourceId": {
-        "type": "long"
       },
       "description": {
         "type": "text",
@@ -229,70 +115,7 @@
           }
         }
       },
-      "families": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "fileSource": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "id": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "lang": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
       "noticeType": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "origine": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "procurementId": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "procurementMethod": {
         "type": "text",
         "fields": {
           "keyword": {
@@ -303,9 +126,6 @@
       },
       "publicationDate": {
         "type": "date"
-      },
-      "publication_timestamp": {
-        "type": "long"
       },
       "regionLvl0": {
         "type": "text",
@@ -325,73 +145,6 @@
           }
         }
       },
-      "regionLvl2": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "sourceUrl": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
-          }
-        }
-      },
-      "status": {
-        "type": "long"
-      },
-      "tenderCriterions": {
-        "properties": {
-          "findCount": {
-            "type": "long"
-          },
-          "scope": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          },
-          "status": {
-            "type": "long"
-          },
-          "textparseId": {
-            "type": "long"
-          },
-          "value": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          },
-          "word": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword",
-                "ignore_above": 256
-              }
-            }
-          }
-        }
-      },
-      "tenderId": {
-        "type": "long"
-      },
-      "termDate": {
-        "type": "date"
-      },
       "title": {
         "type": "text",
         "fields": {
@@ -400,12 +153,6 @@
             "ignore_above": 256
           }
         }
-      },
-      "updateDate": {
-        "type": "date"
-      },
-      "userId": {
-        "type": "long"
       },
       "words": {
         "type": "text",

@@ -185,12 +185,14 @@ export class DocumentStack extends Stack {
 
     stepDocumentDownload.addLayers(nodeLayer, deepblooLayer)
     stepPdfToImg.addLayers(ghostscripLayer, nodeLayer, deepblooLayer)
+    stepDocumentStore.addLayers(nodeLayer, deepblooLayer)
     stepPdfToBoxes.addLayers(pythonModulesLayer, helperLayer)
     stepHtmlToPdf.addLayers(pythonModulesLayer, helperLayer)
     stepZipExtraction.addLayers(pythonModulesLayer, helperLayer)
     stepTextToSentences.addLayers(pythonModulesLayer, helperLayer)
 
     dbSecret.grantRead(stepDocumentDownload)
+    dbSecret.grantRead(stepDocumentStore)
     documentsBucket.grantReadWrite(stepDocumentDownload)
     documentsBucket.grantReadWrite(stepHtmlToPdf)
     documentsBucket.grantReadWrite(stepPdfToImg)
@@ -210,6 +212,36 @@ export class DocumentStack extends Stack {
       lambdaFunction: stepPdfToImg,
       inputPath: '$.document',
       resultPath: '$.pdf2img',
+      payloadResponseOnly: true,
+    })
+
+    // Store task for each document that we want to save.(Cannot duplicate same Task)
+
+    const documentStorePdfTask = new LambdaInvoke(this, 'Document Pdf Store', {
+      lambdaFunction: stepDocumentStore,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
+    const documentStorePdfBboxTask = new LambdaInvoke(this, 'Document Pdf Bbox Store', {
+      lambdaFunction: stepDocumentStore,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
+    const documentStorePdfSentencesTask = new LambdaInvoke(this, 'Document Pdf Sentences Store', {
+      lambdaFunction: stepDocumentStore,
+      inputPath: '$.document',
+      resultPath: '$.document',
+      payloadResponseOnly: true,
+    })
+
+    const documentStorePdfImageTask = new LambdaInvoke(this, 'Document Pdf Image Store', {
+      lambdaFunction: stepDocumentStore,
+      inputPath: '$.document',
+      resultPath: '$.document',
       payloadResponseOnly: true,
     })
 
@@ -245,10 +277,17 @@ export class DocumentStack extends Stack {
 
     const processDocx = new Pass(this, 'Docx process')
 
+    const parallelProcessPdf = new Parallel(this, 'Pdf parallel process', {})
+      .branch(documentStorePdfBboxTask)
+      .branch(textToSentencesTask
+        .next(documentStorePdfSentencesTask))
+
     const processPdf = new Parallel(this, 'Pdf process', {})
-      .branch(pdfToImgTask)
+      .branch(documentStorePdfTask)
+      .branch(pdfToImgTask
+        .next(documentStorePdfImageTask))
       .branch(pdfToBoxesTask
-        .next(textToSentencesTask) // maybe later will accept all type of document text (docx, jpg, ...)
+        .next(parallelProcessPdf) // maybe later will accept all type of document text (docx, jpg, ...)
       )
 
     const processHtml = htmlToPdfTask
@@ -258,7 +297,7 @@ export class DocumentStack extends Stack {
 
     const processZip = new Parallel(this, 'Zip process', {})
       .branch(zipExtractionTask)
-
+ 
     const documentIterator = downloadTask
       .next(new Choice(this, 'Document type ?')
         .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
@@ -278,28 +317,11 @@ export class DocumentStack extends Stack {
     const logGroup = new logs.LogGroup(this, 'DocumentLogGroup');
 
     const documentMap = new Map(this, 'Document Map', {
-      inputPath: '$.mergedData',
+      inputPath: '$',
       itemsPath: '$.newSourceUrls',
       resultPath: '$.downloadedData',
       maxConcurrency: 2,
     }).iterator(documentIterator);
-
-    // this.chain = Chain.start(downloadTask)
-    //   .next(new Choice(this, 'Document type ?')
-    //     .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
-    //     .when(Condition.or(
-    //       Condition.stringEquals('$.document.contentType', 'image/png'),
-    //       Condition.stringEquals('$.document.contentType', 'image/jpeg'),
-    //     ), processImg)
-    //     .when(Condition.stringEquals('$.document.contentType', 'application/pdf'), processPdf)
-    //     .when(Condition.stringEquals('$.document.contentType', 'application/msword'), processDoc)
-    //     .when(Condition.stringEquals('$.document.contentType',
-    //       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'), processDocx)
-    //     .when(Condition.stringEquals('$.document.contentType', 'application/zip'), processZip)
-    //     .otherwise(new Pass(this, 'Document type unknown'))
-    //     .afterwards()
-    //   )
-    // const logGroup = new logs.LogGroup(this, 'DocumentProcessLogGroup');
 
     this.documentMachine = new StateMachine(this, 'DocumentProcess', {
       definition: documentMap,
@@ -309,19 +331,5 @@ export class DocumentStack extends Stack {
       },
       tracingEnabled: true,
     });
-
-    // pass the arn of this stack
-    /*
-     this.cfnArn = new CfnOutput(this, "DocumentProcessArn", {
-      value: stateMachine.stateMachineArn,
-      exportName: "ExportedDocumentProcessArn"
-    });
-
-     // pass the name of this stack
-     this.cfnName = new CfnOutput(this, "DocumentProcessId", {
-      value: id,
-      exportName: "ExportedDocumentProcessName",
-    });
-     */
   }
 }
