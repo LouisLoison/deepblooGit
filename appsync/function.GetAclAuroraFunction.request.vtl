@@ -1,0 +1,11 @@
+#if( $ctx.args.tenderUuid ) ## FOR QUERY OPERATIONS
+	#set( $id = $ctx.args.tenderUuid )
+#else
+	#set( $id = $ctx.args.input.tenderUuid ) ## FOR MUTATION OPERATIONS
+#end
+{
+  "version": "2018-05-29",
+  "statements": [
+    "select role as \"role\" FROM resourceaccesslist WHERE resourceid = '$id' and  granteeid = '$ctx.stash.user_uuid'"
+  ]
+}

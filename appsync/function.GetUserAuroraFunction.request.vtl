@@ -1,0 +1,8 @@
+#set($tokenAuthorizerResult = $context.prev.result) ## {id, name, primary_email, nbf } tokenAuthorizerResult return from TokenAuthorizer function.
+
+{
+    "version": "2018-05-29",
+    "statements": [
+        "select userId as \"userId\", uuid as \"uuid\", hivebriteId as \"hivebriteId\",type as \"type\",email as \"email\",username as \"username\",membershipFree as \"membershipFree\", organizationId as \"organizationId\", country as \"country\", countryCode as \"countryCode\", regions as \"regions\", photo as \"photo\", doNotContact as \"doNotContact\", notifSend as \"notifSend\", notifCpvs as \"notifCpvs\", notifRegions as \"notifRegions\",notifPostEmail as \"notifPostEmail\",notifTripEmail as \"notifTripEmail\",notifEventEmail as \"notifEventEmail\", notifDigestEmail as \"notifDigestEmail\", notifCommentEmail as \"notifCommentEmail\",notifVentureEmail as \"notifVentureEmail\",notifBusinessRequest as \"notifBusinessRequest\",notifCurrentLocationEmail as \"notifCurrentLocationEmail\",notifEmailingComEmail as \"notifEmailingComEmail\",notifForumPostEmail as \"notifForumPostEmail\", notifContactByPhone as \"notifContactByPhone\", notifContactBySms as \"notifContactBySms\", notifContactByPost as \"notifContactByPost\", dashboardUrl as \"dashboardUrl\", businessPipeline as \"businessPipeline\", connexionTender as \"connexionTender\",connexionBusiness as \"connexionBusiness\", status as \"status\", creationDate as \"creationDate\", updateDate as \"updateDate\" FROM public.user WHERE hivebriteid = '$tokenAuthorizerResult.id' "
+    ]
+}

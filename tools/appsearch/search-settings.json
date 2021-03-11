@@ -1,0 +1,133 @@
+{
+  "search_fields": {
+    "country": {
+      "weight": 1
+    },
+    "description": {
+      "weight": 1.8
+    },
+    "buyer_name": {
+      "weight": 1
+    },
+    "title": {
+      "weight": 3
+    },
+    "id": {
+      "weight": 1
+    }
+  },
+  "result_fields": {
+    "category_lvl0": {
+      "raw": {}
+    },
+    "contract_types": {
+      "raw": {}
+    },
+    "country": {
+      "snippet": {
+        "size": 100
+      },
+      "raw": {}
+    },
+    "cpvs": {
+      "raw": {}
+    },
+    "tender_id": {
+      "raw": {}
+    },
+    "description": {
+      "snippet": {
+        "size": 180
+      },
+      "raw": {}
+    },
+    "buyer_name": {
+      "snippet": {
+        "size": 100
+      },
+      "raw": {}
+    },
+    "id": {
+      "raw": {}
+    },
+    "title": {
+      "snippet": {
+        "size": 100
+      },
+      "raw": {}
+    },
+    "procurement_method": {
+      "raw": {}
+    },
+    "notice_type": {
+      "raw": {}
+    },
+    "segments": {
+      "raw": {}
+    },
+    "region_lvl2": {
+      "raw": {}
+    },
+    "region_lvl1": {
+      "raw": {}
+    },
+    "region_lvl0": {
+      "raw": {}
+    },
+    "procurement_id": {
+      "raw": {}
+    },
+    "bid_deadline_date": {
+      "raw": {}
+    },
+    "publication_date": {
+      "raw": {}
+    },
+    "scope_of_works": {
+      "raw": {}
+    },
+    "currency": {
+      "raw": {}
+    },
+    "categories": {
+      "raw": {}
+    },
+    "power": {
+      "raw": {}
+    },
+    "lang": {
+      "raw": {}
+    },
+    "category_lvl1": {
+      "raw": {}
+    },
+    "brands": {
+      "raw": {}
+    },
+    "creation_timestamp": {
+      "raw": {}
+    },
+    "groups": {
+      "raw": {}
+    },
+    "families": {
+      "raw": {}
+    },
+    "voltage": {
+      "raw": {}
+    },
+    "publication_timestamp": {
+      "raw": {}
+    },
+    "bid_deadline_timestamp": {
+      "raw": {}
+    },
+    "datasource": {
+      "raw": {}
+    },
+    "designs": {
+      "raw": {}
+    }
+  },
+  "boosts": {}
+}

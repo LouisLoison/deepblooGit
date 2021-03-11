@@ -1,68 +1,30 @@
 {
-  "name": "deepbloofront2",
+  "name": "deepbloo-infra",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
-  },
-  "dependencies": {
-    "@elastic/app-search-javascript": "^7.x",
-    "@elastic/react-search-ui-views": "^1.x",
-    "@elastic/search-ui": "^1.x",
-    "@elastic/search-ui-app-search-connector": "^1.x",
-    "@highcharts/map-collection": "^1.1.3",
-    "axios": "^0.19.2",
-    "core-js": "^3.6.5",
-    "dotenv": "^8.2.0",
-    "fuse.js": "^6.4.1",
-    "highcharts": "^8.1.2",
-    "highcharts-vue": "^1.3.5",
-    "moment": "^2.27.0",
-    "nprogress": "^0.2.0",
-    "vue": "^2.6.11",
-    "vue-drag-drop": "^1.1.4",
-    "vue-grid-layout": "^2.3.12",
-    "vue-highcharts": "^0.1.0",
-    "vue-perfect-scrollbar": "^0.2.1",
-    "vue-router": "^3.4.1",
-    "vue2-perfect-scrollbar": "^1.5.0",
-    "vuejs-paginate": "^2.1.0",
-    "vuetify": "^2.2.11",
-    "vuex": "^3.5.1",
-    "vuex-persist": "^2.2.0"
+    "postinstall": "npm run build-deps ; (cd cdk && npm install )",
+    "build-deps": "./tools/build-deps.sh",
+    "clean": "rm -fr lambda/layer/pipenv/python lambda/layer/pipenv/bin cdk/cdk.out lambda/build/ lambda/layer/npm/nodejs/node_modules/; cd lambda/layer/pipenv && (pipenv --venv && rm -fr $(pipenv --venv); echo) && cd ../../../lambda/test/ && (pipenv --venv && rm -fr $(pipenv --venv); echo)",
+    "lint": "eslint lambda cdk || true",
+    "test": "./tools/test-lambda-imports.sh || true",
+    "local-start": "sudo -b nohup docker-compose -f local/stack.yml up -d  && sudo tail --retry -f nohup.out",
+    "local-init-db": "sudo docker run --rm -v $PWD/local:/opt:ro,delegated --network host --name pgloader dimitri/pgloader:latest pgloader /opt/pgloader-local.cmd",
+    "local-stop": "sudo docker-compose -f local/stack.yml down",
+    "local-clean": "sudo docker-compose -f local/stack.yml rm -f",
+    "deploy-all": "./tools/build-lib.sh && cd cdk && npm run deploy-all",
+    "deploy": "./tools/build-lib.sh && cd cdk && npm run deploy",
+    "sam": "./tools/start-sam.sh",
+    "tests_run": "cd lambda/test && pipenv shell 'cd ../../ && pytest -vv'",
+    "test:unit": "NODE_PATH=$NODE_PATH:lambda/libjs jest -c .jest/config.unit.js",
+    "cov": "cd lambda/test/ && pipenv shell 'cd ../../ && pytest -v --cov-report term-missing --cov=lambda'"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.4.0",
-    "@vue/cli-plugin-eslint": "^4.4.0",
-    "@vue/cli-service": "^4.4.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "sass": "^1.19.0",
-    "sass-loader": "^8.0.0",
-    "vue-cli-plugin-vuetify": "^2.0.7",
-    "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.3.0"
+    "jest": "^26.6.3",
+    "sam": "0.0.7"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "dependencies": {
+    "aws-sdk": "^2.793.0",
+    "images": "^3.2.3",
+    "moment": "^2.29.1"
+  }
 }

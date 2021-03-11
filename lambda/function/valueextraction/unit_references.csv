@@ -1,0 +1,6 @@
+entity,unit,unit_full_name
+power,W,watt
+electric potential,V,volt
+current,A,ampere
+length,m,meter
+energy,Wh,watt-hour
