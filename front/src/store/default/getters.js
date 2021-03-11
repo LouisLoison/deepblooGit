@@ -140,3 +140,7 @@ export function getIsPremiumMembership(state) {
 export function getIsBusinessMembership (state) {
 return state.userMembership.isBusiness || state.type === 1
 }
+
+export function getMapTender(state) {
+  return state.mapTender
+}

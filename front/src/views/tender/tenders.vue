@@ -120,6 +120,19 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
+
+        <v-btn
+           v-if="!getIsMobile"
+           @click="displayType = 'MAP'"
+           icon
+           large
+           :color="displayType === 'MAP' ? 'blue-grey' : 'grey'"
+           class="mt-2 mb-0 mx-0"
+           title="Map display"
+         >
+           <v-icon style="font-size: 24px;">fa-map</v-icon>
+        </v-btn>
+
         <div v-if="!getIsMobile && 1 === 1">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">

@@ -47,6 +47,14 @@
       @facetItemRemove="facetItemRemove($event)"
     />
 
+    <Map
+      v-else-if="displayType === 'MAP'"
+      inTendersScreen
+      :searchFilter="{ searchInputValue: searchState.searchTerm, facets: filter }"
+      @searchInputValueRemove="searchInputValueRemove()"
+      @facetItemRemove="facetItemRemove($event)"
+    />
+
     <!-- Dialog -->
     <TenderDialog
       ref="TenderDialog"
@@ -77,11 +85,13 @@ import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from '@/views/tender/components/TenderGroupChoice'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
 import TenderRemoveDialog from '@/views/tender/components/TenderRemoveDialog'
+import Map from '@/views/tender/components/mapView/Map'
 
 export default {
   name: 'SearchResults',
 
   components: {
+    Map,
     SearchResult,
     SearchResultsTable,
     Dashboard,
@@ -96,7 +106,7 @@ export default {
       type: Array,
       required: true
     },
-    
+
     displayType: {
       type: String,
       required: true
