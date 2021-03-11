@@ -3,7 +3,7 @@ exports.TenderAdd = (tender) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -11,10 +11,10 @@ exports.TenderAdd = (tender) => {
       if (tender.algoliaId && tender.algoliaId > 0 && !tender.id) {
         let query = `
           SELECT      id AS "id" 
-          FROM        dgmarket 
-          WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId, BddEnvironnement, BddId)} 
+          FROM        tenders 
+          WHERE       algoliaId = ${BddTool.NumericFormater(tender.algoliaId)} 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         for (var record of recordset) {
           tender.id = record.id
         }
@@ -48,12 +48,12 @@ exports.TenderAdd = (tender) => {
       tender.cpvs = cpvFound.cpvsText
       tender.cpvDescriptions = cpvFound.cpvDescriptionsText
 
-      tender.dgmarketId = 0
+      tender.dataSourceId = 0
       tender.userId = config.user.userId
       tender.status = 0
       tender.creationDate = new Date()
       tender.updateDate = tender.creationDate
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender)
+      let data = await BddTool.RecordAddUpdate('tenders', tender)
       await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersImport()
       resolve(data)
     } catch (err) {
@@ -69,7 +69,7 @@ exports.tenderAddUpdate = (tender) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'dgmarketid')
+      let tenderNew = await BddTool.RecordAddUpdate('tenders', tender, 'dgmarketid')
       resolve(tenderNew)
     } catch (err) { reject(err) }
   })
@@ -83,8 +83,8 @@ exports.tenderCount = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      let query = `SELECT COUNT(*) AS tenderCount FROM dgmarket `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let query = `SELECT COUNT(*) AS tenderCount FROM tenders `
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let count = 0
       for (const record of recordset.results) {
         count = record.tenderCount;
@@ -110,7 +110,7 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     tenderUuid AS "tenderUuid",
                     title AS "title",
@@ -146,34 +146,34 @@ exports.TenderGet = (id, algoliaId, tenderUuid) => {
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        tenders 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       }
       if (tenderUuid && tenderUuid !== '') {
         if (where !== '') {
           where += 'AND '
         }
-        where += `tenderUuid = '${BddTool.ChaineFormater(tenderUuid, BddEnvironnement, BddId)}' \n`
+        where += `tenderUuid = '${BddTool.ChaineFormater(tenderUuid)}' \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tender = {}
       for (var record of recordset) {
         tender = {
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           tenderUuid: record.tenderUuid,
           title: record.title,
@@ -240,7 +240,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
         cpvCodes = filter.cpvs.map(a => a.code)
       }
       if (filter && filter.cpvLabels && filter.cpvLabels.length) {
-        const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
         cpvCodes = []
         for (let cpvLabel of filter.cpvLabels) {
           cpvLabelFormats.push(cpvLabel.split('-').join(' ').trim())
@@ -254,62 +254,62 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
 
       let query = `
         SELECT      SQL_CALC_FOUND_ROWS 
-                    dgmarket.id AS "id",
-                    dgmarket.dgmarketId AS "dgmarketId",
-                    dgmarket.procurementId AS "procurementId",
-                    dgmarket.tenderUuid AS "tenderUuid",
-                    dgmarket.title AS "title",
-                    dgmarket.description AS "description",
-                    dgmarket.lang AS "lang",
-                    dgmarket.contactFirstName AS "contactFirstName",
-                    dgmarket.contactLastName AS "contactLastName",
-                    dgmarket.contactAddress AS "contactAddress",
-                    dgmarket.contactCity AS "contactCity",
-                    dgmarket.contactState AS "contactState",
-                    dgmarket.contactCountry AS "contactCountry",
-                    dgmarket.contactEmail AS "contactEmail",
-                    dgmarket.contactPhone AS "contactPhone",
-                    dgmarket.buyerName AS "buyerName",
-                    dgmarket.buyerCountry AS "buyerCountry",
-                    dgmarket.procurementMethod AS "procurementMethod",
-                    dgmarket.noticeType AS "noticeType",
-                    dgmarket.country AS "country",
-                    dgmarket.estimatedCost AS "estimatedCost",
-                    dgmarket.currency AS "currency",
-                    dgmarket.publicationDate AS "publicationDate",
-                    dgmarket.cpvs AS "cpvs",
-                    dgmarket.cpvDescriptions AS "cpvDescriptions",
-                    dgmarket.words AS "words",
-                    dgmarket.bidDeadlineDate AS "bidDeadlineDate",
-                    dgmarket.sourceUrl AS "sourceUrl",
-                    dgmarket.termDate AS "termDate",
-                    dgmarket.fileSource AS "fileSource",
-                    dgmarket.userId AS "userId",
-                    dgmarket.algoliaId AS "algoliaId",
-                    dgmarket.brand AS "brand",
-                    dgmarket.contractType1 AS "contractType1",
-                    dgmarket.status AS "status",
-                    dgmarket.creationDate AS "creationDate",
-                    dgmarket.updateDate AS "updateDate" `
+                    tenders.id AS "id",
+                    tenders.dataSourceId AS "dataSourceId",
+                    tenders.procurementId AS "procurementId",
+                    tenders.tenderUuid AS "tenderUuid",
+                    tenders.title AS "title",
+                    tenders.description AS "description",
+                    tenders.lang AS "lang",
+                    tenders.contactFirstName AS "contactFirstName",
+                    tenders.contactLastName AS "contactLastName",
+                    tenders.contactAddress AS "contactAddress",
+                    tenders.contactCity AS "contactCity",
+                    tenders.contactState AS "contactState",
+                    tenders.contactCountry AS "contactCountry",
+                    tenders.contactEmail AS "contactEmail",
+                    tenders.contactPhone AS "contactPhone",
+                    tenders.buyerName AS "buyerName",
+                    tenders.buyerCountry AS "buyerCountry",
+                    tenders.procurementMethod AS "procurementMethod",
+                    tenders.noticeType AS "noticeType",
+                    tenders.country AS "country",
+                    tenders.estimatedCost AS "estimatedCost",
+                    tenders.currency AS "currency",
+                    tenders.publicationDate AS "publicationDate",
+                    tenders.cpvs AS "cpvs",
+                    tenders.cpvDescriptions AS "cpvDescriptions",
+                    tenders.words AS "words",
+                    tenders.bidDeadlineDate AS "bidDeadlineDate",
+                    tenders.sourceUrl AS "sourceUrl",
+                    tenders.termDate AS "termDate",
+                    tenders.fileSource AS "fileSource",
+                    tenders.userId AS "userId",
+                    tenders.algoliaId AS "algoliaId",
+                    tenders.brand AS "brand",
+                    tenders.contractType1 AS "contractType1",
+                    tenders.status AS "status",
+                    tenders.creationDate AS "creationDate",
+                    tenders.updateDate AS "updateDate" `
       if (filter && filter.textParses) {
         query += `,\n              tenderCriterion.tenderCriterionId AS "tenderCriterionId" `
       }
       if (filter && filter.tenderGroupId && filter.tenderGroupId > 0) {
         query += `,\n              tenderGroupLink.tenderGroupLinkId AS "tenderGroupLinkId" `
       }
-      query += `\nFROM        dgmarket `
+      query += `\nFROM        tenders `
       if (filter && filter.textParses) {
-        query += `\nINNER JOIN tenderCriterion ON tenderCriterion.tenderId = dgmarket.id `
+        query += `\nINNER JOIN tenderCriterion ON tenderCriterion.tenderId = tenders.id `
       }
       if (filter && filter.tenderGroupId && filter.tenderGroupId > -1) {
-        query += `\nINNER JOIN tenderGroupLink ON tenderGroupLink.tenderId = dgmarket.id `
+        query += `\nINNER JOIN tenderGroupLink ON tenderGroupLink.tenderId = tenders.id `
       }
       let where = ``
       if (filter) {
         if (filter.search && filter.search.trim() !== '') {
           if (where !== '') { where += 'AND ' }
           let search = filter.search.replace(/ /g,"%")
-          where += `dgmarket.title LIKE '%${BddTool.ChaineFormater(search, BddEnvironnement, BddId)}%' \n`
+          where += `tenders.title LIKE '%${BddTool.ChaineFormater(search)}%' \n`
         }
         if (filter.items && filter.items.length) {
           const bidDeadLineItems = filter.items.filter(a => a.other === 'bidDeadLine')
@@ -337,58 +337,58 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const noticeTypeItems = filter.items.filter(a => a.other === 'noticeType')
           if (noticeTypeItems && noticeTypeItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.noticeType IN (${BddTool.ArrayStringFormat(noticeTypeItems.map(a => a.value))}) \n`
           }
 
           const useridItems = filter.items.filter(a => a.other === 'userid' && a.value === 'USERID')
           if (useridItems && useridItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.userId > 0 \n`
+            where += `tenders.userId > 0 \n`
           }
 
           const procurementMethodItems = filter.items.filter(a => a.other === 'procurementMethod')
           if (procurementMethodItems && procurementMethodItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.procurementMethod IN (${BddTool.ArrayStringFormat(procurementMethodItems.map(a => a.value))}) \n`
           }
 
           const langItems = filter.items.filter(a => a.other === 'lang')
           if (langItems && langItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.lang IN (${BddTool.ArrayStringFormat(langItems.map(a => a.value))}) \n`
           }
 
           const brandItems = filter.items.filter(a => a.other === 'brand')
           if (brandItems && brandItems.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value), BddEnvironnement, BddId)}) \n`
+            where += `tenders.brand IN (${BddTool.ArrayStringFormat(brandItems.map(a => a.value))}) \n`
           }
 
           const contractType1Items = filter.items.filter(a => a.other === 'contractType1')
           if (contractType1Items && contractType1Items.length) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.contractType1 = 1 \n`
+            where += `tenders.contractType1 = 1 \n`
           }
         }
 
         if (filter.tenderGroupId) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderGroupId === -1) {
-            where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = dgmarket.id) \n`
+            where += `NOT EXISTS(SELECT null FROM tenderGroupLink WHERE tenderGroupLink.tenderId = tenders.id) \n`
           } else {
-            where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId, BddEnvironnement, BddId)} \n`
+            where += `tenderGroupLink.tenderGroupId = ${BddTool.NumericFormater(filter.tenderGroupId)} \n`
           }
         }
         if (filter && filter.textParses && filter.textParses.length) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterion.textParseId IN (${BddTool.ArrayNumericFormater(filter.textParses.map(a => a.textParseId), BddEnvironnement, BddId)}) \n`
+          where += `tenderCriterion.textParseId IN (${BddTool.ArrayNumericFormater(filter.textParses.map(a => a.textParseId))}) \n`
         }
         if (cpvCodes && cpvCodes.length) {
           if (where !== '') { where += 'AND '}
           let orCondition = ''
           for (let cpvCode of cpvCodes) {
             if (orCondition !== '') { orCondition += 'OR '}
-            orCondition += `dgmarket.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+            orCondition += `tenders.cpvs LIKE '%${BddTool.ChaineFormater(cpvCode)}%' `
           }
           where += `(${orCondition}) `
         }
@@ -396,16 +396,16 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
           if (countrys) {
             if (where !== '') { where += 'AND ' }
-            where += `dgmarket.country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+            where += `tenders.country IN (${BddTool.ArrayStringFormat(countrys)}) \n`
           }
         }
         if (filter.countrys && filter.countrys !== '') {
           if (where !== '') { where += 'AND ' }
-          where += `dgmarket.country IN (${BddTool.ArrayStringFormat(filter.countrys, BddEnvironnement, BddId)}) \n`
+          where += `tenders.country IN (${BddTool.ArrayStringFormat(filter.countrys)}) \n`
         }
         if (filter.noUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `dgmarket.tenderUuid IS NULL \n`
+          where += `tenders.tenderUuid IS NULL \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -414,7 +414,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let tenders = []
       for (const record of recordset.results) {
         let tender = tenders.find(a => a.id === record.id)
@@ -492,7 +492,7 @@ exports.tenders = (filter, orderBy, limit, page, pageLimit) => {
           }
           tender = {
             id: record.id,
-            dgmarketId: record.dgmarketId,
+            dataSourceId: record.dataSourceId,
             procurementId: record.procurementId,
             tenderUuid: record.tenderUuid,
             title: record.title,
@@ -561,7 +561,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
@@ -582,7 +582,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
 
       let query = `
         SELECT      id AS "id",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     tenderUuid AS "tenderUuid",
                     title AS "title",
@@ -617,16 +617,16 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
                     status AS "status",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
-        FROM        dgmarket 
+        FROM        tenders 
       `
       let where = ``
       if (id && id !== '' && id > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       }
       if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (hasAlgoliaId) {
         if (where !== '') { where += 'AND ' }
@@ -634,26 +634,26 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       }
       if (creationDateMin && creationDateMin !== '') {
         if (where !== '') { where += 'AND '}
-        where += `creationDate >= ${BddTool.DateFormater(creationDateMin, BddEnvironnement, BddId)} `
+        where += `creationDate >= ${BddTool.DateFormater(creationDateMin)} `
       }
       if (creationDateMax && creationDateMax !== '') {
         if (where !== '') { where += 'AND '}
-        where += `creationDate <= ${BddTool.DateFormater(creationDateMax, BddEnvironnement, BddId)} `
+        where += `creationDate <= ${BddTool.DateFormater(creationDateMax)} `
       }
       if (termDateMin && termDateMin !== '') {
         if (where !== '') { where += 'AND '}
-        where += `termDate >= ${BddTool.DateFormater(termDateMin, BddEnvironnement, BddId)} `
+        where += `termDate >= ${BddTool.DateFormater(termDateMin)} `
       }
       if (termDateMax && termDateMax !== '') {
         if (where !== '') { where += 'AND '}
-        where += `termDate <= ${BddTool.DateFormater(termDateMax, BddEnvironnement, BddId)} `
+        where += `termDate <= ${BddTool.DateFormater(termDateMax)} `
       }
       if (cpvCodes && cpvCodes.length) {
         if (where !== '') { where += 'AND '}
         let orCondition = ''
         for (let cpvCode of cpvCodes) {
           if (orCondition !== '') { orCondition += 'OR '}
-          orCondition += `cpvs LIKE '%${BddTool.ChaineFormater(cpvCode, BddEnvironnement, BddId)}%' `
+          orCondition += `cpvs LIKE '%${BddTool.ChaineFormater(cpvCode)}%' `
         }
         where += `(${orCondition}) `
       }
@@ -661,24 +661,24 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
         const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
         if (countrys) {
           if (where !== '') { where += 'AND ' }
-          where += `country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) \n`
+          where += `country IN (${BddTool.ArrayStringFormat(countrys)}) \n`
         }
       }
       if (country && country !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `country = '${BddTool.ChaineFormater(country, BddEnvironnement, BddId)}' \n`
+        where += `country = '${BddTool.ChaineFormater(country)}' \n`
       }
       if (noticeType && noticeType !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `noticeType = '${BddTool.ChaineFormater(noticeType, BddEnvironnement, BddId)}' \n`
+        where += `noticeType = '${BddTool.ChaineFormater(noticeType)}' \n`
       }
       if (noticeTypeExclusion && noticeTypeExclusion !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `noticeType != '${BddTool.ChaineFormater(noticeTypeExclusion, BddEnvironnement, BddId)}' \n`
+        where += `noticeType != '${BddTool.ChaineFormater(noticeTypeExclusion)}' \n`
       }
       if (status && status !== '' && status > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `status = ${BddTool.NumericFormater(status, BddEnvironnement, BddId)} \n`
+        where += `status = ${BddTool.NumericFormater(status)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
       // query += ` ORDER BY bidDeadlineDate DESC `
@@ -688,7 +688,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
       if (limit && limit !== '') {
         query += ` LIMIT ${limit} `
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenders = []
       for (var record of recordset) {
         // Get country region
@@ -770,7 +770,7 @@ exports.TenderList = (id, algoliaId, creationDateMin, creationDateMax, termDateM
 
         tenders.push({
           id: record.id,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           tenderUuid: record.tenderUuid,
           title: record.title,
@@ -829,7 +829,7 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
       const BddEnvironnement = config.prefixe
 
       let query = `
-        UPDATE      dgmarket 
+        UPDATE      tenders 
         SET         status = -1 
       `
       let where = ``
@@ -837,23 +837,23 @@ exports.TenderRemove = (id, algoliaId, permanentlyDelete) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `id = ${BddTool.NumericFormater(id, BddEnvironnement, BddId)} \n`
+        where += `id = ${BddTool.NumericFormater(id)} \n`
       } else if (algoliaId && algoliaId !== '' && algoliaId > 0) {
         if (where !== '') {
           where += 'AND '
         }
-        where += `algoliaId = ${BddTool.NumericFormater(algoliaId, BddEnvironnement, BddId)} \n`
+        where += `algoliaId = ${BddTool.NumericFormater(algoliaId)} \n`
       }
       if (where !== '') {
         query += '  WHERE ' + where
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').deleteObject([id])
         await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TendersPurge()
       }
 
       if (permanentlyDelete && where && where.trim() !== '') {
-        query = `DELETE FROM dgmarket WHERE ${where} AND status = -2 `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        query = `DELETE FROM tenders WHERE ${where} AND status = -2 `
+        await BddTool.QueryExecBdd2(query)
       }
 
       resolve()
@@ -868,7 +868,7 @@ exports.TenderStatistic = (year, month, user) => {
     try {
       const config = require(process.cwd() + '/config')
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let userData = null
       let userCpvs = []
@@ -1294,7 +1294,7 @@ exports.TenderGroupAddUpdate = (tenderGroup) => {
         tenderGroup.creationDate = new Date()
       }
       tenderGroup.updateDate = new Date()
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroup', tenderGroup)
+      let data = await BddTool.RecordAddUpdate('tenderGroup', tenderGroup)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1305,16 +1305,13 @@ exports.TenderGroupAddUpdate = (tenderGroup) => {
 exports.TenderGroupDelete = (tenderGroupId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroup 
-        WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)}
+        WHERE         tenderGroupId = ${BddTool.NumericFormater(tenderGroupId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       resolve()
     } catch (err) {
@@ -1326,10 +1323,7 @@ exports.TenderGroupDelete = (tenderGroupId) => {
 exports.TenderGroupList = (tenderGroupId, userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderGroupId AS "tenderGroupId",
@@ -1346,14 +1340,14 @@ exports.TenderGroupList = (tenderGroupId, userId) => {
       let where = ``
       if (tenderGroupId && tenderGroupId !== '' && tenderGroupId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderGroupId = ${BddTool.NumericFormater(tenderGroupId, BddEnvironnement, BddId)} \n`
+        where += `tenderGroupId = ${BddTool.NumericFormater(tenderGroupId)} \n`
       }
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderGroups = []
       for (var record of recordset) {
         tenderGroups.push({
@@ -1391,61 +1385,43 @@ exports.TenderGroup = (tenderGroupId) => {
   })
 }
 
-exports.TenderGroupMove = (userId, tenderGroupId, tenderId, algoliaId) => {
+exports.TenderGroupMove = (userId, tenderGroupId, tenderId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
-      let query = `
-        DELETE FROM   tenderGroupLink 
-        WHERE         tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
-        AND           userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
-      `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      if (!tenderId && tenderUuid) {
+        const tender = await this.TenderGet(null, null, tenderUuid)
+        if (tender) {
+          tenderId = tender.id
+        }
+      }
 
       if (tenderGroupId) {
         const tenderGroupLink = {
           userId: userId,
           tenderGroupId: tenderGroupId,
           tenderId: tenderId,
+          tenderUuid: tenderUuid,
           creationDate: new Date(),
           updateDate: new Date(),
         }
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderGroupLink', tenderGroupLink)
-      }
-
-      if (!algoliaId) {
-        const tender = await this.TenderGet(tenderId)
-        if (tender) {
-          algoliaId = tender.algoliaId
-        }
+        await BddTool.RecordAddUpdate('tenderGroupLink', tenderGroupLink, 'userId, tenderUuid')
       }
 
       const tenderGroupLinks = await this.TenderGroupLinkList(null, tenderId)
       const groups = tenderGroupLinks.map(a => a.tenderGroupId)
-      const tender = {
-        objectID: algoliaId,
-        groups,
-      }
-      await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderUpdate(tender)
-      try {
-        await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
-          {
-            id: tenderId,
-            groups,
-          }
-        ])
-      } catch (err) {
-        console.log('Elasticsearch indexObject error')
-      }
+      await require(process.cwd() + '/controllers/Elasticsearch/MdlElasticsearch').updateObject([
+        {
+          id: tenderUuid,
+          groups,
+        }
+      ])
 
       // synchroSalesforce
       let tenderGroup = await this.TenderGroup(tenderGroupId)
       if (tenderGroup && tenderGroup.synchroSalesforce) {
-        await require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
+        require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(userId, tenderId)
       }
 
       resolve({
@@ -1463,15 +1439,13 @@ exports.TenderArchiveMove = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroupLink 
-        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
-        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+        WHERE         userId = ${BddTool.NumericFormater(userId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
 
       let tenderDetail = {
@@ -1486,7 +1460,7 @@ exports.TenderArchiveMove = (userId, tenderId) => {
 
       tenderDetail.status = -2;
       tenderDetail.updateDate = new Date();
-      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let tenderGroup = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
 
       resolve(tenderGroup)
     } catch (err) {
@@ -1500,15 +1474,13 @@ exports.TenderDeleteMove = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         DELETE FROM   tenderGroupLink 
-        WHERE         userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)}
-        AND           tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)}
+        WHERE         userId = ${BddTool.NumericFormater(userId)}
+        AND           tenderId = ${BddTool.NumericFormater(tenderId)}
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
 
       let tenderDetail = {
@@ -1523,7 +1495,7 @@ exports.TenderDeleteMove = (userId, tenderId) => {
 
       tenderDetail.status = -1;
       tenderDetail.updateDate = new Date();
-      let tenderGroup = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let tenderGroup = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
 
       resolve(tenderGroup)
     } catch (err) {
@@ -1537,14 +1509,12 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderGroupLinkId AS "tenderGroupLinkId", 
                     userId AS "userId",
                     tenderGroupId AS "tenderGroupId",
-                    tenderId AS "tenderId",
+                    tenderUuid AS "tenderUuid",
                     creationDate AS "creationDate",
                     updateDate AS "updateDate"
         FROM        tenderGroupLink 
@@ -1552,14 +1522,18 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
       let where = ``
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
-      if (tenderId && tenderId !== '' && tenderId > 0) {
+      if (tenderId && tenderId !== '') {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
+          if (isFinite(tenderId)) {
+            where += `tenderId = '${BddTool.ChaineFormater(tenderId)}' \n`
+          } else {
+            where += `tenderUuid = '${BddTool.ChaineFormater(tenderId)}' \n`
+          }
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderGroupLinks = []
       for (var record of recordset) {
         tenderGroupLinks.push({
@@ -1567,6 +1541,7 @@ exports.TenderGroupLinkList = (userId, tenderId) => {
           userId: record.userId,
           tenderGroupId: record.tenderGroupId,
           tenderId: record.tenderId,
+          tenderUuid: record.tenderUuid,
           creationDate: record.creationDate,
           updateDate: record.updateDate
         })
@@ -1584,8 +1559,6 @@ exports.TenderDetailList = (userId, tenderId) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderDetailId AS "tenderDetailId", 
@@ -1603,14 +1576,14 @@ exports.TenderDetailList = (userId, tenderId) => {
       let where = ``
       if (userId && userId !== '' && userId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} \n`
+        where += `userId = ${BddTool.NumericFormater(userId)} \n`
       }
       if (tenderId && tenderId !== '' && tenderId > 0) {
         if (where !== '') { where += 'AND ' }
-        where += `tenderId = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} \n`
+        where += `tenderId = ${BddTool.NumericFormater(tenderId)} \n`
       }
       if (where !== '') { query += 'WHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let tenderDetails = []
       for (var record of recordset) {
         tenderDetails.push({
@@ -1639,14 +1612,12 @@ exports.TenderDetailAddUpdate = (tenderDetail) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       if (!tenderDetail.tenderDetailId) {
         tenderDetail.creationDate = new Date()
       }
       tenderDetail.updateDate = new Date()
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderDetail', tenderDetail)
+      let data = await BddTool.RecordAddUpdate('tenderDetail', tenderDetail)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1698,9 +1669,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
     try {
       const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
-      let data = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderCriterion', tenderCriterion)
+      let data = await BddTool.RecordAddUpdate('tenderCriterion', tenderCriterion)
       resolve(data)
     } catch (err) {
       reject(err)
@@ -1711,19 +1680,17 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
 exports.tenderCriterions = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
-                    tenderCriterion.documentId AS "documentId", 
                     tenderCriterion.textParseId AS "textParseId", 
                     tenderCriterion.value AS "value", 
                     tenderCriterion.word AS "word", 
                     tenderCriterion.findCount AS "findCount", 
+                    tenderCriterion.numericValue AS "numericValue", 
+                    tenderCriterion.entity AS "entity", 
                     tenderCriterion.scope AS "scope", 
                     tenderCriterion.status AS "status", 
                     tenderCriterion.creationDate AS "creationDate", 
@@ -1734,21 +1701,23 @@ exports.tenderCriterions = (filter) => {
       if (filter) {
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterion.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `tenderCriterion.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterions = []
       for (let record of recordset) {
         tenderCriterions.push({
           tenderCriterionId: record.tenderCriterionId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           textParseId: record.textParseId,
           value: record.value,
           word: record.word,
           findCount: record.findCount,
+          numericValue: record.numericValue,
+          entity: record.entity,
           scope: record.scope,
           status: record.status,
           creationDate: record.creationDate,
@@ -1766,15 +1735,11 @@ exports.tenderCriterions = (filter) => {
 exports.tenderCriterionCpvs = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
-        SELECT      tenderCriterionCpv.tenderCriterionCpvId AS "tenderCriterionCpvId", 
-                    tenderCriterionCpv.tenderId AS "tenderId", 
-                    tenderCriterionCpv.documentId AS "documentId", 
+        SELECT      tenderCriterionCpv.tenderId AS "tenderId", 
+                    tenderCriterionCpv.documentUuid AS "documentUuid", 
                     tenderCriterionCpv.cpvId AS "cpvId", 
                     tenderCriterionCpv.value AS "value", 
                     tenderCriterionCpv.word AS "word", 
@@ -1789,17 +1754,16 @@ exports.tenderCriterionCpvs = (filter) => {
       if (filter) {
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderCriterionCpv.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `tenderCriterionCpv.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionCpvs = []
       for (let record of recordset) {
         tenderCriterionCpvs.push({
-          tenderCriterionCpvId: record.tenderCriterionCpvId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           cpvId: record.cpvId,
           value: record.value,
           word: record.word,
@@ -1821,11 +1785,8 @@ exports.tenderCriterionCpvs = (filter) => {
 exports.tenderFilterAddUpdate = (tenderFilter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
-      let tenderFilterNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'tenderFilter', tenderFilter)
+      let tenderFilterNew = await BddTool.RecordAddUpdate('tenderFilter', tenderFilter)
       resolve(tenderFilterNew);
     } catch (err) { reject(err) }
   })
@@ -1834,10 +1795,7 @@ exports.tenderFilterAddUpdate = (tenderFilter) => {
 exports.tenderFilterDelete = (tenderFilterId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       if (!tenderFilterId) {
         throw new Error("No available id !")
@@ -1851,13 +1809,13 @@ exports.tenderFilterDelete = (tenderFilterId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `tenderFilterId = ${BddTool.NumericFormater(tenderFilterId, BddEnvironnement, BddId)} \n`
+        where += `tenderFilterId = ${BddTool.NumericFormater(tenderFilterId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -1868,13 +1826,10 @@ exports.tenderFilterDelete = (tenderFilterId) => {
 exports.tenderFilterList = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
       // Get tenderFilter list
       const tenderFilters = []
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = `
         SELECT    tenderFilter.tenderFilterId AS "tenderFilterId", 
                   tenderFilter.userId AS "userId", 
@@ -1889,16 +1844,16 @@ exports.tenderFilterList = (filter) => {
         let where = ``
         if (filter.tenderFilterId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderFilter.tenderFilterId = ${BddTool.NumericFormater(filter.tenderFilterId, BddEnvironnement, BddId)} \n`
+          where += `tenderFilter.tenderFilterId = ${BddTool.NumericFormater(filter.tenderFilterId)} \n`
         }
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `tenderFilter.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `tenderFilter.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '\nORDER BY tenderFilter.label '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         tenderFilters.push({
           tenderFilterId: record.tenderFilterId,
@@ -1921,10 +1876,7 @@ exports.tenderFilterList = (filter) => {
 exports.tenderUserGroupDispatch = (tenders) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let userFilters = [
         {
@@ -2166,9 +2118,9 @@ exports.tenderUserGroupDispatch = (tenders) => {
                       creationDate AS "creationDate",
                       updateDate AS "updateDate"
           FROM        tenderGroupLink 
-          WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+          WHERE       tenderId IN (${BddTool.ArrayNumericFormater(tenderIds)}) 
         `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        let recordset = await BddTool.QueryExecBdd2(query)
         for (const record of recordset) {
           tenderGroupLinks = tenderGroupLinks.filter(
             a => a.tenderGroupId !== record.tenderGroupId && a.tenderId !== record.tenderId

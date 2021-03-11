@@ -32,7 +32,7 @@ exports.Timeline = (Identifiant) => {
         {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
-            BddTool.QueryExecBdd(BddId, Environnement, `
+            BddTool.QueryExecBdd(`
                 SELECT     DeploiementID AS "DeploiementID", 
                            Plateforme AS "Plateforme", 
                            Environnement AS "Environnement", 
@@ -47,7 +47,7 @@ exports.Timeline = (Identifiant) => {
                            ModificationDate AS "ModificationDate", 
                            Responsable AS "Responsable" 
                 FROM       Deploiement 
-                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
+                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant)}' 
             `, reject, (recordset) => { 
                 for (var record of recordset) {
                     if (record.Environnement === 'ref_PRD') { continue }
@@ -78,7 +78,7 @@ exports.Timeline = (Identifiant) => {
         {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
-            BddTool.QueryExecBdd(BddId, Environnement, `
+            BddTool.QueryExecBdd(`
                 SELECT     JobLockDEVStatut AS "JobLockDEVStatut", 
                            JobLockDEVDate AS "JobLockDEVDate", 
                            JobLockDEVVersionOrigine AS "JobLockDEVVersionOrigine", 
@@ -94,8 +94,8 @@ exports.Timeline = (Identifiant) => {
                            JobLockMCOProjetCode AS "JobLockMCOProjetCode", 
                            JobLockMCOTicketID AS "JobLockMCOTicketID" 
                 FROM       Job 
-                WHERE      JobLockDEVResponsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
-                OR         JobLockMCOResponsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
+                WHERE      JobLockDEVResponsable = '${BddTool.ChaineFormater(Identifiant)}' 
+                OR         JobLockMCOResponsable = '${BddTool.ChaineFormater(Identifiant)}' 
             `, reject, (recordset) => { 
                 for (var record of recordset) {
                     var JobLockDEVDate = record.JobLockDEVDate
@@ -133,7 +133,7 @@ exports.Timeline = (Identifiant) => {
         {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
-            BddTool.QueryExecBdd(BddId, Environnement, `
+            BddTool.QueryExecBdd(`
                 SELECT     Interface.InterfaceID AS "InterfaceID", 
                            Interface.FluxID AS "FluxID", 
                            Flux.Nom AS "FluxNom", 
@@ -145,7 +145,7 @@ exports.Timeline = (Identifiant) => {
                            Interface.Responsable AS "Responsable" 
                 FROM       Interface 
                 LEFT JOIN  Flux ON Flux.FluxID = Interface.FluxID 
-                WHERE      Interface.Responsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
+                WHERE      Interface.Responsable = '${BddTool.ChaineFormater(Identifiant)}' 
             `, reject, (recordset) => { 
                 for (var record of recordset) {
                     Result.push({
@@ -170,8 +170,8 @@ exports.Timeline = (Identifiant) => {
         {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
-            BddTool.QueryExecBdd(BddId, Environnement, `
-                SELECT     DocumentID AS "DocumentID", 
+            BddTool.QueryExecBdd(`
+                SELECT     DocumentUuid AS "DocumentUuid", 
                            Environnement AS "Environnement", 
                            Type AS "Type", 
                            Lien AS "Lien", 
@@ -179,12 +179,12 @@ exports.Timeline = (Identifiant) => {
                            CreationDate AS "CreationDate", 
                            Responsable AS "Responsable" 
                 FROM       Document 
-                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
+                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant)}' 
             `, reject, (recordset) => { 
                 for (var record of recordset) {
                     Result.push({
                         Type: 'Document',
-                        DocumentID: record.DocumentID,
+                        DocumentUuid: record.DocumentUuid,
                         Environnement: record.Environnement,
                         DocumentType: record.Type,
                         Lien: record.Lien,
@@ -203,13 +203,13 @@ exports.Timeline = (Identifiant) => {
         {
             var BddId = 'EtlTool'
             var Environnement = 'PRD'
-            BddTool.QueryExecBdd(BddId, Environnement, `
+            BddTool.QueryExecBdd(`
                 SELECT     TicketID AS "TicketID", 
                            Environnement AS "Environnement", 
                            CreationDate AS "CreationDate", 
                            Responsable AS "Responsable" 
                 FROM       TicketJob 
-                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant, Environnement, BddId)}' 
+                WHERE      Responsable = '${BddTool.ChaineFormater(Identifiant)}' 
             `, reject, (recordset) => { 
                 for (var record of recordset) {
                     Result.push({

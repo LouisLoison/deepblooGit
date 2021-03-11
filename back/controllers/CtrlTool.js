@@ -280,6 +280,9 @@ exports.ArchiveVersionSync = (FileLocation) => {
 }
 
 exports.onError = (err, res) => {
+    if (process.env.NODE_ENV=='dev') {
+      console.log(err)
+    }
   res.end(
     JSON.stringify({
       success: false,

@@ -1,5 +1,5 @@
 exports.documentDelete = (req, res) => {
-  require(process.cwd() + '/controllers/Document/MdlDocument').documentDelete(req.body.documentId).then((data) => {
+  require(process.cwd() + '/controllers/Document/MdlDocument').documentDelete(req.body.documentUuid).then((data) => {
     res.end(JSON.stringify({ success: true, data: data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

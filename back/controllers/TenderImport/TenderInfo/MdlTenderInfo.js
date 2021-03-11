@@ -60,8 +60,8 @@ exports.BddImport = () => {
       }
 
       // Bulk insert into import table
-      let query = `DELETE FROM importTenderInfo WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM importTenderInfo WHERE fileSource = '${BddTool.ChaineFormater(files[0])}' `
+      await BddTool.QueryExecBdd2(query)
       await BddTool.bulkInsert(
         BddId,
         BddEnvironnement,
@@ -72,32 +72,32 @@ exports.BddImport = () => {
       // Search tender by procurementId
       query = `
         UPDATE      importTenderInfo 
-        INNER JOIN  dgmarket ON 
-                    importTenderInfo.tender_notice_no = dgmarket.procurementId 
+        INNER JOIN  tenders ON 
+                    importTenderInfo.tender_notice_no = tenders.procurementId 
                     AND importTenderInfo.tender_notice_no != ''
-        SET         importTenderInfo.tenderId = dgmarket.id, 
+        SET         importTenderInfo.tenderId = tenders.id, 
                     importTenderInfo.mergeMethod = "PROCUREMENT_ID", 
                     importTenderInfo.status = 5
         WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Search tender by title, buyer name and bidDeadline date
       query = `
         UPDATE      importTenderInfo 
-        INNER JOIN  dgmarket ON 
-                    importTenderInfo.maj_org = dgmarket.buyerName 
-                    AND importTenderInfo.short_desc = dgmarket.title 
+        INNER JOIN  tenders ON 
+                    importTenderInfo.maj_org = tenders.buyerName 
+                    AND importTenderInfo.short_desc = tenders.title 
                     AND importTenderInfo.short_desc != '' 
-                    AND REPLACE(importTenderInfo.doc_last, '-', '') = dgmarket.bidDeadlineDate 
-        SET         importTenderInfo.tenderId = dgmarket.id, 
+                    AND REPLACE(importTenderInfo.doc_last, '-', '') = tenders.bidDeadlineDate 
+        SET         importTenderInfo.tenderId = tenders.id, 
                     importTenderInfo.mergeMethod = "TITLE_BUYER_BIDDEADLINE", 
                     importTenderInfo.status = 5
         WHERE 		  importTenderInfo.status = 1
         AND         importTenderInfo.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Move file to archive folder
       const fileSource = path.parse(fileLocation).base
@@ -207,7 +207,7 @@ exports.FileParse = (fileLocation) => {
 exports.mergeTender = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList(null, true)
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
       const dataImportTenderInfos = await this.importTenderInfos({ tenderId: 0, statuss: [1, 5] }, null, null, 1, 1000)
       let tenderKoCount = 0
@@ -267,7 +267,7 @@ exports.convertToTender = (importTenderInfo, CpvList, textParses) => {
       */
 
       let tender = {
-        dgmarketId: 0,
+        dataSourceId: 0,
         procurementId: importTenderInfo.procurementId,
         title,
         lang: '',
@@ -326,7 +326,7 @@ exports.importTenderInfoAddUpdate = (importTenderInfo) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let importTenderInfoNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importTenderInfo', importTenderInfo)
+      let importTenderInfoNew = await BddTool.RecordAddUpdate('importTenderInfo', importTenderInfo)
       resolve(importTenderInfoNew)
     } catch (err) {
       reject(err)
@@ -394,27 +394,27 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
       if (filter) {
         if (filter.fileSources && filter.fileSources.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources, BddEnvironnement, BddId)}) \n`
+          where += `importTenderInfo.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources)}) \n`
         }
         if (filter.mergeMethods && filter.mergeMethods.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods, BddEnvironnement, BddId)}) \n`
+          where += `importTenderInfo.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods)}) \n`
         }
         if (filter.tenderId !== null && filter.tenderId !== undefined) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderId === 0) {
             where += `(importTenderInfo.tenderId = 0 OR importTenderInfo.tenderId IS NULL) \n`
           } else {
-            where += `importTenderInfo.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+            where += `importTenderInfo.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
           }
         }
         if (filter.status !== null && filter.status !== undefined) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `importTenderInfo.status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -429,7 +429,7 @@ exports.importTenderInfos = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let importTenderInfos = []
       for (const record of recordset.results) {
         importTenderInfos.push({
@@ -508,7 +508,7 @@ exports.importTenderInfoFacets = () => {
         FROM        importTenderInfo 
         GROUP BY    fileSource 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let fileSources = []
       for (const record of recordset.results) {
         fileSources.push({
@@ -524,7 +524,7 @@ exports.importTenderInfoFacets = () => {
         WHERE       mergeMethod IS NOT NULL 
         GROUP BY    mergeMethod 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       let mergeMethods = []
       for (const record of recordset.results) {
         mergeMethods.push({
@@ -540,7 +540,7 @@ exports.importTenderInfoFacets = () => {
         WHERE       status IS NOT NULL 
         GROUP BY    status 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       let statuss = []
       for (const record of recordset.results) {
         statuss.push({

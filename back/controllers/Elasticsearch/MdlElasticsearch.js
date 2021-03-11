@@ -2,6 +2,8 @@ const config = require(process.cwd() + '/config/')
 
 let elasticSearchClient = false
 
+const tendersEngine = `tenders-${process.env.NODE_ENV || 'dev'}`
+
 exports.connectToElasticsearch = async () => {
   if(!elasticSearchClient) {
     const { Client } = require('@elastic/elasticsearch')
@@ -36,7 +38,7 @@ exports.indexToElasticsearch = async (objects, index) => {
   })
 }
 
-exports.connectToPublicAppSearch = (engineName = "deepbloo") => {
+exports.connectToPublicAppSearch = (engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       const ElasticAppSearch = require("@elastic/app-search-javascript");
@@ -67,7 +69,7 @@ exports.connectToPrivateAppSearch = () => {
 // Indexes an objects array into appsearch's "deepbloo" engine.
 // This will update any document having the same "id" fields,
 // adding any new field to the document
-exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
+exports.indexObjectToAppsearch = (objects, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -90,7 +92,7 @@ exports.indexObjectToAppsearch = (objects, engineName = "deepbloo") => {
 }
 
 // This way of updating (PATCH operation) will NOT add any new field
-exports.updateObject = (objects, engineName = "deepbloo") => {
+exports.updateObject = (objects, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       // Init object id
@@ -112,7 +114,7 @@ exports.updateObject = (objects, engineName = "deepbloo") => {
   })
 }
 
-exports.deleteObject = (objectIds, engineName = "deepbloo") => {
+exports.deleteObject = (objectIds, engineName = tendersEngine) => {
   return new Promise(async (resolve, reject) => {
     try {
       const client = await this.connectToPrivateAppSearch()
@@ -153,7 +155,8 @@ exports.tendersFormat = (tenders) => {
         delete tenderNew.cpvsOrigine
         delete tenderNew.sourceUrls
         delete tenderNew.fileSource
-        delete tenderNew.dgmarketId
+        delete tenderNew.origine
+        delete tenderNew.dataSourceId
         tenderNews.push(tenderNew)
       }
       resolve(tenderNews)
@@ -175,7 +178,6 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
-                    tenderCriterion.documentId AS "documentId", 
                     tenderCriterion.textParseId AS "textParseId", 
                     tenderCriterion.value AS "value", 
                     tenderCriterion.word AS "word", 
@@ -184,17 +186,17 @@ exports.tendersImport = (tendersNumberMax = 100) => {
                     tenderCriterion.status AS "status", 
                     tenderCriterion.creationDate AS "creationDate", 
                     tenderCriterion.updateDate AS "updateDate" 
-        FROM        dgmarket 
-        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
-        WHERE       dgmarket.status = 0 
+        FROM        tenders 
+        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = tenders.id 
+        WHERE       tenders.status = 0 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionAlls = []
       for (let record of recordset) {
         tenderCriterionAlls.push({
           tenderCriterionId: record.tenderCriterionId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           textParseId: record.textParseId,
           value: record.value,
           word: record.word,
@@ -208,7 +210,7 @@ exports.tendersImport = (tendersNumberMax = 100) => {
       
       query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -243,12 +245,12 @@ exports.tendersImport = (tendersNumberMax = 100) => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
-        WHERE       dgmarket.status = 20
+        FROM        tenders 
+        WHERE       tenders.status = 20
         ORDER BY    creationDate DESC 
         LIMIT ${tendersNumberMax}
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(query)
       const tenders = []
       const tenderIdDeletes = []
       for (const record of recordset) {
@@ -264,7 +266,6 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         tender.id = record.id
         tenders.push(tender)
       }
-      console.log(tenders.length)
       const tranches = []
       let borneMin = 0
       let occurence = 20
@@ -273,8 +274,8 @@ exports.tendersImport = (tendersNumberMax = 100) => {
         borneMin += occurence
       } while (borneMin < tenders.length)
       for (const tranche of tranches) {
-        await this.indexObjectToAppsearch(tranche)
-        await this.indexObjectToAppsearch(tranche, 'deepbloo-en')
+         await this.indexObjectToAppsearch(tranche)
+        // await this.indexObjectToAppsearch(tranche, 'deepbloo-en')
         await this.indexToElasticsearch(tranche, 'tenders')
       }
       
@@ -283,40 +284,66 @@ exports.tendersImport = (tendersNumberMax = 100) => {
   })
 }
 
+exports.formatSearchQuery = (searchRequest) => {
+  const query = searchRequest.searchInputValue
+  const searchFields = { title: {} }
+  const resultFields = {
+    id: { raw: {} },
+    title: { raw: {} },
+    country: { raw: {} },
+    publication_timestamp: { raw: {} },
+    bid_deadline_timestamp: { raw: {} },
+    cpvs: { raw: {} },
+    description: { raw: {} },
+  }
+  const options = {
+    filters: { all: [] },
+    search_fields: searchFields,
+    result_fields: resultFields,
+    facets: searchRequest.facets,
+  }
+  if (searchRequest.filter) {
+    for (const field in searchRequest.filter) {
+      if (searchRequest.filter[field].length) {
+        let anys = []
+        for (const value of searchRequest.filter[field]) {
+          let option = {}
+          option[field] = value
+          anys.push(option)
+        }
+        options.filters.all.push({ any: anys })
+      }
+    }
+  }
+  return {
+    query,
+    options,
+  }
+}
+
 // Import tender into elastic search
 exports.search = (searchRequest) => {
   return new Promise(async (resolve, reject) => {
     try {
       const client = await this.connectToPrivateAppSearch()
-      const query = searchRequest.searchInputValue
-      const searchFields = { title: {} }
-      const resultFields = {
-        tender_uuid: { raw: {} },
-        title: { raw: {} },
-        country: { raw: {} },
-        publication_timestamp: { raw: {} },
-        bid_deadline_timestamp: { raw: {} },
-        cpvs: { raw: {} },
-        description: { raw: {} },
-      }
-      const options = {
-        filters: { all: [] },
-        search_fields: searchFields,
-        result_fields: resultFields,
-      }
-      if (searchRequest.filter) {
-        for (const field in searchRequest.filter) {
-          if (searchRequest.filter[field].length) {
-            for (const value of searchRequest.filter[field]) {
-              let option = {}
-              option[field] = value
-              options.filters.all.push({ any: [ option ] })
-            }
-          }
-        }
-      }
+      const { query, options } = this.formatSearchQuery(searchRequest)
       const result = await client.search(config.elasticEngineName, query, options)
       resolve(result)
+    } catch (err) { reject(err) }
+  })
+}
+
+// Import tender into elastic search
+exports.multiSearch = (searchRequests) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const client = await this.connectToPrivateAppSearch()
+      const searches = []
+      for (const searchRequest of searchRequests) {
+        searches.push(this.formatSearchQuery(searchRequest))
+      }
+      const results = await client.multiSearch(config.elasticEngineName, searches)
+      resolve(results)
     } catch (err) { reject(err) }
   })
 }

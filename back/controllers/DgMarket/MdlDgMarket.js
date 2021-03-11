@@ -33,8 +33,8 @@ exports.BddImport = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')      
 
       // Bulk insert into Dgmarket import table
-      let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0], BddEnvironnement, BddId)}' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM importDgmarket WHERE fileSource = '${BddTool.ChaineFormater(files[0])}' `
+      await BddTool.QueryExecBdd2(query)
       await BddTool.bulkInsert(
         BddId,
         BddEnvironnement,
@@ -42,19 +42,19 @@ exports.BddImport = () => {
         fileParseData.importDgmarkets
       )
       
-      // Search tender by dgmarketId
+      // Search tender by dataSourceId
       query = `
         UPDATE      importDgmarket 
-        INNER JOIN  dgmarket ON 
-                    importDgmarket.dgmarketId = dgmarket.dgmarketId 
-                    AND importDgmarket.dgmarketId != ''
-        SET         importDgmarket.tenderId = dgmarket.id, 
+        INNER JOIN  tenders ON 
+                    importDgmarket.dataSourceId = tenders.dataSourceId 
+                    AND importDgmarket.dataSourceId != ''
+        SET         importDgmarket.tenderId = tenders.id, 
                     importDgmarket.mergeMethod = "DGMARKET_ID", 
                     importDgmarket.status = 5
         WHERE 		  importDgmarket.status = 1
         AND         importDgmarket.tenderId IS NULL
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
 
       // Move file to archive folder
       const fileSource = path.parse(fileLocation).base
@@ -213,7 +213,7 @@ exports.FileParse = (fileLocation) => {
         
         // importDgmarket
         const importDgmarket = {
-          dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+          dataSourceId: parseInt(tool.getXmlJsonData(notice.id), 10),
           procurementId: tool.getXmlJsonData(notice.procurementId).substring(0, 90),
           title: title.substring(0, 450),
           lang: lang,
@@ -288,7 +288,7 @@ exports.FileParse = (fileLocation) => {
 exports.mergeTender = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList(null, true)
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList(null, true)
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
       const dataImportDgmarkets = await this.importDgmarkets({ statuss: [1, 5] }, null, null, 1, 1000)
       let tenderKoCount = 0
@@ -322,7 +322,7 @@ exports.convertToTender = (importDgmarket) => {
     try {
       let tender = {
         id: importDgmarket.tenderId,
-        dgmarketId: importDgmarket.dgmarketId,
+        dataSourceId: importDgmarket.dataSourceId,
         procurementId: importDgmarket.procurementId,
         title: importDgmarket.title,
         lang: importDgmarket.lang,
@@ -438,7 +438,7 @@ exports.CpvList = () => {
       const readFile = util.promisify(fs.readFile)
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
@@ -588,7 +588,7 @@ exports.CpvList = () => {
           }
 
           tenders.push({
-            dgmarketId: parseInt(tool.getXmlJsonData(notice.id), 10),
+            dataSourceId: parseInt(tool.getXmlJsonData(notice.id), 10),
             title: tool.getXmlJsonData(notice.noticeTitle).substring(0, 100),
             description: description,
             buyerName: tool.getXmlJsonData(notice.buyerName),
@@ -606,7 +606,7 @@ exports.CpvList = () => {
         })
       }
 
-      let tenderText = `catch;dgmarketId;categories;families;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
+      let tenderText = `catch;dataSourceId;categories;families;title;description;cpv code;cpv;words;buyerName;country;region;bidDeadline;publication\n`
       for (let tender of tenders) {
         let description = tender.description.substring(0, 1000)
         description = description.split(';').join(',')
@@ -619,7 +619,7 @@ exports.CpvList = () => {
         title = title.split(';').join(',')
         title = title.split('\n').join(' ').trim()
         title = title.trim()
-        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dgmarketId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+        tenderText += `${tender.valide ? 'Y' : 'N'};${tender.dataSourceId};${tender.categories.join(',')};${tender.families.join(',')};${title};${description};${tender.cpvs};${tender.cpvDescriptions};${tender.words};${tender.buyerName};${tender.country};${tender.regions.join(',')};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderList.csv')
       fs.writeFileSync(tenderListLocation, tenderText)
@@ -638,7 +638,7 @@ exports.CpvListOld = () => {
       const util = require('util')
       const tool = require(process.cwd() + '/controllers/CtrlTool')
       const readFile = util.promisify(fs.readFile)
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       // Get file
       const fileFolder = path.join(config.WorkSpaceFolder, 'TenderImport/DgMarket/Archive/')
@@ -715,13 +715,13 @@ exports.ExportUrlFromFile = () => {
       const fs = require('fs')
       const path = require('path')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -754,10 +754,10 @@ exports.ExportUrlFromFile = () => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = 0 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenders = []
       for (let record of recordset) {
         let tender = await require(process.cwd() + '/controllers/Algolia/MdlAlgolia').TenderFormat(record, CpvList)
@@ -795,7 +795,7 @@ exports.ExportUrlFromFile = () => {
         }
       }
 
-      let tenderText = `dgmarketId;title;buyerName;domaine;url;type;bidDeadline;publication\n`
+      let tenderText = `dataSourceId;title;buyerName;domaine;url;type;bidDeadline;publication\n`
       for (let tender of tenderUrl) {
         let title = tender.title.substring(0, 1000)
         title = title.split(';').join(',')
@@ -804,7 +804,7 @@ exports.ExportUrlFromFile = () => {
         title = title.split('\n').join(' ').trim()
         title = title.split('\r').join(' ').trim()
         title = title.trim()
-        tenderText += `${tender.dgmarketId};${title};${tender.buyer.name};${tender.urlDomaine};${tender.url};${tender.urlType};${tender.bidDeadlineDate};${tender.publicationDate}\n`
+        tenderText += `${tender.dataSourceId};${title};${tender.buyer.name};${tender.urlDomaine};${tender.url};${tender.urlType};${tender.bidDeadlineDate};${tender.publicationDate}\n`
       }
       const tenderListLocation = path.join(config.WorkSpaceFolder, 'TenderUrlList.csv')
       fs.writeFileSync(tenderListLocation, tenderText)
@@ -821,7 +821,7 @@ exports.importDgmarketAddUpdate = (importDgmarket) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let importDgmarketNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'importDgmarket', importDgmarket)
+      let importDgmarketNew = await BddTool.RecordAddUpdate('importDgmarket', importDgmarket)
       resolve(importDgmarketNew)
     } catch (err) {
       reject(err)
@@ -840,7 +840,7 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       let query = `
         SELECT      SQL_CALC_FOUND_ROWS 
                     importDgmarketId AS "importDgmarketId",
-                    dgmarketId AS "dgmarketId",
+                    dataSourceId AS "dataSourceId",
                     procurementId AS "procurementId",
                     title AS "title",
                     description AS "description",
@@ -877,27 +877,27 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       if (filter) {
         if (filter.fileSources && filter.fileSources.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.fileSource IN (${BddTool.ArrayStringFormat(filter.fileSources)}) \n`
         }
         if (filter.mergeMethods && filter.mergeMethods.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.mergeMethod IN (${BddTool.ArrayStringFormat(filter.mergeMethods)}) \n`
         }
         if (filter.tenderId !== null && filter.tenderId !== undefined) {
           if (where !== '') { where += 'AND ' }
           if (filter.tenderId === 0) {
             where += `(importDgmarket.tenderId = 0 OR importDgmarket.tenderId IS NULL) \n`
           } else {
-            where += `importDgmarket.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+            where += `importDgmarket.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
           }
         }
         if (filter.status !== null && filter.status !== undefined) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `importDgmarket.status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
@@ -912,12 +912,12 @@ exports.importDgmarkets = (filter, orderBy, limit, page, pageLimit) => {
       }
       query += ` LIMIT ${(page - 1) * pageLimit}, ${pageLimit} `
 
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       let importDgmarkets = []
       for (const record of recordset.results) {
         importDgmarkets.push({
           importDgmarketId: record.importDgmarketId,
-          dgmarketId: record.dgmarketId,
+          dataSourceId: record.dataSourceId,
           procurementId: record.procurementId,
           title: record.title,
           description: record.description,

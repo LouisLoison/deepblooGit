@@ -27,11 +27,11 @@ exports.statistics = (filter) => {
       if (filter) {
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importDgmarket.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      let recordset = await BddTool.QueryExecBdd2(query, true)
       for (const record of recordset.results) {
         statistics.dgMarket.push({
           fileSource: record.fileSource,
@@ -59,11 +59,11 @@ exports.statistics = (filter) => {
       if (filter) {
         if (filter.statuss && filter.statuss.length) {
           if (where !== '') { where += 'AND ' }
-          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss, BddEnvironnement, BddId)}) \n`
+          where += `importTenderInfo.status IN (${BddTool.ArrayNumericFormater(filter.statuss)}) \n`
         }
       }
       if (where !== '') { query += '\nWHERE ' + where }
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query, true)
+      recordset = await BddTool.QueryExecBdd2(query, true)
       for (const record of recordset.results) {
         statistics.tenderInfo.push({
           fileSource: record.fileSource,
@@ -131,15 +131,15 @@ exports.importTender = (tender, CpvList, textParses) => {
 
       // Remove tenderCriterion
       if (tender.id) {
-        query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-        query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)}`
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id)}`
+        await BddTool.QueryExecBdd2(query)
+        query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id)}`
+        await BddTool.QueryExecBdd2(query)
       } else {
         tender.tenderUuid = uuidv4()
       }
 
-      const tenderNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'dgmarket', tender, 'id')
+      const tenderNew = await BddTool.RecordAddUpdate('tenders', tender, 'id')
 
       // Bulk insert into tenderCriterion table
       if (tender.tenderCriterionCpvs && tender.tenderCriterionCpvs.length) {
@@ -209,7 +209,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: cpv.cpvId,
             value: cpv.label,
             word: '',
@@ -228,7 +228,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: tenderCriterionCpvTitle.cpvId,
             value: tenderCriterionCpvTitle.value,
             word: tenderCriterionCpvTitle.word,
@@ -247,7 +247,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterionCpv) {
           tenderCriterionCpvs.push({
-            documentId: 0,
+            documentUuid: 0,
             cpvId: tenderCriterionCpvDescription.cpvId,
             value: tenderCriterionCpvDescription.value,
             word: tenderCriterionCpvDescription.word,
@@ -280,7 +280,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterion) {
           tenderCriterions.push({
-            documentId: 0,
+            documentUuid: 0,
             textParseId: tenderCriterionTitle.textParseId,
             value: tenderCriterionTitle.value,
             word: tenderCriterionTitle.word,
@@ -298,7 +298,7 @@ exports.searchCpvCriterions = (tender, CpvList, textParses) => {
         )
         if (!tenderCriterion) {
           tenderCriterions.push({
-            documentId: 0,
+            documentUuid: 0,
             textParseId: tenderCriterionDescription.textParseId,
             value: tenderCriterionDescription.value,
             word: tenderCriterionDescription.word,

@@ -102,9 +102,9 @@ exports.MembershipSynchro = () => {
                         membershipFree AS "membershipFree" 
             FROM        user 
             WHERE       type = 3 
-            AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id, BddEnvironnement, BddId)} 
+            AND         hivebriteId = ${BddTool.NumericFormater(membership.user_id)} 
           `
-          let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+          let recordset = await BddTool.QueryExecBdd2(query)
           for (let record of recordset) {
             userMemberships.push({
               user: {
@@ -133,7 +133,7 @@ exports.MembershipSynchro = () => {
         if (membership.type_name.startsWith("Premium Free Trial") && user.membershipFree === 1) {
           user.membershipFree = 2
           user.updateDate = new Date()
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+          await BddTool.RecordAddUpdate('user', user)
 
           // Send email
           let to = user.email
@@ -164,7 +164,7 @@ exports.MembershipSynchro = () => {
         }
         user.type = 2
         user.updateDate = new Date()
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+        await BddTool.RecordAddUpdate('user', user)
       
         // Send email
         let to = user.email
@@ -210,7 +210,6 @@ exports.VenturesGet = () => {
       let response = await this.get(`api/admin/v2/ventures?page=${pagenum}&per_page=100`)
       if (!pageCount) {
         pageCount = Math.ceil(parseInt(response.headers['x-total'], 10) / parseInt(response.headers['x-per-page'], 10))
-        console.log(`Page count (${pageCount})`)
       }
       for (let venture of response.data.ventures) {
         // venture.pagenum = pagenum
@@ -250,7 +249,7 @@ exports.VenturesGet = () => {
         })
       }
     }
-    console.log(`Venture date null (${ventureDateNull})`)
+    // console.log(`Venture date null (${ventureDateNull})`)
     // Delete duplicate tenders
     /*
     console.log(`Delete duplicate (${ventureDuplicates.length})`)
@@ -316,16 +315,16 @@ exports.CompanieSynchro = () => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       for (let companie of companies) {
-        let organizationBdd = organizationsBdd.find(a => a.dgmarketId === companie.id)
+        let organizationBdd = organizationsBdd.find(a => a.dataSourceId === companie.id)
         if (!organizationBdd) {
           organizationBdd = {
-            dgmarketId: companie.id,
+            dataSourceId: companie.id,
             name: companie.name,
             countrys: companie.country,
             creationDate: new Date(),
             updateDate: new Date()
           }
-          organizationBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+          organizationBdd = await BddTool.RecordAddUpdate('organization', organizationBdd)
         } else {
           let countrys = companie.country
           if (organizationBdd.countrys && organizationBdd.countrys !== '') {
@@ -340,7 +339,7 @@ exports.CompanieSynchro = () => {
             organizationBdd.name = companie.name
             organizationBdd.countrys = companie.country
             organizationBdd.updateDate = new Date()
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organization', organizationBdd)
+            await BddTool.RecordAddUpdate('organization', organizationBdd)
           }
         }
 
@@ -349,7 +348,7 @@ exports.CompanieSynchro = () => {
           WHERE organizationId = ${organizationBdd.organizationId} 
           AND origineType = 1 
         `
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        await BddTool.QueryExecBdd2(query)
         if (companie.cpvFound) {
           let cpvsTextTemp = companie.cpvFound.cpvsText.split(',')
           let cpvsDescriptionTemp = companie.cpvFound.cpvDescriptionsText.split(',')
@@ -362,7 +361,7 @@ exports.CompanieSynchro = () => {
               cpvName: name.trim(),
               origineType: 1,
             }
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'organizationCpv', organizationCpv)
+            await BddTool.RecordAddUpdate('organizationCpv', organizationCpv)
           }
         }
       }

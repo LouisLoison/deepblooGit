@@ -1,15 +1,3 @@
-exports.Action1 = (req, res) => {
-    var uploadMdl = require('./models/uploadMdl');
-    var uploadMdl = new uploadMdl();
-    var filelist = uploadMdl.Action1();
-    res.end(JSON.stringify({ success: true, filelist: filelist }, null, 3));
-}
-
-exports.Action2 = (req, res) => {
-    var uploadMdl = require('./models/uploadMdl');
-    uploadMdl.Action2(req, res);
-}
-
 exports.UploadFile = (req, res) => {
     var path = require('path');
     var formidable = require('formidable');

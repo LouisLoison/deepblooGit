@@ -5,7 +5,7 @@ exports.AddUpdate = (annonce) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let annonceNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'annonce', annonce)
+      let annonceNew = await BddTool.RecordAddUpdate('annonce', annonce)
       resolve(annonceNew)
     } catch (err) { reject(err) }
   })
@@ -28,7 +28,7 @@ exports.Click = (annonceId, userId, screen) => {
         updateDate: new Date()
       }
 
-      let annonceNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'annonceClick', annonceClick)
+      let annonceNew = await BddTool.RecordAddUpdate('annonceClick', annonceClick)
       resolve(annonceNew);
     } catch (err) { reject(err) }
   })
@@ -64,12 +64,12 @@ exports.List = (filter) => {
         let where = ``
         if (filter.annonceId) {
           if (where !== '') { where += 'AND ' }
-          where += `annonce.annonceId = ${BddTool.NumericFormater(filter.annonceId, BddEnvironnement, BddId)} \n`
+          where += `annonce.annonceId = ${BddTool.NumericFormater(filter.annonceId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY annonce.annonceId'
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let annonce = null
       for (var record of recordset) {
         if (!annonce || annonce.annonceId !== record.annonceId) {
@@ -123,13 +123,13 @@ exports.Remove = (annonceId) => {
         if (where !== '') {
           where += 'AND '
         }
-        where += `annonceId = ${BddTool.NumericFormater(annonceId, BddEnvironnement, BddId)} \n`
+        where += `annonceId = ${BddTool.NumericFormater(annonceId)} \n`
       }
       if (where !== '') { query += '  WHERE ' + where }
       else {
         throw new Error("No available filter !")
       }
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -154,31 +154,31 @@ exports.AnnonceClickList = (filter) => {
                   annonceClick.screen AS "screen", 
                   annonceClick.status AS "status", 
                   annonceClick.creationDate AS "creationDate", 
-                  user.hivebriteId AS "hivebriteId", 
-                  user.type AS "type", 
-                  user.email AS "email", 
-                  user.username AS "username", 
-                  user.membershipFree AS "membershipFree", 
-                  user.organizationId AS "organizationId", 
-                  user.country AS "country", 
-                  user.photo AS "photo" 
+                  "user".hivebriteId AS "hivebriteId", 
+                  "user".type AS "type", 
+                  "user".email AS "email", 
+                  "user".username AS "username", 
+                  "user".membershipFree AS "membershipFree", 
+                  "user".organizationId AS "organizationId", 
+                  "user".country AS "country", 
+                  "user".photo AS "photo" 
         FROM      annonceClick 
       `
-      query += `LEFT JOIN user ON annonceClick.userId = user.userId `
+      query += `LEFT JOIN "user" ON annonceClick.userId = "user".userId `
       if (filter) {
         let where = ``
         if (filter.annonceClickId) {
           if (where !== '') { where += 'AND ' }
-          where += `annonceClickId = ${BddTool.NumericFormater(filter.annonceClickId, BddEnvironnement, BddId)} \n`
+          where += `annonceClickId = ${BddTool.NumericFormater(filter.annonceClickId)} \n`
         }
         if (filter.annonceId && filter.annonceId !== '' && filter.annonceId > 0) {
           if (where !== '') { where += 'AND ' }
-          where += `annonceId = ${BddTool.NumericFormater(filter.annonceId, BddEnvironnement, BddId)} \n`
+          where += `annonceId = ${BddTool.NumericFormater(filter.annonceId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         let annonceClick = {
           annonceClickId: record.annonceClickId,

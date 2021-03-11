@@ -1,10 +1,10 @@
-exports.document = (documentId) => {
+exports.document = (documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       let document = null
-      if (documentId) {
+      if (documentUuid) {
         let filter = {
-          documentId
+          documentUuid
         }
         let documents = await this.documentList(filter);
         if (documents && documents.length > 0) {
@@ -23,13 +23,13 @@ exports.documentAddUpdate = (document) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let documentNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'document', document)
+      let documentNew = await BddTool.RecordAddUpdate('document', document)
       resolve(documentNew)
     } catch (err) { reject(err) }
   })
 }
 
-exports.documentDelete = (documentId) => {
+exports.documentDelete = (documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
@@ -37,11 +37,11 @@ exports.documentDelete = (documentId) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
 
-      if (!documentId) {
+      if (!documentUuid) {
         throw new Error("No available id !")
       }
 
-      const document = await this.document(documentId)
+      const document = await this.document(documentUuid)
 
       // Remove document from AWS
       try {
@@ -49,12 +49,12 @@ exports.documentDelete = (documentId) => {
       } catch (err) {}
 
       try {
-        await require(process.cwd() + '/controllers/TextParse/MdlTextParse').tenderCriterionDelete(null, documentId)
+        await require(process.cwd() + '/controllers/TextParse/MdlTextParse').tenderCriterionDelete(null, documentUuid)
       } catch (err) {}
 
       // Remove document from Deepbloo BDD
-      let query = `DELETE FROM document WHERE documentId = ${BddTool.NumericFormater(documentId, BddEnvironnement, BddId)}`
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM document WHERE documentUuid = ${BddTool.ChaineFormater(documentUuid)}`
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -73,7 +73,7 @@ exports.documentList = (filter) => {
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let query = `
-        SELECT    document.documentId AS "documentId", 
+        SELECT    document.documentUuid AS "documentUuid", 
                   document.tenderId AS "tenderId", 
                   document.cpvs AS "cpvs", 
                   document.filename AS "filename", 
@@ -81,6 +81,7 @@ exports.documentList = (filter) => {
                   document.pageCount AS "pageCount", 
                   document.sourceUrl AS "sourceUrl", 
                   document.s3Url AS "s3Url", 
+                  document.thumbnailUrl AS "thumbnailUrl", 
                   document.boxFolderId AS "boxFolderId", 
                   document.boxFileId AS "boxFileId", 
                   document.parseResult AS "parseResult", 
@@ -91,21 +92,21 @@ exports.documentList = (filter) => {
       `
       if (filter) {
         let where = ``
-        if (filter.documentId) {
+        if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `document.documentId = ${BddTool.NumericFormater(filter.documentId, BddEnvironnement, BddId)} \n`
+          where += `document.documentUuid = ${BddTool.ChaineFormater(filter.documentUuid)} \n`
         }
         if (filter.tenderId) {
           if (where !== '') { where += 'AND ' }
-          where += `document.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `document.tenderId = ${BddTool.ChaineFormater(filter.tenderId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
       // query += '  ORDER BY document.creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         documents.push({
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           tenderId: record.tenderId,
           cpvs: record.cpvs,
           filename: record.filename,
@@ -113,6 +114,7 @@ exports.documentList = (filter) => {
           pageCount: record.pageCount,
           sourceUrl: record.sourceUrl,
           s3Url: record.s3Url,
+          thumbnailUrl: record.thumbnailUrl,
           boxFolderId: record.boxFolderId,
           boxFileId: record.boxFileId,
           parseResult: record.parseResult,
@@ -140,7 +142,7 @@ exports.documentMessageList = (filter, userData) => {
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT    documentMessage.documentMessageId AS "documentMessageId", 
-                  documentMessage.documentId AS "documentId", 
+                  documentMessage.documentUuid AS "documentUuid", 
                   documentMessage.organizationId AS "organizationId", 
                   documentMessage.userId AS "userId", 
                   documentMessage.type AS "type", 
@@ -153,43 +155,43 @@ exports.documentMessageList = (filter, userData) => {
                   documentMessage.updateDate AS "updateDate" `
       if (userData) {
         query += `,
-                    user.username AS "userName",
-                    user.email AS "userEmail",
-                    user.hivebriteId AS "userHivebriteId",
-                    user.photo AS "userPhoto" `
+                    "user".username AS "userName",
+                    "user".email AS "userEmail",
+                    "user".hivebriteId AS "userHivebriteId",
+                    "user".photo AS "userPhoto" `
       }
       query += `
                     FROM      documentMessage 
       `
       if (userData) {
-        query += `LEFT JOIN  user ON user.userId = documentMessage.userId \n`
+        query += `LEFT JOIN  "user" ON "user".userId = documentMessage.userId \n`
       }
       if (filter) {
         let where = ``
         if (filter.documentMessageId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentMessageId = ${BddTool.NumericFormater(filter.documentMessageId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.documentMessageId = ${BddTool.NumericFormater(filter.documentMessageId)} \n`
         }
-        if (filter.documentId) {
+        if (filter.documentUuid) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.documentId = ${BddTool.NumericFormater(filter.documentId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.documentUuid = '${BddTool.ChaineFormater(filter.documentUuid)}' \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.organizationId = ${BddTool.NumericFormater(filter.organizationId)} \n`
         }
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `documentMessage.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `documentMessage.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
       query += '  ORDER BY documentMessage.creationDate DESC '
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         documentMessages.push({
           documentMessageId: record.documentMessageId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           organizationId: record.organizationId,
           userId: record.userId,
           type: record.type,
@@ -220,7 +222,7 @@ exports.documentMessageAddUpdate = (documentMessage) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let documentMessageNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'documentMessage', documentMessage)
+      let documentMessageNew = await BddTool.RecordAddUpdate('documentMessage', documentMessage)
       resolve(documentMessageNew)
     } catch (err) { reject(err) }
   })
@@ -239,8 +241,8 @@ exports.documentMessageDelete = (documentMessageId) => {
       }
 
       // Remove documentMessage from Deepbloo BDD
-      let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId, BddEnvironnement, BddId)}`
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM documentMessage WHERE documentMessageId = ${BddTool.NumericFormater(documentMessageId)}`
+      await BddTool.QueryExecBdd2(query)
       resolve()
     } catch (err) {
       reject(err)
@@ -260,7 +262,7 @@ exports.tenderFileImport = (tenderId) => {
       if (!tender) {
         resolve()
       }
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       for (const cpv of CpvList) {
@@ -283,10 +285,10 @@ exports.tenderFileImport = (tenderId) => {
 
 
       // Remove tenderCriterion of this tender
-      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id, BddEnvironnement, BddId)} AND scope = 'DOCUMENT' `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM tenderCriterionCpv WHERE tenderId = ${BddTool.NumericFormater(tender.id)} AND scope = 'DOCUMENT' `
+      await BddTool.QueryExecBdd2(query)
+      query = `DELETE FROM tenderCriterion WHERE tenderId = ${BddTool.NumericFormater(tender.id)} AND scope = 'DOCUMENT' `
+      await BddTool.QueryExecBdd2(query)
 
       const documentNews = []
       const documents = await this.documentList({ tenderId })
@@ -301,14 +303,14 @@ exports.tenderFileImport = (tenderId) => {
           if (document) {
             continue
           }
-          if (sourceUrl.includes('www2.dgmarket.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
+          if (sourceUrl.includes('www2.tenders.com')  && !sourceUrl.includes('secret=sdfsfs452Rfsdgbjsdb343RFGG')) {
             sourceUrl = sourceUrl + '?secret=sdfsfs452Rfsdgbjsdb343RFGG'
           }
           const fileInfo = await this.fileDownload(sourceUrl)
           const exportAws = await this.fileExportAws(tenderId, fileInfo.fileLocation)
           const textParseResults = await this.fileParse(fileInfo.fileLocation, fileInfo.filename, CpvList, textParses, tenderId, exportAws)
           let documentNew = await this.documentAddUpdate({
-            documentId: document ? document.documentId : undefined,
+            documentUuid: document ? document.documentUuid : undefined,
             tenderId,
             cpvs: textParseResults.cpvs ? textParseResults.cpvs.join(',') : null,
             filename: fileInfo.filename,
@@ -330,7 +332,7 @@ exports.tenderFileImport = (tenderId) => {
             if (!tenderCriterionFind) {
               tenderCriterionFind = {
                 tenderId: documentNew.tenderId,
-                documentId: documentNew.documentId,
+                documentUuid: documentNew.documentUuid,
                 textParseId: tenderCriterion.textParseId,
                 value: tenderCriterion.value,
                 word: tenderCriterion.word,

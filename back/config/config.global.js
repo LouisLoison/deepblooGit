@@ -1,6 +1,6 @@
 var config = module.exports = {}
 
-config.prefixe = 'prod'
+config.prefixe = 'devLocal'
 config.prefixeDev = 'dev'
 config.prefixeProd = 'prod'
 config.WorkSpaceFolder = 'C:/Temp/Deepbloo/'
@@ -63,17 +63,25 @@ config.bdd = {
     },
     devAws: {
       config: {
-        type: 'PostgreSql',
+        type: 'postgres',
         user: 'deepbloo',
-        password: 'quieraKeey0eig',
-        server: 'database-deepbloo-dev.cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
-        database: 'deepbloo'
+        password: 'taiT6jooy7iza',
+        server: 'serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com',
+        database: 'deepbloo_dev'
       }
     },
-
+    devLocal: {
+      config: {
+        type: 'postgres',
+        user: 'deepbloo',
+        password: 'taiT6jooy7iza',
+        server: 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com',
+        database: 'deepbloo_dev',
+      }
+    },
     test: {
       config: {
-        type: 'PostgreSql',
+        type: 'postgres',
         user: 'deepbloo',
         password: 'secret',
         server: '127.0.0.1', 
@@ -99,7 +107,7 @@ config.awsBucketFtp = 'sftp.deepbloo.com'
 config.elasticEndpoint = 'https://a85bb760f6f74e4bbb19f9928e3ba878.eu-west-1.aws.found.io:9243/'
 config.elasticUser = 'elastic'
 config.elasticPassword = 'qIEa2t1kjelVtxLDm0wlnirN'
-config.elasticEngineName = 'deepbloo'
+config.elasticEngineName = 'tenders-dev'
 config.appsearchEndpoint = 'https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/'
 config.appsearchSearchKey = 'search-pg8ft3mtkfkup3occekertmt'
 config.appsearchPrivateKey = 'private-ychdiximphcy4avd3kdtrc51'

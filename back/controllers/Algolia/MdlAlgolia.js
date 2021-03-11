@@ -2,7 +2,7 @@ exports.TendersImport = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
 
       const BddTool = require(process.cwd() + '/global/BddTool')
@@ -13,7 +13,6 @@ exports.TendersImport = () => {
       let query = `
         SELECT      tenderCriterion.tenderCriterionId AS "tenderCriterionId", 
                     tenderCriterion.tenderId AS "tenderId", 
-                    tenderCriterion.documentId AS "documentId", 
                     tenderCriterion.textParseId AS "textParseId", 
                     tenderCriterion.value AS "value", 
                     tenderCriterion.word AS "word", 
@@ -22,17 +21,17 @@ exports.TendersImport = () => {
                     tenderCriterion.status AS "status", 
                     tenderCriterion.creationDate AS "creationDate", 
                     tenderCriterion.updateDate AS "updateDate" 
-        FROM        dgmarket 
-        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = dgmarket.id 
-        WHERE       dgmarket.status = ${tenderStatus} 
+        FROM        tenders 
+        INNER JOIN  tenderCriterion ON tenderCriterion.tenderId = tenders.id 
+        WHERE       tenders.status = ${tenderStatus} 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const tenderCriterionAlls = []
       for (let record of recordset) {
         tenderCriterionAlls.push({
           tenderCriterionId: record.tenderCriterionId,
           tenderId: record.tenderId,
-          documentId: record.documentId,
+          documentUuid: record.documentUuid,
           textParseId: record.textParseId,
           value: record.value,
           word: record.word,
@@ -46,7 +45,7 @@ exports.TendersImport = () => {
       
       query = `
         SELECT      id AS "id", 
-                    dgmarketId AS "dgmarketId", 
+                    dataSourceId AS "dataSourceId", 
                     procurementId AS "procurementId", 
                     tenderUuid AS "tenderUuid", 
                     title AS "title", 
@@ -81,10 +80,10 @@ exports.TendersImport = () => {
                     status AS "status", 
                     creationDate AS "creationDate", 
                     updateDate AS "updateDate" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = ${tenderStatus} 
       `
-      recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      recordset = await BddTool.QueryExecBdd2(query)
       const tenders = []
       const tendersWithCriterions = []
       const tenderIdDeletes = []
@@ -141,9 +140,9 @@ exports.TendersImport = () => {
       }
 
       for (const tenderId of tenderIdDeletes) {
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
-          DELETE FROM dgmarket 
-          WHERE       id = ${BddTool.NumericFormater(tenderId, BddEnvironnement, BddId)} 
+        await BddTool.QueryExecBdd2(`
+          DELETE FROM tenders 
+          WHERE       id = ${BddTool.NumericFormater(tenderId)} 
         `)
       }
       
@@ -157,7 +156,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
     try {
       if (!CpvList) {
         console.log('[TenderFormat] no CPV list !')
-        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       }
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
       const CategoryList = require(process.cwd() + '/public/constants/categories.json')
@@ -264,7 +263,7 @@ exports.TenderFormat = (tender, CpvList, textParses) => {
 
       let tenderNew = {
         objectID: tender.algoliaId ? tender.algoliaId : undefined,
-        dgmarketId: tender.dgmarketId,
+        dataSourceId: tender.dataSourceId,
         tenderId: tender.id,
         procurementId: tender.procurementId,
         tenderUuid: tender.tenderUuid,
@@ -359,11 +358,11 @@ exports.TendersAdd = (tenders, index) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < tenders.length; i++) {
         tenders[i].objectID = content.objectIDs[i]
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
-          UPDATE      dgmarket 
-          SET         algoliaId = '${BddTool.ChaineFormater(tenders[i].objectID, BddEnvironnement, BddId)}', 
+        await BddTool.QueryExecBdd2(`
+          UPDATE      tenders 
+          SET         algoliaId = '${BddTool.ChaineFormater(tenders[i].objectID)}', 
                       status = 20 
-          WHERE       id = ${BddTool.NumericFormater(tenders[i].tenderId, BddEnvironnement, BddId)} 
+          WHERE       id = ${BddTool.NumericFormater(tenders[i].tenderId)} 
         `)
       }
       resolve(tenders)
@@ -405,11 +404,11 @@ exports.tendersObsoleteRemove = () => {
 
       const tenderIds = tenders.map(a => a.id)
       const query = `
-        UPDATE      dgmarket 
+        UPDATE      tenders 
         SET         status = -1 
-        WHERE       id IN (${BddTool.ArrayNumericFormater(tenderIds, BddEnvironnement, BddId)}) 
+        WHERE       id IN (${BddTool.ArrayNumericFormater(tenderIds)}) 
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       await this.TendersPurge()
 
       resolve()
@@ -426,11 +425,11 @@ exports.TendersPurge = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       let query = `
         SELECT      algoliaId AS "algoliaId" 
-        FROM        dgmarket 
+        FROM        tenders 
         WHERE       status = -1 
         LIMIT       300
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const algoliaIds = []
       for (let record of recordset) {
         algoliaIds.push(record.algoliaId);
@@ -472,10 +471,10 @@ exports.TendersRemove = (algoliaIds, index) => {
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < algoliaIds.length; i++) {
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
-          UPDATE      dgmarket 
+        await BddTool.QueryExecBdd2(`
+          UPDATE      tenders 
           SET         status = -2 
-          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
+          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i])} 
         `)
       }
       resolve()
@@ -548,11 +547,11 @@ exports.PrivateDealsAdd = (privateDeals, index) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < privateDeals.length; i++) {
         privateDeals[i].objectID = content.objectIDs[i]
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+        await BddTool.QueryExecBdd2(`
           UPDATE      privateDeal 
-          SET         algoliaId = '${BddTool.ChaineFormater(privateDeals[i].objectID, BddEnvironnement, BddId)}', 
+          SET         algoliaId = '${BddTool.ChaineFormater(privateDeals[i].objectID)}', 
                       status = 20 
-          WHERE       privateDealId = ${BddTool.NumericFormater(privateDeals[i].privateDealId, BddEnvironnement, BddId)} 
+          WHERE       privateDealId = ${BddTool.NumericFormater(privateDeals[i].privateDealId)} 
         `)
       }
       resolve(privateDeals)
@@ -573,7 +572,7 @@ exports.PrivateDealsPurge = () => {
         WHERE       status = -1 
         LIMIT       300
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       const algoliaIds = []
       for (let record of recordset) {
         algoliaIds.push(record.algoliaId);
@@ -615,10 +614,10 @@ exports.PrivateDealsRemove = (algoliaIds, index) => {
       const BddEnvironnement = config.prefixe
       const BddTool = require(process.cwd() + '/global/BddTool')
       for (let i = 0; i < algoliaIds.length; i++) {
-        await BddTool.QueryExecBdd2(BddId, BddEnvironnement, `
+        await BddTool.QueryExecBdd2(`
           UPDATE      privateDeal 
           SET         status = -2 
-          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i], BddEnvironnement, BddId)} 
+          WHERE       algoliaId = ${BddTool.NumericFormater(algoliaIds[i])} 
         `)
       }
       resolve()
@@ -636,7 +635,7 @@ exports.TendersSynchro = () => {
       let apiKey = '5cc468809130d45b76cf76598a09ff21'
       let client = algoliasearch(applicationId, apiKey, { timeout: 4000 })
       let index = client.initIndex(`${config.prefixe}_tenders`)
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
       let tenderNbr = 0
@@ -675,16 +674,16 @@ exports.TendersSynchro = () => {
           // Search tender in BDD
           let query = `
             SELECT      id AS "id", 
-                        dgmarketId AS "dgmarketId"
-            FROM        dgmarket 
-            WHERE       id = ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)} 
+                        dataSourceId AS "dataSourceId"
+            FROM        tenders 
+            WHERE       id = ${BddTool.NumericFormater(hit.tenderId)} 
           `
-          let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+          let recordset = await BddTool.QueryExecBdd2(query)
           if (!recordset || !recordset.length) {
             query = `
-              INSERT INTO dgmarket (
+              INSERT INTO tenders (
                 id,
-                dgmarketId,
+                dataSourceId,
                 procurementId,
                 tenderUuid,
                 title,
@@ -720,84 +719,84 @@ exports.TendersSynchro = () => {
                 creationDate,
                 updateDate
               ) VALUES (
-                ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)},
-                ${BddTool.NumericFormater(hit.dgmarketId, BddEnvironnement, BddId)},
-                '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.description, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.lang, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.firstName, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.lastName, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.address, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.city, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.state, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.country, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.email, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.contact.phone, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.buyer.name, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.buyer.country, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.procurementMethod, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.noticeType, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.country, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.estimatedCost, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.currency, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.publicationDate ? hit.publicationDate.replace('-', '').replace('-', '') : '', BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.cpvsOrigine, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(cpvs, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(cpvDescriptions, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.words, BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.bidDeadlineDate ? hit.bidDeadlineDate.replace('-', '').replace('-', '') : '', BddEnvironnement, BddId)}',
-                '${BddTool.ChaineFormater(hit.sourceUrl, BddEnvironnement, BddId)}',
-                ${BddTool.DateFormater(termDate, BddEnvironnement, BddId)},
-                '${BddTool.ChaineFormater(hit.fileSource, BddEnvironnement, BddId)}',
+                ${BddTool.NumericFormater(hit.tenderId)},
+                ${BddTool.NumericFormater(hit.dataSourceId)},
+                '${BddTool.ChaineFormater(hit.procurementId)}',
+                '${BddTool.ChaineFormater(hit.tenderUuid)}',
+                '${BddTool.ChaineFormater(hit.title)}',
+                '${BddTool.ChaineFormater(hit.description)}',
+                '${BddTool.ChaineFormater(hit.lang)}',
+                '${BddTool.ChaineFormater(hit.contact.firstName)}',
+                '${BddTool.ChaineFormater(hit.contact.lastName)}',
+                '${BddTool.ChaineFormater(hit.contact.address)}',
+                '${BddTool.ChaineFormater(hit.contact.city)}',
+                '${BddTool.ChaineFormater(hit.contact.state)}',
+                '${BddTool.ChaineFormater(hit.contact.country)}',
+                '${BddTool.ChaineFormater(hit.contact.email)}',
+                '${BddTool.ChaineFormater(hit.contact.phone)}',
+                '${BddTool.ChaineFormater(hit.buyer.name)}',
+                '${BddTool.ChaineFormater(hit.buyer.country)}',
+                '${BddTool.ChaineFormater(hit.procurementMethod)}',
+                '${BddTool.ChaineFormater(hit.noticeType)}',
+                '${BddTool.ChaineFormater(hit.country)}',
+                '${BddTool.ChaineFormater(hit.estimatedCost)}',
+                '${BddTool.ChaineFormater(hit.currency)}',
+                '${BddTool.ChaineFormater(hit.publicationDate ? hit.publicationDate.replace('-', '').replace('-', '') : '')}',
+                '${BddTool.ChaineFormater(hit.cpvsOrigine)}',
+                '${BddTool.ChaineFormater(cpvs)}',
+                '${BddTool.ChaineFormater(cpvDescriptions)}',
+                '${BddTool.ChaineFormater(hit.words)}',
+                '${BddTool.ChaineFormater(hit.bidDeadlineDate ? hit.bidDeadlineDate.replace('-', '').replace('-', '') : '')}',
+                '${BddTool.ChaineFormater(hit.sourceUrl)}',
+                ${BddTool.DateFormater(termDate)},
+                '${BddTool.ChaineFormater(hit.fileSource)}',
                 0,
-                '${BddTool.ChaineFormater(hit.objectID, BddEnvironnement, BddId)}',
+                '${BddTool.ChaineFormater(hit.objectID)}',
                 0,
                 ${BddTool.DateNow(BddEnvironnement, BddId)},
                 ${BddTool.DateNow(BddEnvironnement, BddId)}
               )
             `
-            await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+            await BddTool.QueryExecBdd2(query)
             tenderAddNbr++
           } else {
             query = `
-              UPDATE      dgmarket 
-              SET         procurementId = '${BddTool.ChaineFormater(hit.procurementId, BddEnvironnement, BddId)}', 
-                          tenderUuid = '${BddTool.ChaineFormater(hit.tenderUuid, BddEnvironnement, BddId)}', 
-                          title = '${BddTool.ChaineFormater(hit.title, BddEnvironnement, BddId)}', 
-                          description = '${BddTool.ChaineFormater(hit.description, BddEnvironnement, BddId)}', 
-                          lang = '${BddTool.ChaineFormater(hit.lang, BddEnvironnement, BddId)}', 
-                          contactFirstName = '${BddTool.ChaineFormater(hit.contact.firstName, BddEnvironnement, BddId)}', 
-                          contactLastName = '${BddTool.ChaineFormater(hit.contact.lastName, BddEnvironnement, BddId)}', 
-                          contactAddress = '${BddTool.ChaineFormater(hit.contact.address, BddEnvironnement, BddId)}', 
-                          contactCity = '${BddTool.ChaineFormater(hit.contact.city, BddEnvironnement, BddId)}', 
-                          contactState = '${BddTool.ChaineFormater(hit.contact.state, BddEnvironnement, BddId)}', 
-                          contactCountry = '${BddTool.ChaineFormater(hit.contact.country, BddEnvironnement, BddId)}', 
-                          contactEmail = '${BddTool.ChaineFormater(hit.contact.email, BddEnvironnement, BddId)}', 
-                          contactPhone = '${BddTool.ChaineFormater(hit.contact.phone, BddEnvironnement, BddId)}', 
-                          buyerName = '${BddTool.ChaineFormater(hit.buyer.name, BddEnvironnement, BddId)}', 
-                          buyerCountry = '${BddTool.ChaineFormater(hit.buyer.country, BddEnvironnement, BddId)}', 
-                          procurementMethod = '${BddTool.ChaineFormater(hit.procurementMethod, BddEnvironnement, BddId)}', 
-                          noticeType = '${BddTool.ChaineFormater(hit.noticeType, BddEnvironnement, BddId)}', 
-                          country = '${BddTool.ChaineFormater(hit.country, BddEnvironnement, BddId)}', 
-                          estimatedCost = '${BddTool.ChaineFormater(hit.estimatedCost, BddEnvironnement, BddId)}', 
-                          currency = '${BddTool.ChaineFormater(hit.currency, BddEnvironnement, BddId)}', 
-                          publicationDate = '${BddTool.ChaineFormater(hit.publicationDate ? hit.publicationDate.replace('-', '').replace('-', '') : '', BddEnvironnement, BddId)}', 
-                          cpvsOrigine = '${BddTool.ChaineFormater(hit.cpvsOrigine, BddEnvironnement, BddId)}', 
-                          cpvs = '${BddTool.ChaineFormater(cpvs, BddEnvironnement, BddId)}', 
-                          cpvDescriptions = '${BddTool.ChaineFormater(cpvDescriptions, BddEnvironnement, BddId)}', 
-                          words = '${BddTool.ChaineFormater(hit.words, BddEnvironnement, BddId)}', 
-                          bidDeadlineDate = '${BddTool.ChaineFormater(hit.bidDeadlineDate ? hit.bidDeadlineDate.replace('-', '').replace('-', '') : '', BddEnvironnement, BddId)}', 
-                          sourceUrl = '${BddTool.ChaineFormater(hit.sourceUrl, BddEnvironnement, BddId)}', 
-                          termDate = ${BddTool.DateFormater(termDate, BddEnvironnement, BddId)}, 
-                          fileSource = '${BddTool.ChaineFormater(hit.fileSource, BddEnvironnement, BddId)}', 
-                          algoliaId = '${BddTool.ChaineFormater(hit.objectID, BddEnvironnement, BddId)}', 
+              UPDATE      tenders 
+              SET         procurementId = '${BddTool.ChaineFormater(hit.procurementId)}', 
+                          tenderUuid = '${BddTool.ChaineFormater(hit.tenderUuid)}', 
+                          title = '${BddTool.ChaineFormater(hit.title)}', 
+                          description = '${BddTool.ChaineFormater(hit.description)}', 
+                          lang = '${BddTool.ChaineFormater(hit.lang)}', 
+                          contactFirstName = '${BddTool.ChaineFormater(hit.contact.firstName)}', 
+                          contactLastName = '${BddTool.ChaineFormater(hit.contact.lastName)}', 
+                          contactAddress = '${BddTool.ChaineFormater(hit.contact.address)}', 
+                          contactCity = '${BddTool.ChaineFormater(hit.contact.city)}', 
+                          contactState = '${BddTool.ChaineFormater(hit.contact.state)}', 
+                          contactCountry = '${BddTool.ChaineFormater(hit.contact.country)}', 
+                          contactEmail = '${BddTool.ChaineFormater(hit.contact.email)}', 
+                          contactPhone = '${BddTool.ChaineFormater(hit.contact.phone)}', 
+                          buyerName = '${BddTool.ChaineFormater(hit.buyer.name)}', 
+                          buyerCountry = '${BddTool.ChaineFormater(hit.buyer.country)}', 
+                          procurementMethod = '${BddTool.ChaineFormater(hit.procurementMethod)}', 
+                          noticeType = '${BddTool.ChaineFormater(hit.noticeType)}', 
+                          country = '${BddTool.ChaineFormater(hit.country)}', 
+                          estimatedCost = '${BddTool.ChaineFormater(hit.estimatedCost)}', 
+                          currency = '${BddTool.ChaineFormater(hit.currency)}', 
+                          publicationDate = '${BddTool.ChaineFormater(hit.publicationDate ? hit.publicationDate.replace('-', '').replace('-', '') : '')}', 
+                          cpvsOrigine = '${BddTool.ChaineFormater(hit.cpvsOrigine)}', 
+                          cpvs = '${BddTool.ChaineFormater(cpvs)}', 
+                          cpvDescriptions = '${BddTool.ChaineFormater(cpvDescriptions)}', 
+                          words = '${BddTool.ChaineFormater(hit.words)}', 
+                          bidDeadlineDate = '${BddTool.ChaineFormater(hit.bidDeadlineDate ? hit.bidDeadlineDate.replace('-', '').replace('-', '') : '')}', 
+                          sourceUrl = '${BddTool.ChaineFormater(hit.sourceUrl)}', 
+                          termDate = ${BddTool.DateFormater(termDate)}, 
+                          fileSource = '${BddTool.ChaineFormater(hit.fileSource)}', 
+                          algoliaId = '${BddTool.ChaineFormater(hit.objectID)}', 
                           status = 0, 
                           updateDate = ${BddTool.DateNow(BddEnvironnement, BddId)} 
-              WHERE       id = ${BddTool.NumericFormater(hit.tenderId, BddEnvironnement, BddId)} 
+              WHERE       id = ${BddTool.NumericFormater(hit.tenderId)} 
             `
-            await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+            await BddTool.QueryExecBdd2(query)
             tenderUpdNbr++
           }
         }

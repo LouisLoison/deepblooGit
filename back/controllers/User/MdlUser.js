@@ -41,19 +41,19 @@ exports.Login = (username, password, userToken) => {
                   email AS "email", 
                   username AS "username", 
                   password AS "password" 
-        FROM      user 
+        FROM      "user" 
       `
       if (hivebriteId) {
         query += `
-          WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId, BddEnvironnement, BddId)} 
+          WHERE     hivebriteId = ${BddTool.NumericFormater(hivebriteId)} 
         `
       } else {
         query += `
-          WHERE     email = '${BddTool.ChaineFormater(username, BddEnvironnement, BddId)}' 
-          AND       password = '${BddTool.ChaineFormater(password, BddEnvironnement, BddId)}' 
+          WHERE     email = '${BddTool.ChaineFormater(username)}' 
+          AND       password = '${BddTool.ChaineFormater(password)}' 
         `
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       let user = {}
       for (let record of recordset) {
         user = { 
@@ -102,6 +102,7 @@ exports.List = (filter) => {
       const BddEnvironnement = config.prefixe
       let query = `
         SELECT    userId AS "userId", 
+                  uuid AS "uuid", 
                   hivebriteId AS "hivebriteId", 
                   type AS "type", 
                   email AS "email", 
@@ -137,37 +138,43 @@ exports.List = (filter) => {
                   status AS "status",
                   creationDate AS "creationDate",
                   updateDate AS "updateDate"
-        FROM      user 
+        FROM      "user" 
       `
       if (filter) {
         let where = ``
         if (filter.userId) {
           if (where !== '') { where += 'AND ' }
-          where += `userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `userId = ${BddTool.NumericFormater(filter.userId)} \n`
+        }
+        if (filter.uuid && filter.uuid !== '') {
+          if (where !== '') {
+            where += 'AND '
+          }
+          where += `uuid = '${BddTool.ChaineFormater(filter.uuid)}' \n`
         }
         if (filter.email) {
           if (where !== '') { where += 'AND ' }
-          where += `email = '${BddTool.ChaineFormater(filter.email, BddEnvironnement, BddId)}' \n`
+          where += `email = '${BddTool.ChaineFormater(filter.email)}' \n`
         }
         if (filter.hivebriteId) {
           if (where !== '') { where += 'AND ' }
-          where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId, BddEnvironnement, BddId)} \n`
+          where += `hivebriteId = ${BddTool.NumericFormater(filter.hivebriteId)} \n`
         }
         if (filter.organizationId) {
           if (where !== '') { where += 'AND ' }
-          where += `organizationId = ${BddTool.NumericFormater(filter.organizationId, BddEnvironnement, BddId)} \n`
+          where += `organizationId = ${BddTool.NumericFormater(filter.organizationId)} \n`
         }
         if (filter.type) {
           if (where !== '') { where += 'AND ' }
-          where += `type = ${BddTool.NumericFormater(filter.type, BddEnvironnement, BddId)} \n`
+          where += `type = ${BddTool.NumericFormater(filter.type)} \n`
         }
         if (filter.types) {
           if (where !== '') { where += 'AND ' }
-          where += `type IN (${BddTool.ArrayNumericFormater(filter.types, BddEnvironnement, BddId)}) \n`
+          where += `type IN (${BddTool.ArrayNumericFormater(filter.types)}) \n`
         }
         if (filter.doNotContact) {
           if (where !== '') { where += 'AND ' }
-          where += `doNotContact = ${BddTool.NumericFormater(filter.doNotContact, BddEnvironnement, BddId)} \n`
+          where += `doNotContact = ${BddTool.NumericFormater(filter.doNotContact)} \n`
         }
         if (filter.hasConnexionTender) {
           if (where !== '') { where += 'AND ' }
@@ -179,18 +186,19 @@ exports.List = (filter) => {
         }
         if (filter.notifSend) {
           if (where !== '') { where += 'AND ' }
-          where += `notifSend = ${BddTool.NumericFormater(filter.notifSend, BddEnvironnement, BddId)} \n`
+          where += `notifSend = ${BddTool.NumericFormater(filter.notifSend)} \n`
         }
         if (filter.status) {
           if (where !== '') { where += 'AND ' }
-          where += `status = ${BddTool.NumericFormater(filter.status, BddEnvironnement, BddId)} \n`
+          where += `status = ${BddTool.NumericFormater(filter.status)} \n`
         }
         if (where !== '') { query += 'WHERE ' + where }
       }
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         users.push({
           userId: record.userId,
+          uuid: record.uuid,
           hivebriteId: record.hivebriteId,
           type: record.type,
           email: record.email,
@@ -241,7 +249,7 @@ exports.User = (userId) => {
         let filter = {
           userId
         }
-        let users = await this.List(filter);
+        let users = await this.List(filter)
         if (users && users.length > 0) {
           user = users[0];
         }
@@ -267,7 +275,7 @@ exports.UserCpvs = (userId) => {
         FROM        userCpv 
         WHERE       userCpv.userId = ${userId} 
       `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         cpvs.push({
           cpvCode: record.cpvCode,
@@ -293,11 +301,11 @@ exports.UserDelete = (userId) => {
         throw new Error("No available id !")
       }
 
-      let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let query = `DELETE FROM userCpv WHERE userId = ${BddTool.NumericFormater(userId)} `
+      await BddTool.QueryExecBdd2(query)
 
-      query = `DELETE FROM user WHERE userId = ${BddTool.NumericFormater(userId, BddEnvironnement, BddId)} `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      query = `DELETE FROM "user" WHERE userId = ${BddTool.NumericFormater(userId)} `
+      await BddTool.QueryExecBdd2(query)
 
       resolve()
     } catch (err) {
@@ -318,9 +326,9 @@ exports.Memberships = (userId) => {
         memberships = membershipsResponse.data.memberships
       }
       
-      let isFreeMembership = false;
-      let isPremiumMembership = false;
-      let isBusinessMembership = false;
+      let isFreeMembership = false
+      let isPremiumMembership = false
+      let isBusinessMembership = false
       for (let membership of memberships) {
         if (
           membership.type_name.startsWith('Free Trial')
@@ -393,7 +401,7 @@ exports.AddUpdate = (user) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let userNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      let userNew = await BddTool.RecordAddUpdate('user', user)
       resolve(userNew)
     } catch (err) { reject(err) }
   })
@@ -406,7 +414,7 @@ exports.synchroNew = () => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
       
@@ -502,7 +510,7 @@ exports.synchroNew = () => {
 
         if (update) {
           computed.updateDate = new Date()
-          const response = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', computed)
+          const response = await BddTool.RecordAddUpdate('user', computed)
           if (response) {
             user.userId = response.userId
           }
@@ -551,7 +559,7 @@ exports.Synchro = () => {
             creationDate: new Date(),
             updateDate: new Date()
           }
-          userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+          userBdd = await BddTool.RecordAddUpdate('user', userBdd)
         } else {
           if (
             userBdd.hivebriteId !== user.id
@@ -563,7 +571,7 @@ exports.Synchro = () => {
             userBdd.email = user.email
             userBdd.username = user.name.substring(0, 100)
             userBdd.updateDate = new Date()
-            await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+            await BddTool.RecordAddUpdate('user', userBdd)
           }
         }
       }
@@ -616,7 +624,7 @@ exports.SynchroAllFull = (pageNbr, perPage) => {
       let usersBdd = await this.List()
       let organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
 
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const RegionList = require(process.cwd() + '/public/constants/regions.json')
 
       // Update user bdd list
@@ -658,17 +666,14 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
         organizationsBdd = await require(process.cwd() + '/controllers/Organization/MdlOrganization').List()
       }
       if (!CpvList) {
-        CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+        CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       }
       if (!RegionList) {
         RegionList = require(process.cwd() + '/public/constants/regions.json')
       }
 
       // Update user bdd list
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let userBdd = usersBdd.find(a => a.userId === userId)
       if (!userBdd) {
@@ -676,8 +681,8 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
       }
 
       if (!user) {
-        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`);
-        user = userExperiencesResponse.data.user;
+        let userExperiencesResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/users/${userBdd.hivebriteId}`)
+        user = userExperiencesResponse.data.user
       }
 
       // Get user organization by user experiences
@@ -699,7 +704,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
         //   let userExperienceResponse = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').get(`api/admin/v1/experiences/${experience.id}`);
         // }
         let organizationDgmarketId = experiences[0].companies_company_id
-        organization = organizationsBdd.find(a => a.dgmarketId === organizationDgmarketId)
+        organization = organizationsBdd.find(a => a.dataSourceId === organizationDgmarketId)
         if (organization) {
           organizationId = organization.organizationId
         }
@@ -782,7 +787,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           creationDate: new Date(),
           updateDate: new Date()
         }
-        userBdd = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+        userBdd = await BddTool.RecordAddUpdate('user', userBdd)
       } else {
         if (
           userBdd.email !== user.email
@@ -829,7 +834,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           userBdd.notifContactBySms = user.notifContactBySms
           userBdd.notifContactByPost = user.notifContactByPost
           userBdd.updateDate = new Date()
-          await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', userBdd)
+          await BddTool.RecordAddUpdate('user', userBdd)
         }
       }
 
@@ -853,7 +858,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           DELETE FROM userCpv 
           WHERE userId = ${userBdd.userId} 
       `
-      await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      await BddTool.QueryExecBdd2(query)
       for (let cpv of cpvs) {
         let userCpv= {
           userId: userBdd.userId,
@@ -862,7 +867,7 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
           origineType: cpv.origineType,
           rating: cpv.rating,
         }
-        await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userCpv', userCpv)
+        await BddTool.RecordAddUpdate('userCpv', userCpv)
       }
 
       // Synchro membership
@@ -893,7 +898,7 @@ exports.SetPremium = (userId) => {
       if (!user.password || user.password.trim() === '') {
         user.password = Math.random().toString(36).slice(-10)
       }
-      await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'user', user)
+      await BddTool.RecordAddUpdate('user', user)
       resolve(user)
     } catch (err) { reject(err) }
   })
@@ -978,7 +983,7 @@ exports.Opportunity = (userId) => {
           WHERE       userCpv.userId = ${user.userId} 
         `
         query += '  ORDER BY userCpv.cpvCode '
-        recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+        recordset = await BddTool.QueryExecBdd2(query)
         let userCpvCode = null
         for (var record of recordset) {
           if (userCpvCode !== record.userCpvCode) {
@@ -1099,16 +1104,13 @@ exports.OpportunityDownloadCsv = (tenderIds) => {
   })
 }
 
-exports.SendPeriodicDashboard = () => {
+exports.SendPeriodicDashboard = (userUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const moment = require('moment')
       const htmlToText = require('html-to-text')
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
-      const CpvList = await require(process.cwd() + '/controllers/cpv/MdlCpv').CpvList()
+      const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
       const tenderMax = 30
 
       const types = [1, 2, 4, 5]
@@ -1116,6 +1118,14 @@ exports.SendPeriodicDashboard = () => {
 
       let emailSents = []
       for (const user of users) {
+        if (
+          userUuid
+          && userUuid.trim() !== ''
+          && user.uuid !== userUuid
+        ) {
+          continue
+        }
+
         /*
         if (user.email.trim() !== 'jeancazaux@hotmail.com') {
           continue
@@ -1133,11 +1143,10 @@ exports.SendPeriodicDashboard = () => {
         let to = user.email.trim()
 
         // Get Automatic query
-        /*
         let automaticQuerys = null
         const tenderGroups = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGroupList(null, user.userId)
         if (tenderGroups && tenderGroups.length) {
-          const automaticQuerys = tenderGroups.filter(a => a.notify && a.searchRequest)
+          automaticQuerys = tenderGroups.filter(a => a.notify && a.searchRequest)
           if (automaticQuerys && automaticQuerys.length) {
             for (const automaticQuery of automaticQuerys) {
               const searchRequest = JSON.parse(automaticQuery.searchRequest)
@@ -1146,188 +1155,245 @@ exports.SendPeriodicDashboard = () => {
             }
           }
         }
-        */
 
-        // Get CPVs
-        let cpvs = []
-        if (user.notifCpvs && user.notifCpvs.trim() !== '') {
-          const notifCpvs = user.notifCpvs.split(',')
-          cpvs = CpvList.filter(a => notifCpvs.includes(a.code.toString()))
-        } else {
-          const userCpvs = await this.UserCpvs(dataSynchroFull.userId)
-          if (userCpvs && userCpvs.length) {
-            const userCpvCodes = userCpvs.map(a => a.cpvCode)
-            cpvs = CpvList.filter(a => userCpvCodes.includes(a.code.toString()))
-          }
-        }
-        if (!cpvs || !cpvs.length) {
-          continue
-        }
-
-        // Get countries
-        let regions = dataSynchroFull.regions.trim()
-        if (user.notifRegions && user.notifRegions.trim() !== '') {
-          regions = user.notifRegions
-        }
-        const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
-
-        // Get tenders
-        let query = `
-          SELECT    dgmarket.id, 
-                    dgmarket.description, 
-                    dgmarket.publicationDate, 
-                    dgmarket.bidDeadlineDate, 
-                    dgmarket.country, 
-                    tenderCriterionCpv.cpvId, 
-                    COUNT(*) AS Nbr, 
-                    SUM(tenderCriterionCpv.findCount) AS Weight 
-          FROM      dgmarket 
-          LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = dgmarket.id 
-          WHERE     dgmarket.noticeType != 'Contract Award' 
-          AND       dgmarket.updateDate > DATE_SUB(NOW(),INTERVAL 7 day) 
-          AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId), BddEnvironnement, BddId)}) `
-        if (countrys && countrys.length) {
-          query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys, BddEnvironnement, BddId)}) `
-        }
-        query = query + `
-          GROUP BY  dgmarket.id, 
-                    dgmarket.description, 
-                    dgmarket.publicationDate, 
-                    dgmarket.bidDeadlineDate, 
-                    dgmarket.country, 
-                    tenderCriterionCpv.cpvId 
-          ORDER BY  SUM(tenderCriterionCpv.findCount) DESC 
-        `
-        let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
-        let tenders = []
-        for (var record of recordset) {
-          tenders.push({
-            tenderId: record.id,
-            description: record.description,
-            publicationDate: record.publicationDate,
-            bidDeadlineDate: record.bidDeadlineDate,
-            country: record.country,
-            cpvId: record.cpvId,
-            Weight: record.Weight
-          })
-        }
-
-        // Group tenderds by CPV
-        let tenderIds = []
-        for (const cpv of cpvs) {
-          const tenderCpvs = tenders.filter(a => a.cpvId === cpv.cpvId && !tenderIds.includes(a.tenderId))
-          cpv.tenders = tenderCpvs.slice(0, tenderMax)
-          cpv.tenderLeftCount = tenderCpvs.length - tenderMax
-          tenderIds = tenderIds.concat(cpv.tenders.map(a => a.tenderId))
-        }
-
-        let subject = `DeepBloo - Business opportunities`
-
-        // Text version
-        let cpvLabels = cpvs.map(a => a.label)
         let text = ``
         text += `Dear ${user.username},\r\n`
         text += `\r\n`
-        if (cpvLabels && cpvLabels.length && regions && regions.length) {
-          text += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions.split(',').join(', ')}).\r\n`
-        } else {
-          text += `Please find your summary of business opportunities corresponding to your profile.\r\n`
-          text += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences. Please complete your profile with the CPV codes and Regions to get a personalized pipeline.\r\n`
-        }
-        text += `\r\n`
-        text += `There are ${tenders.length} live opportunities (not yet expired) corresponding to your criteria.\r\n`
-        text += `\r\n`
-        text += `Regards\r\n`
-        text += `The Deepbloo Team\r\n`
-        text += `Mail desinscription\r\n`
-
-        // HTML version
         let html = ``
         html += `Dear ${user.username},<br>`
         html += `<br>`
-        if (cpvLabels && cpvLabels.length && regions && regions.trim() !== '') {
-          html += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels.join(', ')} in ${regions.split(',').join(', ')}).<br>`
+        let tenders = []
+        if (automaticQuerys && automaticQuerys.length) {
+          text += `Please find your summary of business opportunities corresponding to your queries pipeline.\r\n`
+          for (const automaticQuery of automaticQuerys) {
+            let tenderCount = 0
+            if (automaticQuery.tenders) {
+              html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">Pipeline : ${automaticQuery.label}</div><br>`
+              html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
+              html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
+              html += `    <td>Country</td>`
+              html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
+              html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
+              html += `    <td>Description</td>`
+              html += `    <td>Link</td>`
+              html += `  </tr>`
+              for (const tender of automaticQuery.tenders) {
+                if (!tenders.find(a => a.id.raw === tender.id.raw)) {
+                  const description = htmlToText.fromString(tender.description.raw).replace(/<[^>]+>/g, ' ')
+                  html += `  <tr style="font-size: 0.9em;">`
+                  html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
+                  html += `      ${tender.country.raw}`
+                  html += `    </td>`
+                  html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+                  html += `      ${moment(tender.publication_timestamp.raw).format('YYYY-MM-DD')}`
+                  html += `    </td>`
+                  html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+                  html += `      ${moment(tender.bid_deadline_timestamp.raw).format('YYYY-MM-DD')}`
+                  html += `    </td>`
+                  html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
+                  html += `      ${description.substring(0, 150)}...`
+                  html += `    </td>`
+                  html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+                  html += `      <a href="https://prod.deepbloo.com/#/tender?tenderUuid=${tender.id.raw}" target="_blank">open</a>`
+                  html += `    </td>`
+                  html += `  </tr>`
+                  tenders.push(tender)
+                  tenderCount = tenderCount + 1
+                  if (tenderCount > 10) {
+                    break
+                  }
+                }
+              }
+              html += `</table>`
+              if (automaticQuery.tenders.length - tenderCount > 0) {
+                html += `<div style="margin: 20px 0px 10px 10px;">`
+                html += `  <a href="https://platform.deepbloo.com/page/tenders" target="_blank">`
+                html += `    There are ${automaticQuery.tenders.length - tenderCount} other tenders with this CPV`
+                html += `  </a>`
+                html += `</div>`
+              }
+              html += `<br><br>`
+            }
+          }
+          text += `\r\n`
+          text += `There are ${tenders.length} live opportunities (not yet expired) corresponding to your criteria.\r\n`
+          text += `\r\n`
+          text += `Regards\r\n`
+          text += `The Deepbloo Team\r\n`
+          text += `Mail desinscription\r\n`
         } else {
-          html += `Please find your summary of business opportunities corresponding to your profile.<br>`
-          html += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences.`
-          html += `<a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank">Please complete your profile with the CPV codes and Regions to get a personalized pipeline.</a><br>`
-          html += `<br>`
-        }
-        html += `<br>`
-
-        for (const cpv of cpvs) {
-          if (!cpv.tenders.length) {
+          // Get CPVs
+          let cpvs = []
+          if (user.notifCpvs && user.notifCpvs.trim() !== '') {
+            const notifCpvs = user.notifCpvs.split(',')
+            cpvs = CpvList.filter(a => notifCpvs.includes(a.code.toString()))
+          } else {
+            const userCpvs = await this.UserCpvs(dataSynchroFull.userId)
+            if (userCpvs && userCpvs.length) {
+              const userCpvCodes = userCpvs.map(a => a.cpvCode)
+              cpvs = CpvList.filter(a => userCpvCodes.includes(a.code.toString()))
+            }
+          }
+          if (!cpvs || !cpvs.length) {
             continue
           }
-          html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">CPV : ${cpv.label}</div><br>`
-          html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
-          html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
-          html += `    <td>Country</td>`
-          html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
-          html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
-          html += `    <td>Description</td>`
-          html += `    <td>Link to tender</td>`
-          html += `  </tr>`
-          for (const tender of cpv.tenders) {
-            const cpv = cpvs.find(a => a.cpvId === tender.cpvId)
-            const description = htmlToText.fromString(tender.description).replace(/<[^>]+>/g, ' ');
-            html += `  <tr style="font-size: 0.9em;">`
-            html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
-            html += `      ${tender.country}`
-            html += `    </td>`
-            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-            html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
-            html += `    </td>`
-            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-            html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
-            html += `    </td>`
-            html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
-            html += `      ${description.substring(0, 150)}...`
-            html += `    </td>`
-            html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
-            html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}&tenderUuid=${tender.tenderUuid}" target="_blank">#${tender.tenderId}</a>`
-            html += `    </td>`
-            html += `  </tr>`
-          }
-          html += `</table>`
-          if (cpv.tenderLeftCount > 0) {
-            html += `<div style="margin: 20px 0px 10px 10px;">`
-            html += `  <a href="https://platform.deepbloo.com/page/tenders" target="_blank">`
-            html += `    There are ${cpv.tenderLeftCount} other tenders with this CPV`
-            html += `  </a>`
-            html += `</div>`
-          }
-          html += `<br><br>`
-        }
 
-        if (user.type === 1 || user.type === 4) {
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
+          // Get countries
+          let regions = dataSynchroFull.regions.trim()
+          if (user.notifRegions && user.notifRegions.trim() !== '') {
+            regions = user.notifRegions
+          }
+          const countrys = require(`${process.cwd()}/controllers/CtrlTool`).countrysFromRegions(regions)
+
+          // Get tenders
+          let query = `
+            SELECT    tenders.id AS "id", 
+                      tenders.description AS "description", 
+                      tenders.publicationDate AS "publicationDate", 
+                      tenders.bidDeadlineDate AS "bidDeadlineDate", 
+                      tenders.country AS "country", 
+                      tenderCriterionCpv.cpvId AS "cpvId", 
+                      COUNT(*) AS "Nbr", 
+                      SUM(tenderCriterionCpv.findCount) AS "Weight" 
+            FROM      tenders 
+            LEFT JOIN tenderCriterionCpv ON tenderCriterionCpv.tenderId = tenders.id 
+            WHERE     tenders.noticeType != 'Contract Award' 
+            AND       tenders.updateDate > (NOW() - INTERVAL '7 day') 
+            AND       tenderCriterionCpv.cpvId IN (${BddTool.ArrayNumericFormater(cpvs.map(a => a.cpvId))}) `
+          if (countrys && countrys.length) {
+            query = query + `AND       country IN (${BddTool.ArrayStringFormat(countrys)}) `
+          }
+          query = query + `
+            GROUP BY  tenders.id, 
+                      tenders.description, 
+                      tenders.publicationDate, 
+                      tenders.bidDeadlineDate, 
+                      tenders.country, 
+                      tenderCriterionCpv.cpvId 
+            ORDER BY  SUM(tenderCriterionCpv.findCount) DESC 
+          `
+          let recordset = await BddTool.QueryExecBdd2(query)
+          for (var record of recordset) {
+            tenders.push({
+              tenderId: record.id,
+              description: record.description,
+              publicationDate: record.publicationDate,
+              bidDeadlineDate: record.bidDeadlineDate,
+              country: record.country,
+              cpvId: record.cpvId,
+              Weight: record.Weight
+            })
+          }
+
+          // Group tenderds by CPV
+          let tenderIds = []
+          for (const cpv of cpvs) {
+            const tenderCpvs = tenders.filter(a => a.cpvId === cpv.cpvId && !tenderIds.includes(a.tenderId))
+            cpv.tenders = tenderCpvs.slice(0, tenderMax)
+            cpv.tenderLeftCount = tenderCpvs.length - tenderMax
+            tenderIds = tenderIds.concat(cpv.tenders.map(a => a.tenderId))
+          }
+
+          // Text version
+          let cpvLabels = cpvs.map(a => a.label)
+          if (cpvLabels && cpvLabels.length && regions && regions.length) {
+            text += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels} in ${regions.split(',').join(', ')}).\r\n`
+          } else {
+            text += `Please find your summary of business opportunities corresponding to your profile.\r\n`
+            text += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences. Please complete your profile with the CPV codes and Regions to get a personalized pipeline.\r\n`
+          }
+          text += `\r\n`
+          text += `There are ${tenders.length} live opportunities (not yet expired) corresponding to your criteria.\r\n`
+          text += `\r\n`
+          text += `Regards\r\n`
+          text += `The Deepbloo Team\r\n`
+          text += `Mail desinscription\r\n`
+
+          // HTML version
+          if (cpvLabels && cpvLabels.length && regions && regions.trim() !== '') {
+            html += `Please find your summary of business opportunities corresponding to your profile (${cpvLabels.join(', ')} in ${regions.split(',').join(', ')}).<br>`
+          } else {
+            html += `Please find your summary of business opportunities corresponding to your profile.<br>`
+            html += `Your pipeline of tenders may not be relevant as you have not completed  your profile with your business preferences.`
+            html += `<a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank">Please complete your profile with the CPV codes and Regions to get a personalized pipeline.</a><br>`
+            html += `<br>`
+          }
           html += `<br>`
-          html += `You can as well  update your business preferences in order to change your CPV's and Business areas to adjust your pipeline and the opportunities you will receive by email.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
-          html += `<br>`
-          html += `If you want to add more sources, to specify your own keywords to find relevant tenders or access to stats and dashboards of your pipeline, please contact us.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
-        } else if (user.type === 2) {
-          html += `You can update your business preferences in order to change your CPV’s and Business areas to adjust the type of opportunities you will receive by email.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
-          html += `<br>`
-          html += `If you want to Go on "Business+" membership in order to a access to a private pipeline of opportunities, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or ask any other question, please contact us.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
-        } else if (user.type === 5) {
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
-          html += `<br>`
-          html += `You can as well update your business preferences in order to change your CPV’s and Business areas to adjust your private pipeline and the opportunities you will receive by email.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
-          html += `<br>`
-          html += `If you want to get a demo, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or for any other queries, please contact us.<br>`
-          html += `<br>`
-          html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+
+          for (const cpv of cpvs) {
+            if (!cpv.tenders.length) {
+              continue
+            }
+            html += `<div style="font-weight: bold; color: #1e88e5; margin-bottom: 3px;">CPV : ${cpv.label}</div><br>`
+            html += `<table cellpadding=2 cellspacing=0 style="width: 100%;">`
+            html += `  <tr style="background-color: #494949; color: #ffffff; text-align: center; font-size: 0.8em;">`
+            html += `    <td>Country</td>`
+            html += `    <td style="min-width: 100px; max-width: 100px;">Publication</td>`
+            html += `    <td style="min-width: 100px; max-width: 100px;">Bid deadline</td>`
+            html += `    <td>Description</td>`
+            html += `    <td>Link to tender</td>`
+            html += `  </tr>`
+            for (const tender of cpv.tenders) {
+              const cpv = cpvs.find(a => a.cpvId === tender.cpvId)
+              const description = htmlToText.fromString(tender.description).replace(/<[^>]+>/g, ' ');
+              html += `  <tr style="font-size: 0.9em;">`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6; padding-right: 15px;">`
+              html += `      ${tender.country}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      ${moment(tender.publicationDate).format('YYYY-MM-DD')}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      ${moment(tender.bidDeadlineDate).format('YYYY-MM-DD')}`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6; width: 60%;">`
+              html += `      ${description.substring(0, 150)}...`
+              html += `    </td>`
+              html += `    <td style="border-bottom: 1px solid #d6d6d6;">`
+              html += `      <a href="https://prod.deepbloo.com/#/tender?tenderId=${tender.tenderId}&tenderUuid=${tender.tenderUuid}" target="_blank">#${tender.tenderId}</a>`
+              html += `    </td>`
+              html += `  </tr>`
+            }
+            html += `</table>`
+            if (cpv.tenderLeftCount > 0) {
+              html += `<div style="margin: 20px 0px 10px 10px;">`
+              html += `  <a href="https://platform.deepbloo.com/page/tenders" target="_blank">`
+              html += `    There are ${cpv.tenderLeftCount} other tenders with this CPV`
+              html += `  </a>`
+              html += `</div>`
+            }
+            html += `<br><br>`
+          }
+
+          if (user.type === 1 || user.type === 4) {
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
+            html += `<br>`
+            html += `You can as well  update your business preferences in order to change your CPV's and Business areas to adjust your pipeline and the opportunities you will receive by email.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+            html += `<br>`
+            html += `If you want to add more sources, to specify your own keywords to find relevant tenders or access to stats and dashboards of your pipeline, please contact us.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+          } else if (user.type === 2) {
+            html += `You can update your business preferences in order to change your CPV’s and Business areas to adjust the type of opportunities you will receive by email.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+            html += `<br>`
+            html += `If you want to Go on "Business+" membership in order to a access to a private pipeline of opportunities, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or ask any other question, please contact us.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+          } else if (user.type === 5) {
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/page/tenders" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">GO TO MY BUSINESS+</a></div>`
+            html += `<br>`
+            html += `You can as well update your business preferences in order to change your CPV’s and Business areas to adjust your private pipeline and the opportunities you will receive by email.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://platform.deepbloo.com/users/${user.hivebriteId}" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">UPDATE MY BUSINESS PREFERENCES</a></div>`
+            html += `<br>`
+            html += `If you want to get a demo, add more sources, specify your own keywords to find relevant tenders, access to stats and dashboards of your pipeline or for any other queries, please contact us.<br>`
+            html += `<br>`
+            html += `<div style="text-align: center; padding: 10px 0px 10px 0px; font-size: 0.9em;"><a href="https://zfrmz.com/mboskCSG6TIFctLumTgb" target="_blank" style="background-color: #3498DB; color: #ffffff; padding: 12px 45px; text-decoration: none;">Contact us</a></div>`
+          }
         }
 
         html += `<br>`
@@ -1344,12 +1410,13 @@ exports.SendPeriodicDashboard = () => {
             <p style="margin:0cm 0cm 0.0001pt; text-align:justify"><span style="font-size:10px"><span style="font-family:&quot;Times New Roman&quot;,serif"><span style="font-style:normal"><span style="font-variant-caps:normal"><span style="font-weight:normal"><span style="letter-spacing:normal"><span style="text-transform:none"><span style="white-space:normal"><span style="word-spacing:0px"><span style="text-decoration:none"><span style=""><span style="font-family:&quot;Helvetica Neue&quot;">&nbsp;</span></span></span></span></span></span></span></span></span></span></span></span></p>
           </div> 
         `
+
         emailSents.push({
           email: user.email,
           tendersLength: tenders.length
         })
         // to = "jeancazaux@hotmail.com"
-        await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
+        await require(process.cwd() + '/controllers/CtrlTool').sendMail(`DeepBloo - Business opportunities`, html, text, to)
       }
 
       resolve(emailSents)
@@ -1366,7 +1433,7 @@ exports.userNotifyAddUpdate = (userNotify) => {
       const BddTool = require(process.cwd() + '/global/BddTool')
       const BddId = 'deepbloo'
       const BddEnvironnement = config.prefixe
-      let userNotifyNew = await BddTool.RecordAddUpdate(BddId, BddEnvironnement, 'userNotify', userNotify)
+      let userNotifyNew = await BddTool.RecordAddUpdate('userNotify', userNotify)
       resolve(userNotifyNew)
     } catch (err) { reject(err) }
   })
@@ -1392,46 +1459,46 @@ exports.userNotifyList = (filter, userData, tenderData) => {
                   userNotify.updateDate AS "updateDate"`
       if (userData) {
         query += `,
-                    user.username AS "userName",
-                    user.email AS "userEmail",
-                    user.hivebriteId AS "userHivebriteId",
-                    user.photo AS "userPhoto",
+                    "user".username AS "userName",
+                    "user".email AS "userEmail",
+                    "user".hivebriteId AS "userHivebriteId",
+                    "user".photo AS "userPhoto",
                     recipient.username AS "recipientName",
                     recipient.hivebriteId AS "recipientHivebriteId",
                     recipient.photo AS "recipientPhoto" `
       }
       if (tenderData) {
         query += `,
-                    dgmarket.title AS "tenderTitle" `
+                    tenders.title AS "tenderTitle" `
       }
       query += `
         FROM      userNotify `
       if (userData) {
-        query += `LEFT JOIN  user ON user.userId = userNotify.userId \n`
-        query += `LEFT JOIN  user AS recipient ON recipient.userId = userNotify.recipientId \n`
+        query += `LEFT JOIN  "user" ON "user".userId = userNotify.userId \n`
+        query += `LEFT JOIN  "user" AS recipient ON recipient.userId = userNotify.recipientId \n`
       }
       if (tenderData) {
-        query += `LEFT JOIN  dgmarket ON dgmarket.id = userNotify.tenderId \n`
+        query += `LEFT JOIN  tenders ON tenders.id = userNotify.tenderId \n`
       }
       if (filter) {
         let where = ``
         if (filter.userId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.userId = ${BddTool.NumericFormater(filter.userId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.userId = ${BddTool.NumericFormater(filter.userId)} \n`
         }
         if (filter.recipientId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.recipientId = ${BddTool.NumericFormater(filter.recipientId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.recipientId = ${BddTool.NumericFormater(filter.recipientId)} \n`
         }
         if (filter.tenderId) {
           if (where !== '') { where += '        AND       ' }
-          where += `userNotify.tenderId = ${BddTool.NumericFormater(filter.tenderId, BddEnvironnement, BddId)} \n`
+          where += `userNotify.tenderId = ${BddTool.NumericFormater(filter.tenderId)} \n`
         }
         if (where !== '') { query += '        WHERE     ' + where }
       }
       query += `                  
         ORDER BY userNotify.creationDate DESC `
-      let recordset = await BddTool.QueryExecBdd2(BddId, BddEnvironnement, query)
+      let recordset = await BddTool.QueryExecBdd2(query)
       for (var record of recordset) {
         userNotifys.push({
           userNotifyId: record.userNotifyId,

@@ -99,6 +99,7 @@ app.post('/api/:Controller/:Methode', function(req, res) {
       res.end(JSON.stringify({ success: false, Error: 'Unknown methode !' }, null, 3))
     }
   } catch (err) {
+    console.log(err)
     res.end(JSON.stringify({ success: false, Error: 'Error' }, null, 3))
   }
 })
