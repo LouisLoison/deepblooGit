@@ -172,3 +172,5 @@ drop index tendercriterion_textparseid_scope_tenderuuid_unique ;
 create unique index tendercriterion_textparseid_word_scope_tenderuuid_unique on tendercriterion(textparseid, scope, word, tenderuuid);
 
 alter table document add column parentuuid uuid;
+
+alter table document alter column s3url varchar(500);
