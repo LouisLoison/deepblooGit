@@ -2317,7 +2317,7 @@ export default {
       this.documentImport = false;
     },
 
-    documentDeleteDialog(document) {
+    async documentDeleteDialog(document) {
       if (!document.documentUuid) {
         return;
       }
