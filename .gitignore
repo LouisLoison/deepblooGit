@@ -29,3 +29,7 @@ lambda/function/*/global
 lambda/build/
 
 .*.swp
+
+back/config/*
+
+
