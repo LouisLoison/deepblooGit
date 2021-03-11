@@ -1,0 +1,11 @@
+type Tender {
+  id: ID!
+  procurementId: String
+  owner: String
+  title: String
+  description: String
+}
+
+type Query {
+  getTender(id: ID): Tender
+}

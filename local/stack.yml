@@ -1,0 +1,51 @@
+version: '3.3'
+
+services:
+
+  db:
+    image: postgres:10.14-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: deepbloo
+      POSTGRES_USER: deepbloo
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    environment:
+    - "node.name=es-node"
+    - "discovery.type=single-node"
+    - "cluster.name=elastic-docker-cluster"
+    - "bootstrap.memory_lock=true"
+    - "ES_JAVA_OPTS=-Xms512m -Xmx2048m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+
+        #  appsearch complains aout a license and starts in "read-only mode" 
+        #  appsearch:
+        #    image: docker.elastic.co/enterprise-search/enterprise-search:7.9.2
+        #    environment:
+        #      - "elasticsearch.host=http://elasticsearch:9200"
+        #      - "allow_es_settings_modification=true"
+        #      - "JAVA_OPTS=-Xmx2048m"
+        #      - "secret_management.encryption_keys=[f0034cd8ff64b7ce4c799cb2f5c717572218e699dddc5dbb984d35aaf6dd3583]"
+        #    ports:
+        #      - 3002:3002
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.2
+    ports:
+      - "5601:5601"
+
