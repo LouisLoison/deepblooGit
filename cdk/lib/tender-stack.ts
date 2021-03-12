@@ -207,8 +207,8 @@ export class TenderStack extends Stack {
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/valueextraction'),
       handler: 'lambda_function.lambda_handler',
-      memorySize: 500,
-      reservedConcurrentExecutions: 20,
+      memorySize: 1720,
+      reservedConcurrentExecutions: 105,
       timeout: Duration.seconds(60),
       environment: {
       }

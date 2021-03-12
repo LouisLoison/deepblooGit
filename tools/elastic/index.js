@@ -124,7 +124,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     //const elasticRes = await indexToElasticsearch([elasticDoc], 'newtenders')
     //console.log(JSON.stringify(elasticRes, null, 2))
 
-    if (promiseTranche.length >= 18) {
+    if (promiseTranche.length >= 60) {
       await Promise.all(promiseTranche)
       await indexToElasticsearch(tranche, 'tenders')
       if (appTranche.length) {

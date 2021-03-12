@@ -77,6 +77,8 @@ exports.regionFromCountry = (country) => {
 }
 
 exports.sendMail = (subject, html, text, to, from) => {
+  console.log(`sendMail to ${to}`)
+
   return new Promise((resolve, reject) => {
     const nodeMailer = require('nodemailer')
     const transporter = nodeMailer.createTransport({
