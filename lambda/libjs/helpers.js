@@ -1,37 +1,5 @@
 const { AWS } = require('./config');
 const stream = require('stream')
-const path = require('path')
-
-const getS3Url = async (s3Url, extension) => {
-  // s3Url can be 'https://xxxxxx/tenders/tender%xxxxxx/xxxxxxx/xxxxx.pdf'
-  const s3UrlSliced = s3Url.split('/')
-  const baseS3Url = "https://" + "/".join(s3UrlSliced.slice(2, 5));
-  const documentFile = getFilename(s3Url)
-  const documentName = documentFile.split('.')[0];
-  const newDocumentFile = documentFile + extension;
-  return path.join(baseS3Url, documentName, newDocumentFile);
-}
-
-// const getS3ObjectUrl = async (objectName, extension) => {
-//   const documentObject = path.parse(objectName);
-//   const pathArray = objectName.split('/')
-//   const baseSource = pathArray.slice(0, 3).join('/');
-//   const newDocument = documentObject.name + extension;
-//   return path.join(baseSource, documentObject.name, newDocument);
-// }
-//
-const getFilename = async (objectUrl) => {
-  return objectUrl.split('/').slice(-1)[0]
-}
-//
-// const updateEventOutput = async (s3Url, objectName, event, newExtension) => {
-//   const filename = getFilename(s3Url)
-//   const newFilename = filename.split('.')[0] + `.${newExtension}`;
-//   event.s3Url = getS3Url(s3Url, newExtension);
-//   event.sourceUrl = event.s3Url;
-//   event.filename = newFilename;
-//   event.objectName = getS3ObjectUrl(objectName, newExtension);
-// }
 
 const getFileContent = async (bucketName, fileKey) => {
   const s3 = new AWS.S3({apiVersion: '2006-03-01'});
@@ -124,10 +92,6 @@ const onError = (err, res) => {
 }
 
 export {
-  getS3Url,
-  // getS3ObjectUrl,
-  getFilename,
-  // updateEventOutput,
   getFileContent,
   putFile,
   putStream,

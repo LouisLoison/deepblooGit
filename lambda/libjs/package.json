@@ -15,6 +15,7 @@
     "axios": "^0.21",
     "esm": "^3.2",
     "fs-extra": "^9.0",
+    "node-gs": "^0.1.1",
     "object-hash": "^2.0",
     "pg": "^8.5",
     "string-strip-html": "^8.1"
