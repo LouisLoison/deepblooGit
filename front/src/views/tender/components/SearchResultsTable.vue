@@ -807,7 +807,7 @@ export default {
       },
       {
         show: false,
-        title: "Woltage",
+        title: "Voltage",
         property: "voltage",
         menu: null
       },
