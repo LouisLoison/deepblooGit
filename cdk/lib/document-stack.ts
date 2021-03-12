@@ -133,9 +133,9 @@ export class DocumentStack extends Stack {
       runtime: Runtime.PYTHON_3_8,
       code: new AssetCode('../lambda/function/pdftobboxtext'),
       handler: 'lambda_function.lambda_handler',
-      memorySize: 500,
+      memorySize: 1720,
       reservedConcurrentExecutions: 20,
-      timeout: Duration.seconds(60),
+      timeout: Duration.seconds(120),
       environment: {
         DOCUMENTS_BUCKET: documentsBucket.bucketName,
         // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,

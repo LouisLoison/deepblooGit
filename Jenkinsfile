@@ -42,7 +42,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
-              npm run
+              npm run test:unit
             '''
           }
           post {
@@ -51,6 +51,21 @@ pipeline {
             }
           }
         }
+
+        stage('Build') {
+          steps {
+            sh '''
+              set -xe;
+              npm run build
+            '''
+          }
+          post {
+            failure {
+              slackSend channel: "#${env.ENV}", color: 'danger', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} build failed ❌(last commit by ${env.GIT_USERNAME}): failure (<${env.BUILD_URL}/console|Open>)"
+            }
+          }
+        }
+
 
         stage('Manual Judgment') {
           when {
@@ -78,11 +93,9 @@ pipeline {
               echo "Deploy in ${ENV}"
               # $(./tools/assume_role.sh $ENV)
               npm run deploy-all
-	      ssh deepbloo@172.31.1.146 "cd deepbloo-back && git pull && npm install && nohup npm run restart >> backend.log 2>&1"
-              ssh deepbloo-front@172.31.1.146 "cd deepbloo-front && git pull && npm install"
+	      ssh deepbloo@172.31.1.146 "cd platform/back && git pull && npm install && nohup npm run restart >> backend.log 2>&1"
               sleep 10
               aws cloudfront create-invalidation --distribution-id EEY9ER5MY2XRN --paths '/*'
-              aws cloudfront create-invalidation --distribution-id E3US7LPL6BXFWF --paths '/*'
             '''
           }
           post {
