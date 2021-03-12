@@ -801,13 +801,13 @@ export default {
       },
       {
         show: false,
-        title: "power",
+        title: "Power",
         property: "power",
         menu: null
       },
       {
         show: false,
-        title: "voltage",
+        title: "Woltage",
         property: "voltage",
         menu: null
       },
