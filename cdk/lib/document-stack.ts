@@ -1,12 +1,10 @@
-import { Chain, Choice, Condition, Fail, StateMachine, IStateMachine,  LogLevel, Map, Succeed, Pass, Parallel, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, StateMachine, IStateMachine,  LogLevel, Pass, Parallel } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
-import { S3EventSource, } from '@aws-cdk/aws-lambda-event-sources';
-import { Construct, Stack, StackProps, Duration, CfnOutput } from '@aws-cdk/core';
+import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
-// import iam = require('@aws-cdk/aws-iam');
 import logs = require('@aws-cdk/aws-logs');
 
 
@@ -297,8 +295,8 @@ export class DocumentStack extends Stack {
 
     const processZip = new Parallel(this, 'Zip process', {})
       .branch(zipExtractionTask)
- 
-    const documentIterator = downloadTask
+
+    const documentProcess = Chain.start(downloadTask)
       .next(new Choice(this, 'Document type ?')
         .when(Condition.stringEquals('$.document.contentType', 'text/html'), processHtml)
         .when(Condition.or(
@@ -316,15 +314,8 @@ export class DocumentStack extends Stack {
 
     const logGroup = new logs.LogGroup(this, 'DocumentLogGroup');
 
-    const documentMap = new Map(this, 'Document Map', {
-      inputPath: '$',
-      itemsPath: '$.newSourceUrls',
-      resultPath: '$.downloadedData',
-      maxConcurrency: 2,
-    }).iterator(documentIterator);
-
     this.documentMachine = new StateMachine(this, 'DocumentProcess', {
-      definition: documentMap,
+      definition: documentProcess,
       logs: {
         destination: logGroup,
         level: LogLevel.ERROR,

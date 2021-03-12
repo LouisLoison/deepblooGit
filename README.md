@@ -31,9 +31,6 @@ npm run sam <STACK_NAME> <LAMBDA_NAME> <PATH_TO_EVENT>
 ### Unit tests
 ```bash
 npm install
-cd lambda/test/
-pipenv shell
-cd ../../
 npm run tests_run
 ```
 

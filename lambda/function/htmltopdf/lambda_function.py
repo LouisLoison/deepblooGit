@@ -6,7 +6,7 @@ from xhtml2pdf import pisa
 from htmllaundry import sanitize
 
 from helper import S3Helper, AwsHelper
-from update_event import update_event, get_new_s3_url
+from update_event import update_event, get_s3_url, get_s3_object_url, get_filename
 
 
 def convert_html_to_pdf(html_str, aws_env):
@@ -68,14 +68,6 @@ def read_from_s3(aws_env):
             return content
 
 
-def get_pdf_filename(path_to_pdf: str, document_id: str) -> str:
-    folder_output, pdf_output = os.path.split(path_to_pdf)
-    name, ext = os.path.splitext(pdf_output)
-    pdf_output = name + ".pdf"
-    output_file = "{}-analysis/{}/{}".format(folder_output, document_id, pdf_output)
-    return output_file
-
-
 def sanitize_html_content(html_str: str) -> str:
     return sanitize(html_str)
 
@@ -86,8 +78,8 @@ def lambda_handler(event, context):
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "awsRegion": 'eu-west-1',
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
-        "outputName": get_pdf_filename(event["objectName"],
-                                       ""),
+        "outputName": get_s3_object_url(event["objectName"],
+                                       ".pdf"),
     }
     print("==> Aws Env: {0}".format(json.dumps(aws_env)))
     html_content = read_from_s3(aws_env)
@@ -96,10 +88,14 @@ def lambda_handler(event, context):
     aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
                                              aws_env['outputName'],
                                              aws_env['awsRegion'])
-    aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "pdf")
+    aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], ".pdf")
     aws_env["status"] = status['status']
     aws_env["errorMessage"] = status["errorMessage"]
     aws_env["contentType"] = "text/pdf"
     aws_env["objectName"] = aws_env["outputName"]
+    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
+                                             aws_env['outputName'],
+                                             aws_env['awsRegion'])
+    aws_env["filename"] = get_filename(aws_env['objectName'])
     aws_env["sourceUrl"] = aws_env["s3Url"]
     return update_event(aws_env, event)

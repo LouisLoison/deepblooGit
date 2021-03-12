@@ -1,12 +1,24 @@
-import { Chain, Choice, Condition, Fail, StateMachine, IStateMachine, LogLevel, Succeed, Wait, WaitTime} from '@aws-cdk/aws-stepfunctions';
+import {
+  Chain,
+  Choice,
+  Condition,
+  Fail,
+  StateMachine,
+  Map,
+  IStateMachine,
+  LogLevel,
+  Succeed,
+  Wait,
+  WaitTime,
+  Pass
+} from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { Construct, Stack, StackProps, Duration, CfnOutput, Fn, Arn } from '@aws-cdk/core';
+import { Construct, Stack, StackProps, Duration } from '@aws-cdk/core';
 import { Secret } from '@aws-cdk/aws-secretsmanager';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
-// import iam = require('@aws-cdk/aws-iam');
 import logs = require('@aws-cdk/aws-logs');
 
 
@@ -24,10 +36,6 @@ export class TenderStack extends Stack {
     }
 
     const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
-
-    // const processDocumentArn = Fn.importValue("ExportedDocumentProcessArn")
-
-    // const documentProcessId = Fn.importValue("ExportedDocumentProcessId")
 
     const dbEnv = {
       DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
@@ -332,9 +340,16 @@ export class TenderStack extends Stack {
 
     const stepFunctionsTask = new StepFunctionsStartExecution(this, "Document Process", {
       stateMachine: props.documentMachine,
-      inputPath: "$.mergedData",
-      resultPath: '$.downloadedData'
-    }).addCatch(notifyErrorTask)
+      inputPath: '$',
+      resultPath: '$'
+    });
+
+    const documentMap = new Map(this, 'Document Map', {
+      inputPath: '$.mergedData',
+      itemsPath: '$.newSourceUrls',
+      resultPath: '$.downloadedData',
+      maxConcurrency: 2,
+    }).iterator(stepFunctionsTask);
 
     const logGroup = new logs.LogGroup(this, 'TenderLogGroup');
 
@@ -356,12 +371,12 @@ export class TenderStack extends Stack {
         .when(Condition.numberLessThan('$.formatedData.status', 20), noInterest)
         .otherwise(stepTenderIndexTask
           .next(new Choice(this, 'Has documents ?')
-            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), stepFunctionsTask
+            .when(Condition.booleanEquals('$.mergedData.hasDocuments', true), documentMap
               .next(fullSucceed)
             ).otherwise(fullSucceed)
-            // )
-            // )
-          )))
+          )
+        )
+      )
 
     const stateMachine = new StateMachine(this, 'TenderProcess', {
       definition: chain,
