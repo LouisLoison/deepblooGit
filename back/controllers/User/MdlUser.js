@@ -916,7 +916,7 @@ exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
           if (!user || !user.email || user.email.trim() === '') {
             continue;
           }
-          let to = user.email;
+          let to = process.env.NODE_ENV === 'dev' ? 'olivier@deepblo.com' : user.email;
           let text = `${body.trim()}\r\n\r\n${footerHtml}`
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)
