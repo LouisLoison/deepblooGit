@@ -77,9 +77,15 @@ exports.regionFromCountry = (country) => {
 }
 
 exports.sendMail = (subject, html, text, to, from) => {
-  console.log(`sendMail to ${to}`)
+  if(process.env.DEBUG) {
+    console.log(`sendMail to ${to}`)
+  }
 
   return new Promise((resolve, reject) => {
+    if(process.env.DEBUG) {
+      resolve()
+      return
+    }
     const nodeMailer = require('nodemailer')
     const transporter = nodeMailer.createTransport({
       host: 'smtp.gmail.com',
