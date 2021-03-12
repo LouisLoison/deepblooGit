@@ -257,7 +257,9 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
       ColumnList.push(ColumnName)
     }
     if (['updateDate', 'creationDate'].includes(ColumnName)) {
-      ColumnList.push(ColumnName)
+      if(!ColumnList.includes(ColumnName)) {
+        ColumnList.push(ColumnName)
+      }
     }
   }
   let Query = ''
