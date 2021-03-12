@@ -1,6 +1,6 @@
 const gs = require('node-gs');
 const fs = require('fs')
-const { documentsBucket, getFileContent, putFile, log } = require('deepbloo')
+const { documentsBucket, getFileContent, putFile, log, getS3ObjectUrl } = require('deepbloo')
 
 const pdfToImages = async (documentsBucket, objectName) => {
   return new Promise(async (resolve, reject) => {
@@ -24,6 +24,8 @@ const pdfToImages = async (documentsBucket, objectName) => {
         Promise.all(fs.readdirSync('/tmp/out/').map(fileName => {
           const pngData = fs.readFileSync(`/tmp/out/${fileName}`)
           const outputKey = `${objectName}-${fileName}`
+          console.log("filename: ", fileName)
+          // const outputKey = getS3ObjectUrl(objectName)
           return putFile(documentsBucket, outputKey, pngData)
         }))
           .then(a =>
