@@ -11,7 +11,7 @@ Here are some properties we add in stash object.
 The stash is a Map that is made available inside each resolver and function mapping template.
 1. pipelineFunctions (List of names of defined Pipeline functions in Stack).
 2. pipelineFunctionsInfo (Info of each Pipline function).
-3. currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora INSERT OR UPDATE operations because we are reusing the same template for these operations.).
+3. currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora functions because we are reusing the same template for these operations, In CreateTender example we are starting from index 3)
 4. currentPipelineFunction (String value current pipeline function based on index).
 
 Example data we save in stash.
@@ -32,5 +32,31 @@ pipelineFunctionsInfo object details
 - In Pipleline function mapping templates of Aurora datasource we are using UPSERT operation, for which we need a key, and we can define key in object.
 ![image](https://user-images.githubusercontent.com/17459522/110788999-30786f00-8291-11eb-870f-058472e60da1.png)
 
+3.**MAPPING TEMPLATES FROM INSERT OR UPDATE AURORA PIPELINE FUNCTIONS**
+- We have defined mapping template which handles insert and update operations, we reuse that mapping template for every insert or update operatin for AURORA datasource.
+- Request mapping template
+- Respone mapping template
+
 2.**PIPELINE FLOW**
+
+Explanation of CreateTender Mutation Pipeline Flow
+
+
+- From CreateTenderAuroraFunction which index is 3, we all have AURORA PIPELINE FUNCTIONS. As definded in point#3 we have one mapping template for insert and update operations, so in order to reuse that mapping template for same AURORA datasource but for different tables we have to pass different data for each table.
+- We excessively use two objects in the current Pipeline flow which pipeline functions have access to, 
+1. $context.stash object
+2. $context.prev.result object (This is the respone from previous pipeline functions), so before Aurora Pipeline Functions we have to pass result from Previous Pipeline Function in correct format, Previous Pipeline Function can be of any datasource.
+- In the CreateTender Pipeline Mutation from CreateTenderElasticFunction we all have Aurora Pipline Functions, so from CreateTenderElasticFunction response we return the object in this format 
+![image](https://user-images.githubusercontent.com/17459522/110788999-30786f00-8291-11eb-870f-058472e60da1.png)
+- We can also have a Pipeline function with Local datasource which can return the object for Aurora Pipeline Functions.
+- This (function.multiInsertUpdateAurora.request.vtl) mapping template have information of which function is executing, so its just use the $context.stash.currentPipelineFunction as key to get the details from $ctx.prev.result in this form $context.prev.result[$currentPipelineFunction].
+
+Note:
+* In Mutation if we want to use reuse template for different pipline Functions of Aurora datasource for INSERT or UPDATE operation then before using that template we have to define these function in correct format
+1) BEFORE MAPPING TEMPLATE (check its details in Point#2)
+2) Response from Last Pipeline function(pipeline function before Aurora functions) 
+    
+
+
+
 
