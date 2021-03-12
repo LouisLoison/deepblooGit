@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "startpid": "bash -c 'while true; do DEBUG=1 node app.js >> backend.log 2>&1' &echo $! > node-app.pid",
+    "startpid": "bash -c 'while true; do DEBUG=1 node app.js >> backend.log 2>&1; done' &echo $! > node-app.pid",
     "stoppid": "kill $(cat node-app.pid); tail --pid=$(cat node-app.pid) -f /dev/null",
     "restart": "npm run stoppid; npm run startpid;",
     "updateindex": "node tools/elastic/updateindex.js",
