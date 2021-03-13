@@ -1,3 +1,5 @@
+const { getHivebriteSharedSecret } = require(process.cwd() + '../lambda/libjs/config')
+
 exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -27,6 +29,9 @@ exports.Login = (username, password, userToken) => {
       let hivebriteId = null
       if (userToken) {
         let userData = jwt.decode(userToken, {complete: true})
+	let { hivebrite_shared_secret } = await getHivebriteSharedSecret();
+        jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
+
         username = userData.payload.primary_email
         hivebriteId = userData.payload.id
       }
