@@ -1,4 +1,4 @@
-const { getHivebriteSharedSecret } = require(process.cwd() + '../lambda/libjs/config')
+const { getHivebriteSharedSecret } = require(process.cwd() + '/../lambda/libjs/config')
 
 exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
@@ -6,6 +6,8 @@ exports.Login = (username, password, userToken) => {
       const config = require(process.cwd() + '/config')
       const jwt = require('jsonwebtoken')
       const BddTool = require(process.cwd() + '/global/BddTool')
+
+      const { hivebrite_shared_secret } = await getHivebriteSharedSecret()
 
       /*
       // Get hivebrite token
@@ -28,8 +30,8 @@ exports.Login = (username, password, userToken) => {
 
       let hivebriteId = null
       if (userToken) {
+
         let userData = jwt.decode(userToken, {complete: true})
-	let { hivebrite_shared_secret } = await getHivebriteSharedSecret();
         jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
 
         username = userData.payload.primary_email
@@ -84,8 +86,7 @@ exports.Login = (username, password, userToken) => {
       }
 
       // Creat user token
-      let certText = 'certTest'
-      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username, photo: user.photo }, certText, { algorithm: 'HS256'})
+      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username, photo: user.photo }, hivebrite_shared_secret, { algorithm: 'HS256'})
       
       resolve({
         user,

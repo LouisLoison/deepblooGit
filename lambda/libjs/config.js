@@ -30,15 +30,16 @@ const getSecret = async (SecretId) => {
   const data = await secretsmanager.getSecretValue({ SecretId }).promise()
   // console.log(data)
   const params = JSON.parse(data.SecretString)
-  if (localEnv === 'local') {
-    params.host = 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com'
-    params.port = 5432
-  }
   return params
 }
 
 exports.getDbSecret = async () => {
   dbSecret = dbSecret || await getSecret(process.env.DB_SECRET)
+  if (localEnv === 'local') {
+    dbSecret.host = 'postgres-dev-1dd6a1ec3b56af08.elb.eu-west-1.amazonaws.com'
+    dbSecret.port = 5432
+  }
+
   return dbSecret
 }
 
@@ -59,7 +60,11 @@ exports.getHivebriteSecret = async () => {
 }
 
 exports.getHivebriteSharedSecret = async () => {
-  hivebriteSharedSecret = hivebriteSharedSecret || await getSecret(process.env.HIVEBRITE_SECRET)
+  if (localEnv === 'local') {
+    hivebriteSharedSecret = { hivebrite_shared_secret: 'yohWohphoh6riSomeVerySecretaeghu4oa5zi6A' }
+  } else {
+    hivebriteSharedSecret = hivebriteSharedSecret || await getSecret(process.env.HIVEBRITE_SECRET)
+  }
   return { ...hivebriteSharedSecret }
 }
 
