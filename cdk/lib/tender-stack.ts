@@ -10,7 +10,6 @@ import {
   Succeed,
   Wait,
   WaitTime,
-  Pass
 } from '@aws-cdk/aws-stepfunctions';
 import { LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
@@ -21,47 +20,54 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
 import logs = require('@aws-cdk/aws-logs');
 
+import { config } from './config';
 
 interface TenderStackProps extends StackProps {
   documentMachine: IStateMachine;
 }
 
-
 export class TenderStack extends Stack {
   constructor(scope: Construct, id: string, props: TenderStackProps) {
     super(scope, id, props);
 
-    const environment = {
-      NODE_ENV: "dev",
-    }
+    const {
+      DB_SECRET,
+      DB_HOST,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
+      NODE_ENV,
+      ELASTIC_SECRET,
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
+    } = config
 
-    const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
+    const environment = {
+      NODE_ENV,
+    }
 
     const dbEnv = {
-      DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: secretArn,
+      DB_HOST,
+      DB_SECRET,
     }
 
-    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
     const appsearchEnv = {
-      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
-      APPSEARCH_SECRET: appsearchSecretArn,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
     }
-
-    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
 
     const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
-      secretArn,
+      secretArn: DB_SECRET,
 
       // If the secret is encrypted using a KMS-hosted CMK, either import or reference that key:
       // encryptionKey,
     });
     const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
-      secretArn: appsearchSecretArn,
+      secretArn: APPSEARCH_SECRET,
     });
 
     const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
-      secretArn: elasticSecretArn,
+      secretArn: ELASTIC_SECRET,
     });
 
     const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
@@ -70,11 +76,11 @@ export class TenderStack extends Stack {
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)
 
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
-      vpcId: 'vpc-f7456f91',
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
+      vpcId,
+      availabilityZones,
       // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
       // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
-      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+      privateSubnetIds,
     });
 
     const nodeLayer = new LayerVersion(this, 'NodeLib', {
@@ -185,7 +191,7 @@ export class TenderStack extends Stack {
       timeout: Duration.seconds(20),
       environment: {
         ...environment,
-        ELASTIC_SECRET: elasticSecretArn,
+        ELASTIC_SECRET,
       }
     });
 
@@ -198,7 +204,7 @@ export class TenderStack extends Stack {
       timeout: Duration.seconds(20),
       environment: {
         ...environment,
-        ELASTIC_SECRET: elasticSecretArn,
+        ELASTIC_SECRET,
       }
     });
 

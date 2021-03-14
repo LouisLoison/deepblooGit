@@ -7,6 +7,7 @@ import { Vpc } from '@aws-cdk/aws-ec2';
 import s3 = require('@aws-cdk/aws-s3');
 import logs = require('@aws-cdk/aws-logs');
 
+import { config } from './config';
 
 export class DocumentStack extends Stack {
   public documentMachine: IStateMachine
@@ -14,32 +15,41 @@ export class DocumentStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props)
 
+    const {
+      DB_SECRET,
+      DB_HOST,
+      NODE_ENV,
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
+      DOCUMENTS_BUCKET,
+    } = config
+
     const environment = {
-      NODE_ENV: "dev",
+      NODE_ENV,
     }
 
-    const secretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
     const dbEnv = {
-      DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: secretArn,
+      DB_HOST,
+      DB_SECRET,
     }
 
-    const documentsBucketArn = 'arn:aws:s3:::textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj'
+    const documentsBucketArn = `arn:aws:s3:::${DOCUMENTS_BUCKET}`
     const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
 
     const dbSecret = Secret.fromSecretAttributes(this, 'dbSecret', {
-      secretArn,
+      secretArn: DB_SECRET,
 
       // If the secret is encrypted using a KMS-hosted CMK, either import or reference that key:
       // encryptionKey,
     });
 
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
-      vpcId: 'vpc-f7456f91',
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
+      vpcId,
+      availabilityZones,
       // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
       // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
-      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+      privateSubnetIds,
     });
 
     // Helper Layer with helper functions
@@ -51,12 +61,14 @@ export class DocumentStack extends Stack {
     });
 
     // Textractor helper layer
+    /*
     const textractorLayer = new LayerVersion(this, 'Textractor', {
       code: new AssetCode('../lambda/layer/textractor'),
       compatibleRuntimes: [Runtime.PYTHON_3_8],
       license: 'Apache-2.0',
       description: 'Textractor layer.',
     });
+     */
 
     const ghostscripLayer = new LayerVersion(this, 'GhostScript layer', {
       code: new AssetCode('../lambda/layer/gs'),
@@ -98,7 +110,7 @@ export class DocumentStack extends Stack {
       environment: {
         ...environment,
         ...dbEnv,
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
       }
     });
 
@@ -125,7 +137,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
       }
     })
 
@@ -137,7 +149,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(120),
       environment: {
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
         // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
         MIN_CHAR_NEEDED: "10", // if nb char found in PDF is inferior -> call textract
@@ -153,7 +165,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
       }
     })
 
@@ -165,7 +177,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
       }
     })
 
@@ -177,7 +189,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
-        DOCUMENTS_BUCKET: documentsBucket.bucketName,
+        DOCUMENTS_BUCKET,
       }
     })
 

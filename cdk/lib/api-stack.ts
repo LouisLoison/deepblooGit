@@ -4,12 +4,12 @@ import {
   GraphqlApi,
   AuthorizationType,
   FieldLogLevel,
-  MappingTemplate,
+  // MappingTemplate,
   CfnResolver,
   CfnDataSource,
   Schema,
   CfnFunctionConfiguration,
-  NoneDataSource,
+  // NoneDataSource,
 } from '@aws-cdk/aws-appsync';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
@@ -20,49 +20,47 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import { Duration } from '@aws-cdk/core';
 
+import { config } from './config';
+
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const {
+      DB_SECRET,
+      DB_HOST,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
+      NODE_ENV,
+      ELASTIC_SECRET,
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
+      HIVEBRITE_SECRET,
+    } = config
+
     const environment = {
-      NODE_ENV: "dev",
+      NODE_ENV,
     }
-    const dbSecretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
     const dbEnv = {
-      DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: dbSecretArn,
+      DB_HOST,
+      DB_SECRET,
     }
 
-    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
     const appsearchEnv = {
-      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
-      APPSEARCH_SECRET: appsearchSecretArn,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
     }
 
-    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
-
-    const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
-      HIVEBRITE_SECRET: hivebriteSecretArn,
+      HIVEBRITE_SECRET,
     }
     const hivebriteSecret = Secret.fromSecretAttributes(this, 'hivebriteSecret', {
-      secretArn: hivebriteSecretArn,
+      secretArn: HIVEBRITE_SECRET,
     });
 
     const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
-    new cdk.CfnOutput(this, 'db-arn', {
-      exportName: 'db-arn',
-      value: dbArn
-    })
-
-    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
-      secretArn: appsearchSecretArn,
-    });
-
-    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
-      secretArn: elasticSecretArn,
-    });
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -123,22 +121,22 @@ export class ApiStack extends cdk.Stack {
           statements: [new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [dbSecretArn]
+            resources: [DB_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [hivebriteSecretArn]
+            resources: [HIVEBRITE_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [appsearchSecretArn]
+            resources: [APPSEARCH_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [elasticSecretArn]
+            resources: [ELASTIC_SECRET]
           })
           ]
         }),
@@ -148,11 +146,9 @@ export class ApiStack extends cdk.Stack {
 
     // -------------VPC FUNCTION DEFINITIONS----------------- //
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
-      vpcId: 'vpc-f7456f91',
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
-      // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
-      // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
-      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
     });
 
     // -------------LAMBDA FUNCTION DEFINITIONS----------------- //
@@ -205,7 +201,7 @@ export class ApiStack extends cdk.Stack {
         ...environment,
         ...appsearchEnv,
         ...dbEnv,
-        ELASTIC_SECRET: elasticSecretArn,
+        ELASTIC_SECRET,
       },
       role: lambdaBasicDbSecretVpcExecutionRole
     });
@@ -246,7 +242,7 @@ export class ApiStack extends cdk.Stack {
           }), new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [dbSecretArn]
+            resources: [DB_SECRET]
           })]
         }),
 
@@ -262,7 +258,7 @@ export class ApiStack extends cdk.Stack {
         relationalDatabaseSourceType: "RDS_HTTP_ENDPOINT",
         rdsHttpEndpointConfig: {
           awsRegion: 'eu-west-1',
-          awsSecretStoreArn: dbSecretArn,
+          awsSecretStoreArn: DB_SECRET,
           databaseName: 'deepbloo_dev',
           dbClusterIdentifier: dbArn
         }
