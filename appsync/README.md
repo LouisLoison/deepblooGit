@@ -9,22 +9,22 @@ Every mutation with pipeline functions have BEFORE mapping template, this mappin
 
 Here are some properties we add in stash object.
 The stash is a Map that is made available inside each resolver and function mapping template.
-1. pipelineFunctions (List of names of defined Pipeline functions in Stack).
-2. pipelineFunctionsInfo (Info of each Pipline function).
-3. currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora functions because we are reusing the same template for these operations, In CreateTender example we are starting from index 3)
-4. currentPipelineFunction (String value current pipeline function based on index).
+a. pipelineFunctions (List of names of defined Pipeline functions in Stack).
+b. pipelineFunctionsInfo (Info of each Pipline function).
+c. currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora functions because we are reusing the same template for these operations, In CreateTender example we are starting from index 3)
+d. currentPipelineFunction (String value current pipeline function based on index).
 
 Example data we save in stash.
-1. ![image](https://user-images.githubusercontent.com/17459522/110757948-c5697100-826d-11eb-8402-d4e5fd855336.png)
-2. ![image](https://user-images.githubusercontent.com/17459522/110758396-4b85b780-826e-11eb-843e-0cb2dd61db96.png)
-3. ![image](https://user-images.githubusercontent.com/17459522/110758766-b46d2f80-826e-11eb-9850-f26e56f7426f.png)
-4. ![image](https://user-images.githubusercontent.com/17459522/110759092-0f068b80-826f-11eb-8614-a5ff412b4b98.png)
+a. ![image](https://user-images.githubusercontent.com/17459522/110757948-c5697100-826d-11eb-8402-d4e5fd855336.png)
+b. ![image](https://user-images.githubusercontent.com/17459522/110758396-4b85b780-826e-11eb-843e-0cb2dd61db96.png)
+c. ![image](https://user-images.githubusercontent.com/17459522/110758766-b46d2f80-826e-11eb-9850-f26e56f7426f.png)
+d. ![image](https://user-images.githubusercontent.com/17459522/110759092-0f068b80-826f-11eb-8614-a5ff412b4b98.png)
 
 pipelineFunctionsInfo object details
 - Currently We have three types of datasources implemented in this project, datasources are
-1. Lambda
-2. Aurora
-3. Local
+a. Lambda
+b. Aurora
+c. Local
 - Each Pipeline function should be attach with on the datasources we define above. 
 - If Pipeline function datasource is Lambda then in pipelineFunctionInfo object we should have this type of object.
 ![image](https://user-images.githubusercontent.com/17459522/110788782-e3949880-8290-11eb-81ec-5eee5aa35256.png)
@@ -37,7 +37,7 @@ pipelineFunctionsInfo object details
 - Request mapping template
 - Respone mapping template
 
-2.**PIPELINE FLOW**
+4.**PIPELINE FLOW**
 
 Explanation of CreateTender Mutation Pipeline Flow
 
@@ -48,13 +48,13 @@ Explanation of CreateTender Mutation Pipeline Flow
 2. $context.prev.result object (This is the respone from previous pipeline functions), so before Aurora Pipeline Functions we have to pass result from Previous Pipeline Function in correct format, Previous Pipeline Function can be of any datasource.
 - In the CreateTender Pipeline Mutation from CreateTenderElasticFunction we all have Aurora Pipline Functions, so from CreateTenderElasticFunction response we return the object in this format 
 ![image](https://user-images.githubusercontent.com/17459522/110788999-30786f00-8291-11eb-870f-058472e60da1.png)
-- We can also have a Pipeline function with Local datasource which can return the object for Aurora Pipeline Functions.
+- We can also have a Pipeline function with Local datasource which can create and return the same object for Aurora Pipeline Functions.
 - This (function.multiInsertUpdateAurora.request.vtl) mapping template have information of which function is executing, so its just use the $context.stash.currentPipelineFunction as key to get the details from $ctx.prev.result in this form $context.prev.result[$currentPipelineFunction].
 
-Note:
-* In Mutation if we want to use reuse template for different pipline Functions of Aurora datasource for INSERT or UPDATE operation then before using that template we have to define these function in correct format
+TLDR:
+* In Mutation if we want to use reuse template for different pipline Functions of Aurora datasource for INSERT or UPDATE operation then before using that template we have to define these in correct format
 1) BEFORE MAPPING TEMPLATE (check its details in Point#2)
-2) Response from Last Pipeline function(pipeline function before Aurora functions) 
+2) Response from Last Pipeline function(pipeline function before Aurora functions), in CreateTender example it's a  CreateTenderElasticFunction.
     
 
 
