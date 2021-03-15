@@ -6,6 +6,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const path = require('path')
 const config = require('./config')
+const { getHivebriteSharedSecret } = require('../lambda/libjs/config')
 
 config.user = { }
 
@@ -37,6 +38,9 @@ app.post('/api/User/Login', function(req, res) {
     require('./controllers/User/CtrlUser').Login(req, res)
   } catch (err) {
     res.end(JSON.stringify({ success: false, Error: 'Error' }, null, 3))
+    if(process.env.DEBUG) {
+      throw err
+    }
   }
 })
 
@@ -62,7 +66,7 @@ const urlPublics = [
   '/api/Tender/tenderCriterions',
   '/api/tender/tenderCriterions',
 ]
-app.use(function(req, res, next) {
+app.use(async function(req, res, next) {
   if (urlPublics.includes(req.path)) {
     next()
   } else {
@@ -71,9 +75,9 @@ app.use(function(req, res, next) {
     }
     const jwt = require('jsonwebtoken')
     let token = req.headers.authorization.split(' ')[1]
-    let certText = 'certTest'
+    const { hivebrite_shared_secret } = await getHivebriteSharedSecret()
     try {
-      let tokenDecoded = jwt.verify(token, certText, { algorithm: 'HS256'})
+      let tokenDecoded = jwt.verify(token, hivebrite_shared_secret, { algorithm: 'HS256'})
       config.user.userId = tokenDecoded.userId
       config.user.hivebriteId = tokenDecoded.hivebriteId
       config.user.type = tokenDecoded.type

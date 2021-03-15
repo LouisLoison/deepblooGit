@@ -1,9 +1,13 @@
+const { getHivebriteSharedSecret } = require(process.cwd() + '/../lambda/libjs/config')
+
 exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
     try {
       const config = require(process.cwd() + '/config')
       const jwt = require('jsonwebtoken')
       const BddTool = require(process.cwd() + '/global/BddTool')
+
+      const { hivebrite_shared_secret } = await getHivebriteSharedSecret()
 
       /*
       // Get hivebrite token
@@ -26,7 +30,10 @@ exports.Login = (username, password, userToken) => {
 
       let hivebriteId = null
       if (userToken) {
+
         let userData = jwt.decode(userToken, {complete: true})
+        jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
+
         username = userData.payload.primary_email
         hivebriteId = userData.payload.id
       }
@@ -79,8 +86,7 @@ exports.Login = (username, password, userToken) => {
       }
 
       // Creat user token
-      let certText = 'certTest'
-      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username, photo: user.photo }, certText, { algorithm: 'HS256'})
+      let token = jwt.sign({ userId: user.userId, hivebriteId: user.hivebriteId, type: user.type, email: user.email, username: user.username, photo: user.photo }, hivebrite_shared_secret, { algorithm: 'HS256'})
       
       resolve({
         user,
@@ -916,7 +922,7 @@ exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
           if (!user || !user.email || user.email.trim() === '') {
             continue;
           }
-          let to = user.email;
+          let to = process.env.NODE_ENV === 'dev' ? 'olivier@deepblo.com' : user.email;
           let text = `${body.trim()}\r\n\r\n${footerHtml}`
           let html = text.replace(/(?:\r\n|\r|\n)/g, '<br>')
           await require(process.cwd() + '/controllers/CtrlTool').sendMail(subject, html, text, to)

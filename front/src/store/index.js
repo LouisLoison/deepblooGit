@@ -4,6 +4,7 @@ import VuexPersistence from 'vuex-persist'
 
 // import example from './module-example'
 import defaultStore from './default'
+import TenderAppSyncStore from './TenderAppSync'
 
 
 Vue.use(Vuex)
@@ -14,7 +15,8 @@ const vuexLocal = new VuexPersistence({
 
 const Store = new Vuex.Store({
   modules: {
-    defaultStore
+    defaultStore,
+    TenderAppSyncStore
     // example
   },
   // enable strict mode (adds overhead!)

@@ -1,0 +1,7 @@
+#set( $id = $context.source.tenderUuid )
+{
+  "version": "2018-05-29",
+  "statements": [
+    "select tenderid as \"tenderId\", tenderUuid as \"tenderUuid\", documentUuid as \"documentUuid\", cpvId as \"cpvId\", value as \"value\", word as \"word\", findCount as \"findCount\", scope as \"scope\", status as \"status\", creationDate as \"creationDate\", updateDate as \"updateDate\" FROM tendercriterioncpv WHERE tenderuuid = '$id'"
+  ]
+}

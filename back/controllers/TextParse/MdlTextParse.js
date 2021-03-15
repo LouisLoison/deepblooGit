@@ -688,7 +688,7 @@ exports.textParseList = (filter) => {
           textParseId: 101,
           theme: "Contract type",
           group: "PPA / IPP agreement",
-          words: "Power Purchase Agreement § Energy Purchase Agreement § PPA § IPP § Independant Power Producer § Producteur d'électricité indépendant § Producteur d'électricité non-public § non-utility generator § NUG § Producteur d'électricité non public § non utility generator § independent Energy producer § independant Energy producer § local power producer § local energy producer § producteurs indépendents d’électricité § Build § own § operate and transfer § Build § own § operate § Independent Power Producer",
+          words: "Power Purchase Agreement § Energy Purchase Agreement § PPA § IPP § Independant Power Producer § Producteur d'électricité indépendant § Producteur d'électricité non-public § non-utility generator § NUG § Producteur d'électricité non public § non utility generator § independent Energy producer § independant Energy producer § local power producer § local energy producer § producteurs indépendents d’électricité § Build, own, operate § Build own operate § Independent Power Producer § boom § dbfommt § dbfot § build, finance § build finance § build and finance § finance build § finance, build § finance and build §  Build, operate § Build operate § Build and Operate § Build-own-operate § own operate § own, operate",
           exclusions: '',
           type: "KEYWORD",
           scopes: 'TITLE, DESCRIPTION',

@@ -341,6 +341,25 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
+                    @click="menu = 'search'"
+                    :fab="menu === 'search'"
+                    :dark="menu === 'search'"
+                    :small="menu === 'search'"
+                    :text="menu !== 'search'"
+                    :icon="menu !== 'search'"
+                    color="blue"
+                  >
+                    <v-icon>fa-search</v-icon>
+                  </v-btn>
+                </template>
+                <span>Properties</span>
+              </v-tooltip>
+            </div>
+            <div>
+              <v-tooltip left>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
                     @click="menu = 'properties'"
                     :fab="menu === 'properties'"
                     :dark="menu === 'properties'"
@@ -379,6 +398,25 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"
+                    @click="menu = 'share'"
+                    :fab="menu === 'share'"
+                    :dark="menu === 'share'"
+                    :small="menu === 'share'"
+                    :text="menu !== 'share'"
+                    :icon="menu !== 'share'"
+                    color="blue"
+                  >
+                    <v-icon>fa-share-square</v-icon>
+                  </v-btn>
+                </template>
+                <span>share</span>
+              </v-tooltip>
+            </div>
+            <div>
+              <v-tooltip left>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
                     @click="menu = 'info'"
                     :fab="menu === 'info'"
                     :dark="menu === 'info'"
@@ -394,6 +432,47 @@
               </v-tooltip>
             </div>
           </div>
+
+          <div v-if="menu === 'search'" class="pa-3">
+            <h4 class="blue--text text--darken-1">
+              Search criterion in documents
+            </h4>
+            <br>
+            <v-text-field
+              v-model="searchWord"
+              prepend-inner-icon="fa-search"
+              clearable
+              hide-details
+              label="Search criterion"
+              type="text"
+              @keyup.enter="searchCriterion()"
+              @click:append="searchCriterion()"
+            />
+
+            <div v-if="searchResult !== null">
+              <p> Results {{this.searchResult}} found </p>
+              <v-expansion-panels>
+                <v-expansion-panel
+                  v-for="(item,i) in 5"
+                  :key="i"
+                >
+                  <v-expansion-panel-header>
+                    {{searchResult}}
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                    laboris nisi ut aliquip ex ea commodo consequat.
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </div>
+            <div v-else>
+              <p> No result found </p>
+            </div>
+          </div>
+
           <div>
             <div v-if="menu === 'properties'" class="pa-3">
               <h4 class="blue--text text--darken-1">
@@ -748,6 +827,12 @@
               </v-tabs>
             </div>
 
+            <div v-if="menu === 'share'" class="pa-3">
+              <h4 class="blue--text text--darken-1">
+                Share with collaborators
+              </h4>
+            </div>
+
             <div v-if="menu === 'info'" class="pa-3">
               <div class="pb-3">
                 <div class="blue-grey--text text--lighten-2">Creation:</div>
@@ -787,6 +872,12 @@ export default {
       loading: null,
       data: null
     },
+    dataTenderCriterionCpvs: {
+      loading: null,
+      data: null
+    },
+    searchWord: null,
+    searchResult: null,
     parseResults: null,
     cpvCategorys: null,
     tenderCriterions: null,
@@ -1300,6 +1391,35 @@ export default {
       } catch (err) {
         this.messageLoading = -1;
         this.$api.error(err, this);
+      }
+    },
+
+    searchCriterion() {
+        if ( !this.searchWord || this.searchWord.trim() === '') {
+          return
+        } else {
+          console.log(this.searchWord)
+          this.searchResult = this.searchWord
+          // var searchResults = ["solar", "water", "geothermal"];
+        }
+    },
+
+    async loadTenderCriterionCpvs() {
+      try {
+        this.dataTenderCriterionCpvs.loading = 0
+        const res = await this.$api.post("/Tender/tenderCriterionCpvs", {
+          filter: {
+            tenderId: this.tender.id
+          }
+        })
+        if (!res.success) {
+          throw new Error(res.Error)
+        }
+        this.dataTenderCriterionCpvs.data = res.data
+        this.dataTenderCriterionCpvs.loading = 1
+      } catch (err) {
+        this.dataTenderCriterionCpvs.loading = -1
+        this.$api.error(err, this)
       }
     },
 

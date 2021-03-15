@@ -54,6 +54,8 @@ exports.filterDocument = (doc) => {
     "title",
     "words",
     "id",
+    "dataSource",
+    "dataSourceId",
   ].reduce((acc, key) => {
     acc[key] = doc[key]
     return acc

@@ -6,7 +6,7 @@ from layer.helper.python.helper import S3Helper
 def test_html_to_pdf_execution():
     test_json_path = "lambda/test/html_to_pdf/input_events/basic.json"
     result_json_path = "lambda/test/html_to_pdf/output_events/basic.json"
-    dest_s3_file = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d-analysis/2e61ac87-061a-41ba-8c48-42ada588ab5c/T459624983.pdf"
+    dest_s3_file = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983.pdf"
     bucket_name = os.environ['DOCUMENTS_BUCKET']
     aws_region = os.environ['AWS_REGION']
 

@@ -1,15 +1,15 @@
 {
     "tenderid": null,
     "cpvs": null,
-    "filename": null,
-    "size": 25307,
+    "filename": "T459624983_sentences.txt",
+    "size": 1524,
     "pageCount": null,
-    "sourceUrl": "http://d.infostores.biz/T458075031.html?id=PzA7RDR6JxczJS0BUBxGdQ5jK3EcVW5oXAQENUFE",
-    "s3Url": "https://textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj.s3.eu-west-1.amazonaws.com/tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/sentences_of_T459624983.txt",
+    "sourceUrl": "https://textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj.s3.eu-west-1.amazonaws.com/tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983_sentences.txt",
+    "s3Url": "https://textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj.s3.eu-west-1.amazonaws.com/tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983_sentences.txt",
     "boxFolderId": null,
     "boxFileId": null,
     "parseResult": null,
-    "status": 0,
+    "status": 1,
     "errorMessage": null,
     "creationDate": null,
     "updateDate": "2021-01-07T16:55:31.440Z",
@@ -17,5 +17,5 @@
     "documentUuid": "2e61ac87-061a-41ba-8c48-42ada588ab5c",
     "contentHash": "22d9be1798016d4dcc1ca48e301d50d5715547573ffec2cbe80edc9dc832c07e",
     "contentType": "text/txt",
-    "objectName": "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d-analysis/2e61ac87-061a-41ba-8c48-42ada588ab5c/sentences_of_T459624983.txt"
+    "objectName": "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983_sentences.txt"
 }

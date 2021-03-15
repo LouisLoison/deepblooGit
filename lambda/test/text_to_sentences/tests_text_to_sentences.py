@@ -6,7 +6,7 @@ from layer.helper.python.helper import S3Helper
 def test_text_to_sentences_execution():
     test_json_path = "lambda/test/text_to_sentences/input_events/basic.json"
     result_json_path = "lambda/test/text_to_sentences/output_events/basic.json"
-    dest_s3_file = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d-analysis/2e61ac87-061a-41ba-8c48-42ada588ab5c/sentences_of_T459624983.txt"
+    dest_s3_file = "tenders/tender#f3f5e3bf-2bee-423c-ba27-2c08ac05a09d/T459624983/T459624983_sentences.txt"
     bucket_name = os.environ['DOCUMENTS_BUCKET']
     aws_region = os.environ['AWS_REGION']
 

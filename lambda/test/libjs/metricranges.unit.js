@@ -23,7 +23,7 @@ test('metricRangesTest', done => {
     // console.log(criterions)
     ranges = metricsRanges('electric potential', criterions)
     // console.log(ranges)
-    expect(ranges).toEqual(['EHV >(330kV)', 'EHV >(220kV)', 'HV (33kV/220kV)', 'MV (1kV/33kV)'])
+    expect(ranges).toEqual(['EHV (>330kV)', 'EHV (>220kV)', 'HV (33kV/220kV)', 'MV (1kV/33kV)'])
     ranges = metricsRanges('power', criterions)
     // console.log(ranges)
     expect(ranges).toEqual(['10MW/100MW', '1kW/1MW'])
