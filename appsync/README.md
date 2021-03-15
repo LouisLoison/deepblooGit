@@ -37,17 +37,17 @@ c. Local
 - Request mapping template
 - Respone mapping template
 
-4.**PIPELINE FLOW**
+4.**PIPELINE FLOW:**
 
-Explanation of CreateTender Mutation Pipeline Flow
+![image](https://user-images.githubusercontent.com/17459522/111109056-cfe07f00-857b-11eb-87ad-3a27406e754f.png).
 
+Explanation of CreateTender Mutation Pipeline Flow.
 
 - From CreateTenderAuroraFunction which index is 3, we all have AURORA PIPELINE FUNCTIONS. As definded in point#3 we have one mapping template for insert and update operations, so in order to reuse that mapping template for same AURORA datasource but for different tables we have to pass different data for each table.
 - We excessively use two objects in the current Pipeline flow which pipeline functions have access to, 
 1. $context.stash object
 2. $context.prev.result object (This is the respone from previous pipeline functions), so before Aurora Pipeline Functions we have to pass result from Previous Pipeline Function in correct format, Previous Pipeline Function can be of any datasource.
 - In the CreateTender Pipeline Mutation from CreateTenderElasticFunction we all have Aurora Pipline Functions, so from CreateTenderElasticFunction response we return the object in this format 
-![image](https://user-images.githubusercontent.com/17459522/110788999-30786f00-8291-11eb-870f-058472e60da1.png)
 - We can also have a Pipeline function with Local datasource which can create and return the same object for Aurora Pipeline Functions.
 - This (function.multiInsertUpdateAurora.request.vtl) mapping template have information of which function is executing, so its just use the $context.stash.currentPipelineFunction as key to get the details from $ctx.prev.result in this form $context.prev.result[$currentPipelineFunction].
 
