@@ -1,0 +1,11 @@
+#set( $tender = $ctx.stash.tender )
+#if($tender.tenderSource != 'private')
+    #set( $userType = $ctx.stash.user_type)
+    #if($userType == 1 || $userType == 2 || $userType == 4 )
+        #return($tender)
+    #else
+        $utils.error('Not Found')
+    #end
+#else
+	 #return($tender)
+#end

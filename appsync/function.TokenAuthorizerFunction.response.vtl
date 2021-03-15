@@ -1,5 +1,6 @@
  #if( $context.result && $context.result.Error )
       $utils.error($context.result.Error)
  #else
+     $util.qr($ctx.stash.put('hivebrite',$context.result.data))
      $utils.toJson($context.result.data)
  #end

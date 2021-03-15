@@ -17,7 +17,7 @@
   #end
   
   #if($hasPermission)
-      $utils.toJson($context.result)
+      $utils.toJson($ctx.stash.tender)
   #else
       $utils.unauthorized()
   #end

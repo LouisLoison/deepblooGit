@@ -20,7 +20,7 @@ let TokenAuthorizer = async (event) => {
     try {
       let { userToken } = event.arguments;
       let { hivebrite_shared_secret } = await SharedSecretGet();
-      let { id, name, primary_email, nbf } = jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
+      let { userId, hivebriteId } = jwt.verify(userToken, hivebrite_shared_secret, { algorithm: 'HS256' })
 
       /* let diff = (new Date(nbf * 1000).getTime() - new Date.getTime()) / 1000;
        diff /= 60;
@@ -30,7 +30,7 @@ let TokenAuthorizer = async (event) => {
        }
        */
 
-      resolve({ id, name, primary_email, nbf })
+      resolve({ id: hivebriteId })
     } catch (err) { reject(err) }
   })
 }

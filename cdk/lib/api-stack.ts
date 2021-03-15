@@ -434,21 +434,21 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
-    // const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
-    //   apiId: api.apiId,
-    //   functionVersion: "2018-05-29",
-    //   description: "description",
-    //   dataSourceName: noneDataSource.name,
-    //   name: "localFunction",
-    //   requestMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.request.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    //   responseMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.response.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    // })
+    const CheckNonPrivateTenderFunction = new CfnFunctionConfiguration(this, `CheckNonPrivateTenderFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: noneDataSource.name,
+      name: "CheckNonPrivateTenderFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckNonPrivateTenderFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckNonPrivateTenderFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
 
     const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
@@ -580,9 +580,11 @@ export class ApiStack extends cdk.Stack {
       pipelineConfig: {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
-          GetAclAuroraFunction.attrFunctionId,
-          GetTenderFunction.attrFunctionId]
+          CheckNonPrivateTenderFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId
+        ]
       },
     })
 
