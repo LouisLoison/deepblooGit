@@ -1,7 +1,8 @@
 ### PIPELINE MUTATION FLOW WHICH HAVE MULTI INSERT OR UPDATE AURORA OPERATIONS
 
 1.**Define Pipeline functions using AWS CDK:**
-![image](https://user-images.githubusercontent.com/17459522/110761031-1af34d00-8271-11eb-8b06-e6f4cdb78cb9.png)
+
+![image](https://user-images.githubusercontent.com/17459522/110761031-1af34d00-8271-11eb-8b06-e6f4cdb78cb9.png).
 
 2.**Before Mapping template:**
 The request mapping template of a Pipeline resolver or also called the Before step, allows to perform some preparation logic before executing the defined functions. 
