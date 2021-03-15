@@ -10,22 +10,22 @@ Every mutation with Pipeline Functions have Before mapping template, this mappin
 
 Here are some properties we add in stash object.
 The stash is a Map that is made available inside each resolver and function mapping template.
-a. pipelineFunctions (List of names of defined Pipeline Functions in Stack).
-b. pipelineFunctionsInfo (Info of each Pipline function).
-c. currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora Functions because we are reusing the same template for these operations, In CreateTender example we are starting from index 3)
-d. currentPipelineFunction (String value current Pipeline Function based on index).
+- pipelineFunctions (List of names of defined Pipeline Functions in Stack).
+- pipelineFunctionsInfo (Info of each Pipline function).
+- currentPipelineFunctionIndex (index of executing function, we need this to track which function gets executed. We define the value of index from where we want to trach the Pipeline, in our case we start tracking from Aurora Functions because we are reusing the same template for these operations, In CreateTender example we are starting from index 3)
+- currentPipelineFunction (String value current Pipeline Function based on index).
 
 **Example data we save in stash.**
-a. ![image](https://user-images.githubusercontent.com/17459522/110757948-c5697100-826d-11eb-8402-d4e5fd855336.png)
-b. ![image](https://user-images.githubusercontent.com/17459522/110758396-4b85b780-826e-11eb-843e-0cb2dd61db96.png)
-c. ![image](https://user-images.githubusercontent.com/17459522/110758766-b46d2f80-826e-11eb-9850-f26e56f7426f.png)
-d. ![image](https://user-images.githubusercontent.com/17459522/110759092-0f068b80-826f-11eb-8614-a5ff412b4b98.png)
+- ![image](https://user-images.githubusercontent.com/17459522/110757948-c5697100-826d-11eb-8402-d4e5fd855336.png).
+- ![image](https://user-images.githubusercontent.com/17459522/110758396-4b85b780-826e-11eb-843e-0cb2dd61db96.png).
+- ![image](https://user-images.githubusercontent.com/17459522/110758766-b46d2f80-826e-11eb-9850-f26e56f7426f.png).
+- ![image](https://user-images.githubusercontent.com/17459522/110759092-0f068b80-826f-11eb-8614-a5ff412b4b98.png).
 
 **pipelineFunctionsInfo object details**
 - Currently We have three types of datasources implemented in this project, datasources are
-a. Lambda
-b. Aurora
-c. Local
+1. Lambda
+2. Aurora
+3. Local
 - Each Pipeline Function should be attach with on the datasources we define above. 
 - If Pipeline Function datasource is Lambda then in pipelineFunctionInfo object we should have this type of object.
 ![image](https://user-images.githubusercontent.com/17459522/110788782-e3949880-8290-11eb-81ec-5eee5aa35256.png)
