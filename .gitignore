@@ -41,6 +41,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+backend.log*
+node-loop.pid
+node-app.pid
 
 
 # Editor directories and files

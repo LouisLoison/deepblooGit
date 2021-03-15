@@ -20,6 +20,8 @@
     "sam": "./tools/start-sam.sh",
     "tests_run": "cd lambda/test && pipenv shell 'cd ../../ && pytest -vv'",
     "test:unit": "NODE_PATH=$NODE_PATH:lambda/libjs jest -c .jest/config.unit.js",
+    "local": "NODE_ENV=local npm run",
+    "local:install": "npm run install; (cd back && npm install) ; (cd lambda/libjs && npm install)",
     "cov": "cd lambda/test/ && pipenv shell 'cd ../../ && pytest -v --cov-report term-missing --cov=lambda'"
   },
   "devDependencies": {
