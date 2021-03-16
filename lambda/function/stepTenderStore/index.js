@@ -6,7 +6,7 @@ const { BddTool } = require('deepbloo');
 
 
 const handler = async function(event, context, client) {
-  const { analyzedData, convertedData, tenderData } = event
+  const { analyzedData, convertedData } = event
 
   analyzedData.dataRaw = convertedData.dataRaw
   const tender = await BddTool.RecordAddUpdate (

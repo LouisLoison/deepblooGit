@@ -102,11 +102,7 @@ exports.tenderCount = () => {
 exports.TenderGet = (id, algoliaId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       let query = `
         SELECT      id AS "id",

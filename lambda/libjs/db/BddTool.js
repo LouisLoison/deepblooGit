@@ -251,6 +251,11 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     if (ColumnName in Record) {
       ColumnList.push(ColumnName)
     }
+    if (['updateDate', 'creationDate'].includes(ColumnName)) {
+      if(!ColumnList.includes(ColumnName)) {
+        ColumnList.push(ColumnName)
+      }
+    }
   }
   let Query = ''
   let UpdateColumnsList = []
