@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "start:brk": "node --inspect-brk app.js",
-    "startpid": "bash -c 'while true; do DEBUG=1 HIVEBRITE_SECRET=arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB node app.js >> backend.log 2>&1 & echo $! > node-app.pid ; tail --pid=$(cat node-app.pid) -f /dev/null ; sleep 1; done' &echo $! > node-loop.pid",
+    "startpid": "bash -c 'while true; do . ../tools/env.sh; DEBUG=1 node app.js >>backend.log 2>&1 & echo $! > node-app.pid ; tail --pid=$(cat node-app.pid) -f /dev/null ; sleep 1; done' &echo $! > node-loop.pid",
     "stoppid": "kill $(cat node-loop.pid) ; kill $(cat node-app.pid); tail --pid=$(cat node-app.pid) -f /dev/null",
     "restart": "npm run stoppid; sleep 1; npm run startpid;",
     "updateindex": "node tools/elastic/updateindex.js",
