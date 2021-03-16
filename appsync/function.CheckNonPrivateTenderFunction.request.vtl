@@ -1,21 +1,22 @@
 #set( $Tender = $ctx.stash.Tender )
 #set( $Acl = $ctx.stash.Acl )
 #set( $user_type = $ctx.stash.user_type )
+#set( $NotFound = 'Not Found!' )
 
 # CHECK IF TENDER IS NON PRIVATE
 #if($Tender.dataSource != 'private') 
     #if($user_type == 1 || $user_type == 2 || $user_type == 4 )
         #return($Tender)
     #else
-        $utils.error('Not Found')
+        $utils.error($NotFound)
     #end
 #end
 
 # CHECK IF TENDER IS PRIVATE CHECK ACL
 #if( $Acl.isEmpty() )
-	$utils.error('ACL NIS EMPTY.')
+	$utils.error($NotFound)
 #else
-  #set($permissions = ['OWNER', 'MANAGER']) ## HERE WE DEFINE PERMISSIONS 
+  #set($permissions = ['OWNER']) ## HERE WE DEFINE PERMISSIONS 
   #set($claimPermissions = $Acl)
   #foreach($per in $permissions)
       #foreach($item in $claimPermissions)
@@ -26,8 +27,8 @@
   #end
   
   #if($hasPermission)
-      $utils.toJson($ctx.stash.Tender)
+      #return($Tender)
   #else
-      $utils.error('ACL DONT HAVE ROLES')
+      $utils.error($NotFound)
   #end
 #end
