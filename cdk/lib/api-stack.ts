@@ -582,8 +582,8 @@ export class ApiStack extends cdk.Stack {
           TokenAuthorizerFunction.attrFunctionId,
           GetTenderFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
-          CheckNonPrivateTenderFunction.attrFunctionId,
-          GetAclAuroraFunction.attrFunctionId
+          GetAclAuroraFunction.attrFunctionId,
+          CheckNonPrivateTenderFunction.attrFunctionId
         ]
       },
     })

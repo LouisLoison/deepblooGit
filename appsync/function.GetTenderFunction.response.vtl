@@ -2,7 +2,11 @@
 #if($ctx.error)
     $utils.error($ctx.error.message, $ctx.error.type)
 #end
-#set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
-$util.qr($result.put('tenderSource', 'private'))
-$util.qr($ctx.stash.put('tender', $result))
-$utils.toJson($result)
+#set( $result = $utils.rds.toJsonObject($ctx.result)[0])
+
+#if($result.isEmpty())
+    $utils.error("NOT FOUND")
+#else
+    $util.qr($ctx.stash.put('Tender', $result[0]))
+#end
+$utils.toJson($result[0])

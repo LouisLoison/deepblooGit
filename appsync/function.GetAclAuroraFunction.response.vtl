@@ -3,22 +3,5 @@
     $utils.error($ctx.error.message, $ctx.error.type)
 #end
 #set( $result = $utils.rds.toJsonObject($ctx.result)[0])
-#if( $result.isEmpty() )
-	$utils.unauthorized()
-#else
-  #set($permissions = ['OWNER', 'MANAGER']) ## HERE WE DEFINE PERMISSIONS 
-  #set($claimPermissions = $result)
-  #foreach($per in $permissions)
-      #foreach($item in $claimPermissions)
-          #if($item.role == $per)
-              #set($hasPermission = true)
-          #end
-      #end
-  #end
-  
-  #if($hasPermission)
-      $utils.toJson($ctx.stash.tender)
-  #else
-      $utils.unauthorized()
-  #end
-#end
+$util.qr($ctx.stash.put('Acl', $result))
+$util.toJson($result)
