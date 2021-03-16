@@ -6,6 +6,7 @@ import { ApiStack } from '../lib/api-stack';
 import { TenderStack } from '../lib/tender-stack';
 import { DocumentStack } from '../lib/document-stack';
 import { AuroraDbStack } from '../lib/auroradb-stack';
+import { FrontendStack } from '../lib/frontend-stack';
 // import { CloudFrontStack } from '../lib/cloud-front-stack';
 
 
@@ -17,15 +18,17 @@ const { account, region } = config
 
 const env = { account, region }
 
-const apiStack = new ApiStack(app, 'ApiStack', { env });
+new ApiStack(app, 'ApiStack', { env });
 
-const textractPipelineStack = new TextractPipelineStack(app, 'TextractPipelineStack', { env });
+new FrontendStack(app, 'FrontendStack', { env });
+
+new TextractPipelineStack(app, 'TextractPipelineStack', { env });
 
 // const cloudFrontStack = new CloudFrontStack(app, 'DocumentAccessStack', { env: { account: "669031476932", region: "eu-west-1" }});
 
-const auroraDbStack = new AuroraDbStack(app, 'AuroraPostgresStack', {
+new AuroraDbStack(app, 'AuroraPostgresStack', {
   env
-  })
+})
 
 const documentStack = new DocumentStack(app, 'DocumentStack', {
   env,

@@ -16,7 +16,7 @@ export class AuroraDbStack extends Stack {
       NODE_ENV,
       vpcId,
       availabilityZones,
-      privateSubnetIds,
+      publicSubnetIds,
     } = config
 
 
@@ -36,7 +36,8 @@ export class AuroraDbStack extends Stack {
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
       vpcId,
       availabilityZones,
-      privateSubnetIds,
+      // publicSubnetIds, 
+      privateSubnetIds: publicSubnetIds,
     });
 
     new CfnOutput(this, 'secret-arn', {
