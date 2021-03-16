@@ -6,4 +6,4 @@ export TOPLEVEL NODE_ENV
 
 `cat $TOPLEVEL/cdk/lib/config.ts  |grep '^  '|sed "s/ *: *'/=/"|sed 's/^ *//'| sed "s/',$//" |grep '^[A-Z]' |sed 's/^/export /'`
 
-APPSEARCH_PRIVATE=`aws secretsmanager get-secret-value --secret-id $APPSEARCH_SECRET |jq -r '.SecretString | fromjson | .appsearchPrivateKey'`
+# APPSEARCH_PRIVATE=`aws secretsmanager get-secret-value --secret-id $APPSEARCH_SECRET |jq -r '.SecretString | fromjson | .appsearchPrivateKey'`
