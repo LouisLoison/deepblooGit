@@ -4,6 +4,7 @@ import VuexPersistence from 'vuex-persist'
 
 // import example from './module-example'
 import defaultStore from './default'
+import appSearchTender from './appSearchTender'
 
 
 Vue.use(Vuex)
@@ -14,7 +15,8 @@ const vuexLocal = new VuexPersistence({
 
 const Store = new Vuex.Store({
   modules: {
-    defaultStore
+    defaultStore,
+    appSearchTender
     // example
   },
   // enable strict mode (adds overhead!)

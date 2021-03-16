@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    v-if="isVisible"
-    v-model="isVisible"
+    v-if="dialogState && getPreviewUUID"
+    v-model="dialogState"
     :scrollable="getIsMobile"
     :max-width="!getIsMobile ? '80%' : null"
     :fullscreen="getIsMobile"
@@ -9,14 +9,14 @@
   >
     <Tender
       ref="Tender"
-      @close="isVisible = false"
+      @close="dialogState = false"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
     />
   </v-dialog>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import Tender from '@/views/tender/components/Tender'
 
 export default {
@@ -29,16 +29,29 @@ export default {
   data: () => ({
     isVisible: false,
   }),
-
   computed: {
+    dialogState: {
+      get () {
+        return this.getPreviewState
+      },
+      set (value) {
+        this.UPDATE_PREVIEW_STATE(value)
+      }
+    },
+    ...mapGetters('appSearchTender', [
+      'getPreviewState',
+      'getPreviewUUID'
+    ]),
     ...mapGetters('defaultStore', [
       'getIsMobile',
-    ]),
+    ])
   },
-
   methods: {
+    ...mapMutations('appSearchTender', [
+      'UPDATE_PREVIEW_STATE'
+    ]),
     show(tender) {
-      this.isVisible = true
+      console.log(tender)
       this.tender = tender
       this.$nextTick(() => {
         let tenderUuid = null

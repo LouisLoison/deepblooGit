@@ -1,60 +1,126 @@
 <template>
 
-  <div :style="'height:'+ sizeUp + 'px; width: 100%'">
+  <div class="row" :style="'height:'+ sizeUp + 'px; width: 100%'">
     <l-map
       v-if="showMap"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      style="height: 100%"
+      style="z-index:0; height: 100%; width: 90%"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
+      @update:bounds="boundsUpdate"
     >
       <l-tile-layer
         :url="url"
       />
-      <div v-if="currentZoom > 4">
-        <div v-for="(data, index) in mapData" v-bind:key=index>
-          <tender-map-view v-if="onScreen()" :tenderData="data" />
+    <l-control>
+      <v-btn @click="$store.dispatch('appSearchTender/setPosData')">
+        Refresh Pos Data
+      </v-btn>
+    </l-control>
+      <div v-if="currentZoom >= 4">
+        <div v-for="(data, index) in getSearchResult" v-bind:key=index>
+          <div v-if="data.pos">
+            <tender-map-view v-if="onScreen(data) && data.pos.type === 'Pos'" @tenderDialogShow="call(data)" :tenderData="data" />
+            <tender-zone-view v-if="onScreen(data) && data.pos.type === 'Cercle'" @tenderDialogShow="call(data)" :tenderData="data" />
+          </div>
+        </div>
+      </div>
+      <div v-if="currentZoom >= 4">
+        <div v-for="(data, index) in getSearchResult" v-bind:key=index>
+          <tender-map-view v-if="data.pos && data.pos.type === 'Pos' && onScreen(data.pos)" @tenderDialogShow="call(data)" :tenderData="data" />
+        </div>
+        <div v-for="(data, index) in getCercleZone" v-bind:key="'cercle' + index">
+          <tender-zone-view v-if="onScreen(data)" @tenderDialogShow="call(data)" :tenderData="data" :zoom="currentZoom" />
         </div>
       </div>
     </l-map>
+    <v-card class="col width: 10%">
+        <div v-for="(data, index) in getTenders" v-bind:key="'cercle' + index">
+          <div @click="setPreviewTender({ prevState: true, data: data })">
+            <search-result :result="data" />
+          </div>
+        </div>
+    </v-card>
   </div>
 </template>
 
 <script>
 import { latLng } from "leaflet";
-import { LMap, LTileLayer } from "vue2-leaflet";
+import { LMap, LTileLayer, LControl } from "vue2-leaflet";
 import tenderMapView from './TenderMapView'
+import { mapGetters, mapActions } from 'vuex'
+import SearchResult from '../SearchResult.vue';
+import TenderZoneView from './TenderZoneView.vue';
 
 export default {
   name: "Example",
   components: {
     tenderMapView,
     LMap,
-    LTileLayer
+    LTileLayer,
+    TenderZoneView,
+    SearchResult,
+    LControl
   },
   data() {
     return {
       sizeUp: window.innerHeight,
       zoom: 4,
       center: latLng(47.41322, -1.219482),
+      bounds: {},
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       currentZoom: 4,
       currentCenter: latLng(47.41322, -1.219482),
+      currentBounds: {
+        _northEast: {
+          lat: 60.50052541051131,
+          lng: 30.498046875000004
+        },
+        _southWest: {
+          lat: 29.783449456820605,
+          lng: -32.91503906250001
+        }
+      },
       showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5,
         minZoom: 4,
-        maxZoom: 12
+        maxZoom: 12,
+        worldCopyJump: true
       },
       showMap: true,
-      mapData: this.$store.getters['defaultStore/getMapTender']
+      results: this.getSearchResult
     };
   },
+  computed: {
+    ...mapGetters('appSearchTender', [
+      'getSearchResult',
+      'getCercleZone',
+      'getTenders'
+    ])
+  },
   methods: {
-    onScreen() {
-      return true
+    ...mapActions('appSearchTender', [
+      'setPreviewTender'
+    ]),
+    call (data) {
+      this.$emit('tenderDialogShow', data)
+    },
+    async onScreen(data) {
+      if (this.currentBounds === undefined)
+        return false;
+
+      if (this.currentBounds._southWest.lat < data.lat && this.currentBounds._northEast.lat > data.lat) {
+        if (this.currentBounds._southWest.lng < data.lng && this.currentBounds._northEast.lng > data.lng) {
+          return true
+        }
+      }
+      return false
+    },
+    boundsUpdate(bounds) {
+      this.currentBounds = bounds
     },
     zoomUpdate(zoom) {
       this.currentZoom = zoom;

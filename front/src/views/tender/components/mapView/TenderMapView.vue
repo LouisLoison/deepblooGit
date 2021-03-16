@@ -1,28 +1,34 @@
 <template>
 <l-marker :lat-lng="getPos()">
-  <l-tooltip>
-    <div>
+  <l-icon
+    :icon-size="[30, 30]"
+    :icon-url="this.$global.cpvLogo(this.tenderData.cpvs.raw, this.$store.getters['defaultStore/getDataCpvs'].data)" >
+  </l-icon>
+  <l-popup>
+    <div @click="$emit('tenderDialogShow')">
       <search-result :result="tenderData" />
     </div>
-  </l-tooltip>
+  </l-popup>
 </l-marker>
 </template>
 
 <script>
 import { latLng } from "leaflet";
-import { LTooltip, LMarker } from "vue2-leaflet";
+import { LPopup, LMarker, LIcon } from "vue2-leaflet";
 import SearchResult from '../SearchResult.vue';
 
 export default {
   name: "tenderMap",
   props: [ 'tenderData' ],
   components: {
-    LTooltip,
+    LIcon,
+    LPopup,
     LMarker,
     SearchResult
   },
   data () {
     return {
+      logo: this.$global.cpvLogo(this.tenderData.cpvs.raw, this.$store.getters['defaultStore/getDataCpvs'].data)
     }
   },
   methods: {

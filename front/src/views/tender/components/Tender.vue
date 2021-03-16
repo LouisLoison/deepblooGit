@@ -1685,7 +1685,9 @@ export default {
       'getDataTenderGroups',
       'getCpvsLogoFromLabel',
     ]),
-
+    ...mapGetters('appSearchTender', [
+      'getPreviewUUID'
+    ]),
     isFree() {
       if (
         (this.getUserType && this.getUserType === 1) ||
@@ -1792,7 +1794,9 @@ export default {
       return this.searchTextParse("Voltage")
     },
   },
-
+  mounted () {
+    this.loadTender(this.getPreviewUUID)
+  },
   methods: {
     async loadTender(tenderUuid) {
       try {

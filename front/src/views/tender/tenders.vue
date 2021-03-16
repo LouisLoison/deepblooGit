@@ -506,6 +506,7 @@ export default {
 
     driver.subscribeToStateChanges(state => {
       this.searchState = state
+      this.$store.commit('appSearchTender/UPDATE_SEARCH_RESULT', state)
     })
 
     // Get user memberships
@@ -798,7 +799,7 @@ export default {
 
 .searchbox-grid {
   display: grid;
-  grid-template-columns: 1fr 50px 50px 50px;
+  grid-template-columns: 1fr 50px 50px 50px 50px;
   grid-gap: 0px 0px;
   background-color: #f5f5f5;
   height: 55px;

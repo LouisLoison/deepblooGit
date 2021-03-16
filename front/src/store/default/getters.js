@@ -81,9 +81,7 @@ export const getCpvsLogoFromLabel = (state) => (cpvs) => {
     cpvs = ""
   }
   if (!Array.isArray(cpvs)) {
-    console.log('cc')
     console.log(cpvsArray)
-    console.log('cc')
     cpvsArray = cpvs.split(",").map(a => a)
   }
   if (cpvsArray && cpvsArray.length) {

@@ -50,9 +50,7 @@
     <Map
       v-else-if="displayType === 'MAP'"
       inTendersScreen
-      :searchFilter="{ searchInputValue: searchState.searchTerm, facets: filter }"
-      @searchInputValueRemove="searchInputValueRemove()"
-      @facetItemRemove="facetItemRemove($event)"
+      @tenderDialogShow="tenderOpen($event)"
     />
 
     <!-- Dialog -->
@@ -89,7 +87,6 @@ import Map from '@/views/tender/components/mapView/Map'
 
 export default {
   name: 'SearchResults',
-
   components: {
     Map,
     SearchResult,
