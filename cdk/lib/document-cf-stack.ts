@@ -12,12 +12,14 @@ export class DocumentCfStack extends Stack {
 
     const {
       NODE_ENV,
-      DOCUMENTS_BUCKET,
       docsCertificateArn,
     } = config
 
-    const documentsBucketArn = `arn:aws:s3:::${DOCUMENTS_BUCKET}`
-    const documentsBucket = s3.Bucket.fromBucketArn(this, 'DocumentsBucket', documentsBucketArn);
+    const documentsBucket = new s3.Bucket(this, `docsBucket-${NODE_ENV}`, {
+      versioned: false,
+      bucketName: `docs.${NODE_ENV}.deepbloo.com`,
+      websiteIndexDocument:  'index.html',
+    });
 
     const domainName = NODE_ENV === 'prod' ? 'docs.deepbloo.com' : `docs.${NODE_ENV}.deepbloo.com`
 
