@@ -21,7 +21,7 @@ exports.documentAddUpdate = async (client, document) => {
   return (documentNew)
 }
 
-searchDocumentCpv = (document, documentCriterionCpvsBody, searchedScope) => {
+const searchDocumentCpv = (document, documentCriterionCpvsBody, searchedScope) => {
   let importExclusion = {}
   const documentCriterionCpvs = []
   if (documentCriterionCpvsBody.length) {
@@ -67,7 +67,7 @@ searchDocumentCpv = (document, documentCriterionCpvsBody, searchedScope) => {
   return ([ words, cpvCodes.slice(0, 25).join(), cpvDescriptions.slice(0, 25).join(), documentCriterionCpvs ])
 }
 
-searchDocumentCriterions = (document, textParses, searchedScope) => {
+const searchDocumentCriterions = (document, textParses, searchedScope) => {
   const documentCriterionsBody = textParseTreat(document.body, textParses, searchedScope)
   const documentCriterions = []
 
