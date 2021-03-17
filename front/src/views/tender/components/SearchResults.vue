@@ -18,8 +18,6 @@
         <SearchResult
           ref="SearchResult"
           :result="result"
-          @tenderDialogShow="tenderOpen(result)"
-          @openTenderGroupChoice="openTenderGroupChoice(result)"
           @openSentEmailDialog="openSentEmailDialog(result)"
           @removeTender="removeTenderDialog(result)"
         />
@@ -36,7 +34,6 @@
       @handleFacetChange="handleFacetChange($event)"
       @handleFacetCheckAll="handleFacetCheckAll($event)"
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
-      @openTenderGroupChoice="openTenderGroupChoice($event)"
       @sendToSalesforce="sendToSalesforce($event)"
     />
     <Dashboard
@@ -50,14 +47,12 @@
     <Map
       v-else-if="displayType === 'MAP'"
       inTendersScreen
-      @tenderDialogShow="tenderOpen($event)"
     />
 
     <!-- Dialog -->
     <TenderDialog
       ref="TenderDialog"
       @updateTender="refreshFunction()"
-      @openTenderGroupChoice="openTenderGroupChoice($event)"
     />
     <TenderGroupChoice
       ref="TenderGroupChoice"
@@ -136,10 +131,6 @@ export default {
       'showInsufficientRightDialog',
       'loadUserNotifys',
     ]),
-
-    openTenderGroupChoice(result) {
-      this.$refs.TenderGroupChoice.show(result)
-    },
 
     async moveTenderToGroup(result, tenderGroup) {
       try {

@@ -1475,7 +1475,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import moment from 'moment'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
 import DocumentDialog from '@/components/modal/DocumentDialog'
@@ -1795,9 +1795,14 @@ export default {
     },
   },
   mounted () {
-    this.loadTender(this.getPreviewUUID)
+    if (this.getPreviewUUID) {
+      this.loadTender(this.getPreviewUUID)
+    }
   },
   methods: {
+    ...mapActions('appSearchTender', [
+      'setPipelineDialog'
+    ]),
     async loadTender(tenderUuid) {
       try {
         this.getUserMemberships()
@@ -2364,21 +2369,20 @@ export default {
     },
 
     openTenderGroupChoice() {
-      let result = {
-        id: {
+      let result = this.tender
+      result.id = {
           raw: (this.tender.tenderUuid || this.tender.id).toString()
-        },
-        object_id: {
+        }
+      result.object_id = {
           raw: this.tender.id.toString()
-        },
-        tender_id: {
+        }
+      result.tender_id = {
           raw: this.tender.id.toString()
-        },
-        groups: {
+        }
+      result.groups = {
           raw: this.tenderGroupLinks.map(a => a.tenderGroupId.toString())
-        },
-      }
-      this.$emit('openTenderGroupChoice', result)
+        }
+      this.setPipelineDialog({ isVisible: true, tender:result})
     },
 
     updateTenderGroup() {

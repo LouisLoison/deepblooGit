@@ -7,5 +7,9 @@ export default function () {
       prevState: false,
       uuid: undefined
     },
+    pipelineDialog: {
+      isVisible: false,
+      tender: {}
+    }
   }
 }

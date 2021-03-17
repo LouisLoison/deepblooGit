@@ -49,17 +49,30 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'TenderGroupChoice',
 
   data: () => ({
-    isShow: false,
-    tender: null,
+    tender: undefined,
   }),
-
+  mounted () {
+    this.tender = this.getPipelineDialogTender
+  },
   computed: {
+    isShow: {
+      get () {
+        return this.getPipelineDialogState
+      },
+      set (value) {
+        this.UPDATE_PIPELINE_STATE(value)
+      }
+    },
+    ...mapGetters('appSearchTender', [
+      'getPipelineDialogState',
+      'getPipelineDialogTender'
+    ]),
     ...mapGetters('defaultStore', [
       'getDataTenderGroups',
     ]),
@@ -72,7 +85,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations('appSearchTender', [
+      'UPDATE_PIPELINE_STATE'
+    ]),
     async show(tender) {
+      console.log('show-me')
       try {
         this.tender = tender
         this.isShow = true
@@ -82,6 +99,7 @@ export default {
     },
 
     choice(group) {
+      console.log('teder: ' + this.tender)
       this.$emit('choice', {
         tender: this.tender,
         group,

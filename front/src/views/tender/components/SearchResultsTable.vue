@@ -284,7 +284,7 @@
           <div
             class="cursor-pointer display-table-row pt-2 pb-1 px-0"
             style="border-bottom: 1px solid #d7d7d7;"
-            @click.stop="$emit('tenderDialogShow', result)"
+            @click.stop="setPreviewTender({ prevState: true, data: result })"
           >
             <div
               class="display-table-cell display-table-cell-option"
@@ -873,6 +873,9 @@ export default {
       'showInsufficientRightDialog',
       'setScreenTenders',
     ]),
+    ...mapActions('appSearchTender', [
+      'setPreviewTender'
+    ]),
 
     initUserScreen() {
       if (this.getScreenTenders.columns) {
@@ -909,7 +912,7 @@ export default {
     },
 
     openTenderGroupChoice(result) {
-      this.$emit('openTenderGroupChoice', result)
+      this.setPipelineDialog({ isVisible: true, tender:result})
     },
 
     sendToSalesforce(result) {

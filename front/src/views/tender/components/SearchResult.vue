@@ -1,6 +1,6 @@
 <template>
   <div
-    @click="$emit('tenderDialogShow')"
+    @click="setPreviewTender({ prevState: true, data: result })"
     class="search-result"
   >
     <div style="position: absolute; top: 10px; left: 10px; z-index: 5;">
@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import moment from 'moment'
 
 export default {
@@ -246,6 +246,10 @@ export default {
   },
 
   methods: {
+    ...mapActions('appSearchTender', [
+      'setPreviewTender',
+      'setPipelineDialog'
+    ]),
     getDate(creation_timestamp) {
       let date = new Date()
       date.setTime(creation_timestamp)
@@ -253,7 +257,17 @@ export default {
     },
 
     openTenderGroupChoice() {
-      this.$emit('openTenderGroupChoice')
+      let result = this.result
+      result.id = {
+          raw: (this.result.tenderUuid || this.result.id).toString()
+        }
+      result.object_id = {
+          raw: this.result.id.toString()
+        }
+      result.tender_id = {
+          raw: this.result.id.toString()
+        }
+      this.setPipelineDialog({ isVisible: true, tender:result})
     },
 
     hasNotifys(tenderId) {

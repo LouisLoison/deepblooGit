@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    v-if="dialogState && getPreviewUUID"
+    v-if="dialogState"
     v-model="dialogState"
     :scrollable="getIsMobile"
     :max-width="!getIsMobile ? '80%' : null"
@@ -10,7 +10,6 @@
     <Tender
       ref="Tender"
       @close="dialogState = false"
-      @openTenderGroupChoice="openTenderGroupChoice($event)"
     />
   </v-dialog>
 </template>
@@ -51,7 +50,6 @@ export default {
       'UPDATE_PREVIEW_STATE'
     ]),
     show(tender) {
-      console.log(tender)
       this.tender = tender
       this.$nextTick(() => {
         let tenderUuid = null
@@ -69,10 +67,6 @@ export default {
         }
         this.$refs.Tender.loadTender(tenderUuid)
       })
-    },
-
-    openTenderGroupChoice(result) {
-      this.$emit('openTenderGroupChoice', result)
     },
 
     updateTenderGroup(groups) {

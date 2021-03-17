@@ -1,12 +1,12 @@
 <template>
 
-  <div class="row" :style="'height:'+ sizeUp + 'px; width: 100%'">
+  <div class="row boundBoxMap" :style="'height:'+ sizeUp + 'px; width: 100%'">
     <l-map
       v-if="showMap"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      style="z-index:0; height: 100%; width: 90%"
+      style="z-index:0; height: 100%; width: 100%"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
       @update:bounds="boundsUpdate"
@@ -36,15 +36,24 @@
         </div>
       </div>
     </l-map>
-    <v-card class="col width: 10%">
+    <v-card class="col" style="border-radius: 0%; padding: 4px">
         <div v-for="(data, index) in getTenders" v-bind:key="'cercle' + index">
           <div @click="setPreviewTender({ prevState: true, data: data })">
-            <search-result :result="data" />
+            <search-result :result="data" style="width: 100%" />
           </div>
         </div>
     </v-card>
   </div>
 </template>
+
+<style scoped>
+.boundBoxMap {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  grid-gap: 0px 0px;
+  height: 100%;
+}
+</style>
 
 <script>
 import { latLng } from "leaflet";
