@@ -434,21 +434,22 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
-    const CheckNonPrivateTenderFunction = new CfnFunctionConfiguration(this, `CheckNonPrivateTenderFunction`, {
+    const CheckTenderPermissionFunction = new CfnFunctionConfiguration(this, `CheckTenderPermissionFunction`, {
       apiId: api.apiId,
       functionVersion: "2018-05-29",
       description: "description",
       dataSourceName: noneDataSource.name,
-      name: "CheckNonPrivateTenderFunction",
+      name: "CheckTenderPermissionFunction",
       requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CheckNonPrivateTenderFunction.request.vtl`,
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.request.vtl`,
         { encoding: "utf8" }
       ),
       responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CheckNonPrivateTenderFunction.response.vtl`,
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.response.vtl`,
         { encoding: "utf8" }
       ),
     })
+
 
     const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
@@ -580,10 +581,10 @@ export class ApiStack extends cdk.Stack {
       pipelineConfig: {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
-          GetTenderFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId,
           GetAclAuroraFunction.attrFunctionId,
-          CheckNonPrivateTenderFunction.attrFunctionId
+          CheckTenderPermissionFunction.attrFunctionId
         ]
       },
     })
@@ -631,8 +632,9 @@ export class ApiStack extends cdk.Stack {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
-          GetAclAuroraFunction.attrFunctionId,
           GetTenderFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          CheckTenderPermissionFunction.attrFunctionId,
           UpdateTenderLocalFunction.attrFunctionId,
           UpdateTenderElasticFunction.attrFunctionId,
           UpdateTenderAuroraFunction.attrFunctionId,

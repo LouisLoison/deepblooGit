@@ -3,8 +3,8 @@
 #set( $user_type = $ctx.stash.user_type )
 #set( $NotFound = 'Not Found!' )
 
-# CHECK IF TENDER IS NON PRIVATE
-#if($Tender.dataSource != 'private') 
+# CHECK IF TENDER IS NON PRIVATE and Query is GetTender
+#if($Tender.dataSource != 'private' && $context.info.fieldName == 'GetTender') 
     #if($user_type == 1 || $user_type == 2 || $user_type == 4 )
         #return($Tender)
     #else
