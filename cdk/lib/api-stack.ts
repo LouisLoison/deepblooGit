@@ -288,63 +288,6 @@ export class ApiStack extends cdk.Stack {
 
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
 
-    /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
-       apiId: api.apiId,
-       fieldName: "GetTender",
-       typeName: "Query",
-       requestMappingTemplate: readFileSync(
-         `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
-         { encoding: "utf8" }
-       ),
-       responseMappingTemplate: `
-             #if($ctx.error)
-                 $utils.error($ctx.error.message, $ctx.error.type)
-             #end
-             $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
-       dataSourceName: auroraDataSource.name,
-     })
-     listEventsResolver.addDependsOn(auroraDataSource);
- 
-     hivebriteDataSource.createResolver({ //TODO CHANGE IT TO CfnResolver class
-       typeName: 'Query',
-       fieldName: 'HivebriteUsers',
-       requestMappingTemplate: MappingTemplate.fromString(
-         `{
-           "version": "2017-02-28",
-           "operation": "Invoke",
-           "payload": {
-               "method": "HivebriteUsers",
-               "arguments":  $utils.toJson($context.arguments)
-           }
-       }`),
-       responseMappingTemplate: MappingTemplate.fromString(
-         `
-       #if( $context.result && $context.result.Error )
-         $utils.error($context.result.Error)
-       #else
-         $utils.toJson($context.result.data)
-       #end
-         `,
-       ),
-     })
-
-        const CreateTenderCriterionCpvs = new CfnResolver(this, `CreateTenderCriterionCpvs`, {
-      apiId: api.apiId,
-      typeName: "Query",
-      fieldName: "CreateTenderCriterionCpvs",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.request.vtl`,
-        { encoding: "utf8" }
-      ),
-      responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.response.vtl`,
-        { encoding: "utf8" }
-      ),
-      dataSourceName: auroraDataSource.name,
-    })
-    CreateTenderCriterionCpvs.addDependsOn(auroraDataSource);
-
-     */
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
     const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizerFunction', {
@@ -697,5 +640,37 @@ export class ApiStack extends cdk.Stack {
         ]
       }
     })
+
+    const GetTenderCriterionCpvs = new CfnResolver(this, `GetTenderCriterionCpvs`, {
+      apiId: api.apiId,
+      typeName: "Tender",
+      fieldName: "tenderCriterionCpv",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterionCpv.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterionCpv.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    GetTenderCriterionCpvs.addDependsOn(auroraDataSource);
+
+    const GetTenderCriterion = new CfnResolver(this, `GetTenderCriterion`, {
+      apiId: api.apiId,
+      typeName: "Tender",
+      fieldName: "tenderCriterion",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterion.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterion.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    GetTenderCriterion.addDependsOn(auroraDataSource);
   }
 }
