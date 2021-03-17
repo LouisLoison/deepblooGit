@@ -249,12 +249,9 @@ export default {
 
     async sendToSalesforce(result) {
       try {
-        if (!result.tender_id) {
-          return
-        }
         const res = await this.$api.post('/Tender/sendToSalesforce', {
           userId: this.getUserId,
-          tenderId: parseInt(result.tender_id.raw, 10),
+          tenderUuid: result.id.raw,
         })
         if (!res.success) {
           let message = ''
