@@ -16,6 +16,7 @@ const config = {
   DOCUMENTS_BUCKET: 'documents.deepbloo.com',
   HIVEBRITE_SECRET: 'arn:aws:secretsmanager:eu-west-1:957571717716:secret:hivebrite-In9VfQ',
   frontCertificateArn: 'arn:aws:acm:us-east-1:957571717716:certificate/07a275bd-b9bd-40e7-adfe-874613935891',
+  docsCertificateArn: 'arn:aws:acm:us-east-1:957571717716:certificate/a8002222-8abe-466d-9a4e-455d12fea445',
   // backCertificateArn: 'arn:aws:acm:us-east-1:957571717716:certificate/56224d3c-1297-4aa9-90e7-70cb50ecab84',
 }
 

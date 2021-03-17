@@ -36,16 +36,11 @@ def get_s3_object_url(document_source: str, extension: str) -> str:
     document_output = os.path.join(base_source, document_name, new_document_file)
     return document_output
 
-def get_s3_url(s3_url: str, extension: str) -> str:
-    s3_url_sliced = s3_url.split('/')
-    base_s3_url = "https://" + "/".join(s3_url_sliced[2:5])
-    _, document_file = os.path.split(s3_url)
-    document_name, _ = os.path.splitext(document_file)
-    new_document_file = document_name + extension
-    s3_document_url = os.path.join(base_s3_url,
-                                   document_name,
-                                   new_document_file)
-    return s3_document_url
+def get_s3_url(object_name: str) -> str:
+    env = os.environ['NODE_ENV']
+    domain_name = 'docs.deepbloo.com' if env == 'prod' else 'docs.{}.deepbloo.com'.format(env)
+    s3_url = 'https://{}/{}'.format(domain_name, object_name)
+    return s3_url.replace('#','%23')
 
 def get_filename(object_name: str):
     return os.path.split(object_name)[-1]

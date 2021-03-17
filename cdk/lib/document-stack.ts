@@ -137,6 +137,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
+        ...environment,
         DOCUMENTS_BUCKET,
       }
     })
@@ -149,6 +150,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(120),
       environment: {
+        ...environment,
         DOCUMENTS_BUCKET,
         // ELASTIC_QUEUE_URL: esIndexQueue.queueUrl,
         TEXTRACT_ONLY: "false", // "true" or "false"
@@ -165,6 +167,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
+        ...environment,
         DOCUMENTS_BUCKET,
       }
     })
@@ -177,6 +180,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
+        ...environment,
         DOCUMENTS_BUCKET,
       }
     })
@@ -189,6 +193,7 @@ export class DocumentStack extends Stack {
       reservedConcurrentExecutions: 20,
       timeout: Duration.seconds(60),
       environment: {
+        ...environment,
         DOCUMENTS_BUCKET,
       }
     })
