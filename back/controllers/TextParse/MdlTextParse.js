@@ -578,7 +578,7 @@ exports.textParseList = (filter) => {
         },
         {
           textParseId: 26,
-          theme: "Métriques",
+          theme: "Power",
           group: "Power",
           words: "MVA § megavolt-amp § KVA § Kilovolt-amp",
           exclusions: '',
@@ -586,15 +586,15 @@ exports.textParseList = (filter) => {
         },
         {
           textParseId: 1000,
-          theme: "Métriques",
+          theme: "Power",
           group: "Power",
-          words: "GW,giga-watt,giga watt,MW,mega-watt,megawatt,KW,Kilowatt-hour,kWh,KWp,kilo-watt,kilowatt",
+          words: "GW § giga-watt § giga watt § MW § mega-watt § megawatt § KW § Kilowatt-hour § kWh § KWp § kilo-watt § kilowatt",
           exclusions: '',
           type: "NLP",
         },
         {
           textParseId: 1001,
-          theme: "Métriques",
+          theme: "Power",
           group: "Power",
           words: "",
           exclusions: '',
@@ -602,7 +602,7 @@ exports.textParseList = (filter) => {
         },
         {
           textParseId: 1002,
-          theme: "Métriques",
+          theme: "Voltage",
           group: "Tension",
           words: "",
           exclusions: '',
@@ -626,7 +626,7 @@ exports.textParseList = (filter) => {
         },
         {
           textParseId: 1005,
-          theme: "Métriques",
+          theme: "Voltage",
           group: "Voltage",
           words: "",
           exclusions: '',
@@ -634,7 +634,7 @@ exports.textParseList = (filter) => {
         },
         {
           textParseId: 27,
-          theme: "Métriques",
+          theme: "Voltage",
           group: "Voltage",
           words: "KV § kilovolt § kilo volt § kilo-volt",
           exclusions: '',
