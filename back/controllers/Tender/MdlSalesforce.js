@@ -50,8 +50,14 @@ exports.sendToSalesforce = (userId, tenderId) => {
       `
       let recordset = await BddTool.QueryExecBdd2(query)
       for (let record of recordset) {
+        if (mappingFinancialId !== '') {
+          mappingFinancialId += ','
+        }
         mappingFinancialId = record.code
       }
+
+      // Get power
+      // Voltage1__c
 
       // Get countryId
       let countryId = ''
