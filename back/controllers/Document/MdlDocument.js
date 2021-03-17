@@ -263,7 +263,7 @@ exports.tenderFileImport = (tenderId) => {
         resolve()
       }
       const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
-      const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
+      const textParses = require('deepbloo').textParseList
 
       for (const cpv of CpvList) {
         const cpvWords = []
@@ -476,7 +476,8 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
           tenderCriterions: []
         }
 
-        const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(text, CpvList)
+	const { cpvParseTreat, .textParseTreat } = require('deepbloo').textparse
+        const tenderCriterionCpvfounds = cpvParseTreat(text, CpvList)
         if (tenderCriterionCpvfounds) {
           for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
             const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
@@ -497,7 +498,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
           }
         }
 
-        page.tenderCriterions = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(text, textParses, 'DOCUMENT')
+        page.tenderCriterions = textParseTreat(text, textParses, 'DOCUMENT')
         pages.push(page)
         tenderCriterions = page.tenderCriterions
       } else if (textData) {
@@ -513,7 +514,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
             if (pageData.textData && pageData.textData.Blocks) {
               const lines = pageData.textData.Blocks.filter(a => a.BlockType === 'LINE')
               for (const line of lines) {
-                const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(line.Text, CpvList)
+                const tenderCriterionCpvfounds = cpvParseTreat(line.Text, CpvList)
                 if (tenderCriterionCpvfounds) {
                   for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
                     const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
@@ -533,7 +534,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
                     }
                   }
                 }
-                const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(line.Text, textParses, 'DOCUMENT')
+                const tenderCriterionNews = textParseTreat(line.Text, textParses, 'DOCUMENT')
                 if (tenderCriterionNews) {
                   for (const tenderCriterionNew of tenderCriterionNews) {
                     tenderCriterionNew.boundingBox = {
@@ -552,7 +553,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
           }
         }
         if (textData.text) {
-          const tenderCriterionCpvfounds = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').cpvParseTreat(textData.text, CpvList)
+          const tenderCriterionCpvfounds = cpvParseTreat(textData.text, CpvList)
           if (tenderCriterionCpvfounds) {
             for (const tenderCriterionCpv of tenderCriterionCpvfounds) {
               const cpvFind = CpvList.find(a => a.cpvId === tenderCriterionCpv.cpvId)
@@ -565,7 +566,7 @@ exports.fileParse = (fileLocation, filename, CpvList, textParses, tenderId, expo
               }
             }
           }
-          const tenderCriterionNews = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseTreat(textData.text, textParses, 'DOCUMENT')
+          const tenderCriterionNews = textParseTreat(textData.text, textParses, 'DOCUMENT')
           for (const tenderCriterionNew of tenderCriterionNews) {
             const tenderCriterionFind = tenderCriterions.find(a => a.textParseId === tenderCriterionNew.textParseId)
             if (!tenderCriterionFind) {
