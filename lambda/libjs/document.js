@@ -7,6 +7,7 @@ const os = require('os')
 const { v4: uuidv4 } = require('uuid')
 const { AWS, documentsBucket } = require('./config')
 const objectHash = require('object-hash')
+const { cpvParseTreat, textExclusionIfNoCpv, textParseTreat, textExclusion } = require('./textparse')
 
 const fileHash = (fileName) => {
   const data = fs.readFileSync(fileName)
@@ -18,6 +19,116 @@ const fileHash = (fileName) => {
 exports.documentAddUpdate = async (client, document) => {
   const documentNew = await BddTool.RecordAddUpdate('document', document, 'tenderuuid, sourceurl', client)
   return (documentNew)
+}
+
+searchDocumentCpv = (document, documentCriterionCpvsBody, searchedScope) => {
+  let importExclusion = {}
+  const documentCriterionCpvs = []
+  if (documentCriterionCpvsBody.length) {
+    const isOk = textExclusionIfNoCpv(document.body, searchedScope)
+    if (!isOk.status) {
+      importExclusion.exclusion = searchedScope
+      importExclusion.exclusionWord = isOk.origine
+      return({ importExclusion })
+    }
+  }
+  for (const documentCriterionCpvBody of documentCriterionCpvsBody) {
+    const documentCriterionCpv = documentCriterionCpvs.find(
+      a => a.cpvId === documentCriterionCpvBody.cpvId && a.scope === searchedScope
+    )
+    if (!documentCriterionCpv) {
+      documentCriterionCpvs.push({
+        documentId: 0,
+        cpvId: documentCriterionCpvBody.cpvId,
+        value: documentCriterionCpvBody.value,
+        word: documentCriterionCpvBody.word,
+        findCount: 1,
+        scope: searchedScope,
+        status: 1,
+        cpv: documentCriterionCpvBody.cpv,
+      })
+    } else {
+      documentCriterionCpvs.findCount = documentCriterionCpvs.findCount + 1
+    }
+  }
+  let words = [...new Set(documentCriterionCpvs.filter(a => a.word.trim() !== '').map(a => a.word))]
+  let cpvCodes = [...new Set(documentCriterionCpvs.map(a => a.cpv.code))]
+  let cpvDescriptions = [...new Set(documentCriterionCpvs.map(a => a.cpv.label))]
+
+  for (const documentCriterionCpv of documentCriterionCpvs) {
+    delete documentCriterionCpv.cpv
+  }
+
+  if (!cpvCodes || !cpvCodes.length) {
+    importExclusion.exclusion = 'NO_CPV'
+    importExclusion.exclusionWord = ''
+    return({ importExclusion })
+  }
+  return ([ words, cpvCodes.slice(0, 25).join(), cpvDescriptions.slice(0, 25).join(), documentCriterionCpvs ])
+}
+
+searchDocumentCriterions = (document, textParses, searchedScope) => {
+  const documentCriterionsBody = textParseTreat(document.body, textParses, searchedScope)
+  const documentCriterions = []
+
+  for (const documentCriterionBody of documentCriterionsBody) {
+    const tenderCriterion = documentCriterions.find(
+      a => a.textParseId === documentCriterionBody.textParseId && a.scope === searchedScope
+    )
+    if (!tenderCriterion) {
+      documentCriterions.push({
+        documentId: 0,
+        textParseId: documentCriterionBody.textParseId,
+        value: documentCriterionBody.value,
+        word: documentCriterionBody.word,
+        findCount: 1,
+        scope: searchedScope,
+        status: 1,
+      })
+    } else {
+      tenderCriterion.findCount = tenderCriterion.findCount + 1
+    }
+  }
+  return (documentCriterions)
+}
+
+exports.searchDocumentCpvCriterions = (document, cpvList, textParses, searchedScope) => {
+  document.cpvsOrigine = document.cpvs
+  const documentCriterionCpvsBody = cpvParseTreat(document.body, cpvList, true, searchedScope)
+  ([document.words, document.cpvs, document.cpvDescriptions, document.tenderCriterionCpvs] = searchDocumentCpv(document, documentCriterionCpvsBody, searchedScope))
+  document.tenderCriterions = searchDocumentCriterions(document, textParses, searchedScope)
+  return ({ document })
+}
+
+exports.documentImportCriterions = async (document, cpvList, textParses) => {
+  const importOrigin = {}
+  const searchedScope = 'DOCUMENT'
+
+  // HTML format
+  const descriptionLowerCase = document.description.toLowerCase()
+  if (descriptionLowerCase.includes("<br") || descriptionLowerCase.includes("<table") || descriptionLowerCase.includes("<div")) {
+    document.description = document.description.replace(/\r/gm, '<br>')
+  }
+  let isOk = textExclusion(document.body, searchedScope)
+  if (!isOk.status) {
+    importOrigin.exclusion = searchedScope
+    importOrigin.exclusionWord = isOk.origine
+    importOrigin.status = -10
+    return({importOrigin})
+  }
+
+  const dataSearchCpvCriterions = this.searchDocumentCpvCriterions(document, cpvList, textParses, searchedScope)
+  if (dataSearchCpvCriterions.importExclusion) {
+    importOrigin.exclusion = dataSearchCpvCriterions.importExclusion.exclusion
+    importOrigin.exclusionWord = dataSearchCpvCriterions.importExclusion.exclusionWord
+    importOrigin.status = -10
+    return({importOrigin})
+  }
+  document = dataSearchCpvCriterions.tender
+  document.status = 20
+  document.updateDate = new Date()
+
+  return({document})
 }
 
 exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId, acl="bucket-owner-full-control") => {
