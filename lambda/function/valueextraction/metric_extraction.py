@@ -88,26 +88,25 @@ def quantulum_to_metric(quant, relevant):
 
     unit_name = quant.unit.name
 
-    if relevant and quant.unit.entity.name != "currency":
-        # Naming units after pint ways eases further
-        # processes
-        try:
-            quant_pint_version = Q_("{} {}".format(quant.value,
-                                                   quant.unit.name))
-            unit_name = str(quant_pint_version.units)
-        except pint.errors.DimensionalityError:
-            unit_name = quantulum_pint_dict[quant.unit.name]
-
     try:
+        if relevant and quant.unit.entity.name != "currency":
+            # Naming units after pint ways eases further
+            # processes
+            try:
+                quant_pint_version = Q_("{} {}".format(quant.value,
+                                                       quant.unit.name))
+                unit_name = str(quant_pint_version.units)
+            except pint.errors.DimensionalityError:
+                unit_name = quantulum_pint_dict[quant.unit.name]
+
         metric = Metric(quant.value,  # value
-                    unit_name,  # unit
-                    quant.unit.entity.name,  # entity
-                    quant.surface  # surface
-                    )
+                        unit_name,  # unit
+                        quant.unit.entity.name,  # entity
+                        quant.surface  # surface
+                        )
     except:
         traceback.print_exc()
         metric = False
-        pass
     
     return metric
 
