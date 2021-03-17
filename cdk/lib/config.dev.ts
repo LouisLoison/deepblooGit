@@ -13,7 +13,7 @@ const config = {
   availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
   publicSubnetIds: ['subnet-aff99dc9', 'subnet-225d2a6a', 'subnet-a8d677f2'],
   privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
-  DOCUMENTS_BUCKET: 'textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj',
+  DOCUMENTS_BUCKET: 'docs.dev.deepbloo.com',
   HIVEBRITE_SECRET: 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB',
   frontCertificateArn: 'arn:aws:acm:us-east-1:669031476932:certificate/6a68b464-3123-4d6f-87f2-dfef8fcce134',
   docsCertificateArn: 'arn:aws:acm:us-east-1:669031476932:certificate/a1ad52e6-b508-4331-bfa6-97919b21376a',
