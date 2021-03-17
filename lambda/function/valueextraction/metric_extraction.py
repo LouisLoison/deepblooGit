@@ -5,6 +5,7 @@ This module implements functions to extract metrics from text
 
 import csv
 import pint
+import traceback
 from classes import Metric
 from quantulum3 import parser
 from utilities import quantulum_pint_dict, unit_references
@@ -67,8 +68,8 @@ def extract_metrics(txt, dimensions=ref_dimensions,
 #     quants = [quant for quant in quants 
 #               if quant.unit.entity.name in dimensions]
     # Mapping of the Quantity objects to Metric objects
-    quants_of_interest = list(map(lambda x: quantulum_to_metric(x, True),
-                                  quants_of_interest))
+    quants_of_interest = list(filter(lambda x: x, map(lambda x: quantulum_to_metric(x, True),
+                                  quants_of_interest)))
     if not return_noise:
         return quants_of_interest
     else:
@@ -97,11 +98,16 @@ def quantulum_to_metric(quant, relevant):
         except pint.errors.DimensionalityError:
             unit_name = quantulum_pint_dict[quant.unit.name]
 
-    metric = Metric(quant.value,  # value
+    try:
+        metric = Metric(quant.value,  # value
                     unit_name,  # unit
                     quant.unit.entity.name,  # entity
                     quant.surface  # surface
                     )
+    except:
+        traceback.print_exc()
+        metric = False
+        pass
     
     return metric
 
