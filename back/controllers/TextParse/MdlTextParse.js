@@ -571,34 +571,34 @@ exports.textParseList = (filter) => {
         {
           textParseId: 25,
           theme: "Métriques",
-          group: "Distance (KM)",
+          group: "Distance",
           words: "kms § kilomètres",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 26,
           theme: "Métriques",
-          group: "Puissance (KVA)",
+          group: "Power",
           words: "MVA § megavolt-amp § KVA § Kilovolt-amp",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1000,
           theme: "Métriques",
-          group: "Puissance (MW)",
+          group: "Power",
           words: "GW,giga-watt,giga watt,MW,mega-watt,megawatt,KW,Kilowatt-hour,kWh,KWp,kilo-watt,kilowatt",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1001,
           theme: "Métriques",
-          group: "Puissance",
+          group: "Power",
           words: "",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1002,
@@ -606,7 +606,7 @@ exports.textParseList = (filter) => {
           group: "Tension",
           words: "",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1003,
@@ -614,7 +614,7 @@ exports.textParseList = (filter) => {
           group: "Longueur",
           words: "",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1004,
@@ -622,23 +622,23 @@ exports.textParseList = (filter) => {
           group: "Montant",
           words: "",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 1005,
           theme: "Métriques",
-          group: "Courant",
+          group: "Voltage",
           words: "",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         {
           textParseId: 27,
           theme: "Métriques",
-          group: "Voltage (kV)",
+          group: "Voltage",
           words: "KV § kilovolt § kilo volt § kilo-volt",
           exclusions: '',
-          type: "METRIC",
+          type: "NLP",
         },
         /*
         {
@@ -921,7 +921,7 @@ exports.textParseTreat = (text, textParses, scope) => {
           })
         }
       }
-    } else {
+    } else if (textParse.type !== 'NLP') {
       const words = textParse.words.split('§')
       words.push(textParse.group)
       for (const word of words) {
