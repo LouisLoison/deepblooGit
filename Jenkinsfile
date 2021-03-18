@@ -22,6 +22,7 @@ pipeline {
               # (echo $DIR_PATH | grep -Eq "(backend|frontend)"; if [[ $? = 0 ]] ; then yarn; fi) ||true
 	      . tools/jenkins-env.sh
               set -xe;
+              git clean -fdx 
 
               npm install
            '''
