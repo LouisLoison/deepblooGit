@@ -7,6 +7,7 @@ pipeline {
     GIT_USERNAME = sh(script: "git show -s --format='%aN' ${env.GIT_COMMIT}", returnStdout: true).toString().trim()
 
     TOPLEVEL = sh(script: '''pwd''', returnStdout: true).toString().trim()
+    CUR_DATE=sh(script: "date +%F", returnStdout: true).toString().trim()
     IS_JENKINS_BUILD = "1"
     TMPDIR = "/var/lib/jenkins/tmp/"
     REPO = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).toString().trim()
