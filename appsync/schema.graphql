@@ -44,7 +44,7 @@ type Tender {
     updateDate: String
     tenderCriterionCpv: [TenderCriterionCpv]
     tenderCriterion: [TenderCriterion]
-    dataSource: String # 'public | private' 
+    dataSource: String # tenderinfo | private | dgmarket' 
 }
 
 type TenderCriterionCpv{
