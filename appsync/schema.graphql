@@ -42,9 +42,10 @@ type Tender {
     status: Int
     creationDate: String
     updateDate: String
+    dataSource: String # tenderinfo | private | dgmarket' 
     tenderCriterionCpv: [TenderCriterionCpv]
     tenderCriterion: [TenderCriterion]
-    dataSource: String # tenderinfo | private | dgmarket' 
+    document: [Document]
 }
 
 type TenderCriterionCpv{
@@ -73,6 +74,28 @@ type TenderCriterion{
     findCount: Int
     scope: String # 'TITLE | DESCRIPTION | DOCUMENT' 
     status: Int # '-1 = Delete | -2 = Archive' 
+    creationDate: String
+    updateDate: String
+}
+
+type Document{
+    documentUuid: ID
+    parentUuid: ID
+    tenderId: ID
+    tenderUuid: ID
+    cpvs: String
+    filename: String
+    contentHash: String
+    size: Int
+    pageCount: Int
+    sourceUrl: String 
+    s3Url: String
+    boxFolderId: String
+    boxFileId: String
+    parseResult: String
+    contentType: String
+    objectName: String
+    status: Int
     creationDate: String
     updateDate: String
 }
@@ -130,6 +153,7 @@ type User{
 type Query {
   GetTender(userToken:String!, id: ID!): Tender
   GetUser(userToken:String!): User
+  DocumentList(id: ID!): [Document]
 }
 
 type Mutation {

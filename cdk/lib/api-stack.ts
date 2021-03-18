@@ -676,5 +676,37 @@ export class ApiStack extends cdk.Stack {
       dataSourceName: auroraDataSource.name,
     })
     GetTenderCriterion.addDependsOn(auroraDataSource);
+
+    const GetTenderDocument = new CfnResolver(this, `GetTenderDocument`, {
+      apiId: api.apiId,
+      typeName: "Tender",
+      fieldName: "document",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.GetTenderDocument.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.GetTenderDocument.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    GetTenderCriterion.addDependsOn(auroraDataSource);
+
+    const DocumentList = new CfnResolver(this, `DocumentList`, {
+      apiId: api.apiId,
+      typeName: "Query",
+      fieldName: "DocumentList",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.GetTenderDocument.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.GetTenderDocument.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    DocumentList.addDependsOn(auroraDataSource);
   }
 }

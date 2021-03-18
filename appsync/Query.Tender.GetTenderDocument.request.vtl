@@ -1,0 +1,11 @@
+#if($context.arguments.id)
+    #set( $id = $context.arguments.id )
+#else
+    #set( $id = $context.source.tenderUuid )
+#end
+{
+  "version": "2018-05-29",
+  "statements": [
+    "select documentUuid as \"documentUuid\", parentUuid as \"parentUuid\", tenderId as \"tenderId\", tenderUuid as \"tenderUuid\", cpvs as \"cpvs\", filename as \"filename\", contentHash as \"contentHash\", size as \"size\", pageCount as \"pageCount\", sourceUrl as \"sourceUrl\", s3Url as \"s3Url\", boxFolderId as \"boxFolderId\", boxFileId as \"boxFileId\", parseResult as \"parseResult\", contentType as \"contentType\", objectName as \"objectName\", status as \"status\", creationDate as \"creationDate\", updateDate as \"updateDate\"  FROM document WHERE tenderuuid = '$id'"
+  ]
+}
