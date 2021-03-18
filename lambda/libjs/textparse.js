@@ -224,7 +224,7 @@ exports.textExclusionIfNoCpv = (text, scope) => {
 }
 
 
-const { textParses } = require('./textParseList.js')
+const { textParseList: textParses } = require('./textParseList.js')
 
 exports.textParseList = textParses
 
