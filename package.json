@@ -26,12 +26,6 @@
   },
   "devDependencies": {
     "jest": "^26.6.3",
-    "sam": "0.0.7",
-    "esm": "^3.2"
-  },
-  "dependencies": {
-    "aws-sdk": "^2.793.0",
-    "images": "^3.2.3",
-    "moment": "^2.29.1"
+    "sam": "0.0.7"
   }
 }
