@@ -136,19 +136,15 @@ export default {
 
     async moveTenderToGroup(result, tenderGroup) {
       try {
-        console.log('-- moveTenderToGroup')
-        console.log(result)
-        console.log(tenderGroup)
         let SearchResultHtml = null
         if (result) {
           if (this.displayType === 'CARD') {
-            console.log(this.$refs.SearchResult)
             SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
             console.log(SearchResultHtml)
             if (SearchResultHtml) {
               SearchResultHtml.groupLoadingStatus(true)
+              result = SearchResultHtml.result
             }
-            result = SearchResultHtml.result
           } else {
             result = this.$refs.SearchResultsTable.results.find(a => a.id.raw === result.id.raw)
           }

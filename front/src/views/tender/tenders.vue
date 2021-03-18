@@ -120,10 +120,11 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
-        <div v-if="!getIsMobile && 1 === 2">
+        <div v-if="!getIsMobile">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
+                :disabled="getUserType !== 1"
                 v-bind="attrs"
                 v-on="on"
                 icon
@@ -310,6 +311,7 @@ export default {
   computed: {
     ...mapGetters('defaultStore', [
       'getUserId',
+      'getUserType',
       'isHeaderShow',
       'getIsMobile',
       'getScreenTenders',
@@ -785,7 +787,7 @@ export default {
 
 .searchbox-grid {
   display: grid;
-  grid-template-columns: 1fr 50px 50px;
+  grid-template-columns: 1fr 50px 50px 50px;
   grid-gap: 0px 0px;
   background-color: #f5f5f5;
   height: 55px;
