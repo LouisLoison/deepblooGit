@@ -7,6 +7,7 @@ def initialize_common_env():
     os.environ[
         'DOCUMENTS_BUCKET'] = "textractpipelinestack-documentsbucket9ec9deb9-mla8aarhzynj"
     os.environ['AWS_REGION'] = "eu-west-1"
+    os.environ['NODE_ENV'] = "dev"
 
 
 def get_common_lambda_layers_path():
