@@ -119,7 +119,7 @@ exports.tenderFilterList = (req, res) => {
 }
 
 exports.sendToSalesforce = (req, res) => {
-  require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(req.body.userId, req.body.tenderId).then((data) => {
+  require(process.cwd() + '/controllers/Tender/MdlSalesforce').sendToSalesforce(req.body.userId, req.body.tenderUuid).then((data) => {
     res.end(JSON.stringify({ success: true, data }, null, 3))
   }).catch((err) => { require(process.cwd() + '/controllers/CtrlTool').onError(err, res) })
 }

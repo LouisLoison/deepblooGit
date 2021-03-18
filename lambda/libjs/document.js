@@ -5,7 +5,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const os = require('os')
 const { v4: uuidv4 } = require('uuid')
-const { AWS, documentsBucket } = require('./config')
+const { AWS, documentsBucket, env } = require('./config')
 const objectHash = require('object-hash')
 const { cpvParseTreat, textExclusionIfNoCpv, textParseTreat, textExclusion } = require('./textparse')
 
@@ -150,7 +150,7 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId, acl="bucket-o
 
       document.contentHash = fileHash(fileInfo.fileLocation)
       document.size = fileInfo.size
-      document.s3Url = s3Url
+      document.s3Url = `https://docs.${ env === 'prod' ? '' : env + '.'}deepbloo.com/${objectName.replace(/#/g,'%23')}`
       document.bucketName = documentsBucket
       document.objectName = objectName
       document.filename = fileInfo.filename

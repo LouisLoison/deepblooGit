@@ -114,5 +114,6 @@ app.use(function(req, res) {
 
 var server = app.listen(config.AppBackPort, function() {
   console.log('Server listening on port ' + config.AppBackPort)
+  console.log(`NODE_ENV ${process.env.NODE_ENV}`)
 })
 server.timeout = 2400000;

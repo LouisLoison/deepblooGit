@@ -1,13 +1,16 @@
-#set($tender = $context.prev.result) ## Tender return from GetTenderAuroraFunction.
+#set($tender = $context.stash.Tender) ## Tender return from GetTenderAuroraFunction.
 #set($updateTenderInput = $context.args.input) ## Tender return from GetTenderAuroraFunction.
-
+#set($newInput={})
 
 ## UPDATE TENDER OBJECT
 #foreach( $entry in $updateTenderInput.entrySet() )
-    $util.qr($tender.put($entry.key, $updateTenderInput[$entry.key]))
+    #if($entry.key != 'id')
+        $util.qr($tender.put($entry.key, $updateTenderInput[$entry.key]))
+    #end
 #end
 
 ## UPDATE ARGUMENTS INPUT OBJECT WITH TENDER OBJECT BECAUSE THIS OBJECT WILL BE AS ARGUMENTS FOR ELASTIC LAMBDA RESOLVER.
+$util.qr($context.args.put('input', {}))
 #foreach( $entry in $tender.entrySet() )
     $util.qr($ctx.args.input.put($entry.key, $tender[$entry.key]))
 #end

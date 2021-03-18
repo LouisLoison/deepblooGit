@@ -44,6 +44,7 @@ type Tender {
     updateDate: String
     tenderCriterionCpv: [TenderCriterionCpv]
     tenderCriterion: [TenderCriterion]
+    dataSource: String # tenderinfo | private | dgmarket' 
 }
 
 type TenderCriterionCpv{
@@ -127,7 +128,7 @@ type User{
 }
 
 type Query {
-  GetTender(userToken:String!, tenderUuid: ID!): Tender
+  GetTender(userToken:String!, id: ID!): Tender
   GetUser(userToken:String!): User
 }
 
@@ -174,7 +175,7 @@ input CreateTenderInput{
 }
 
 input UpdateTenderInput{
-  tenderUuid: ID! #tenderUuid
+  id: ID! #tenderUuid
   datasourceId: ID
   procurementId: ID
   algoliaId: ID
@@ -207,5 +208,6 @@ input UpdateTenderInput{
   contractType1: String
   brand: String
   status: Int
+  dataSource: String
 }
 

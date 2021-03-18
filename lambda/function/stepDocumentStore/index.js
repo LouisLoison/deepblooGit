@@ -1,4 +1,4 @@
-const { log, BddTool } = require('deepbloo');
+const { BddTool } = require('deepbloo');
 const { dbLambda } = require('deepbloo').lambda;
 
 
@@ -12,6 +12,7 @@ const handler = async function(event, context, client) {
   if (savedDocument.contentType === 'application/zip') {
     savedDocument.parentUuid = savedDocument.documentUuid
   }
+  savedDocument.sourceUuid = savedDocument.documentUuid
   delete savedDocument.documentUuid
   return {...savedDocument}
 }

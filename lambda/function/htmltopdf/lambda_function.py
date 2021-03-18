@@ -88,7 +88,7 @@ def lambda_handler(event, context):
     aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
                                              aws_env['outputName'],
                                              aws_env['awsRegion'])
-    aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], ".pdf")
+    aws_env["s3Url"] = get_s3_url(aws_env["outputName"])
     aws_env["status"] = status['status']
     aws_env["errorMessage"] = status["errorMessage"]
     aws_env["contentType"] = "application/pdf"

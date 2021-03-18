@@ -37,6 +37,7 @@ export class ApiStack extends cdk.Stack {
       availabilityZones,
       privateSubnetIds,
       HIVEBRITE_SECRET,
+      dbName,
     } = config
 
     const environment = {
@@ -60,7 +61,7 @@ export class ApiStack extends cdk.Stack {
       secretArn: HIVEBRITE_SECRET,
     });
 
-    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
+    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:${dbName}`
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -434,21 +435,22 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
-    // const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
-    //   apiId: api.apiId,
-    //   functionVersion: "2018-05-29",
-    //   description: "description",
-    //   dataSourceName: noneDataSource.name,
-    //   name: "localFunction",
-    //   requestMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.request.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    //   responseMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.response.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    // })
+    const CheckTenderPermissionFunction = new CfnFunctionConfiguration(this, `CheckTenderPermissionFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: noneDataSource.name,
+      name: "CheckTenderPermissionFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
 
     const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
@@ -581,8 +583,10 @@ export class ApiStack extends cdk.Stack {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId,
           GetAclAuroraFunction.attrFunctionId,
-          GetTenderFunction.attrFunctionId]
+          CheckTenderPermissionFunction.attrFunctionId
+        ]
       },
     })
 
@@ -629,8 +633,9 @@ export class ApiStack extends cdk.Stack {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
-          GetAclAuroraFunction.attrFunctionId,
           GetTenderFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          CheckTenderPermissionFunction.attrFunctionId,
           UpdateTenderLocalFunction.attrFunctionId,
           UpdateTenderElasticFunction.attrFunctionId,
           UpdateTenderAuroraFunction.attrFunctionId,

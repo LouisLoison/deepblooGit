@@ -1,18 +1,18 @@
-exports.sendToSalesforce = (userId, tenderId) => {
+exports.sendToSalesforce = (userId, tenderUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
       const moment = require('moment')
       const BddTool = require(process.cwd() + '/global/BddTool')
       const FormData = require('form-data')
 
-      const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(tenderId)
+      const tender = await require(process.cwd() + '/controllers/Tender/MdlTender').TenderGet(null, null, tenderUuid)
       if (!tender) {
-        throw new Error(`Unknown tender #${tenderId}`)
+        throw new Error(`Unknown tender #${tenderUuid}`)
       }
 
       // Get scope of work
       const textParses = await require(process.cwd() + '/controllers/TextParse/MdlTextParse').textParseList()
-      const tenderCriterions = await require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions({ tenderId })
+      const tenderCriterions = await require(process.cwd() + '/controllers/Tender/MdlTender').tenderCriterions({ tenderId: tender.id })
       let scopeOfWorkTextParses = textParses.filter(a => a.theme === 'Scope of Work')
       let scopeOfWorkTextTenderCriterions = []
       for (const tenderCriterion of tenderCriterions) {
@@ -50,7 +50,36 @@ exports.sendToSalesforce = (userId, tenderId) => {
       `
       let recordset = await BddTool.QueryExecBdd2(query)
       for (let record of recordset) {
+        if (mappingFinancialId !== '') {
+          mappingFinancialId += ','
+        }
         mappingFinancialId = record.code
+      }
+
+      // Get power
+      let powerTextParses = textParses.filter(a => a.theme === 'Power')
+      let powerTenderCriterions = []
+      for (const tenderCriterion of tenderCriterions) {
+        let textParse = powerTextParses.find(a => a.textParseId === tenderCriterion.textParseId)
+        if (textParse) {
+          tenderCriterion.textParse = textParse
+          powerTenderCriterions.push(tenderCriterion)
+        }
+      }
+
+      // Get voltage
+      let voltage1 = 0
+      let voltageTextParses = textParses.filter(a => a.theme === 'Voltage')
+      let voltageTenderCriterions = []
+      for (const tenderCriterion of tenderCriterions) {
+        let textParse = voltageTextParses.find(a => a.textParseId === tenderCriterion.textParseId)
+        if (textParse) {
+          tenderCriterion.textParse = textParse
+          voltageTenderCriterions.push(tenderCriterion)
+          if (tenderCriterion.numericValue) {
+            voltage1 =  Math.round(parseInt(tenderCriterion.numericValue, 10) / 1000)
+          }
+        }
       }
 
       // Get countryId
@@ -106,7 +135,7 @@ exports.sendToSalesforce = (userId, tenderId) => {
           Scope__c: scopeOfWork,
           Market_Segment__c: "Transmission",
           Application__c: "New Construction",
-          Voltage1__c: 33,
+          Voltage1__c: voltage1,
           Financing_Note__c: "Name of funding org here",
           AC_DC__c: "AC",
           CircuitLength__c: "100",

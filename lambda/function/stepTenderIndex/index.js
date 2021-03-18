@@ -1,4 +1,5 @@
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
+const { env } = require('deepbloo')
 
 exports.handler =  async function(event, ) {
   const formatedTender = event.formatedData
@@ -7,7 +8,7 @@ exports.handler =  async function(event, ) {
     //formatedTender.power = event.mergedData.data.power
     //formatedTender.voltage = event.mergedData.data.voltage
 
-    return await indexObjectToAppsearch([formatedTender], 'tenders-dev')
+    return await indexObjectToAppsearch([formatedTender], `tenders-${env}`)
   }
   return {}
 }
