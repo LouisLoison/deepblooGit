@@ -1,0 +1,34 @@
+#set( $Tender = $ctx.stash.Tender )
+#set( $Acl = $ctx.stash.Acl )
+#set( $user_type = $ctx.stash.user_type )
+#set( $NotFound = 'Not Found!' )
+
+# CHECK IF TENDER IS NON PRIVATE and Query is GetTender
+#if($Tender.dataSource != 'private' && $context.info.fieldName == 'GetTender') 
+    #if($user_type == 1 || $user_type == 2 || $user_type == 4 )
+        #return($Tender)
+    #else
+        $utils.error($NotFound)
+    #end
+#end
+
+# CHECK IF TENDER IS PRIVATE CHECK ACL
+#if( $Acl.isEmpty() )
+	$utils.error($NotFound)
+#else
+  #set($permissions = ['OWNER']) ## HERE WE DEFINE PERMISSIONS 
+  #set($claimPermissions = $Acl)
+  #foreach($per in $permissions)
+      #foreach($item in $claimPermissions)
+          #if($item.role == $per)
+              #set($hasPermission = true)
+          #end
+      #end
+  #end
+  
+  #if($hasPermission)
+      #return($Tender)
+  #else
+      $utils.error($NotFound)
+  #end
+#end

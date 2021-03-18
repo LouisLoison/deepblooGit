@@ -21,7 +21,7 @@ export class FrontendStack extends Stack {
       websiteIndexDocument:  'index.html',
     });
 
-    const appName = NODE_ENV === 'prod' ? 'app.deepbloo.com' : `app.${NODE_ENV}.deepbloo.com`
+    const dnsName = NODE_ENV === 'prod' ? 'app.deepbloo.com' : `app.${NODE_ENV}.deepbloo.com`
 
     const distrib = new cloudfront.CloudFrontWebDistribution(this, `frontDistrib-${NODE_ENV}`, {
       originConfigs: [
@@ -34,7 +34,7 @@ export class FrontendStack extends Stack {
       ],
       aliasConfiguration: {
         acmCertRef: frontCertificateArn,
-        names: [appName]
+        names: [dnsName]
       }
     });
     new CfnOutput(this, 'distributionDomainName', { value: distrib.distributionDomainName });
