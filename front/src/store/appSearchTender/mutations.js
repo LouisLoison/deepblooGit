@@ -1,6 +1,8 @@
 
 export function UPDATE_SEARCH_RESULT(state, searchResult) {
-  state.searchResult = searchResult.results
+  console.log(searchResult)
+  state.searchResult = searchResult
+  state.tenderPreview = searchResult
 }
 
 export function UPDATE_TENDER_PREVIEW(state, tenders) {

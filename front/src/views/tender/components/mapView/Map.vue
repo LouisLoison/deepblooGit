@@ -1,6 +1,6 @@
 <template>
 
-  <div class="row boundBoxMap" :style="'height:'+ sizeUp + 'px; width: 100%'">
+  <div class="row boundBoxMap" :style="'height: 100vh; width: 100%'">
     <l-map
       v-if="showMap"
       :zoom="zoom"
@@ -22,26 +22,28 @@
       <div v-if="currentZoom >= 4">
         <div v-for="(data, index) in getSearchResult" v-bind:key=index>
           <div v-if="data.pos">
-            <tender-map-view v-if="onScreen(data) && data.pos.type === 'Pos'" @tenderDialogShow="call(data)" :tenderData="data" />
-            <tender-zone-view v-if="onScreen(data) && data.pos.type === 'Cercle'" @tenderDialogShow="call(data)" :tenderData="data" />
+            <tender-map-view v-if="onScreen(data) && data.pos.type === 'Pos'"  :tenderData="data" />
+            <tender-zone-view v-if="onScreen(data) && data.pos.type === 'Cercle'"  :tenderData="data" />
           </div>
         </div>
       </div>
       <div v-if="currentZoom >= 4">
         <div v-for="(data, index) in getSearchResult" v-bind:key=index>
-          <tender-map-view v-if="data.pos && data.pos.type === 'Pos' && onScreen(data.pos)" @tenderDialogShow="call(data)" :tenderData="data" />
+          <tender-map-view v-if="data.pos && data.pos.type === 'Pos' && onScreen(data.pos)"  :tenderData="data" />
         </div>
         <div v-for="(data, index) in getCercleZone" v-bind:key="'cercle' + index">
-          <tender-zone-view v-if="onScreen(data)" @tenderDialogShow="call(data)" :tenderData="data" :zoom="currentZoom" />
+          <tender-zone-view v-if="onScreen(data)"  :tenderData="data" :zoom="currentZoom" />
         </div>
       </div>
     </l-map>
     <v-card class="col" style="border-radius: 0%; padding: 4px">
+      <perfect-scrollbar>
         <div v-for="(data, index) in getTenders" v-bind:key="'cercle' + index">
-          <div @click="setPreviewTender({ prevState: true, data: data })">
-            <search-result :result="data" style="width: 100%" />
+          <div >
+            <search-result :key="data.id.raw" :result="data" style="width: 100%" />
           </div>
         </div>
+      </perfect-scrollbar>
     </v-card>
   </div>
 </template>

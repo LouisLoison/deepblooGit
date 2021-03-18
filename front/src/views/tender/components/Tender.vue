@@ -2369,20 +2369,7 @@ export default {
     },
 
     openTenderGroupChoice() {
-      let result = this.tender
-      result.id = {
-          raw: (this.tender.tenderUuid || this.tender.id).toString()
-        }
-      result.object_id = {
-          raw: this.tender.id.toString()
-        }
-      result.tender_id = {
-          raw: this.tender.id.toString()
-        }
-      result.groups = {
-          raw: this.tenderGroupLinks.map(a => a.tenderGroupId.toString())
-        }
-      this.setPipelineDialog({ isVisible: true, tender:result})
+      this.setPipelineDialog({ isVisible: true, tender: this.tender})
     },
 
     updateTenderGroup() {

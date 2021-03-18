@@ -257,17 +257,8 @@ export default {
     },
 
     openTenderGroupChoice() {
-      let result = this.result
-      result.id = {
-          raw: (this.result.tenderUuid || this.result.id).toString()
-        }
-      result.object_id = {
-          raw: this.result.id.toString()
-        }
-      result.tender_id = {
-          raw: this.result.id.toString()
-        }
-      this.setPipelineDialog({ isVisible: true, tender:result})
+      console.log(this.result)
+      this.setPipelineDialog({ isVisible: true, tender: this.result})
     },
 
     hasNotifys(tenderId) {

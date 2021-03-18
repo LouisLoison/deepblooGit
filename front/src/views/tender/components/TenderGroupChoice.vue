@@ -99,7 +99,6 @@ export default {
     },
 
     choice(group) {
-      console.log('teder: ' + this.tender)
       this.$emit('choice', {
         tender: this.tender,
         group,

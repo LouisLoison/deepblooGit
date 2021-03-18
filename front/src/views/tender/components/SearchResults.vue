@@ -135,26 +135,23 @@ export default {
     async moveTenderToGroup(result, tenderGroup) {
       try {
         console.log('-- moveTenderToGroup')
-        console.log(result)
-        console.log(tenderGroup)
         let SearchResultHtml = null
         if (result) {
-          if (this.displayType === 'CARD') {
-            console.log(this.$refs.SearchResult)
-            SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
-            console.log(SearchResultHtml)
+          console.log('1')
+          if (this.$refs.SearchResult && this.displayType !== 'CARD' || this.displayType !== 'MAP') {
+            SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw) //echec on map
             if (SearchResultHtml) {
               SearchResultHtml.groupLoadingStatus(true)
+              result = SearchResultHtml.result
             }
-            result = SearchResultHtml.result
-          } else {
+          } else if (this.$refs.SearchResultsTable && this.displayType !== 'TABLE') {
             result = this.$refs.SearchResultsTable.results.find(a => a.id.raw === result.id.raw)
           }
         }
         const res = await this.$api.post("/Tender/TenderGroupMove", {
           userId: this.getUserId,
           tenderGroupId: tenderGroup ? tenderGroup.tenderGroupId : null,
-          tenderUuid: result.id.raw,
+          tenderUuid: result.tenderUuid,
         })
         if (!res.success) {
           throw new Error(res.Error)
@@ -180,6 +177,7 @@ export default {
         }
         this.$emit('moveTenderToGroup')
       } catch (err) {
+        console.log('err')
         console.log(err)
       }
     },

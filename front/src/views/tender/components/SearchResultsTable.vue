@@ -874,7 +874,8 @@ export default {
       'setScreenTenders',
     ]),
     ...mapActions('appSearchTender', [
-      'setPreviewTender'
+      'setPreviewTender',
+      'setPipelineDialog'
     ]),
 
     initUserScreen() {
