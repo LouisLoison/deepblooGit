@@ -1,7 +1,7 @@
-#if( $ctx.args.tenderUuid ) ## FOR QUERY OPERATIONS
-	#set( $id = $ctx.args.tenderUuid )
+#if( $ctx.args.id ) ## FOR QUERY OPERATIONS
+	#set( $id = $ctx.args.id )
 #else
-	#set( $id = $ctx.args.input.tenderUuid ) ## FOR MUTATION OPERATIONS
+	#set( $id = $ctx.args.input.id ) ## FOR MUTATION OPERATIONS
 #end
 {
   "version": "2018-05-29",

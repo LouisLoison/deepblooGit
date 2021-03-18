@@ -1,4 +1,4 @@
-#set($tokenAuthorizerResult = $context.prev.result) ## {id, name, primary_email, nbf } tokenAuthorizerResult return from TokenAuthorizer function.
+#set($tokenAuthorizerResult = $context.stash.Hivebrite) ## {id, name, primary_email, nbf } tokenAuthorizerResult return from TokenAuthorizer function.
 
 {
     "version": "2018-05-29",
