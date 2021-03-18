@@ -5,7 +5,7 @@ import simplejson
 
 from PdfToBbox import Pdf
 from helper import AwsHelper, S3Helper
-from update_event import update_event, get_new_s3_url
+from update_event import update_event, get_s3_object_url, get_s3_url, get_filename
 
 
 def send_message(client, qUrl, json_message) -> None:
@@ -24,15 +24,6 @@ def send_to_textract(aws_env: dict):
     client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
     qUrl = aws_env['textractQueueUrl']
     send_message(client, qUrl, json_message)
-
-
-def get_bbox_filename(path_to_pdf: str, extension: str) -> str:
-    folder_output, pdf_output = os.path.split(path_to_pdf)
-    file_name, ext = os.path.splitext(pdf_output)
-    json_file = file_name + extension
-    json_output = os.path.join(folder_output, json_file)
-    return json_output
-
 
 def write_bbox_to_s3(aws_env: dict) -> None:
     with open(aws_env['tmpJsonOutput'], "r") as file:
@@ -103,7 +94,7 @@ def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
 
 
 def lambda_handler(event, context):
-    if (event['status'] <= 0):
+    if event['status'] <= 0:
       return { **event, "errorMessage": "Status isnt positive" }
     aws_env = {
         **event,
@@ -112,16 +103,13 @@ def lambda_handler(event, context):
         "tmpJsonOutput": "/tmp/tmp_result.json",
         "tmpTxtOutput": "/tmp/tmp_result.txt",
         "outputBucket": os.environ.get('DOCUMENTS_BUCKET'),
-        "outputNameJson": get_bbox_filename(event['objectName'], ".json"),
-        "outputNameTxt": get_bbox_filename(event['objectName'], ".txt"),
+        "outputNameJson": get_s3_object_url(event['objectName'], ".json"),
+        "outputNameTxt": get_s3_object_url(event['objectName'], ".txt"),
         "textractOnly": os.environ.get('TEXTRACT_ONLY'),
         "minCharNeeded": int(os.environ.get('MIN_CHAR_NEEDED')),
         "extract_pdf_lines": os.environ.get('EXTRACT_PDF_LINES'),
     }
-    status = {
-        "statusCode": 200,
-        "body": "All right"
-    }
+    status =  1
     extract_pdf_lines = aws_env['extract_pdf_lines']
     textract_only = aws_env['textractOnly']
     tmp_folder = "/tmp/pdfToBbox"
@@ -151,12 +139,12 @@ def lambda_handler(event, context):
     aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
                                              aws_env['outputNameTxt'],
                                              aws_env['awsRegion'])
-    aws_env["s3Url"] = get_new_s3_url(aws_env['s3Url'], "txt")
+    aws_env["s3Url"] = get_s3_url(aws_env['outputNameTxt'])
     aws_env["status"] = status
-    aws_env["status"] = 1
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
+    aws_env["filename"] = get_filename(aws_env['objectName'])
     aws_env["sourceUrl"] = aws_env["s3Url"]
     AwsHelper.refreshTmpFolder(tmp_folder)
     return update_event(aws_env, event)

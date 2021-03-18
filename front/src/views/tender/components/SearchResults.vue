@@ -37,6 +37,7 @@
       @handleFacetCheckAll="handleFacetCheckAll($event)"
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
+      @openSentEmailDialog="openSentEmailDialog($event)"
       @sendToSalesforce="sendToSalesforce($event)"
     />
     <Dashboard
@@ -136,19 +137,15 @@ export default {
 
     async moveTenderToGroup(result, tenderGroup) {
       try {
-        console.log('-- moveTenderToGroup')
-        console.log(result)
-        console.log(tenderGroup)
         let SearchResultHtml = null
         if (result) {
           if (this.displayType === 'CARD') {
-            console.log(this.$refs.SearchResult)
             SearchResultHtml = this.$refs.SearchResult.find(a => a.result.id.raw === result.id.raw)
             console.log(SearchResultHtml)
             if (SearchResultHtml) {
               SearchResultHtml.groupLoadingStatus(true)
+              result = SearchResultHtml.result
             }
-            result = SearchResultHtml.result
           } else {
             result = this.$refs.SearchResultsTable.results.find(a => a.id.raw === result.id.raw)
           }
@@ -249,12 +246,9 @@ export default {
 
     async sendToSalesforce(result) {
       try {
-        if (!result.tender_id) {
-          return
-        }
         const res = await this.$api.post('/Tender/sendToSalesforce', {
           userId: this.getUserId,
-          tenderId: parseInt(result.tender_id.raw, 10),
+          tenderUuid: result.id.raw,
         })
         if (!res.success) {
           let message = ''

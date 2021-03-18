@@ -12,7 +12,11 @@ const textparseIds = {
 
 const formatString = (str) => {
   return stripHtml(str).result
-    .replace(/[/-]/g, '|').replace(/[kK][V]/g, 'Kv')
+    .replace(/[/-]/g, '|')
+    .replace(/[kK][V]/g, 'Kv')
+    .replace(/mva\b/gi, 'Mva')
+    .replace(/kw[pc]\b/gi, 'Kw')
+    .replace(/mw[pc]\b/gi, 'Mw')
 }
 
 exports.extractMetrics = async (tender) => {

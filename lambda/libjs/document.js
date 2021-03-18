@@ -5,7 +5,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const os = require('os')
 const { v4: uuidv4 } = require('uuid')
-const { AWS, documentsBucket } = require('./config')
+const { AWS, documentsBucket, env } = require('./config')
 const objectHash = require('object-hash')
 
 const fileHash = (fileName) => {
@@ -20,7 +20,7 @@ exports.documentAddUpdate = async (client, document) => {
   return (documentNew)
 }
 
-exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
+exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId, acl="bucket-owner-full-control") => {
   const client = await BddTool.getClient()
   await BddTool.QueryExecPrepared(client, 'BEGIN;')
 
@@ -35,11 +35,11 @@ exports.tenderFileImport = async (tenderUuid, sourceUrl, tenderId) => {
       const fileInfo = await this.fileDownload(sourceUrl)
       const {
         location: s3Url, objectName, contentType
-      } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation)
+      } = await this.fileExportAws(tenderUuid, fileInfo.fileLocation, acl)
 
       document.contentHash = fileHash(fileInfo.fileLocation)
       document.size = fileInfo.size
-      document.s3Url = s3Url
+      document.s3Url = `https://docs.${ env === 'prod' ? '' : env + '.'}deepbloo.com/${objectName.replace(/#/g,'%23')}`
       document.bucketName = documentsBucket
       document.objectName = objectName
       document.filename = fileInfo.filename
@@ -187,7 +187,7 @@ const awsFileGet = async (objectName) => {
   return fileLocation
 }
 
-exports.awsFileAdd = (fileLocation, objectName) => {
+exports.awsFileAdd = (fileLocation, objectName, acl) => {
   return new Promise(async (resolve, reject) => {
     try {
       const s3 = new AWS.S3()
@@ -195,7 +195,8 @@ exports.awsFileAdd = (fileLocation, objectName) => {
       const params = {
         Bucket: documentsBucket,
         Body: fs.createReadStream(fileLocation),
-        Key: objectName
+        Key: objectName,
+        ACL: acl
       }
       const contentType = getContentType(fileLocation)
       if (contentType) { params.ContentType = contentType }
@@ -213,14 +214,14 @@ exports.awsFileAdd = (fileLocation, objectName) => {
   })
 }
 
-exports.fileExportAws = (tenderId, fileLocation) => {
+exports.fileExportAws = (tenderId, fileLocation, acl="bucket-owner-full-control") => {
   return new Promise(async (resolve, reject) => {
     try {
       const path = require('path')
 
       const fileName = path.basename(fileLocation)
       const objectName = `tenders/tender#${tenderId}/${fileName}`
-      const res = await this.awsFileAdd(fileLocation, objectName)
+      const res = await this.awsFileAdd(fileLocation, objectName, acl)
       resolve({ ...res, objectName, fileName })
     } catch (err) { reject(err) }
   })

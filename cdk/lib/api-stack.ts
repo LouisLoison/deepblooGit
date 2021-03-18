@@ -4,12 +4,12 @@ import {
   GraphqlApi,
   AuthorizationType,
   FieldLogLevel,
-  MappingTemplate,
+  // MappingTemplate,
   CfnResolver,
   CfnDataSource,
   Schema,
   CfnFunctionConfiguration,
-  NoneDataSource,
+  // NoneDataSource,
 } from '@aws-cdk/aws-appsync';
 import { Vpc } from '@aws-cdk/aws-ec2';
 import { AssetCode, Function, Runtime, LayerVersion } from '@aws-cdk/aws-lambda';
@@ -20,49 +20,48 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import { Duration } from '@aws-cdk/core';
 
+import { config } from './config';
+
 export class ApiStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const {
+      DB_SECRET,
+      DB_HOST,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
+      NODE_ENV,
+      ELASTIC_SECRET,
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
+      HIVEBRITE_SECRET,
+      dbName,
+    } = config
+
     const environment = {
-      NODE_ENV: "dev",
+      NODE_ENV,
     }
-    const dbSecretArn = 'arn:aws:secretsmanager:eu-west-1:669031476932:secret:aurora-creds-faJRvx'
 
     const dbEnv = {
-      DB_HOST: "serverless-test.cluster-cxvdonhye3yz.eu-west-1.rds.amazonaws.com",
-      DB_SECRET: dbSecretArn,
+      DB_HOST,
+      DB_SECRET,
     }
 
-    const appsearchSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:appsearch-TZnQcu"
     const appsearchEnv = {
-      APPSEARCH_ENDPOINT: "https://7bbe91f62e1e4ff6b41e5ee2fba2cdbd.app-search.eu-west-1.aws.found.io/",
-      APPSEARCH_SECRET: appsearchSecretArn,
+      APPSEARCH_ENDPOINT,
+      APPSEARCH_SECRET,
     }
 
-    const elasticSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:elastic-fnVFZr"
-
-    const hivebriteSecretArn = "arn:aws:secretsmanager:eu-west-1:669031476932:secret:hivebrite-tayvUB"
     const hivebriteEnv = {
-      HIVEBRITE_SECRET: hivebriteSecretArn,
+      HIVEBRITE_SECRET,
     }
     const hivebriteSecret = Secret.fromSecretAttributes(this, 'hivebriteSecret', {
-      secretArn: hivebriteSecretArn,
+      secretArn: HIVEBRITE_SECRET,
     });
 
-    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
-    new cdk.CfnOutput(this, 'db-arn', {
-      exportName: 'db-arn',
-      value: dbArn
-    })
-
-    const appsearchSecret = Secret.fromSecretAttributes(this, 'appsearchSecret', {
-      secretArn: appsearchSecretArn,
-    });
-
-    const elasticSecret = Secret.fromSecretAttributes(this, 'elasticSecret', {
-      secretArn: elasticSecretArn,
-    });
+    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:${dbName}`
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {
@@ -123,22 +122,22 @@ export class ApiStack extends cdk.Stack {
           statements: [new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [dbSecretArn]
+            resources: [DB_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [hivebriteSecretArn]
+            resources: [HIVEBRITE_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [appsearchSecretArn]
+            resources: [APPSEARCH_SECRET]
           }),
           new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [elasticSecretArn]
+            resources: [ELASTIC_SECRET]
           })
           ]
         }),
@@ -148,11 +147,9 @@ export class ApiStack extends cdk.Stack {
 
     // -------------VPC FUNCTION DEFINITIONS----------------- //
     const vpc = Vpc.fromVpcAttributes(this, 'Vpc', {
-      vpcId: 'vpc-f7456f91',
-      availabilityZones: ['eu-west-1a', 'eu-west-1b', 'eu-west-1c'],
-      // publicSubnetIds: ['subnet-225d2a6a', 'subnet-a8d677f2', 'subnet-aff99dc9'],
-      // publicSubnetIds: ['subnet-xxxxxx', 'subnet-xxxxxx', 'subnet-xxxxxx'],
-      privateSubnetIds: ['subnet-0d44e4d2296bfd59f', 'subnet-0530f274ce7351e90', 'subnet-0530f274ce7351e90'],
+      vpcId,
+      availabilityZones,
+      privateSubnetIds,
     });
 
     // -------------LAMBDA FUNCTION DEFINITIONS----------------- //
@@ -205,7 +202,7 @@ export class ApiStack extends cdk.Stack {
         ...environment,
         ...appsearchEnv,
         ...dbEnv,
-        ELASTIC_SECRET: elasticSecretArn,
+        ELASTIC_SECRET,
       },
       role: lambdaBasicDbSecretVpcExecutionRole
     });
@@ -246,7 +243,7 @@ export class ApiStack extends cdk.Stack {
           }), new iam.PolicyStatement({
             effect: iam.Effect.ALLOW,
             actions: ['secretsmanager:*'],
-            resources: [dbSecretArn]
+            resources: [DB_SECRET]
           })]
         }),
 
@@ -262,7 +259,7 @@ export class ApiStack extends cdk.Stack {
         relationalDatabaseSourceType: "RDS_HTTP_ENDPOINT",
         rdsHttpEndpointConfig: {
           awsRegion: 'eu-west-1',
-          awsSecretStoreArn: dbSecretArn,
+          awsSecretStoreArn: DB_SECRET,
           databaseName: 'deepbloo_dev',
           dbClusterIdentifier: dbArn
         }
@@ -291,63 +288,6 @@ export class ApiStack extends cdk.Stack {
 
     // -------------SIMPLE QUERY AND MUTATION RESOLVERS DEFINITIONS----------------- //
 
-    /* const listEventsResolver = new CfnResolver(this, `get-tender-resolver`, {
-       apiId: api.apiId,
-       fieldName: "GetTender",
-       typeName: "Query",
-       requestMappingTemplate: readFileSync(
-         `${__dirname}/../../appsync/tenderRequestMapping.vtl`,
-         { encoding: "utf8" }
-       ),
-       responseMappingTemplate: `
-             #if($ctx.error)
-                 $utils.error($ctx.error.message, $ctx.error.type)
-             #end
-             $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])`,
-       dataSourceName: auroraDataSource.name,
-     })
-     listEventsResolver.addDependsOn(auroraDataSource);
- 
-     hivebriteDataSource.createResolver({ //TODO CHANGE IT TO CfnResolver class
-       typeName: 'Query',
-       fieldName: 'HivebriteUsers',
-       requestMappingTemplate: MappingTemplate.fromString(
-         `{
-           "version": "2017-02-28",
-           "operation": "Invoke",
-           "payload": {
-               "method": "HivebriteUsers",
-               "arguments":  $utils.toJson($context.arguments)
-           }
-       }`),
-       responseMappingTemplate: MappingTemplate.fromString(
-         `
-       #if( $context.result && $context.result.Error )
-         $utils.error($context.result.Error)
-       #else
-         $utils.toJson($context.result.data)
-       #end
-         `,
-       ),
-     })
-
-        const CreateTenderCriterionCpvs = new CfnResolver(this, `CreateTenderCriterionCpvs`, {
-      apiId: api.apiId,
-      typeName: "Query",
-      fieldName: "CreateTenderCriterionCpvs",
-      requestMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.request.vtl`,
-        { encoding: "utf8" }
-      ),
-      responseMappingTemplate: readFileSync(
-        `${__dirname}/../../appsync/function.CreateTenderCriterionCpvs.response.vtl`,
-        { encoding: "utf8" }
-      ),
-      dataSourceName: auroraDataSource.name,
-    })
-    CreateTenderCriterionCpvs.addDependsOn(auroraDataSource);
-
-     */
 
     // -------------PIPELINE FUNCITONS DEFINITIONS----------------- //
     const TokenAuthorizerFunction = new CfnFunctionConfiguration(this, 'TokenAuthorizerFunction', {
@@ -495,21 +435,22 @@ export class ApiStack extends cdk.Stack {
       ),
     })
 
-    // const localFunction = new CfnFunctionConfiguration(this, `localFunction`, {
-    //   apiId: api.apiId,
-    //   functionVersion: "2018-05-29",
-    //   description: "description",
-    //   dataSourceName: noneDataSource.name,
-    //   name: "localFunction",
-    //   requestMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.request.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    //   responseMappingTemplate: readFileSync(
-    //     `${__dirname}/../../appsync/localresolver.response.vtl`,
-    //     { encoding: "utf8" }
-    //   ),
-    // })
+    const CheckTenderPermissionFunction = new CfnFunctionConfiguration(this, `CheckTenderPermissionFunction`, {
+      apiId: api.apiId,
+      functionVersion: "2018-05-29",
+      description: "description",
+      dataSourceName: noneDataSource.name,
+      name: "CheckTenderPermissionFunction",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/function.CheckTenderPermissionFunction.response.vtl`,
+        { encoding: "utf8" }
+      ),
+    })
+
 
     const CreateAclAuroraFunction = new CfnFunctionConfiguration(this, `CreateAclAuroraFunction`, {
       apiId: api.apiId,
@@ -642,8 +583,10 @@ export class ApiStack extends cdk.Stack {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
+          GetTenderFunction.attrFunctionId,
           GetAclAuroraFunction.attrFunctionId,
-          GetTenderFunction.attrFunctionId]
+          CheckTenderPermissionFunction.attrFunctionId
+        ]
       },
     })
 
@@ -690,8 +633,9 @@ export class ApiStack extends cdk.Stack {
         functions: [
           TokenAuthorizerFunction.attrFunctionId,
           GetUserAuroraFunction.attrFunctionId,
-          GetAclAuroraFunction.attrFunctionId,
           GetTenderFunction.attrFunctionId,
+          GetAclAuroraFunction.attrFunctionId,
+          CheckTenderPermissionFunction.attrFunctionId,
           UpdateTenderLocalFunction.attrFunctionId,
           UpdateTenderElasticFunction.attrFunctionId,
           UpdateTenderAuroraFunction.attrFunctionId,
@@ -700,5 +644,37 @@ export class ApiStack extends cdk.Stack {
         ]
       }
     })
+
+    const GetTenderCriterionCpvs = new CfnResolver(this, `GetTenderCriterionCpvs`, {
+      apiId: api.apiId,
+      typeName: "Tender",
+      fieldName: "tenderCriterionCpv",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterionCpv.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterionCpv.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    GetTenderCriterionCpvs.addDependsOn(auroraDataSource);
+
+    const GetTenderCriterion = new CfnResolver(this, `GetTenderCriterion`, {
+      apiId: api.apiId,
+      typeName: "Tender",
+      fieldName: "tenderCriterion",
+      requestMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterion.request.vtl`,
+        { encoding: "utf8" }
+      ),
+      responseMappingTemplate: readFileSync(
+        `${__dirname}/../../appsync/Query.Tender.tenderCriterion.response.vtl`,
+        { encoding: "utf8" }
+      ),
+      dataSourceName: auroraDataSource.name,
+    })
+    GetTenderCriterion.addDependsOn(auroraDataSource);
   }
 }

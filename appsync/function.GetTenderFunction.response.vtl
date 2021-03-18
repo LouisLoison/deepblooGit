@@ -2,5 +2,13 @@
 #if($ctx.error)
     $utils.error($ctx.error.message, $ctx.error.type)
 #end
-#set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
+
+#set( $result = $utils.rds.toJsonObject($ctx.result)[0])
+
+#if($result.isEmpty())
+    $utils.error("Not Found!")
+#else
+    $util.qr($ctx.stash.put('Tender', $result[0]))
+#end
+
 $utils.toJson($result)

@@ -1,6 +1,3 @@
-const crypto = require('crypto')
-const { getDbSecret } = require('../config')
-
 const log = (msg) => {
   if(process.env.DEBUG) {
     console.log(msg)
@@ -8,21 +5,20 @@ const log = (msg) => {
 }
 
 var Config = require(process.cwd() + '/config')
-
-const BddSchema = require(process.cwd() + '/global/BddSchema')
 let configBdd = Config.bdd.deepbloo[Config.prefixe].config
-//console.log(Config)
 
 let BddId
 let Environnement
 
 let Schema
-let pgPool = false;
+let pgPool = false
 
 exports.bddInit = async () => {
+  const { getDbSecret } = require('../config')
   configBdd = configBdd || await getDbSecret()
   configBdd.type = configBdd.type || configBdd.engine
 
+  const BddSchema = require(process.cwd() + '/global/BddSchema')
   Schema = BddSchema.getSchema().deepbloo
 
   if (configBdd.type === 'postgres') {
@@ -54,6 +50,7 @@ const pgInitPool = () => {
 
 
 var getSHA1ofJSON = function(input){
+  const crypto = require('crypto')
   return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
 }
 
@@ -256,6 +253,11 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     if (ColumnName in Record) {
       ColumnList.push(ColumnName)
     }
+    if (['updateDate', 'creationDate'].includes(ColumnName)) {
+      if(!ColumnList.includes(ColumnName)) {
+        ColumnList.push(ColumnName)
+      }
+    }
   }
   let Query = ''
   let UpdateColumnsList = []
@@ -267,10 +269,9 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
     insertColumnList.push(ColumnName)
     if (ColumnName === 'creationDate') {
       insertValuesList.push('now()')
-      UpdateColumnsList.push('creationDate')
     } else if (ColumnName === 'updateDate') {
       insertValuesList.push('now()')
-      UpdateColumnsList.push('updateDate')
+      UpdateColumnsList.push('updateDate = now()')
     } else {
       index++;
       insertValuesList.push(`$${index}`)
@@ -290,20 +291,6 @@ const RecordAddUpdatepostgres = async(TableName, Record, ColumnKey, client = fal
       }
     }
   }
-
-  if (!insertColumnList.includes('updateDate')) {
-    insertColumnList.push('updateDate')
-    UpdateColumnsList.push('updateDate = now()')
-    insertValuesList.push('now()')
-  }
-
-  if (!insertColumnList.includes('creationDate')) {
-    insertColumnList.push('creationDate')
-    UpdateColumnsList.push('creationDate = now()')
-    insertValuesList.push('now()')
-  }
-
-  console.log(DateNow(Environnement, BddId))
 
   Query = `
     INSERT INTO "${TableName.toLowerCase()}" (${insertColumnList.join(', ')})

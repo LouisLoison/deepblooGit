@@ -565,46 +565,6 @@
                     moment(tender.publicationDate, "YYYY-MM-DD").format("LL")
                   }}
                 </div>
-                <div>
-                  <div class="grey--text pt-3">
-                    Link to tender documentation
-                  </div>
-                  <div
-                    v-if="getItemUrl(tender) && getItemUrl(tender).length"
-                    style="max-height: 300px; overflow: auto;"
-                  >
-                    <div
-                      v-for="(url, index) in getItemUrl(tender)"
-                      :key="index"
-                      class="url-block"
-                    >
-                      <span v-if="hasReadRight">
-                        <a :href="url" target="_blank">
-                          <i class="fa fa-external-link" />
-                          {{ "Link to tender documents" }}
-                        </a>
-                      </span>
-                      <span v-else class="text-blur">
-                        data not available
-                      </span>
-                    </div>
-                    <v-btn
-                      v-if="hasDocumentToImport && 1 === 2"
-                      :loading="documentImport"
-                      rounded
-                      dark
-                      outlined
-                      color="blue-grey lighten-1"
-                      title="Import into DeepBloo"
-                      @click.stop="tenderFileImport()"
-                    >
-                      Import into DeepBloo
-                    </v-btn>
-                  </div>
-                  <div v-else>
-                    See below to access to tender documentation
-                  </div>
-                </div>
               </v-card-text>
             </v-card>
 
@@ -2317,7 +2277,7 @@ export default {
       this.documentImport = false;
     },
 
-    documentDeleteDialog(document) {
+    async documentDeleteDialog(document) {
       if (!document.documentUuid) {
         return;
       }

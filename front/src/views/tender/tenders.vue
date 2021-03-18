@@ -120,10 +120,11 @@
         >
           <v-icon style="font-size: 24px;">fa-table</v-icon>
         </v-btn>
-        <div v-if="!getIsMobile && 1 === 1">
+        <div v-if="!getIsMobile">
           <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
+                :disabled="getUserType !== 1"
                 v-bind="attrs"
                 v-on="on"
                 icon
@@ -310,6 +311,7 @@ export default {
   computed: {
     ...mapGetters('defaultStore', [
       'getUserId',
+      'getUserType',
       'isHeaderShow',
       'getIsMobile',
       'getScreenTenders',

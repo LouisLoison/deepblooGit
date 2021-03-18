@@ -5,9 +5,9 @@
     "postinstall": "node-prune || true"
   },
   "dependencies": {
-    "@elastic/app-search-node": "^7.10",
-    "@elastic/elasticsearch": "^7.10",
-    "axios": "^0.18",
+    "@elastic/app-search-node": "^7.11",
+    "@elastic/elasticsearch": "^7.11",
+    "axios": "^0.21",
     "esm": "^3.2",
     "fs-extra": "^9.0",
     "html-to-text": "^6.0",

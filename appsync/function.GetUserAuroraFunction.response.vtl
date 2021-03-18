@@ -1,11 +1,15 @@
 #if( $context.error )
  $utils.error($ctx.error.message, $ctx.error.type)
-#else
-  #set( $result = $utils.rds.toJsonObject($ctx.result)[0][0] )
-   ## STASH
-     $util.qr($context.stash.put("user_type", $result.type)) 
-     $util.qr($context.stash.put("user_uuid", $result.uuid)) 
-     $util.qr($context.stash.put("user_hivebriteId", $result.hivebriteId)) 
-     ## RESULT
-  $utils.toJson($result)
 #end
+
+#set( $result = $utils.rds.toJsonObject($ctx.result)[0] )
+
+#if($result.isEmpty())
+  $utils.error("Not Found!")
+#else
+  $util.qr($context.stash.put("user_type", $result[0].type)) 
+  $util.qr($context.stash.put("user_uuid", $result[0].uuid)) 
+  $util.qr($context.stash.put("user_hivebriteId", $result[0].hivebriteId)) 
+#end
+
+$util.toJson($result)
