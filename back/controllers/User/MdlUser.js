@@ -3,7 +3,6 @@ const { getHivebriteSharedSecret } = require(process.cwd() + '/../lambda/libjs/c
 exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const jwt = require('jsonwebtoken')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
@@ -39,8 +38,6 @@ exports.Login = (username, password, userToken) => {
       }
 
       // Check user in deepbloo bdd
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = `
         SELECT    userId AS "userId", 
                   hivebriteId AS "hivebriteId", 

@@ -1,6 +1,3 @@
-const crypto = require('crypto')
-const { getDbSecret } = require('../config')
-
 const log = (msg) => {
   if(process.env.DEBUG) {
     console.log(msg)
@@ -8,21 +5,20 @@ const log = (msg) => {
 }
 
 var Config = require(process.cwd() + '/config')
-
-const BddSchema = require(process.cwd() + '/global/BddSchema')
 let configBdd = Config.bdd.deepbloo[Config.prefixe].config
-//console.log(Config)
 
 let BddId
 let Environnement
 
 let Schema
-let pgPool = false;
+let pgPool = false
 
 exports.bddInit = async () => {
+  const { getDbSecret } = require('../config')
   configBdd = configBdd || await getDbSecret()
   configBdd.type = configBdd.type || configBdd.engine
 
+  const BddSchema = require(process.cwd() + '/global/BddSchema')
   Schema = BddSchema.getSchema().deepbloo
 
   if (configBdd.type === 'postgres') {
@@ -54,6 +50,7 @@ const pgInitPool = () => {
 
 
 var getSHA1ofJSON = function(input){
+  const crypto = require('crypto')
   return crypto.createHash('sha1').update(JSON.stringify(input)).digest('hex')
 }
 

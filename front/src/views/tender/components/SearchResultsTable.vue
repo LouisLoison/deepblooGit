@@ -912,6 +912,10 @@ export default {
       this.$emit('openTenderGroupChoice', result)
     },
 
+    openSentEmailDialog(result) {
+      this.$emit('openSentEmailDialog', result)
+    },
+
     sendToSalesforce(result) {
       this.$emit('sendToSalesforce', result)
     },

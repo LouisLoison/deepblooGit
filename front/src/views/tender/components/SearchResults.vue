@@ -37,6 +37,7 @@
       @handleFacetCheckAll="handleFacetCheckAll($event)"
       @handleFacetUnCheckAll="handleFacetUnCheckAll($event)"
       @openTenderGroupChoice="openTenderGroupChoice($event)"
+      @openSentEmailDialog="openSentEmailDialog($event)"
       @sendToSalesforce="sendToSalesforce($event)"
     />
     <Dashboard
