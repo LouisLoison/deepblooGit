@@ -31,4 +31,5 @@ module.exports = {
   documentsBucket,
   env,
   lambda,
+  textParseList: textparse.textParseList
 }

@@ -22,12 +22,14 @@ export class AuroraDbStack extends Stack {
 
     const dbSecret = new Secret(this, 'Aurora DB secret', {
       secretName: 'aurora',
+      /*
       generateSecretString: {
         secretStringTemplate: `{"username": "deepbloo", "database": "deepbloo_${NODE_ENV}"}`,
         generateStringKey: 'password',
         passwordLength: 16,
         excludeCharacters: '"@/\\'
       }
+       */
     })
 
 

@@ -30,3 +30,19 @@ test('metricRangesTest', done => {
     done()
   })
 }, 15000)
+
+test('metricRangesExceptTest', done => {
+
+
+  extractMetrics({
+    title: 'Provision Of Replace R/rear Bumper Corner , 400Kw 500Mwh Cct33253',
+    description: 'Tenders are invited for Provision of Replace R/Rear Bumper Corner  Cct33253&lt;br /&gt; <br>\n&lt;br /&gt; <br>\n7140950 Cct33253 Toyota Hilux 2.4 Bj 2017 Ahtkb8cd702962058 &lt;br /&gt; <br>\n&lt;br /&gt; <br>\nReplace R/Rear Bumper Corner&lt;br /&gt; <br>\n&lt;br /&gt; <br>\nClosing Date: 2021/01/13&lt;br /&gt; <br>\n&lt;br /&gt; <br>\nClosing Time: 12:00 PM<br><br>Provision Of Replace R/rear Bumper Corner 400Kw 500Mwh Cct33253<br><br>',
+  }).then(metrics => {
+
+    console.log(metrics)
+    const criterions = metricsCriterions(metrics)
+    console.log(criterions)
+    done()
+  })
+}, 15000)
+

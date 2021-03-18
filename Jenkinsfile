@@ -3,16 +3,25 @@ pipeline {
 
   environment {
     ENV = "${env.BRANCH_NAME == "develop" ? "dev" : env.BRANCH_NAME == "master" ? "prod" : env.BRANCH_NAME.matches("^release/.*") ? "stage" : "test"}"
+    TEST_BUILD = ""
+    GIT_USERNAME = sh(script: "git show -s --format='%aN' ${env.GIT_COMMIT}", returnStdout: true).toString().trim()
+
+    TOPLEVEL = sh(script: '''pwd''', returnStdout: true).toString().trim()
+    CUR_DATE=sh(script: "date +%F", returnStdout: true).toString().trim()
+    IS_JENKINS_BUILD = "1"
+    TMPDIR = "/var/lib/jenkins/tmp/"
+    REPO = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).toString().trim()
   }
 
       stages {
         stage('Cleanup & Deps install') {
           steps {
             sh '''
-              set -xe;
               # ./tools/delete-untracked-files.sh
 
               # (echo $DIR_PATH | grep -Eq "(backend|frontend)"; if [[ $? = 0 ]] ; then yarn; fi) ||true
+	      . tools/jenkins-env.sh
+              set -xe;
 
               npm install
            '''
@@ -27,6 +36,7 @@ pipeline {
         stage('Linting') {
           steps {
             sh '''
+	      . tools/jenkins-env.sh
               set -xe;
               npm run lint
             '''
@@ -41,7 +51,9 @@ pipeline {
         stage('Unit Test') {
           steps {
             sh '''
+	      . tools/jenkins-env.sh
               set -xe;
+	      (cd lambda/libjs && npm install)
               npm run test:unit
             '''
           }
@@ -56,6 +68,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
+	      . tools/jenkins-env.sh
               npm run build
             '''
           }
@@ -84,6 +97,7 @@ pipeline {
           }
           steps {
             sh '''
+	      . tools/jenkins-env.sh
               set -xe;
 
               if [ "$TEST_BUILD" ] ; then
@@ -92,10 +106,10 @@ pipeline {
 
               echo "Deploy in ${ENV}"
               # $(./tools/assume_role.sh $ENV)
-              npm run deploy-all
-	      ssh deepbloo@172.31.1.146 "cd platform/back && git pull && npm install && nohup npm run restart >> backend.log 2>&1"
+	      ssh deepbloo@172.31.1.146 ". ~/.nvm/nvm.sh ; cd platform/back && git pull && npm install && nohup npm run restart >> backend-nohup.log 2>&1"
               sleep 10
               aws cloudfront create-invalidation --distribution-id EEY9ER5MY2XRN --paths '/*'
+              npm run deploy-all
             '''
           }
           post {
@@ -108,5 +122,12 @@ pipeline {
           }
         }
 
-      }
+        stage("Cleanup") {
+          steps {
+            sh '''
+	      git clean -fdx .
+            '''
+          }
+       }
+     }
 }
