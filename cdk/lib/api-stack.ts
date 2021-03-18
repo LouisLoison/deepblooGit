@@ -37,6 +37,7 @@ export class ApiStack extends cdk.Stack {
       availabilityZones,
       privateSubnetIds,
       HIVEBRITE_SECRET,
+      dbName,
     } = config
 
     const environment = {
@@ -60,7 +61,7 @@ export class ApiStack extends cdk.Stack {
       secretArn: HIVEBRITE_SECRET,
     });
 
-    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:serverless-test`
+    const dbArn = `arn:aws:rds:${this.region}:${this.account}:cluster:${dbName}`
 
     // The code that defines your stack goes here
     const userPool = new UserPool(this, 'dev-user-pool', {

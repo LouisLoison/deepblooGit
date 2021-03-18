@@ -139,7 +139,7 @@ def lambda_handler(event, context):
     aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
                                              aws_env['outputNameTxt'],
                                              aws_env['awsRegion'])
-    aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], ".txt")
+    aws_env["s3Url"] = get_s3_url(aws_env['outputNameTxt'])
     aws_env["status"] = status
     aws_env["errorMessage"] = None
     aws_env["contentType"] = "text/txt"

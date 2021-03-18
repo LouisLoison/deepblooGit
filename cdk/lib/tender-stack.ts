@@ -70,7 +70,10 @@ export class TenderStack extends Stack {
       secretArn: ELASTIC_SECRET,
     });
 
-    const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', { versioned: false });
+    const sftpBucket = new s3.Bucket(this, 'sftpBucketDev', {
+      versioned: false,
+      bucketName: `sftp.${NODE_ENV}.deepbloo.com`, 
+    });
 
     // const imageMagickLayer = LayerVersion.fromLayerVersionArn(this, 'ImageMagickLayer',"arn:aws:lambda:eu-west-1:669031476932:layer:image-magick:1")
     //    const nodeLayer = LayerVersion.fromLayerVersionArn(scope, `${id}Layer`, props.nodeLayerArn)

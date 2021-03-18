@@ -1,5 +1,5 @@
 
-const { BddTool } = require('deepbloo')
+const { BddTool, env } = require('deepbloo')
 const { analyzeTender } = require('deepbloo').tenderformat
 const { indexToElasticsearch, filterDocument } = require('deepbloo').elastic
 const { indexObjectToAppsearch } = require('deepbloo').appsearch
@@ -128,7 +128,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
       await Promise.all(promiseTranche)
       await indexToElasticsearch(tranche, 'tenders')
       if (appTranche.length) {
-        await indexObjectToAppsearch(appTranche, 'tenders-dev')
+        await indexObjectToAppsearch(appTranche, `tenders-${env}`)
         appTranche.forEach((r, index) => delete appTranche[index])
       }
       console.log(processed) //, JSON.stringify(res, null, 2))
@@ -145,7 +145,7 @@ const processResults = async (client, { rows, fields, rowCount }) => {
     await indexToElasticsearch(tranche, 'tenders')
   }
   if (appTranche.length) {
-    await indexObjectToAppsearch(appTranche, 'tenders-dev')
+    await indexObjectToAppsearch(appTranche, `tenders-${env}`)
   }
 
   console.log(processed)

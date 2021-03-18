@@ -5,7 +5,7 @@ set -e
 TOPLEVEL=`git rev-parse --show-toplevel`
 pushd $TOPLEVEL/front
 
-DNS_NAME=front.dev.deepbloo.com
+DNS_NAME=front.$NODE_ENV.deepbloo.com
 # [ $ENV = 'prod' ] && DNS_NAME=www.deepbloo.com
 
 # log_report "[+] Uploading frontend $DNS_NAME"
@@ -28,7 +28,7 @@ aws s3 sync dist/ s3://$DNS_NAME --exclude "*.js" --cache-control 'no-cache, no-
  done
 )
 
-
+[ $NODE_ENV = 'prod' ] && DNS_NAME=app.deepbloo.com
 echo [+] Invalidating $DNS_NAME
 aws cloudfront list-distributions \
             | jq -r '.DistributionList.Items[] | select(.Origins.Items[].DomainName=="'$DNS_NAME'") | .Id' \

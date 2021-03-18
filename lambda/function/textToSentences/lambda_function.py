@@ -51,7 +51,7 @@ def lambda_handler(event, context):
     print("==> Aws env: {0}".format(json.dumps(aws_env)))
     aws_env['status'] = 1
     aws_env['errorMessage'] = None
-    aws_env["s3Url"] = get_s3_url(aws_env['s3Url'], "_sentences.txt")
+    aws_env["s3Url"] = get_s3_url(aws_env['outputNameTxt'])
     aws_env["contentType"] = "text/txt"
     aws_env['objectName'] = aws_env['outputNameTxt']
     aws_env['filename'] = get_filename(aws_env['objectName'])

@@ -551,3 +551,6 @@ alter table document add column parentuuid uuid;
  alter table tendercriteriondocument alter column value type varchar;
  alter table tendercriteriondocument alter column word type varchar;
  alter table tendercriteriondocument alter column scope type varchar;
+
+
+alter table document add column thumbnailurl varchar;
