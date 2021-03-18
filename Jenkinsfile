@@ -16,11 +16,11 @@ pipeline {
         stage('Cleanup & Deps install') {
           steps {
             sh '''
-              set -xe;
               # ./tools/delete-untracked-files.sh
 
               # (echo $DIR_PATH | grep -Eq "(backend|frontend)"; if [[ $? = 0 ]] ; then yarn; fi) ||true
 	      . tools/jenkins-env.sh
+              set -xe;
 
               npm install
            '''
@@ -35,8 +35,8 @@ pipeline {
         stage('Linting') {
           steps {
             sh '''
-              set -xe;
 	      . tools/jenkins-env.sh
+              set -xe;
               npm run lint
             '''
           }
@@ -50,8 +50,9 @@ pipeline {
         stage('Unit Test') {
           steps {
             sh '''
-              set -xe;
 	      . tools/jenkins-env.sh
+              set -xe;
+	      (cd lambda/libjs && npm install)
               npm run test:unit
             '''
           }
@@ -95,8 +96,8 @@ pipeline {
           }
           steps {
             sh '''
-              set -xe;
 	      . tools/jenkins-env.sh
+              set -xe;
 
               if [ "$TEST_BUILD" ] ; then
                 exit
@@ -104,10 +105,10 @@ pipeline {
 
               echo "Deploy in ${ENV}"
               # $(./tools/assume_role.sh $ENV)
-              npm run deploy-all
-	      ssh deepbloo@172.31.1.146 "cd platform/back && git pull && npm install && nohup npm run restart >> backend.log 2>&1"
+	      ssh deepbloo@172.31.1.146 "cd platform/back && git pull && npm install && nohup npm run restart >> backend-nohup.log 2>&1"
               sleep 10
               aws cloudfront create-invalidation --distribution-id EEY9ER5MY2XRN --paths '/*'
+              npm run deploy-all
             '''
           }
           post {
@@ -120,5 +121,12 @@ pipeline {
           }
         }
 
-      }
+        stage("Cleanup") {
+          steps {
+            sh '''
+	      git clean -fdx .
+            '''
+          }
+       }
+     }
 }

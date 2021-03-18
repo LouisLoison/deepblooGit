@@ -21,16 +21,18 @@ const env = { account, region }
 
 new ApiStack(app, 'ApiStack', { env });
 
-new FrontendStack(app, 'FrontendStack', { env });
+// new FrontendStack(app, 'FrontendStack', { env });
 new DocumentCfStack(app, 'DocumentCfStack', { env });
 
 new TextractPipelineStack(app, 'TextractPipelineStack', { env });
 
 // const cloudFrontStack = new CloudFrontStack(app, 'DocumentAccessStack', { env: { account: "669031476932", region: "eu-west-1" }});
 
+/*
 new AuroraDbStack(app, 'AuroraPostgresStack', {
   env
-})
+  })
+  */
 
 const documentStack = new DocumentStack(app, 'DocumentStack', {
   env,
