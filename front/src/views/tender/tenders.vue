@@ -1,13 +1,15 @@
 <template>
-  <div
-    class="search-panel content-grid"
-    style="overflow: auto;"
-    :style="
+<div class="search-panel">
+ <v-navigation-drawer
+        permanent
+        absolute
+        clipped
+        fixed
+        expand-on-hover
+        :style="
       getIsMobile
-        ? 'margin-top: -44px;'
-        : `height: calc(100vh - ${isHeaderShow ? '114' : '40'}px); overflow: auto; margin-top: 0px;`
-    "
-  >
+        ? 'margin-top: -44px; z-index:999'
+        : `height: calc(100vh - ${isHeaderShow ? '114' : '40'}px); overflow: auto; margin-top: 0px; z-index:999`">
     <perfect-scrollbar
       class="search-panel__filters pa-0"
       style="background-color: #f5f5f5; box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px; height: calc(100vh - 155px);"
@@ -22,7 +24,9 @@
         class="pb-4"
       >
         <v-expansion-panel @click="updateUserScreen()" style="background-color: transparent;">
-          <v-expansion-panel-header>Pipelines</v-expansion-panel-header>
+          <v-expansion-panel-header class="iconFilterGrid">
+            <v-icon> fas fa-bookmark </v-icon>
+            Pipelines</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersGroup
               ref="TendersGroup"
@@ -47,7 +51,9 @@
           @change="updateUserScreen()"
           style="background-color: transparent;"
         >
-          <v-expansion-panel-header>Filters</v-expansion-panel-header>
+          <v-expansion-panel-header class="iconFilterGrid">
+            <v-icon> fas fa-filter </v-icon>
+            Filters</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersFilter
               v-if="searchState.wasSearched"
@@ -70,7 +76,9 @@
           @change="updateUserScreen()"
           style="background-color: transparent;"
         >
-          <v-expansion-panel-header>Your colleagues on DeepBloo</v-expansion-panel-header>
+          <v-expansion-panel-header class="iconFilterGrid">
+            <v-icon>fas fa-users</v-icon>
+            Your colleagues</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersYourColleague />
           </v-expansion-panel-content>
@@ -80,16 +88,19 @@
           @change="updateUserScreen()"
           style="background-color: transparent;"
         >
-          <v-expansion-panel-header>Your profile</v-expansion-panel-header>
+          <v-expansion-panel-header class="iconFilterGrid">
+            <v-icon> fas fa-user </v-icon>Your profile</v-expansion-panel-header>
           <v-expansion-panel-content>
             <TendersYourProfile />
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
     </perfect-scrollbar>
+ </v-navigation-drawer>
+
     <div
-      class="search-panel__results pt-3 px-3"
-      style="overflow: auto; height: 100%;"
+      class="content-grid search-panel__results pt-3 px-3"
+      style="margin-left: 50px; overflow: auto; height: 100%;"
     >
       <div class="searchbox-grid mb-1">
         <SearchHeader
@@ -153,7 +164,7 @@
                 </v-list-item-title>
               </v-list-item>
             </v-list>
-          </v-menu>          
+          </v-menu>
         </div>
       </div>
       <div
@@ -775,7 +786,7 @@ export default {
 @media screen and (min-width: 640px) {
   .content-grid {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 1fr;
     grid-gap: 0px 0px;
   }
   .hit-header-grid {
@@ -803,5 +814,10 @@ export default {
 
 .search-panel .v-expansion-panel::before {
     box-shadow: none;
+}
+.iconFilterGrid {
+  display: grid;
+  grid-template-columns: 10px 1fr 20px;
+  grid-gap: 25px;
 }
 </style>
