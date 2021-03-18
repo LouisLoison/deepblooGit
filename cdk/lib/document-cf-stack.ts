@@ -1,6 +1,5 @@
-import cloudfront = require('@aws-cdk/aws-cloudfront');
-// import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import s3 = require('@aws-cdk/aws-s3');
+import { CloudFrontWebDistribution, OriginAccessIdentity } from '@aws-cdk/aws-cloudfront';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Construct, Stack, StackProps, CfnOutput } from '@aws-cdk/core';
 import { config } from './config';
 
@@ -15,7 +14,7 @@ export class DocumentCfStack extends Stack {
       docsCertificateArn,
     } = config
 
-    const documentsBucket = new s3.Bucket(this, `docsBucket-${NODE_ENV}`, {
+    const documentsBucket = new Bucket(this, `docsBucket-${NODE_ENV}`, {
       versioned: false,
       bucketName: `docs.${NODE_ENV}.deepbloo.com`,
       websiteIndexDocument:  'index.html',
@@ -23,7 +22,12 @@ export class DocumentCfStack extends Stack {
 
     const domainName = NODE_ENV === 'prod' ? 'docs.deepbloo.com' : `docs.${NODE_ENV}.deepbloo.com`
 
-    const distrib = new cloudfront.CloudFrontWebDistribution(this, `docsDistrib-${NODE_ENV}`, {
+    const docsIdentity = new OriginAccessIdentity(this, `docsIdentity-${NODE_ENV}`, {
+      comment: `CDK ${NODE_ENV} Documents Access Identity`,
+    });
+    documentsBucket.grantRead(docsIdentity)
+
+    const distrib = new CloudFrontWebDistribution(this, `docsDistrib-${NODE_ENV}`, {
       originConfigs: [
         {
           s3OriginSource: {

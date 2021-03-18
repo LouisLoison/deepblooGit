@@ -1,6 +1,5 @@
-import cloudfront = require('@aws-cdk/aws-cloudfront');
-// import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import s3 = require('@aws-cdk/aws-s3');
+import { CloudFrontWebDistribution, OriginAccessIdentity } from '@aws-cdk/aws-cloudfront';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Construct, Stack, StackProps, CfnOutput } from '@aws-cdk/core';
 import { config } from './config';
 
@@ -15,7 +14,7 @@ export class FrontendStack extends Stack {
       frontCertificateArn,
     } = config
 
-    const frontBucket = new s3.Bucket(this, `frontBucket-${NODE_ENV}`, {
+    const frontBucket = new Bucket(this, `frontBucket-${NODE_ENV}`, {
       versioned: false,
       bucketName: `front.${NODE_ENV}.deepbloo.com`,
       websiteIndexDocument:  'index.html',
@@ -23,7 +22,12 @@ export class FrontendStack extends Stack {
 
     const dnsName = NODE_ENV === 'prod' ? 'app.deepbloo.com' : `app.${NODE_ENV}.deepbloo.com`
 
-    const distrib = new cloudfront.CloudFrontWebDistribution(this, `frontDistrib-${NODE_ENV}`, {
+    const frontIdentity = new OriginAccessIdentity(this, `frontIdentity-${NODE_ENV}`, {
+      comment: `CDK ${NODE_ENV} Frontend Access Identity`,
+    });
+    frontBucket.grantRead(frontIdentity)
+
+    const distrib = new CloudFrontWebDistribution(this, `frontDistrib-${NODE_ENV}`, {
       originConfigs: [
         {
           s3OriginSource: {
