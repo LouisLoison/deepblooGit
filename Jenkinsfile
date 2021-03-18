@@ -77,6 +77,9 @@ pipeline {
             failure {
               slackSend channel: "#${env.ENV}", color: 'danger', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} build failed ❌(last commit by ${env.GIT_USERNAME}): failure (<${env.BUILD_URL}/console|Open>)"
             }
+            success {
+              slackSend channel: "#test", color: 'good', message: "[${env.ENV.toUpperCase()}] ${env.BRANCH_NAME} test ✅ (last commit by ${env.GIT_USERNAME}): success (<${env.BUILD_URL}/console|Open>)"
+            }
           }
         }
 
