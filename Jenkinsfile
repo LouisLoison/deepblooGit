@@ -3,6 +3,13 @@ pipeline {
 
   environment {
     ENV = "${env.BRANCH_NAME == "develop" ? "dev" : env.BRANCH_NAME == "master" ? "prod" : env.BRANCH_NAME.matches("^release/.*") ? "stage" : "test"}"
+    TEST_BUILD = ""
+    GIT_USERNAME = sh(script: "git show -s --format='%aN' ${env.GIT_COMMIT}", returnStdout: true).toString().trim()
+
+    TOPLEVEL = sh(script: '''pwd''', returnStdout: true).toString().trim()
+    IS_JENKINS_BUILD = "1"
+    TMPDIR = "/var/lib/jenkins/tmp/"
+    REPO = sh(script: "basename -s .git `git config --get remote.origin.url`", returnStdout: true).toString().trim()
   }
 
       stages {
@@ -13,6 +20,7 @@ pipeline {
               # ./tools/delete-untracked-files.sh
 
               # (echo $DIR_PATH | grep -Eq "(backend|frontend)"; if [[ $? = 0 ]] ; then yarn; fi) ||true
+	      . tools/jenkins-env.sh
 
               npm install
            '''
@@ -28,6 +36,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
+	      . tools/jenkins-env.sh
               npm run lint
             '''
           }
@@ -42,6 +51,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
+	      . tools/jenkins-env.sh
               npm run test:unit
             '''
           }
@@ -56,6 +66,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
+	      . tools/jenkins-env.sh
               npm run build
             '''
           }
@@ -85,6 +96,7 @@ pipeline {
           steps {
             sh '''
               set -xe;
+	      . tools/jenkins-env.sh
 
               if [ "$TEST_BUILD" ] ; then
                 exit
