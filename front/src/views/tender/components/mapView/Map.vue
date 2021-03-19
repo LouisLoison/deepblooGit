@@ -18,6 +18,9 @@
       <v-btn @click="$store.dispatch('appSearchTender/setPosData')">
         Refresh Pos Data
       </v-btn>
+      <v-btn @click="$store.dispatch('appSearchTender/resetPreviewTenders')">
+        Clear Selection
+      </v-btn>
     </l-control>
       <div v-if="currentZoom >= 4">
         <div v-for="(data, index) in getSearchResult" v-bind:key=index>
@@ -36,15 +39,15 @@
         </div>
       </div>
     </l-map>
-    <v-card class="col" style="border-radius: 0%; padding: 4px">
       <perfect-scrollbar>
+    <v-card class="col" style="border-radius: 0%; padding: 4px">
         <div v-for="(data, index) in getTenders" v-bind:key="'cercle' + index">
-          <div >
+          <div>
             <search-result :key="data.id.raw" :result="data" style="width: 100%" />
           </div>
         </div>
-      </perfect-scrollbar>
     </v-card>
+      </perfect-scrollbar>
   </div>
 </template>
 

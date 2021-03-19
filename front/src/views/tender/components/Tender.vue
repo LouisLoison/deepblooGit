@@ -1800,7 +1800,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('appSearchTender', [
+    ...mapActions('pipelineStore', [
       'setPipelineDialog'
     ]),
     async loadTender(tenderUuid) {

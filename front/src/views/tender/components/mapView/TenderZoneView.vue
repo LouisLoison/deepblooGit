@@ -47,7 +47,7 @@ export default {
       const filter = this.getSearchResult.filter(x => {
         return x.country.raw === this.tenderData.country
       })
-      this.$store.commit('appSearchTender/UPDATE_TENDER_PREVIEW', filter)
+      this.$store.commit('appSearchTender/UPDATE_TENDERS_PREVIEW', filter)
       console.log(this.getTenders)
     },
     getPos () {

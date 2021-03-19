@@ -874,10 +874,11 @@ export default {
       'setScreenTenders',
     ]),
     ...mapActions('appSearchTender', [
-      'setPreviewTender',
+      'setPreviewTender'
+    ]),
+    ...mapActions('pipelineStore', [
       'setPipelineDialog'
     ]),
-
     initUserScreen() {
       if (this.getScreenTenders.columns) {
         for (const column of this.getScreenTenders.columns) {

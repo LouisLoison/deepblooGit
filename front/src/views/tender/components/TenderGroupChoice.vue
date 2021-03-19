@@ -69,7 +69,7 @@ export default {
         this.UPDATE_PIPELINE_STATE(value)
       }
     },
-    ...mapGetters('appSearchTender', [
+    ...mapGetters('pipelineStore', [
       'getPipelineDialogState',
       'getPipelineDialogTender'
     ]),
@@ -85,7 +85,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations('appSearchTender', [
+    ...mapMutations('pipelineStore', [
       'UPDATE_PIPELINE_STATE'
     ]),
     async show(tender) {

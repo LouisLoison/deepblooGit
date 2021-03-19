@@ -247,7 +247,9 @@ export default {
 
   methods: {
     ...mapActions('appSearchTender', [
-      'setPreviewTender',
+      'setPreviewTender'
+    ]),
+    ...mapActions('pipelineStore', [
       'setPipelineDialog'
     ]),
     getDate(creation_timestamp) {
