@@ -71,14 +71,14 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import SearchResult from './SearchResult'
-import SearchResultsTable from './SearchResultsTable'
+import SearchResult from './tendersView/SearchResult'
+import SearchResultsTable from './tendersView/SearchResultsTable'
 import Dashboard from '@/views/dashboard/Dashboard'
 import TenderDialog from '@/views/tender/components/TenderDialog'
 import TenderGroupChoice from '@/views/tender/components/TenderGroupChoice'
 import SentEmailDialog from '@/components/modal/SentEmailDialog'
 import TenderRemoveDialog from '@/views/tender/components/TenderRemoveDialog'
-import Map from '@/views/tender/components/mapView/Map'
+import Map from '@/views/tender/components/tendersView/mapView/Map'
 
 export default {
   name: 'SearchResults',

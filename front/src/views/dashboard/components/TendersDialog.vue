@@ -50,7 +50,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import moment from 'moment'
-import SearchResultsTable from '@/views/tender/components/SearchResultsTable'
+import SearchResultsTable from '@/views/tender/components/tendersView/SearchResultsTable'
 
 export default {
   name: 'TendersDialog',
