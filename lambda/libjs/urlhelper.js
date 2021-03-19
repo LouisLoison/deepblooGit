@@ -22,7 +22,7 @@ exports.getFilename = (objectUrl) => {
   return objectUrl.split('/').slice(-1)[0]
 }
 
-exports.updateEventOutput = (s3Url, objectName, event, newExtension) => {
+exports.updateDocumentOutput = (s3Url, objectName, event, newExtension) => {
   const filename = exports.getFilename(s3Url)
   const newFilename = filename.split('.')[0] + `${newExtension}`;
   event.s3Url = exports.getS3Url(s3Url, newExtension);

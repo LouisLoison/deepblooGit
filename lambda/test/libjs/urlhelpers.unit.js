@@ -1,4 +1,4 @@
-const { getS3Url,  getS3ObjectUrl, getFilename, updateEventOutput } = require('../../libjs/urlhelper.js')
+const { getS3Url,  getS3ObjectUrl, getFilename, updateDocumentOutput } = require('../../libjs/urlhelper.js')
 
 
 test('getS3Url', done => {
@@ -39,7 +39,7 @@ test('getFilenameWiths3Url', done => {
   done()
 })
 
-test('updateEventOutput', done => {
+test('updateDocumentOutput', done => {
   const s3Url = 'https://bucket_name/tenders/tender#id/filename.html'
   var event = {
     'objectName': '',
@@ -48,7 +48,7 @@ test('updateEventOutput', done => {
     'filename': ''
   }
   const objectUrl = 'tenders/tender#id/filename.html'
-  const newEvent = updateEventOutput(s3Url, objectUrl, event, ".pdf")
+  const newEvent = updateDocumentOutput(s3Url, objectUrl, event, ".pdf")
   expect(newEvent.objectName).toEqual('tenders/tender#id/filename/filename.pdf')
   expect(newEvent.filename).toEqual('filename.pdf')
   expect(newEvent.s3Url).toEqual('https://bucket_name/tenders/tender#id/filename/filename.pdf')
