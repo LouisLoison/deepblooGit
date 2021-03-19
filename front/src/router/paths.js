@@ -57,6 +57,14 @@ export default [
     component: () => import(`@/views/tender/Info.vue`)
   },
   {
+    path: '/organizations',
+    meta: {
+      public: true
+    },
+    name: 'Organizations',
+    component: () => import(`@/views/organization/Organizations.vue`)
+  },
+  {
     path: '/privateDeals',
     meta: {
       public: true

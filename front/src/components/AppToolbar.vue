@@ -124,6 +124,10 @@ export default {
         to: { name: 'Tenders' },
       },
       {
+        title: 'Organization',
+        to: { name: 'Organizations' }, // PrivateDeals
+      },
+      {
         title: 'Dashboard',
         to: { name: 'Dashboards' }, // PrivateDeals
       },
