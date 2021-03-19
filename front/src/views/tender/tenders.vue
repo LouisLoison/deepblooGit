@@ -1,7 +1,6 @@
 <template>
 <div class="search-panel">
  <v-navigation-drawer
-        permanent
         absolute
         clipped
         fixed
