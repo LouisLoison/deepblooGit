@@ -1,10 +1,9 @@
-const { getHivebriteSharedSecret } = require(process.cwd() + '/../lambda/libjs/config')
-
 exports.Login = (username, password, userToken) => {
   return new Promise(async (resolve, reject) => {
     try {
       const jwt = require('jsonwebtoken')
       const BddTool = require(process.cwd() + '/global/BddTool')
+      const { getHivebriteSharedSecret } = require(process.cwd() + '/../lambda/libjs/config')
 
       const { hivebrite_shared_secret } = await getHivebriteSharedSecret()
 
@@ -96,13 +95,10 @@ exports.Login = (username, password, userToken) => {
 exports.List = (filter) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
       // Get user list
       var users = []
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = `
         SELECT    userId AS "userId", 
                   uuid AS "uuid", 
@@ -265,10 +261,7 @@ exports.User = (userId) => {
 exports.UserCpvs = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let cpvs = [];
       let query = `
         SELECT      userCpv.cpvCode AS "cpvCode", 
@@ -295,10 +288,7 @@ exports.UserCpvs = (userId) => {
 exports.UserDelete = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       if (!userId) {
         throw new Error("No available id !")
@@ -400,10 +390,7 @@ exports.Memberships = (userId) => {
 exports.AddUpdate = (user) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let userNew = await BddTool.RecordAddUpdate('user', user)
       resolve(userNew)
     } catch (err) { reject(err) }
@@ -413,10 +400,7 @@ exports.AddUpdate = (user) => {
 exports.synchroNew = () => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       const CpvList = await require(process.cwd() + '/controllers/Cpv/MdlCpv').CpvList()
 
       let hivebriteUsers = await require(process.cwd() + '/controllers/Hivebrite/MdlHivebrite').users()
@@ -547,10 +531,7 @@ exports.Synchro = () => {
       let usersBdd = await this.List()
 
       // Update user bdd list
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       for (let user of users) {
         let userBdd = usersBdd.find(a => a.email === user.email)
         if (!userBdd) {
@@ -890,13 +871,10 @@ exports.SynchroFull = (userId, user, usersBdd, organizationsBdd, CpvList, Region
 exports.SetPremium = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
       let user = await this.User(userId)
 
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       user.type = 2
       if (!user.password || user.password.trim() === '') {
         user.password = Math.random().toString(36).slice(-10)
@@ -958,10 +936,7 @@ exports.Notify = (userIds, subject, body, footerHtml, emails, tenderId) => {
 exports.Opportunity = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = ''
       let recordset = null
       let organization = null
@@ -1432,10 +1407,7 @@ exports.SendPeriodicDashboard = (userUuid) => {
 exports.userNotifyAddUpdate = (userNotify) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let userNotifyNew = await BddTool.RecordAddUpdate('userNotify', userNotify)
       resolve(userNotifyNew)
     } catch (err) { reject(err) }
@@ -1445,13 +1417,10 @@ exports.userNotifyAddUpdate = (userNotify) => {
 exports.userNotifyList = (filter, userData, tenderData) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
 
       // Get userNotify list
       var userNotifys = []
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let query = `
         SELECT    userNotify.userNotifyId AS "userNotifyId", 
                   userNotify.userId AS "userId", 

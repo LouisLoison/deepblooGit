@@ -1,15 +1,22 @@
 
 exports.textParseList = () => {
-  return require('deepbloo').textParseList
+  return new Promise(async (resolve, reject) => {
+    try {
+      try {
+        textParseList = require('deepbloo').textParseList
+      } catch (err) {
+        const path = require('path')
+        textParseList = require(path.join(process.cwd(), '../lambda/libjs/textParseList.js')).textParseList
+      }
+      resolve(textParseList)
+    } catch (err) { reject(err) }
+  })
 }
 
 exports.tenderCriterionAddUpdate = (tenderCriterion) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let tenderCriterionNew = await BddTool.RecordAddUpdate('tenderCriterion', tenderCriterion)
       resolve(tenderCriterionNew)
     } catch (err) { reject(err) }
@@ -19,10 +26,7 @@ exports.tenderCriterionAddUpdate = (tenderCriterion) => {
 exports.tenderCriterionDelete = (tenderCriterionId, documentUuid) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
 
       // Remove document from Deepbloo BDD
       let query = `DELETE FROM tenderCriterion WHERE tenderCriterionId = ${BddTool.NumericFormater(tenderCriterionId)}`
@@ -40,10 +44,7 @@ exports.tenderCriterionDelete = (tenderCriterionId, documentUuid) => {
 exports.tenderCriterionCpvAddUpdate = (tenderCriterionCpv) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const config = require(process.cwd() + '/config')
       const BddTool = require(process.cwd() + '/global/BddTool')
-      const BddId = 'deepbloo'
-      const BddEnvironnement = config.prefixe
       let tenderCriterionCpvNew = await BddTool.RecordAddUpdate('tenderCriterionCpv', tenderCriterionCpv)
       resolve(tenderCriterionCpvNew)
     } catch (err) { reject(err) }
@@ -77,7 +78,7 @@ exports.downloadCsv = () => {
       resolve({
         fileName: fileName, 
         url: `download/${fileName}`,
-      });
+      })
     } catch (err) { reject(err) }
   })
 }

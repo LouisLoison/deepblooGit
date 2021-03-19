@@ -141,7 +141,7 @@ export default {
   methods: {
     ...mapActions('defaultStore', [
       'setHeaderShow',
-    ])
-  }
-};
+    ]),
+  },
+}
 </script>
