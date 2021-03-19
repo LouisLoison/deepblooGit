@@ -36,7 +36,7 @@ export default {
     }
 
     if (this.$route.query && this.$route.query.tenderUuid) {
-      this.$refs.Tender.loadTender(null, this.$route.query.tenderUuid)
+      this.$refs.Tender.loadTender(this.$route.query.tenderUuid)
     }
   },
 
@@ -49,9 +49,8 @@ export default {
       this.isVisible = true
       this.tender = tender
       this.$nextTick(() => {
-        let tenderId = tender.tender_id && tender.tender_id ? tender.tender_id.raw : null
         let tenderUuid = tender.tender_id && tender.tender_uuid ? tender.tender_uuid.raw : null
-        this.$refs.Tender.loadTender(tenderId, tenderUuid)
+        this.$refs.Tender.loadTender(tenderUuid)
       })
     },
 

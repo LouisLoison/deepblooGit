@@ -57,10 +57,14 @@ npm run sam <STACK_NAME> <LAMBDA_NAME> <PATH_TO_EVENT>
 
 ## Launch unit tests and coverage :white_check_mark:
 ### Unit tests
+
 ```bash
-npm install
+# Pytest tests
 npm run tests_run
-npm run tests:unit
+
+# Jest tests
+npm local:install
+npm run local tests:unit
 ```
 
 ### Coverage
