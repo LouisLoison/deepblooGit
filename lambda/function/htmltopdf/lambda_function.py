@@ -9,10 +9,10 @@ from helper import S3Helper, AwsHelper
 from update_event import update_event, get_s3_url, get_s3_object_url, get_filename
 
 
-def convert_html_to_pdf(html_str, tmp_env):
-    aws_region = tmp_env['awsRegion']
-    output_bucket = tmp_env['outputBucket']
-    output_file = tmp_env['outputName']
+def convert_html_to_pdf(html_str, tmp_event):
+    aws_region = tmp_event['awsRegion']
+    output_bucket = tmp_event['outputBucket']
+    output_file = tmp_event['outputName']
     output_content = BytesIO()
 
     if html_str is None:
@@ -39,10 +39,10 @@ def convert_html_to_pdf(html_str, tmp_env):
     }
 
 
-def read_from_s3(tmp_env):
-    bucket_name = tmp_env['bucketName']
-    s3_file_name = tmp_env['objectName']
-    aws_region = tmp_env['awsRegion']
+def read_from_s3(tmp_event):
+    bucket_name = tmp_event['bucketName']
+    s3_file_name = tmp_event['objectName']
+    aws_region = tmp_event['awsRegion']
     s3 = AwsHelper().getResource('s3', aws_region)
     obj = s3.Object(bucket_name, s3_file_name)
     encoding = "utf-8"
@@ -73,7 +73,7 @@ def sanitize_html_content(html_str: str) -> str:
 
 
 def lambda_handler(event, context):
-    tmp_env = {
+    tmp_event = {
         **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "awsRegion": 'eu-west-1',
@@ -81,21 +81,21 @@ def lambda_handler(event, context):
         "outputName": get_s3_object_url(event["objectName"],
                                        ".pdf"),
     }
-    print("==> Aws Env: {0}".format(json.dumps(tmp_env)))
-    html_content = read_from_s3(tmp_env)
+    print("==> Aws Env: {0}".format(json.dumps(tmp_event)))
+    html_content = read_from_s3(tmp_event)
     sanitized_html_content = sanitize_html_content(html_content)
-    status = convert_html_to_pdf(sanitized_html_content, tmp_env)
-    tmp_env['size'] = S3Helper.getS3FileSize(tmp_env['bucketName'],
-                                             tmp_env['outputName'],
-                                             tmp_env['awsRegion'])
-    tmp_env["s3Url"] = get_s3_url(tmp_env["outputName"])
-    tmp_env["status"] = status['status']
-    tmp_env["errorMessage"] = status["errorMessage"]
-    tmp_env["contentType"] = "application/pdf"
-    tmp_env["objectName"] = tmp_env["outputName"]
-    tmp_env['size'] = S3Helper.getS3FileSize(tmp_env['bucketName'],
-                                             tmp_env['outputName'],
-                                             tmp_env['awsRegion'])
-    tmp_env["filename"] = get_filename(tmp_env['objectName'])
-    tmp_env["sourceUrl"] = tmp_env["s3Url"]
-    return update_event(tmp_env, event)
+    status = convert_html_to_pdf(sanitized_html_content, tmp_event)
+    tmp_event['size'] = S3Helper.getS3FileSize(tmp_event['bucketName'],
+                                             tmp_event['outputName'],
+                                             tmp_event['awsRegion'])
+    tmp_event["s3Url"] = get_s3_url(tmp_event["outputName"])
+    tmp_event["status"] = status['status']
+    tmp_event["errorMessage"] = status["errorMessage"]
+    tmp_event["contentType"] = "application/pdf"
+    tmp_event["objectName"] = tmp_event["outputName"]
+    tmp_event['size'] = S3Helper.getS3FileSize(tmp_event['bucketName'],
+                                             tmp_event['outputName'],
+                                             tmp_event['awsRegion'])
+    tmp_event["filename"] = get_filename(tmp_event['objectName'])
+    tmp_event["sourceUrl"] = tmp_event["s3Url"]
+    return update_event(tmp_event, event)

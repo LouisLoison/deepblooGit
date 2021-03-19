@@ -55,12 +55,12 @@ def get_tmp_name(tmp_folder: str, prefix: str="tmp") -> (str, str):
     return zip_path, zip_tmp
 
 
-def copy_zip_to_tmp(tmp_folder, tmp_env: dict) -> str:
-    zip_content = read_bytes_from_s3(tmp_env['bucketName'],
-                                     tmp_env['objectName'],
-                                     tmp_env['awsRegion'])
+def copy_zip_to_tmp(tmp_folder, tmp_event: dict) -> str:
+    zip_content = read_bytes_from_s3(tmp_event['bucketName'],
+                                     tmp_event['objectName'],
+                                     tmp_event['awsRegion'])
     zip_path, zip_tmp = get_tmp_name(tmp_folder)
-    print("[DEBUG]: Copying {0} to {1}".format(tmp_env["objectName"], zip_tmp))
+    print("[DEBUG]: Copying {0} to {1}".format(tmp_event["objectName"], zip_tmp))
     try:
         shutil.rmtree(zip_path)
     except FileNotFoundError:
@@ -78,10 +78,10 @@ def prepare_output_zip(tmp_output: str) -> None:
     os.makedirs(output_result)
 
 
-def write_extracted_zip(tmp_env: dict, zip_tmp: str):
-    output_bucket = tmp_env['bucketName']
-    output_folder = tmp_env['outputName']
-    aws_region = tmp_env['awsRegion']
+def write_extracted_zip(tmp_event: dict, zip_tmp: str):
+    output_bucket = tmp_event['bucketName']
+    output_folder = tmp_event['outputName']
+    aws_region = tmp_event['awsRegion']
 
     print("Writing s3://{0}/{1} in {2}".format(output_bucket, output_folder,
                                                aws_region))
@@ -116,26 +116,26 @@ def write_extracted_zip(tmp_env: dict, zip_tmp: str):
 
 def lambda_handler(event, context):
     print("=> Event: {0}".format(json.dumps(event)))
-    tmp_env = {
+    tmp_event = {
         **event,
         "bucketName": os.environ['DOCUMENTS_BUCKET'],
         "outputBucket": os.environ['DOCUMENTS_BUCKET'],
         "awsRegion": "eu-west-1",
         "outputName": event['objectName'][0:-4]
     }
-    print("=> AWS env: {0}".format(json.dumps(tmp_env)))
+    print("=> AWS env: {0}".format(json.dumps(tmp_event)))
     tmp_folder = "/tmp/zip_extraction"
     if os.path.isdir(tmp_folder) is True:
         AwsHelper.refreshTmpFolder(tmp_folder)
     extraction_output = os.path.join(tmp_folder, "extractions")
     prepare_output_zip(extraction_output)
-    zip_tmp = copy_zip_to_tmp(tmp_folder, tmp_env)
+    zip_tmp = copy_zip_to_tmp(tmp_folder, tmp_event)
     print("[DEBUG]: Extracting {0} into tmp file: {1}".format(zip_tmp,
                                                               extraction_output))
     extract_nested_zip(zip_tmp, extraction_output)
-    write_extracted_zip(tmp_env, extraction_output)
-    tmp_env["status"] = 1
-    tmp_env["errorMessage"] = None
-    tmp_env['filename'] = get_filename(tmp_env['objectName'])
+    write_extracted_zip(tmp_event, extraction_output)
+    tmp_event["status"] = 1
+    tmp_event["errorMessage"] = None
+    tmp_event['filename'] = get_filename(tmp_event['objectName'])
     AwsHelper.refreshTmpFolder(tmp_folder)
-    return update_event(tmp_env, event)
+    return update_event(tmp_event, event)
