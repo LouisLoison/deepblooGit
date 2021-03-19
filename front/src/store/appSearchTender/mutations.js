@@ -1,11 +1,10 @@
 
 export function UPDATE_SEARCH_RESULT(state, searchResult) {
-  console.log(searchResult)
   state.searchResult = searchResult
   state.tenderPreview = searchResult
 }
 
-export function UPDATE_TENDER_PREVIEW(state, tenders) {
+export function UPDATE_TENDERS_PREVIEW(state, tenders) {
   state.tenderPreview = tenders
 }
 
@@ -22,15 +21,4 @@ export function UPDATE_PREVIEW_DATA(state, data) {
 export function UPDATE_PREVIEW(state, { prevState, uuid }) {
   state.preview.state = prevState
   state.preview.uuid = uuid
-}
-
-//-----------------------------------------------------------------
-
-export function UPDATE_PIPELINE_DIALOG(state, { isVisible, tender }) {
-  state.pipelineDialog.isVisible = isVisible
-  state.pipelineDialog.tender = tender
-}
-
-export function UPDATE_PIPELINE_STATE(state, isVisible) {
-  state.pipelineDialog.isVisible = isVisible
 }

@@ -1,12 +1,5 @@
 import axios from 'axios'
 
-//------------------------------------------------------------------------------
-
-export function setPipelineDialog ({ commit }, { isVisible, tender }) {
-  commit('UPDATE_PIPELINE_DIALOG', { isVisible: isVisible, tender: tender})
-}
-
-//------------------------------------------------------------------------------
 
 export function setPreviewTender ({ commit }, { prevState, data }) {
     let tenderUuid = null
@@ -21,6 +14,10 @@ export function setPreviewTender ({ commit }, { prevState, data }) {
       }
     }
     commit('UPDATE_PREVIEW', { prevState: prevState, uuid: tenderUuid})
+}
+
+export function resetPreviewTenders ({ commit, state }) {
+  commit('UPDATE_TENDERS_PREVIEW', state.searchResult )
 }
 
 //------------------------------------------------------------------------------

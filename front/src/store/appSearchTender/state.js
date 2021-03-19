@@ -6,10 +6,6 @@ export default function () {
     preview: {
       prevState: false,
       uuid: undefined
-    },
-    pipelineDialog: {
-      isVisible: false,
-      tender: {}
     }
   }
 }
