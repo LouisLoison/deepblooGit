@@ -15,23 +15,23 @@ def send_message(client, qUrl, json_message) -> None:
     print("Submitted message to queue: {}".format(message))
 
 
-def send_to_textract(aws_env: dict):
+def send_to_textract(tmp_env: dict):
     json_message = {
-        "bucketName": aws_env["outputBucket"],
-        "objectName": aws_env['objectName'],
-        "awsRegion": aws_env["awsRegion"]
+        "bucketName": tmp_env["outputBucket"],
+        "objectName": tmp_env['objectName'],
+        "awsRegion": tmp_env["awsRegion"]
     }
-    client = AwsHelper().getClient('sqs', awsRegion=aws_env["awsRegion"])
-    qUrl = aws_env['textractQueueUrl']
+    client = AwsHelper().getClient('sqs', awsRegion=tmp_env["awsRegion"])
+    qUrl = tmp_env['textractQueueUrl']
     send_message(client, qUrl, json_message)
 
-def write_bbox_to_s3(aws_env: dict) -> None:
-    with open(aws_env['tmpJsonOutput'], "r") as file:
+def write_bbox_to_s3(tmp_env: dict) -> None:
+    with open(tmp_env['tmpJsonOutput'], "r") as file:
         content = file.read()
-        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputNameJson'], aws_env['awsRegion'])
-    with open(aws_env['tmpTxtOutput'], "r") as file:
+        S3Helper.writeToS3(content, tmp_env['outputBucket'], tmp_env['outputNameJson'], tmp_env['awsRegion'])
+    with open(tmp_env['tmpTxtOutput'], "r") as file:
         content = file.read()
-        S3Helper.writeToS3(content, aws_env['outputBucket'], aws_env['outputNameTxt'], aws_env['awsRegion'])
+        S3Helper.writeToS3(content, tmp_env['outputBucket'], tmp_env['outputNameTxt'], tmp_env['awsRegion'])
 
 
 def execute_pdf_to_bbox(pdf_tmp_path: str, bbox_output: str, output_format="json", output_type="line") -> bool:
@@ -74,8 +74,8 @@ def is_pdf_has_enough_characters(pdf_path, min_char_required) -> bool:
     return True
 
 
-def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
-    pdf_content = S3Helper.readBytesFromS3(aws_env['bucketName'], aws_env['objectName'], aws_env['awsRegion'])
+def copy_pdf_to_tmp(tmp_folder: str, tmp_env: dict) -> str:
+    pdf_content = S3Helper.readBytesFromS3(tmp_env['bucketName'], tmp_env['objectName'], tmp_env['awsRegion'])
     pdf_tmp = "tmp_0.pdf"
     index = 0
     if os.path.isdir(tmp_folder) is True:
@@ -89,14 +89,14 @@ def copy_pdf_to_tmp(tmp_folder: str, aws_env: dict) -> str:
     pdf_tmp = os.path.join(tmp_folder, pdf_tmp)
     with open(pdf_tmp, "wb") as tmp_file:
         tmp_file.write(pdf_content)
-    print("Copy {0} to {1}".format(aws_env["objectName"], pdf_tmp))
+    print("Copy {0} to {1}".format(tmp_env["objectName"], pdf_tmp))
     return pdf_tmp
 
 
 def lambda_handler(event, context):
     if event['status'] <= 0:
       return { **event, "errorMessage": "Status isnt positive" }
-    aws_env = {
+    tmp_env = {
         **event,
         "bucketName": os.environ.get('DOCUMENTS_BUCKET'),
         "awsRegion": 'eu-west-1',
@@ -110,41 +110,41 @@ def lambda_handler(event, context):
         "extract_pdf_lines": os.environ.get('EXTRACT_PDF_LINES'),
     }
     status =  1
-    extract_pdf_lines = aws_env['extract_pdf_lines']
-    textract_only = aws_env['textractOnly']
+    extract_pdf_lines = tmp_env['extract_pdf_lines']
+    textract_only = tmp_env['textractOnly']
     tmp_folder = "/tmp/pdfToBbox"
-    pdf_tmp_path = copy_pdf_to_tmp(tmp_folder, aws_env)
+    pdf_tmp_path = copy_pdf_to_tmp(tmp_folder, tmp_env)
 
-    print("==> aws_env: ", aws_env)
-    if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, aws_env['minCharNeeded']) is True:
+    print("==> tmp_env: ", tmp_env)
+    if textract_only == "false" and is_pdf_has_enough_characters(pdf_tmp_path, tmp_env['minCharNeeded']) is True:
         print("=> Extracting bounding box with pdfplumber")
         if extract_pdf_lines == "true":
             print("=> Extracting pdf lines bbox")
-            pdf = Pdf(pdf_tmp_path, aws_env['tmpJsonOutput'], aws_env['tmpTxtOutput'])
+            pdf = Pdf(pdf_tmp_path, tmp_env['tmpJsonOutput'], tmp_env['tmpTxtOutput'])
             pdf.parse_pdf()
             pdf.save_in_json()
             pdf.save_in_txt()
-            write_bbox_to_s3(aws_env)
+            write_bbox_to_s3(tmp_env)
         else:
             print("=> Extracting pdf words bbox")
-            if execute_pdf_to_bbox(pdf_tmp_path, aws_env['tmpJsonOutput']):
+            if execute_pdf_to_bbox(pdf_tmp_path, tmp_env['tmpJsonOutput']):
                 print("=> Error while trying to get pdf information")
-                aws_env["status"] = -1
-                aws_env["errorMessage"] = "PDF format not supported."
+                tmp_env["status"] = -1
+                tmp_env["errorMessage"] = "PDF format not supported."
             else:
-                write_bbox_to_s3(aws_env)
+                write_bbox_to_s3(tmp_env)
     else:
         print("Extracting bounding box with textract")
-        #send_to_textract(aws_env)
-    aws_env['size'] = S3Helper.getS3FileSize(aws_env['bucketName'],
-                                             aws_env['outputNameTxt'],
-                                             aws_env['awsRegion'])
-    aws_env["s3Url"] = get_s3_url(aws_env['outputNameTxt'])
-    aws_env["status"] = status
-    aws_env["errorMessage"] = None
-    aws_env["contentType"] = "text/txt"
-    aws_env['objectName'] = aws_env['outputNameTxt']
-    aws_env["filename"] = get_filename(aws_env['objectName'])
-    aws_env["sourceUrl"] = aws_env["s3Url"]
+        #send_to_textract(tmp_env)
+    tmp_env['size'] = S3Helper.getS3FileSize(tmp_env['bucketName'],
+                                             tmp_env['outputNameTxt'],
+                                             tmp_env['awsRegion'])
+    tmp_env["s3Url"] = get_s3_url(tmp_env['outputNameTxt'])
+    tmp_env["status"] = status
+    tmp_env["errorMessage"] = None
+    tmp_env["contentType"] = "text/txt"
+    tmp_env['objectName'] = tmp_env['outputNameTxt']
+    tmp_env["filename"] = get_filename(tmp_env['objectName'])
+    tmp_env["sourceUrl"] = tmp_env["s3Url"]
     AwsHelper.refreshTmpFolder(tmp_folder)
-    return update_event(aws_env, event)
+    return update_event(tmp_env, event)
